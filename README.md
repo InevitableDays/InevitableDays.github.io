@@ -1,49 +1,169 @@
-# InevitableDays.github.io
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ümit Özkul — Tech Generalist</title>
 
-# Ümit Özkul — Tech Generalist & Digital Tinkerer
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
 
-Welcome to my digital corner.
+  <style>
+    /* Global Reset & Fonts */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #fff;
+      background: url('images/bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      line-height: 1.6;
+    }
 
-I’m Ümit — a self-taught, relentlessly curious builder, fixer, translator, and digital investigator. I didn't take the conventional path into tech. I took the longer one: full of experiments, reverse engineering, scripting chaos into order, and sometimes breaking things just to learn how to put them back together better.
+    /* Glassmorphism Cards */
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 800px;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
 
----
+    h1, h2, h3 {
+      font-family: 'Fira Code', monospace;
+      margin-bottom: 1rem;
+    }
 
-### 💡 What I Do
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+    }
 
-- 🧠 **Build & Automate**: I write AHK scripts, custom GUI tools, and automate repetitive tasks. If there’s a faster way, I’ll find it.
-- 🧪 **Test & Break Things**: I run malware tests in VMs, reverse sketchy scripts, disable system restrictions, and create my own tools to stress-test ideas.
-- 🌐 **Translate & Document**: I’ve translated 20+ projects (including scientific documentaries) and maintain an offline personal knowledge base.
-- 🛠️ **Rescue & Troubleshoot**: From USB virus file recovery to reviving “dead” laptops, I’ve solved problems others walked away from.
-- 🎮 **Create for the Future**: I’m currently developing a solo game project and still design offline HTML/C++/WordPress sites for fun.
+    img.profile {
+      display: block;
+      margin: 1rem auto;
+      width: 150px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
 
----
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
 
-### 📌 Selected Highlights
+    li {
+      margin-bottom: 0.8rem;
+    }
 
-- 🛡️ Built and maintained multiple sandboxed Windows & Linux VMs with custom setups for testing, cracking, and repair.
-- 🔧 Designed 4 functional GUI apps coded in C++ for niche personal automation tasks.
-- 📚 Conducted a full research study in 28 Turkish middle schools under the Ministry of National Education (MoNE).
-- 🎓 YDS English Score: 90/100 — fluent in tech, fluent in language.
-- 🦠 Collected and analyzed malware in high school... on purpose.
-- 🥋 Almost-black belt in Shotokan karate (4+ years trained, didn’t attend the final exam).
+    a {
+      color: #a0e7ff;
+      text-decoration: none;
+    }
 
----
+    a:hover {
+      text-decoration: underline;
+    }
 
-### 🧷 Work Ethic in 3 Words
-**Learn. Hack. Repeat.**
+    blockquote {
+      font-style: italic;
+      text-align: center;
+      margin: 2rem auto;
+      max-width: 700px;
+    }
 
-This GitHub houses my experiments, tools, projects, and archives — a sandbox of ideas that shaped me into the person I am.
+    /* Optional: Responsive Images inside cards */
+    .card img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
 
-You won't see corporate gloss here. You’ll see real work. Quiet wins. Raw potential.
+  </style>
+</head>
 
----
+<body>
 
-### 📫 Contact
+  <!-- Header -->
+  <div class="card">
+    <h1>Ümit Özkul — Tech Generalist & Digital Tinkerer</h1>
+    <img src="images/profile.png" alt="Ümit Özkul" class="profile">
+    <p>Welcome to my digital corner. I’m Ümit — a self-taught, relentlessly curious builder, fixer, translator, and digital investigator. I didn't take the conventional path into tech. I took the longer one: full of experiments, reverse engineering, scripting chaos into order, and sometimes breaking things just to learn how to put them back together better.</p>
+  </div>
 
-- 💌 Email: [umitozkul2015@gmail.com](mailto:umitozkul2015@gmail.com)  
-- 🔗 LinkedIn: [linkedin.com/in/umit-ozkul-749115355](https://www.linkedin.com/in/umit-ozkul-749115355)
+  <!-- What I Do -->
+  <div class="card">
+    <h2>💡 What I Do</h2>
+    <ul>
+      <li>🧠 <strong>Build & Automate:</strong> I write AHK scripts, custom GUI tools, and automate repetitive tasks.<br>
+        <img src="images/automation.png" alt="Automation Screenshot">
+      </li>
+      <li>🧪 <strong>Test & Break Things:</strong> I run malware tests in VMs, reverse sketchy scripts, disable system restrictions, and create my own tools.<br>
+        <img src="images/vm-lab.jpg" alt="VM Lab">
+      </li>
+      <li>🌐 <strong>Translate & Document:</strong> I’ve translated 20+ projects and maintain an offline knowledge base.<br>
+        <img src="images/translation.jpg" alt="Translation Project">
+      </li>
+      <li>🛠️ <strong>Rescue & Troubleshoot:</strong> From USB virus recovery to reviving laptops.<br>
+        <img src="images/laptop-repair.jpg" alt="Laptop Repair">
+      </li>
+      <li>🎮 <strong>Create for the Future:</strong> Solo game project and offline HTML/C++/WordPress sites.<br>
+        <img src="images/game-dev.png" alt="Game Dev Screenshot">
+      </li>
+    </ul>
+  </div>
 
----
+  <!-- Highlights -->
+  <div class="card">
+    <h2>📌 Selected Highlights</h2>
+    <ul>
+      <li>🛡️ Built and maintained multiple sandboxed Windows & Linux VMs.<br>
+        <img src="images/vm-setup.png" alt="VM Setup">
+      </li>
+      <li>🔧 Designed 4 GUI apps in C++.<br>
+        <img src="images/gui-app.png" alt="GUI App">
+      </li>
+      <li>📚 Conducted a research study in 28 Turkish middle schools.<br>
+        <img src="images/research.jpg" alt="Research Study">
+      </li>
+      <li>🎓 YDS English Score: 90/100.<br>
+        <img src="images/yds.jpg" alt="Certificate">
+      </li>
+      <li>🦠 Collected and analyzed malware in high school.<br>
+        <img src="images/malware.png" alt="Malware Analysis">
+      </li>
+      <li>🥋 Almost-black belt in Shotokan karate.<br>
+        <img src="images/karate.jpg" alt="Karate Photo">
+      </li>
+    </ul>
+  </div>
 
-> _"I didn’t wait for permission to start learning. I just started."_  
-> —Ümit
+  <!-- Work Ethic -->
+  <div class="card">
+    <h2>🧷 Work Ethic in 3 Words</h2>
+    <p><strong>Learn. Hack. Repeat.</strong></p>
+  </div>
+
+  <!-- Contact -->
+  <div class="card">
+    <h2>📫 Contact</h2>
+    <ul>
+      <li>💌 Email: <a href="mailto:umitozkul2015@gmail.com">umitozkul2015@gmail.com</a></li>
+      <li>🔗 LinkedIn: <a href="https://www.linkedin.com/in/umit-ozkul-749115355">linkedin.com/in/umit-ozkul-749115355</a></li>
+    </ul>
+  </div>
+
+  <!-- Quote -->
+  <blockquote>
+    "I didn’t wait for permission to start learning. I just started." —Ümit
+  </blockquote>
+
+</body>
+</html>
