@@ -198,5 +198,163 @@ async function loadLanguage(lang) {
 loadLanguage('en');
 </script>
 
+<!-- Minesweeper Section -->
+<div class="section" id="minesweeper-section">
+  <h2>🎮 Mini Game: Minesweeper</h2>
+  <p>Try your luck! Click cells to reveal, avoid the mines.</p>
+  <div id="minesweeper"></div>
+  <p id="ms-status" style="text-align:center; font-weight:bold; margin-top:1rem;"></p>
+  <button onclick="initGame()" style="display:block; margin: 1rem auto;">Restart Game</button>
+</div>
+
+<style>
+  /* Minesweeper Styles */
+  #minesweeper {
+    display: inline-block;
+    margin: 0 auto;
+    user-select: none;
+  }
+  .ms-row {
+    display: flex;
+  }
+  .ms-cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #555;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    background-color: #222;
+    color: #fff;
+    font-weight: bold;
+    font-family: monospace;
+  }
+  .ms-cell.revealed {
+    background-color: #444;
+    cursor: default;
+  }
+  .ms-cell.mine {
+    background-color: #a00;
+  }
+</style>
+
+<script>
+const rows = 8, cols = 8, mines = 10;
+let grid = [], cells = [], gameOver = false;
+
+function initGame() {
+  gameOver = false;
+  grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+  cells = [];
+  document.getElementById('ms-status').textContent = '';
+  const container = document.getElementById('minesweeper');
+  container.innerHTML = '';
+
+  // Place mines randomly
+  let placed = 0;
+  while (placed < mines) {
+    const r = Math.floor(Math.random() * rows);
+    const c = Math.floor(Math.random() * cols);
+    if (grid[r][c] !== 'M') {
+      grid[r][c] = 'M';
+      placed++;
+    }
+  }
+
+  // Calculate numbers
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c] === 'M') continue;
+      let count = 0;
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          const nr = r + dr, nc = c + dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === 'M') count++;
+        }
+      }
+      grid[r][c] = count;
+    }
+  }
+
+  // Build HTML grid
+  for (let r = 0; r < rows; r++) {
+    const rowDiv = document.createElement('div');
+    rowDiv.classList.add('ms-row');
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElement('div');
+      cell.classList.add('ms-cell');
+      cell.dataset.row = r;
+      cell.dataset.col = c;
+      cell.addEventListener('click', () => revealCell(r, c));
+      rowDiv.appendChild(cell);
+      if (!cells[r]) cells[r] = [];
+      cells[r][c] = cell;
+    }
+    container.appendChild(rowDiv);
+  }
+}
+
+function revealCell(r, c) {
+  if (gameOver) return;
+  const cell = cells[r][c];
+  if (cell.classList.contains('revealed')) return;
+  cell.classList.add('revealed');
+
+  if (grid[r][c] === 'M') {
+    cell.textContent = '💣';
+    cell.classList.add('mine');
+    document.getElementById('ms-status').textContent = '💥 Game Over!';
+    revealAllMines();
+    gameOver = true;
+    return;
+  }
+
+  if (grid[r][c] > 0) {
+    cell.textContent = grid[r][c];
+  } else {
+    // Reveal neighbors recursively
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const nr = r + dr, nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+          revealCell(nr, nc);
+        }
+      }
+    }
+  }
+
+  checkWin();
+}
+
+function revealAllMines() {
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c] === 'M') {
+        cells[r][c].textContent = '💣';
+        cells[r][c].classList.add('mine', 'revealed');
+      }
+    }
+  }
+}
+
+function checkWin() {
+  let revealedCount = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (cells[r][c].classList.contains('revealed')) revealedCount++;
+    }
+  }
+  if (revealedCount === rows * cols - mines) {
+    document.getElementById('ms-status').textContent = '🎉 You Win!';
+    gameOver = true;
+    revealAllMines();
+  }
+}
+
+// Initialize first game
+initGame();
+</script>
+
+        
 </body>
 </html>
