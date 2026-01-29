@@ -199,14 +199,27 @@ loadLanguage('en');
 </script>
 
 <!-- Minesweeper Section -->
-<div class="section" id="minesweeper-section" style="centered";>
-  <h2 id="ms-title">🎮Minesweeper</h2>
+<div class="section" id="minesweeper-section">
+  <h2 id="ms-title">🎮           Minesweeper</h2>
 
   <div id="minesweeper-container">
-    <!-- STATUS MOVED TO TOP -->
-    <div id="ms-status" class="ms-status"></div>
 
-    <button id="ms-newgame-btn">New Game</button>
+    <!-- TOP BAR -->
+    <div id="ms-topbar">
+      <div id="ms-status"></div>
+
+      <div id="ms-controls">
+        <select id="ms-difficulty">
+          <option value="beginner">Beginner (8x8 / 10)</option>
+          <option value="intermediate">Intermediate (16x16 / 40)</option>
+          <option value="expert">Expert (16x30 / 99)</option>
+        </select>
+
+        <button id="ms-newgame-btn">New Game</button>
+      </div>
+    </div>
+
+    <!-- GAME GRID -->
     <div id="minesweeper"></div>
   </div>
 </div>
@@ -217,42 +230,74 @@ loadLanguage('en');
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 12px;
+  }
+
+  /* Top bar */
+  #ms-topbar {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
   }
 
-  /* Status (TOP) */
-  .ms-status {
-    min-height: 1.6em; /* keeps layout stable even when empty */
+  #ms-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #ms-status {
     font-weight: bold;
     font-size: 1.2rem;
     text-align: center;
-    padding: 6px 12px;
-    border-radius: 10px;
+    min-height: 1.6rem;
+    transition: transform 0.2s ease, opacity 0.2s ease;
   }
 
-  /* Animation for win/lose message */
-  .ms-status.pop {
-    animation: msPop 450ms ease-out;
+  /* Little animation */
+  #ms-status.pop {
+    transform: scale(1.08);
+    opacity: 1;
   }
 
-  @keyframes msPop {
-    0%   { transform: scale(0.85); opacity: 0; }
-    60%  { transform: scale(1.08); opacity: 1; }
-    100% { transform: scale(1); }
+  #ms-difficulty {
+    padding: 0.5rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #111;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
   }
 
-  /* Optional extra glow styles */
-  .ms-status.win {
-    box-shadow: 0 0 14px rgba(0, 191, 255, 0.6);
+  #ms-newgame-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #00bfff;
+    color: #000;
+    border: none;
+    border-radius: 6px;
   }
-  .ms-status.lose {
-    box-shadow: 0 0 14px rgba(255, 0, 0, 0.35);
-  }
+  #ms-newgame-btn:hover { background-color: #009acd; }
 
   /* Minesweeper Grid */
-  #minesweeper { user-select: none; display: inline-block; }
+  #minesweeper {
+    user-select: none;
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto; /* important for Expert mode */
+  }
 
-  .ms-row { display: flex; justify-content: center; }
+  .ms-row {
+    display: flex;
+    justify-content: center;
+  }
 
   .ms-cell {
     width: 30px;
@@ -265,39 +310,54 @@ loadLanguage('en');
     color: #fff;
     font-weight: bold;
     font-family: monospace;
-    transition: transform 0.08s ease;
+    transition: transform 0.08s ease, background-color 0.12s ease;
   }
 
-  .ms-cell:active { transform: scale(0.95); }
+  .ms-cell:active {
+    transform: scale(0.95);
+  }
 
   .ms-cell.revealed { background-color: #444; cursor: default; }
   .ms-cell.mine { background-color: #a00; }
 
-  #ms-newgame-btn {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: #00bfff;
-    color: #000;
-    border: none;
-    border-radius: 5px;
-  }
-
-  #ms-newgame-btn:hover { background-color: #009acd; }
-
-  /* RESPONSIVE */
+  /* RESPONSIVE: shrink cells on smaller screens */
   @media (max-width: 480px) {
-    .ms-cell { width: 24px; height: 24px; line-height: 24px; font-size: 0.8rem; }
+    .ms-cell {
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 0.8rem;
+    }
   }
+
   @media (max-width: 360px) {
-    .ms-cell { width: 20px; height: 20px; line-height: 20px; font-size: 0.7rem; }
+    .ms-cell {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      font-size: 0.7rem;
+    }
   }
 </style>
 
 <script>
-const rows = 8, cols = 8, mines = 10;
+/* -----------------------------
+   Minesweeper with Difficulty
+------------------------------*/
+
+// Difficulty presets
+const msLevels = {
+  beginner:     { rows: 8,  cols: 8,  mines: 10 },
+  intermediate: { rows: 16, cols: 16, mines: 40 },
+  expert:       { rows: 16, cols: 30, mines: 99 }
+};
+
+let rows = msLevels.beginner.rows;
+let cols = msLevels.beginner.cols;
+let mines = msLevels.beginner.mines;
+
 let grid = [], cells = [], gameOver = false;
-let currentLang = 'en';
+let currentLang = 'en'; // keep if you want multilingual later
 
 const msMessages = {
   en: { gameover: "💥 Game Over!", youwin: "🎉 You Win!", newgame: "New Game" },
@@ -308,28 +368,27 @@ const msMessages = {
 };
 
 function setMSMessage(key) {
-  const el = document.getElementById('ms-status');
-  const msg = msMessages[currentLang][key] || "";
+  const status = document.getElementById('ms-status');
+  const msg = (msMessages[currentLang] && msMessages[currentLang][key]) || msMessages.en[key];
+  status.textContent = msg;
 
-  // set text
-  el.textContent = msg;
-
-  // reset classes
-  el.classList.remove('win', 'lose', 'pop');
-
-  // add win/lose class + animation
-  if (key === 'youwin') el.classList.add('win');
-  if (key === 'gameover') el.classList.add('lose');
-
-  // force restart animation
-  void el.offsetWidth;
-  el.classList.add('pop');
+  // small animation pop
+  status.classList.remove('pop');
+  void status.offsetWidth; // reflow trick
+  status.classList.add('pop');
 }
 
 function clearMSMessage() {
-  const el = document.getElementById('ms-status');
-  el.textContent = '';
-  el.classList.remove('win', 'lose', 'pop');
+  document.getElementById('ms-status').textContent = '';
+}
+
+// NEW: apply difficulty
+function setDifficulty(levelKey) {
+  const lvl = msLevels[levelKey] || msLevels.beginner;
+  rows = lvl.rows;
+  cols = lvl.cols;
+  mines = lvl.mines;
+  initGame();
 }
 
 function initGame() {
@@ -341,12 +400,15 @@ function initGame() {
   const container = document.getElementById('minesweeper');
   container.innerHTML = '';
 
-  // Place mines
+  // Place mines randomly
   let placed = 0;
   while (placed < mines) {
     const r = Math.floor(Math.random() * rows);
     const c = Math.floor(Math.random() * cols);
-    if (grid[r][c] !== 'M') { grid[r][c] = 'M'; placed++; }
+    if (grid[r][c] !== 'M') {
+      grid[r][c] = 'M';
+      placed++;
+    }
   }
 
   // Calculate numbers
@@ -364,7 +426,7 @@ function initGame() {
     }
   }
 
-  // Build grid
+  // Build grid HTML
   for (let r = 0; r < rows; r++) {
     const rowDiv = document.createElement('div');
     rowDiv.classList.add('ms-row');
@@ -375,32 +437,30 @@ function initGame() {
       cell.dataset.row = r;
       cell.dataset.col = c;
 
-      // Left-click
+      // Left click = reveal
       cell.addEventListener('click', () => revealCell(r, c));
 
-      // Right-click flag (toggle)
+      // Right click = flag toggle
       cell.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         if (gameOver || cell.classList.contains('revealed')) return;
-
         cell.textContent = (cell.textContent === '🚩') ? '' : '🚩';
         checkWin();
       });
 
       rowDiv.appendChild(cell);
+
       if (!cells[r]) cells[r] = [];
       cells[r][c] = cell;
     }
 
     container.appendChild(rowDiv);
   }
-
-  // Update button label
-  document.getElementById('ms-newgame-btn').textContent = msMessages[currentLang].newgame;
 }
 
 function revealCell(r, c) {
   if (gameOver) return;
+
   const cell = cells[r][c];
   if (cell.classList.contains('revealed') || cell.textContent === '🚩') return;
 
@@ -418,6 +478,7 @@ function revealCell(r, c) {
   if (grid[r][c] > 0) {
     cell.textContent = grid[r][c];
   } else {
+    // flood fill
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
         const nr = r + dr, nc = c + dc;
@@ -442,35 +503,34 @@ function revealAllMines() {
 
 function checkWin() {
   let revealedCount = 0;
-  let correctFlags = 0;
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      const cell = cells[r][c];
-      if (cell.classList.contains('revealed')) revealedCount++;
-      if (grid[r][c] === 'M' && cell.textContent === '🚩') correctFlags++;
+      if (cells[r][c].classList.contains('revealed')) revealedCount++;
     }
   }
 
-  if (revealedCount === rows * cols - mines || correctFlags === mines) {
+  // Win = all non-mine revealed
+  if (revealedCount === rows * cols - mines) {
     setMSMessage('youwin');
     gameOver = true;
     revealAllMines();
   }
 }
 
-// Language integration
-function updateMSLanguage(lang) {
-  currentLang = lang;
-  document.getElementById('ms-newgame-btn').textContent = msMessages[currentLang].newgame;
-}
-
-// Hook button
+/* -----------------------------
+   Hook up UI
+------------------------------*/
 document.getElementById('ms-newgame-btn').addEventListener('click', initGame);
 
+document.getElementById('ms-difficulty').addEventListener('change', (e) => {
+  setDifficulty(e.target.value);
+});
+
 // Initialize
-initGame();
+setDifficulty('beginner');
 </script>
+
 
 
 
