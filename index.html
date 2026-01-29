@@ -476,6 +476,35 @@ initGame();
 </script>
 
 
+<button
+  id="goTop"
+  title="Scroll to top"
+  style="
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 14px;
+    cursor: pointer;
+  "
+  onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+>
+  🢁
+</button>
+        
+<script>
+  // Disable right-click everywhere EXCEPT Minesweeper grid
+  document.addEventListener("contextmenu", function (e) {
+    const minesweeper = document.getElementById("minesweeper");
+
+    // allow right click inside minesweeper (for flags)
+    if (minesweeper && minesweeper.contains(e.target)) return;
+
+    // block right click everywhere else
+    e.preventDefault();
+  });
+</script>
+
 
 
 
