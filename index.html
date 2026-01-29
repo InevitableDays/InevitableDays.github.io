@@ -202,20 +202,12 @@ loadLanguage('en');
 <div class="section" id="minesweeper-section">
   <h2 id="ms-title" style="text-align:center;">Minesweeper</h2>
 
-
   <div id="minesweeper-container">
-
     <!-- TOP BAR -->
     <div id="ms-topbar">
       <div id="ms-status"></div>
 
       <div id="ms-controls">
-        <select id="ms-difficulty">
-          <option value="beginner">Beginner (8x8 / 10)</option>
-          <option value="intermediate">Intermediate (16x16 / 40)</option>
-          <option value="expert">Expert (16x30 / 99)</option>
-        </select>
-
         <button id="ms-newgame-btn">New Game</button>
       </div>
     </div>
@@ -226,31 +218,13 @@ loadLanguage('en');
 </div>
 
 <style>
-  /* Minesweeper Container */
   #minesweeper-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
   }
-<div class="section" id="minesweeper-section">
-  <h2 id="ms-title" style="text-align:center;">Minesweeper</h2>
 
-  <div id="minesweeper-container">
-    <button id="ms-newgame-btn">New Game</button>
-    <div id="minesweeper"></div>
-    <div id="ms-status"></div>
-  </div>
-
-  <!-- difficulty UNDER the window -->
-  <div id="ms-difficulty" style="text-align:center; margin-top: 12px;">
-    <button onclick="setDifficulty('beginner')">Beginner</button>
-    <button onclick="setDifficulty('intermediate')">Intermediate</button>
-    <button onclick="setDifficulty('expert')">Expert</button>
-  </div>
-</div>
-
-  /* Top bar */
   #ms-topbar {
     width: 100%;
     max-width: 800px;
@@ -276,20 +250,10 @@ loadLanguage('en');
     transition: transform 0.2s ease, opacity 0.2s ease;
   }
 
-  /* Little animation */
+  /* little animation */
   #ms-status.pop {
     transform: scale(1.08);
     opacity: 1;
-  }
-
-  #ms-difficulty {
-    padding: 0.5rem 0.7rem;
-    border-radius: 6px;
-    border: 1px solid #333;
-    background: #111;
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
   }
 
   #ms-newgame-btn {
@@ -308,7 +272,7 @@ loadLanguage('en');
     user-select: none;
     display: inline-block;
     max-width: 100%;
-    overflow-x: auto; /* important for Expert mode */
+    overflow-x: auto;
   }
 
   .ms-row {
@@ -330,14 +294,10 @@ loadLanguage('en');
     transition: transform 0.08s ease, background-color 0.12s ease;
   }
 
-  .ms-cell:active {
-    transform: scale(0.95);
-  }
-
+  .ms-cell:active { transform: scale(0.95); }
   .ms-cell.revealed { background-color: #444; cursor: default; }
   .ms-cell.mine { background-color: #a00; }
 
-  /* RESPONSIVE: shrink cells on smaller screens */
   @media (max-width: 480px) {
     .ms-cell {
       width: 24px;
@@ -359,53 +319,25 @@ loadLanguage('en');
 
 <script>
 /* -----------------------------
-   Minesweeper with Difficulty
+   Minesweeper (Intermediate only)
+   16x16 / 40 mines
 ------------------------------*/
-
-// Difficulty presets
-const msLevels = {
-  beginner:     { rows: 8,  cols: 8,  mines: 10 },
-  intermediate: { rows: 16, cols: 16, mines: 40 },
-  expert:       { rows: 16, cols: 30, mines: 99 }
-};
-
-let rows = msLevels.beginner.rows;
-let cols = msLevels.beginner.cols;
-let mines = msLevels.beginner.mines;
+const rows = 16, cols = 16, mines = 40;
 
 let grid = [], cells = [], gameOver = false;
-let currentLang = 'en'; // keep if you want multilingual later
 
-const msMessages = {
-  en: { gameover: "💥 Game Over!", youwin: "🎉 You Win!", newgame: "New Game" },
-  tr: { gameover: "💥 Oyun Bitti!", youwin: "🎉 Kazandınız!", newgame: "Yeni Oyun" },
-  fr: { gameover: "💥 Partie Perdue!", youwin: "🎉 Vous avez gagné!", newgame: "Nouvelle Partie" },
-  ja: { gameover: "💥 ゲームオーバー！", youwin: "🎉 勝ちました！", newgame: "新しいゲーム" },
-  ru: { gameover: "💥 Игра окончена!", youwin: "🎉 Вы победили!", newgame: "Новая игра" }
-};
-
-function setMSMessage(key) {
+function setMSMessage(text) {
   const status = document.getElementById('ms-status');
-  const msg = (msMessages[currentLang] && msMessages[currentLang][key]) || msMessages.en[key];
-  status.textContent = msg;
+  status.textContent = text;
 
-  // small animation pop
+  // pop animation
   status.classList.remove('pop');
-  void status.offsetWidth; // reflow trick
+  void status.offsetWidth;
   status.classList.add('pop');
 }
 
 function clearMSMessage() {
   document.getElementById('ms-status').textContent = '';
-}
-
-// NEW: apply difficulty
-function setDifficulty(levelKey) {
-  const lvl = msLevels[levelKey] || msLevels.beginner;
-  rows = lvl.rows;
-  cols = lvl.cols;
-  mines = lvl.mines;
-  initGame();
 }
 
 function initGame() {
@@ -486,7 +418,7 @@ function revealCell(r, c) {
   if (grid[r][c] === 'M') {
     cell.textContent = '💣';
     cell.classList.add('mine');
-    setMSMessage('gameover');
+    setMSMessage('💥 Game Over!');
     revealAllMines();
     gameOver = true;
     return;
@@ -527,26 +459,20 @@ function checkWin() {
     }
   }
 
-  // Win = all non-mine revealed
   if (revealedCount === rows * cols - mines) {
-    setMSMessage('youwin');
+    setMSMessage('🎉 You Win!');
     gameOver = true;
     revealAllMines();
   }
 }
 
-/* -----------------------------
-   Hook up UI
-------------------------------*/
+// Hook up button
 document.getElementById('ms-newgame-btn').addEventListener('click', initGame);
 
-document.getElementById('ms-difficulty').addEventListener('change', (e) => {
-  setDifficulty(e.target.value);
-});
-
-// Initialize
-setDifficulty('beginner');
+// Start immediately (Intermediate default)
+initGame();
 </script>
+
 
 
 
