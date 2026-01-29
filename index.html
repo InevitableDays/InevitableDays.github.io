@@ -268,12 +268,14 @@ loadLanguage('en');
   #ms-newgame-btn:hover { background-color: #009acd; }
 
   /* Minesweeper Grid */
-  #minesweeper {
-    user-select: none;
-    display: inline-block;
-    max-width: 100%;
-    overflow-x: auto;
-  }
+#minesweeper {
+  user-select: none;
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: hidden;   /* remove horizontal scrollbar */
+  overflow-y: hidden;   /* remove vertical scrollbar */
+}
+
 
   .ms-row {
     display: flex;
