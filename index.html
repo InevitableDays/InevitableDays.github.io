@@ -200,7 +200,8 @@ loadLanguage('en');
 
 <!-- Minesweeper Section -->
 <div class="section" id="minesweeper-section">
-  <h2 id="ms-title">🎮           Minesweeper</h2>
+  <h2 id="ms-title" style="text-align:center;">Minesweeper</h2>
+
 
   <div id="minesweeper-container">
 
@@ -232,6 +233,22 @@ loadLanguage('en');
     align-items: center;
     gap: 12px;
   }
+<div class="section" id="minesweeper-section">
+  <h2 id="ms-title" style="text-align:center;">Minesweeper</h2>
+
+  <div id="minesweeper-container">
+    <button id="ms-newgame-btn">New Game</button>
+    <div id="minesweeper"></div>
+    <div id="ms-status"></div>
+  </div>
+
+  <!-- difficulty UNDER the window -->
+  <div id="ms-difficulty" style="text-align:center; margin-top: 12px;">
+    <button onclick="setDifficulty('beginner')">Beginner</button>
+    <button onclick="setDifficulty('intermediate')">Intermediate</button>
+    <button onclick="setDifficulty('expert')">Expert</button>
+  </div>
+</div>
 
   /* Top bar */
   #ms-topbar {
