@@ -200,8 +200,8 @@ loadLanguage('en');
 
 <!-- Minesweeper Section -->
 <div class="section" id="minesweeper-section">
-  <h2>🎮 Mini Game: Minesweeper</h2>
-  <p>Try your luck! Click cells to reveal, avoid the mines.</p>
+  <h2 id="ms-title">🎮 Mini Game: Minesweeper</h2>
+  <p id="ms-instructions">Try your luck! Click cells to reveal, avoid the mines.</p>
   <div id="minesweeper"></div>
   <p id="ms-status" style="text-align:center; font-weight:bold; margin-top:1rem;"></p>
   <button onclick="initGame()" style="display:block; margin: 1rem auto;">Restart Game</button>
@@ -209,38 +209,36 @@ loadLanguage('en');
 
 <style>
   /* Minesweeper Styles */
-  #minesweeper {
-    display: inline-block;
-    margin: 0 auto;
-    user-select: none;
-  }
-  .ms-row {
-    display: flex;
-  }
+  #minesweeper { display: inline-block; margin: 0 auto; user-select: none; }
+  .ms-row { display: flex; }
   .ms-cell {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #555;
-    text-align: center;
-    line-height: 30px;
-    cursor: pointer;
-    background-color: #222;
-    color: #fff;
-    font-weight: bold;
-    font-family: monospace;
+    width: 30px; height: 30px; border: 1px solid #555;
+    text-align: center; line-height: 30px; cursor: pointer;
+    background-color: #222; color: #fff; font-weight: bold; font-family: monospace;
   }
-  .ms-cell.revealed {
-    background-color: #444;
-    cursor: default;
-  }
-  .ms-cell.mine {
-    background-color: #a00;
-  }
+  .ms-cell.revealed { background-color: #444; cursor: default; }
+  .ms-cell.mine { background-color: #a00; }
 </style>
 
 <script>
+// Minesweeper settings
 const rows = 8, cols = 8, mines = 10;
 let grid = [], cells = [], gameOver = false;
+
+// Multilingual messages
+const msMessages = {
+  en: { gameover: "💥 Game Over!", youwin: "🎉 You Win!" },
+  tr: { gameover: "💥 Oyun Bitti!", youwin: "🎉 Kazandınız!" },
+  fr: { gameover: "💥 Partie Perdue!", youwin: "🎉 Vous avez gagné!" },
+  ja: { gameover: "💥 ゲームオーバー！", youwin: "🎉 勝ちました！" },
+  ru: { gameover: "💥 Игра окончена!", youwin: "🎉 Вы победили!" }
+};
+let currentLang = 'en'; // default
+
+function setMSMessage(key) {
+  const msg = msMessages[currentLang][key];
+  document.getElementById('ms-status').textContent = msg;
+}
 
 function initGame() {
   gameOver = false;
@@ -255,10 +253,7 @@ function initGame() {
   while (placed < mines) {
     const r = Math.floor(Math.random() * rows);
     const c = Math.floor(Math.random() * cols);
-    if (grid[r][c] !== 'M') {
-      grid[r][c] = 'M';
-      placed++;
-    }
+    if (grid[r][c] !== 'M') { grid[r][c] = 'M'; placed++; }
   }
 
   // Calculate numbers
@@ -285,7 +280,18 @@ function initGame() {
       cell.classList.add('ms-cell');
       cell.dataset.row = r;
       cell.dataset.col = c;
+
+      // Left-click to reveal
       cell.addEventListener('click', () => revealCell(r, c));
+
+      // Right-click to flag
+      cell.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        if (gameOver || cell.classList.contains('revealed')) return;
+        cell.textContent = cell.textContent === '🚩' ? '' : '🚩';
+        checkWin();
+      });
+
       rowDiv.appendChild(cell);
       if (!cells[r]) cells[r] = [];
       cells[r][c] = cell;
@@ -297,28 +303,26 @@ function initGame() {
 function revealCell(r, c) {
   if (gameOver) return;
   const cell = cells[r][c];
-  if (cell.classList.contains('revealed')) return;
+  if (cell.classList.contains('revealed') || cell.textContent === '🚩') return;
+
   cell.classList.add('revealed');
 
   if (grid[r][c] === 'M') {
     cell.textContent = '💣';
     cell.classList.add('mine');
-    document.getElementById('ms-status').textContent = '💥 Game Over!';
+    setMSMessage('gameover');
     revealAllMines();
     gameOver = true;
     return;
   }
 
-  if (grid[r][c] > 0) {
-    cell.textContent = grid[r][c];
-  } else {
+  if (grid[r][c] > 0) cell.textContent = grid[r][c];
+  else {
     // Reveal neighbors recursively
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
         const nr = r + dr, nc = c + dc;
-        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
-          revealCell(nr, nc);
-        }
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) revealCell(nr, nc);
       }
     }
   }
@@ -339,21 +343,37 @@ function revealAllMines() {
 
 function checkWin() {
   let revealedCount = 0;
+  let correctFlags = 0;
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      if (cells[r][c].classList.contains('revealed')) revealedCount++;
+      const cell = cells[r][c];
+      if (cell.classList.contains('revealed')) revealedCount++;
+      if (grid[r][c] === 'M' && cell.textContent === '🚩') correctFlags++;
     }
   }
-  if (revealedCount === rows * cols - mines) {
-    document.getElementById('ms-status').textContent = '🎉 You Win!';
+
+  if (revealedCount === rows * cols - mines || correctFlags === mines) {
+    setMSMessage('youwin');
     gameOver = true;
     revealAllMines();
+  }
+}
+
+// Multilingual integration with your site
+function updateMSLanguage(lang) {
+  currentLang = lang;
+  // update status if game over or win
+  if (gameOver) {
+    const revealedCount = document.querySelectorAll('.ms-cell.revealed').length;
+    if (revealedCount === rows * cols - mines) setMSMessage('youwin');
+    else setMSMessage('gameover');
   }
 }
 
 // Initialize first game
 initGame();
 </script>
+
 
         
 </body>
