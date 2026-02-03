@@ -196,17 +196,6 @@
   <button onclick="loadLanguage('ru')">Русский</button>
 </div>
 
-<img 
-  src="images/Los Angeles at Twilight.jpg" alt="Decorative Top" 
-  style="
-    position: static;      
-    bottom: 0;
-    left: 0;
-    width: auto;        
-    height: auto; 
-    z-index: -1
-  "
->
 
   
   <!-- multilanguage inclusion via script -->
@@ -570,7 +559,7 @@ document.addEventListener('keydown', function(e) {
 
     window.addEventListener("scroll", () => {
     document.getElementById("goTop").style.display =
-      window.scrollY > 900 ;    //go up button
+      window.scrollY > 900 ? "block" : "none";    //go up button
 }); 
 
   const homeTitle = document.getElementById("homeTitle");  //home relander
