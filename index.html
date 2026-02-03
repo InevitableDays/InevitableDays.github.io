@@ -91,7 +91,6 @@
       border: 1px solid #333333;
     }
 
-.hide { display: none; }
     #minesweeper-section{
   background-image: url("images/Solar Eclipse.jpg");
   background-size: cover;
@@ -571,7 +570,7 @@ document.addEventListener('keydown', function(e) {
 
     window.addEventListener("scroll", () => {
     document.getElementById("goTop").style.display =
-      window.scrollY > 900 ? "block" : "none";    //go up button
+      window.scrollY > 900 ;    //go up button
 }); 
 
   const homeTitle = document.getElementById("homeTitle");  //home relander
