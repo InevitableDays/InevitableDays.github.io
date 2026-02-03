@@ -537,6 +537,11 @@ document.addEventListener('keydown', function(e) {
   // Ctrl+U or Cmd+U (View Source)
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') e.preventDefault();
 });
+
+    window.addEventListener("scroll", () => {
+    document.getElementById("goTop").style.display =
+      window.scrollY > 400 ? "block" : "none";    //go up button
+}); 
 </script>
 
    
