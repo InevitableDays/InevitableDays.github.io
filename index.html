@@ -307,6 +307,11 @@ loadLanguage('en');
   .ms-cell.revealed { background-color: #444; cursor: default; }
   .ms-cell.mine { background-color: #a00; }
 
+  /* if player wins, mines appear green instead of red */
+  #minesweeper.win .ms-cell.mine {
+    background-color: #0a0;
+  }
+
   @media (max-width: 480px) {
     .ms-cell {
       width: 24px;
@@ -354,6 +359,8 @@ function initGame() {
   grid = Array.from({ length: rows }, () => Array(cols).fill(0));
   cells = [];
   clearMSMessage();
+
+  document.getElementById('minesweeper').classList.remove('win');
 
   const container = document.getElementById('minesweeper');
   container.innerHTML = '';
@@ -425,6 +432,7 @@ function revealCell(r, c) {
   cell.classList.add('revealed');
 
   if (grid[r][c] === 'M') {
+    document.getElementById('minesweeper').classList.remove('win');
     cell.textContent = '💣';
     cell.classList.add('mine');
     setMSMessage('💥 Game Over!');
@@ -470,6 +478,7 @@ function checkWin() {
 
   if (revealedCount === rows * cols - mines) {
     setMSMessage('🎉 You Win!');
+    document.getElementById('minesweeper').classList.add('win');
     gameOver = true;
     revealAllMines();
   }
@@ -481,6 +490,7 @@ document.getElementById('ms-newgame-btn').addEventListener('click', initGame);
 // Start immediately (Intermediate default)
 initGame();
 </script>
+
 
 
 <button
