@@ -4,170 +4,429 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Independent Technologist | Web, Automation & Indie Dev</title>
+  <style type="text/css">   
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+/* =============================
+   Google Fonts
+============================= */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Fira+Code:wght@400;700&display=swap');
 
-  <style>
-    /* =============================
-       Global Reset & Base Styles
-    ============================== */
-    * { box-sizing: border-box; margin:0; padding:0; }
-    html, body {
-      font-family: 'Roboto', sans-serif;
-      color: #fff;
-      background-color: #000;
-      background-image: url("images/Zorin.png");
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      line-height: 1.6;
-      padding: 1rem 2%;
-      scroll-behavior: smooth;
-    }
+/* =============================
+   Global Reset & Base Styles
+============================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    h1, h2, h3 { font-family: 'Fira Code', monospace; margin-bottom: 1rem; }
-    h1 { text-align: center; font-size: 2.2rem; margin-bottom: 1rem; cursor:pointer; color:#00bfff; }
-    h2 { font-size: 1.8rem; }
-    h3 { font-size: 1.4rem; }
+html, body {
+  font-family: 'Roboto', sans-serif;
+  color: #ffffff;
+  background-color: #000;
+  background-image: url("images/Zorin.png");
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  line-height: 1.6;
+  padding: 1rem 2%;
+  scroll-behavior: smooth;
+}
 
-    /* =============================
-       Profile
-    ============================== */
-    img.profile { display:block; margin:1rem auto; width:120px; max-width:35%; border-radius:50%; border:2px solid #fff; }
+h1, h2, h3 {
+  font-family: 'Fira Code', monospace;
+  margin-bottom: 1rem;
+}
 
-    /* =============================
-       Sections
-    ============================== */
-    .section {
-      background: rgba(0,0,0,0.65);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius:16px;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      padding:1.5rem;
-      margin:2rem auto;
-      width:90%;
-      max-width:900px;
-    }
+h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  color: #00bfff;
+}
 
-    /* =============================
-       Blockquotes
-    ============================== */
-    blockquote {
-      font-style: italic;
-      text-align: center;
-      margin: 2rem auto;
-      max-width: 90%;
-      color: #00bfff;
-      text-shadow:
-        0 0 6px rgba(0,191,255,0.8),
-        0 0 14px rgba(0,191,255,0.6),
-        0 0 28px rgba(0,191,255,0.35);
-    }
+h2 {
+  font-size: 1.8rem;
+}
 
-    /* =============================
-       Compound Layout
-    ============================== */
-    .compound {
-      display:flex;
-      flex-direction: column;
-      gap:1rem;
-      margin-bottom:3rem;
-    }
-    .compound img { border-radius:10px; border:1px solid #333; width:100%; max-width:400px; margin:auto; display:block; }
+h3 {
+  font-size: 1.4rem;
+}
 
-    /* =============================
-       Lists & Links
-    ============================== */
-    ul { list-style:none; padding-left:0; }
-    li { margin-bottom:0.8rem; }
-    a { color:#00bfff; text-decoration:none; }
-    a:hover { text-decoration:underline; }
+/* =============================
+   Profile Image
+============================= */
+img.profile {
+  display: block;
+  margin: 1rem auto;
+  width: 120px;
+  max-width: 35%;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
 
-    /* =============================
-       Language Buttons
-    ============================== */
-    .lang-buttons { text-align:center; margin:2rem 0; display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem; }
-    .lang-buttons button {
-      padding:0.5rem 1rem; background:#00bfff; color:#000; border:none; border-radius:8px; cursor:pointer; font-weight:bold;
-      transition: transform 0.2s, background 0.2s;
-    }
-    .lang-buttons button:hover { background:#009acd; transform:scale(1.05); }
+/* =============================
+   Sections
+============================= */
+.section {
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 1.5rem;
+  margin: 1.5rem auto;
+  width: 90%;
+  max-width: 800px;
+}
 
-    /* =============================
-       Responsive
-    ============================== */
-    @media (max-width:768px){ h1{font-size:2rem;} h2{font-size:1.6rem;} .compound img{max-width:100%;} }
-    @media (max-width:480px){ h1{font-size:1.8rem;} h2{font-size:1.4rem;} .compound img{max-width:100%;} }
-    @media (max-width:360px){ h1{font-size:1.6rem;} h2{font-size:1.2rem;} }
-  </style>
+/* =============================
+   Lists
+============================= */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  margin-bottom: 0.8rem;
+}
+
+/* =============================
+   Links
+============================= */
+a {
+  color: #00bfff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* =============================
+   Blockquotes
+============================= */
+blockquote {
+  font-style: italic;
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 90%;
+  color: #cccccc;
+}
+
+/* =============================
+   Images inside sections
+============================= */
+.section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-top: 1rem;
+  border: 1px solid #333333;
+  display: block;
+}
+
+
+
+/* titular*/
+.language-switcher {
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 2rem auto;
+  max-width: 800px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.language-switcher h2 {
+  margin-bottom: 1rem;
+  color: #00bfff;
+}
+
+.language-switcher .button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.language-switcher button {
+  padding: 0.5rem 1rem;
+  background: #00bfff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.language-switcher button:hover {
+  background: #009acd;
+  transform: scale(1.05);
+}
+
+
+    
+/* =============================
+   Minesweeper Styles
+============================= */
+#minesweeper-section {
+  background-image: url("images/illustration-defense-redim3.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+}
+
+#minesweeper-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  margin: 0 auto;
+}
+
+#ms-topbar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+#ms-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+#ms-status {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  min-height: 1.6rem;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Pop animation for status */
+#ms-status.pop {
+  transform: scale(1.08);
+  opacity: 1;
+}
+
+#ms-newgame-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #00bfff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+}
+
+#ms-newgame-btn:hover {
+  background-color: #009acd;
+}
+
+/* Minesweeper Grid */
+#minesweeper {
+  user-select: none;
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.ms-row {
+  display: flex;
+  justify-content: center;
+}
+
+.ms-cell {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #555;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  background-color: #222;
+  color: #fff;
+  font-weight: bold;
+  font-family: monospace;
+  transition: transform 0.08s ease, background-color 0.12s ease;
+}
+
+.ms-cell:active {
+  transform: scale(0.95);
+}
+
+.ms-cell.revealed {
+  background-color: #444;
+  cursor: default;
+}
+
+.ms-cell.mine {
+  background-color: #a00;
+}
+
+#minesweeper.win .ms-cell.mine {
+  background-color: #0a0;
+}
+
+/* =============================
+   Buttons
+============================= */
+button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+#goTop {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 0px;
+  padding: 10px 14px;
+}
+
+/* =============================
+   Responsive Media Queries
+============================= */
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+  p { font-size: 0.95rem; }
+  .section { padding: 1rem; margin: 1rem auto; }
+  .ms-cell { width: 26px; height: 26px; line-height: 26px; font-size: 0.85rem; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.4rem; }
+  p { font-size: 0.9rem; }
+  .section { padding: 0.8rem; margin: 0.8rem auto; }
+  .ms-cell { width: 24px; height: 24px; line-height: 24px; font-size: 0.8rem; }
+  button { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+}
+
+@media (max-width: 360px) {
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.2rem; }
+  p { font-size: 0.85rem; }
+  .section { padding: 0.6rem; margin: 0.6rem auto; }
+  .ms-cell { width: 20px; height: 20px; line-height: 20px; font-size: 0.7rem; }
+  button { padding: 0.35rem 0.7rem; font-size: 0.75rem; }
+}
+
+    /* the quote, duh */
+    #quote{
+  color: #00bfff;
+  text-shadow:
+    0 0 6px rgba(0,191,255,0.8),
+    0 0 14px rgba(0,191,255,0.6),
+    0 0 28px rgba(0,191,255,0.35);
+}
+
+</style>
 </head>
 
 <body>
+<!-- js required -->
+  <noscript>
+  <div style="background: #ffdddd; padding: 20px; text-align: center; font-weight: bold;">
+    ⚠️ JavaScript is required to view this site. Please enable JS in your browser.
+  </div>
+</noscript>
 
   <!-- Header -->
   <div class="section">
-    <h1 id="homeTitle">Independent Technologist | Web, Automation & Indie Dev</h1>
+    <h1 style="cursor: pointer; color:#00bfff;" id="homeTitle">Independent Technologist | Web, Automation & Indie Dev</h1>
     <img src="images/profile.jpg" alt="Ümit Özkul" class="profile">
-    <p id="intro">Welcome to my digital corner. I’m Ümit — a self-taught, intensely curious technologist, developer, translator, and digital investigator. I’ve been immersed in technology for 20 years; I chose a long, hands-on path: starting from the basics and progressing by developing my skills in software, HTML5, visual editing, music, and game design.</p>
+    <p id="intro">Welcome to my digital corner. I’m Ümit — a self-taught, intensely curious technologist, developer, translator, and digital investigator. I’ve been immersed in technology for 20 years; I chose a long, hands-on path: starting from the basics and progressing by developing my skills in software, HTML5, visual editing, music, and game design.
+</p>
   </div>
 
-  <!-- =============================
-       What I Do
-  ============================== -->
-  <div class="section" id="whatido-texts">
+<!-- =============================
+     What I Do (Texts Only)
+============================= -->
+<div class="section" id="whatido-texts">
 
-    <!-- Compound 1 -->
-    <div class="compound">
-      <div id="build_automate_text">🧠 <strong>Build & Automate:</strong> I write AHK scripts, custom GUI tools, and automate repetitive tasks.</div>
-      <img src="images/img1.png" alt="Automation Screenshot">
-      <img src="images/img2.png" alt="GUI Tools">
-    </div>
-
-    <!-- Compound 2 -->
-    <div class="compound">
-      <div id="test_break_text">🧪 <strong>Test & Break Things:</strong> I run malware tests in VMs, reverse sketchy scripts, disable system restrictions, and create my own tools.</div>
-      <img src="images/img3.png" alt="Malware Testing">
-      <img src="images/img4.png" alt="VM Lab">
-    </div>
-
-    <!-- Compound 3 -->
-    <div class="compound">
-      <div id="translate_doc_text">🌐 <strong>Translate & Document:</strong> I’ve translated 20+ projects and maintain an offline knowledge base.</div>
-      <div id="rescue_troubleshoot_text">🛠️ <strong>Rescue & Troubleshoot:</strong> From USB virus recovery to reviving laptops.</div>
-      <div id="create_future_text">🎮 <strong>Create for the Future:</strong> Solo game project and offline HTML/C++/WordPress sites.</div>
-      <img src="images/20.jpg" alt="Game Project">
-      <img src="images/15.jpg" alt="Projects">
-      <img src="images/14.jpg" alt="Work Samples">
-    </div>
-
+  <div class="table">
+    <div class="row" id="build_automate_text">🧠 <strong>Build & Automate:</strong> I write AHK scripts, custom GUI tools, and automate repetitive tasks.</div>
+    <div class="row" id="test_break_text">🧪 <strong>Test & Break Things:</strong> I run malware tests in VMs, reverse sketchy scripts, disable system restrictions, and create my own tools.</div>
+    <div class="row" id="translate_doc_text">🌐 <strong>Translate & Document:</strong> I’ve translated 20+ projects and maintain an offline knowledge base.</div>
+    <div class="row" id="rescue_troubleshoot_text">🛠️ <strong>Rescue & Troubleshoot:</strong> From USB virus recovery to reviving laptops.</div>
+    <div class="row" id="create_future_text">🎮 <strong>Create for the Future:</strong> Solo game project and offline HTML/C++/WordPress sites.</div>
+    <div class="row"> </div> <!-- empty placeholder -->
   </div>
+</div>
 
-  <!-- =============================
-       Highlights
-  ============================== -->
-  <div class="section" id="highlights-texts">
-    <div class="compound">
-      <div id="vm_setup_text">🛡️ Built and maintained multiple sandboxed Windows & Linux VMs.</div>
-      <div id="gui_apps_text">🔧 Designed 4 GUI apps in C++.</div>
-      <div id="research_text">📚 Conducted a research study in 28 Turkish middle schools.</div>
-      <div id="yds_score_text">🎓 YDS English Score: 90/100.</div>
-    </div>
+<!-- =============================
+     What I Do (Images Only)
+============================= -->
+<div class="section" id="whatido-images">
+  <h2>📌 </h2>
+  <div class="table">
+    <div class="row"><img src="images/img1.png" alt="0"></div>
+    <div class="row"><img src="images/img2.png" alt="1"></div>
+    <div class="row"><img src="images/img3.png" alt="2"></div>
+    <div class="row"><img src="images/img4.png" alt="3"></div>
+    <div class="row"><img src="images/20.jpg" alt="4"></div>
+    <div class="row"><img src="images/15.jpg" alt="5"></div> 
+    <div class="row"><img src="images/14.jpg" alt="5"></div> 
   </div>
+</div>
 
-  <div class="section" id="highlights-images">
-    <div class="compound">
-      <img src="images/img6.jpg" alt="VM Setup">
-      <img src="images/img7.png" alt="GUI Apps">
-      <img src="images/16.png" alt="Research Study">
-      <img src="images/img7.jpg" alt="Certificate">
-      <img src="images/17.png" alt="Extra Image 1">
-      <img src="images/18.png" alt="Extra Image 2">
-      <img src="images/19.jpg" alt="Extra Image 3">
-    </div>
+
+
+<!-- =============================
+     Highlights (Texts Only)
+============================= -->
+<div class="section" id="highlights-texts">
+
+  <div class="table">
+    <div class="row" id="vm_setup_text">🛡️ Built and maintained multiple sandboxed Windows & Linux VMs.</div>
+    <div class="row" id="gui_apps_text">🔧 Designed 4 GUI apps in C++.</div>
+    <div class="row" id="research_text">📚 Conducted a research study in 28 Turkish middle schools.</div>
+    <div class="row" id="yds_score_text">🎓 YDS English Score: 90/100.</div>
+    <div class="row"> </div> <!-- empty placeholder -->
   </div>
+</div>
+
+<!-- =============================
+     Highlights (Images Only)
+============================= -->
+<div class="section" id="highlights-images">
+  <h2>📌 </h2>
+  <div class="table">
+    <div class="row"><img src="images/img6.jpg" alt="1"></div>
+    <div class="row"><img src="images/img7.png" alt="2"></div>
+    <div class="row"><img src="images/16.png" alt="3"></div>
+    <div class="row"><img src="images/img7.jpg" alt="4"></div>
+    <div class="row"><img src="images/17.png" alt="6"></div>
+    <div class="row"><img src="images/18.png" alt="5"></div>
+    <div class="row"><img src="images/19.jpg" alt="5"></div>
+  </div>
+</div>
+
 
   <!-- Work Ethic -->
   <div class="section">
@@ -176,47 +435,417 @@
   </div>
 
   <!-- Contact -->
-  <div class="section">
-    <h2 id="contact">📫 Contact</h2>
-    <ul>
-      <li>💌 Email: <a href="mailto:umitozkul2015@gmail.com">umitozkul2015@gmail.com</a></li>
-      <li>🔗 LinkedIn: <a href="https://www.linkedin.com/in/umit-ozkul-749115355">linkedin.com/in/umit-ozkul-749115355</a></li>
-    </ul>
-  </div>
+<div class="section">
+  <h2 id="contact">📫 Contact</h2>
+  <ul>
+    <li>💌 Email: <a href="mailto:umitozkul2015@gmail.com">umitozkul2015@gmail.com</a></li>
+    <li>🔗 LinkedIn: <a href="https://www.linkedin.com/in/umit-ozkul-749115355">linkedin.com/in/umit-ozkul-749115355</a></li>
+  </ul>
+</div>
+
 
   <!-- Quote -->
   <blockquote id="quote">
     "I didn’t wait for permission to start learning. I just started." —Ümit
   </blockquote>
+  <!-- buttons -->
+        <div style="margin-top: 2rem; text-align:center;">
+  <button onclick="loadLanguage('en')">English</button>
+  <button onclick="loadLanguage('tr')">Türkçe</button>
+  <button onclick="loadLanguage('fr')">Français</button>
+  <button onclick="loadLanguage('ger')">German</button>
+</div>
 
-  <!-- Language Buttons -->
-  <div class="lang-buttons">
-    <button onclick="loadLanguage('en')">English</button>
-    <button onclick="loadLanguage('tr')">Türkçe</button>
-    <button onclick="loadLanguage('fr')">Français</button>
-    <button onclick="loadLanguage('ger')">Deutsch</button>
-  </div>
+<img 
+  src="images/21.png" alt="updated" title="..." 
+  style="
+    position: fixed;      
+    bottom: 0;              
+    left: 0;            
+    width: 100px;        
+    height: auto;        
+    opacity: 1.0;
+    pointer-events: auto;       
+    z-index: 1000; 
+    cursor:pointer;      
+  "
+>
 
-  <!-- JS: Multilanguage -->
+  
+  <!-- multilanguage inclusion via script -->
   <script>
-    async function loadLanguage(lang) {
-      try {
-        const res = await fetch(`${lang}.json`);
-        const data = await res.json();
-        for (const key in data) {
-          const el = document.getElementById(key);
-          if(el){
-            if(key === 'workethictext') el.innerHTML = `<strong>${data[key]}</strong>`;
-            else el.textContent = data[key];
-          }
+async function loadLanguage(lang) {
+  try {
+    const res = await fetch(`${lang}.json`);
+    const data = await res.json();
+    for (const key in data) {
+      const el = document.getElementById(key);
+      if (el) {
+        if (key === 'workethictext') {
+          el.innerHTML = `<strong>${data[key]}</strong>`;
+        } else {
+          el.textContent = data[key];
         }
-        document.documentElement.lang = lang;
-      } catch(err){
-        console.error("Error loading language:", err);
       }
     }
-    loadLanguage('en');
-  </script>
+    document.documentElement.lang = lang;
+  } catch (err) {
+    console.error("Error loading language:", err);
+  }
+}
 
+// Load default language
+loadLanguage('en');
+</script>
+
+<!-- Minesweeper Section -->
+<div class="section" id="minesweeper-section">
+  <h2 id="ms-title" style="text-align:center;">Minesweeper</h2>
+
+  <div id="minesweeper-container">
+    <!-- TOP BAR -->
+    <div id="ms-topbar">
+      <div id="ms-status"></div>
+
+      <div id="ms-controls">
+        <button id="ms-newgame-btn">New Game</button>
+      </div>
+    </div>
+
+    <!-- GAME GRID -->
+    <div id="minesweeper"></div>
+  </div>
+</div>
+
+<style>
+  #minesweeper-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #ms-topbar {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #ms-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #ms-status {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+    min-height: 1.6rem;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* little animation */
+  #ms-status.pop {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+
+  #ms-newgame-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #00bfff;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+  }
+  #ms-newgame-btn:hover { background-color: #009acd; }
+
+  /* Minesweeper Grid */
+#minesweeper {
+  user-select: none;
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: hidden;   /* remove horizontal scrollbar */
+  overflow-y: hidden;   /* remove vertical scrollbar */
+}
+
+
+  .ms-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .ms-cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #555;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    background-color: #222;
+    color: #fff;
+    font-weight: bold;
+    font-family: monospace;
+    transition: transform 0.08s ease, background-color 0.12s ease;
+  }
+
+  .ms-cell:active { transform: scale(0.95); }
+  .ms-cell.revealed { background-color: #444; cursor: default; }
+  .ms-cell.mine { background-color: #a00; }
+
+  /* if player wins, mines appear green instead of red */
+  #minesweeper.win .ms-cell.mine {
+    background-color: #0a0;
+  }
+
+  @media (max-width: 480px) {
+    .ms-cell {
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .ms-cell {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      font-size: 0.7rem;
+    }
+  }
+</style>
+
+<script>
+/* -----------------------------
+   Minesweeper (Intermediate only)
+   16x16 / 40 mines
+------------------------------*/
+const rows = 16, cols = 16, mines = 40;
+
+let grid = [], cells = [], gameOver = false;
+
+function setMSMessage(text) {
+  const status = document.getElementById('ms-status');
+  status.textContent = text;
+
+  // pop animation
+  status.classList.remove('pop');
+  void status.offsetWidth;
+  status.classList.add('pop');
+}
+
+function clearMSMessage() {
+  document.getElementById('ms-status').textContent = '';
+}
+
+function initGame() {
+  gameOver = false;
+  grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+  cells = [];
+  clearMSMessage();
+
+  document.getElementById('minesweeper').classList.remove('win');
+
+  const container = document.getElementById('minesweeper');
+  container.innerHTML = '';
+
+  // Place mines randomly
+  let placed = 0;
+  while (placed < mines) {
+    const r = Math.floor(Math.random() * rows);
+    const c = Math.floor(Math.random() * cols);
+    if (grid[r][c] !== 'M') {
+      grid[r][c] = 'M';
+      placed++;
+    }
+  }
+
+  // Calculate numbers
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c] === 'M') continue;
+      let count = 0;
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          const nr = r + dr, nc = c + dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === 'M') count++;
+        }
+      }
+      grid[r][c] = count;
+    }
+  }
+
+  // Build grid HTML
+  for (let r = 0; r < rows; r++) {
+    const rowDiv = document.createElement('div');
+    rowDiv.classList.add('ms-row');
+
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElement('div');
+      cell.classList.add('ms-cell');
+      cell.dataset.row = r;
+      cell.dataset.col = c;
+
+      // Left click = reveal
+      cell.addEventListener('click', () => revealCell(r, c));
+
+      // Right click = flag toggle
+      cell.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        if (gameOver || cell.classList.contains('revealed')) return;
+        cell.textContent = (cell.textContent === '🚩') ? '' : '🚩';
+        checkWin();
+      });
+
+      rowDiv.appendChild(cell);
+
+      if (!cells[r]) cells[r] = [];
+      cells[r][c] = cell;
+    }
+
+    container.appendChild(rowDiv);
+  }
+}
+
+function revealCell(r, c) {
+  if (gameOver) return;
+
+  const cell = cells[r][c];
+  if (cell.classList.contains('revealed') || cell.textContent === '🚩') return;
+
+  cell.classList.add('revealed');
+
+  if (grid[r][c] === 'M') {
+    document.getElementById('minesweeper').classList.remove('win');
+    cell.textContent = '💣';
+    cell.classList.add('mine');
+    setMSMessage('💥 Game Over!');
+    revealAllMines();
+    gameOver = true;
+    return;
+  }
+
+  if (grid[r][c] > 0) {
+    cell.textContent = grid[r][c];
+  } else {
+    // flood fill
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const nr = r + dr, nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) revealCell(nr, nc);
+      }
+    }
+  }
+
+  checkWin();
+}
+
+function revealAllMines() {
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c] === 'M') {
+        cells[r][c].textContent = '💣';
+        cells[r][c].classList.add('mine', 'revealed');
+      }
+    }
+  }
+}
+
+function checkWin() {
+  let revealedCount = 0;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (cells[r][c].classList.contains('revealed')) revealedCount++;
+    }
+  }
+
+  if (revealedCount === rows * cols - mines) {
+    setMSMessage('🎉 You Win!');
+    document.getElementById('minesweeper').classList.add('win');
+    gameOver = true;
+    revealAllMines();
+  }
+}
+
+// Hook up button
+document.getElementById('ms-newgame-btn').addEventListener('click', initGame);
+
+// Start immediately (Intermediate default)
+initGame();
+</script>
+
+
+
+<button
+  id="goTop"
+  title="Scroll to top"
+  style="
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 14px;
+    cursor: pointer;
+  "
+  onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+>
+  🢁
+</button>
+        
+<script>
+  // Disable right-click everywhere EXCEPT Minesweeper grid
+  document.addEventListener("contextmenu", function (e) {
+    const minesweeper = document.getElementById("minesweeper");
+
+    // allow right click inside minesweeper (for flags)
+    if (minesweeper && minesweeper.contains(e.target)) return;
+
+    // block right click everywhere else
+    e.preventDefault();
+  });
+</script>
+
+
+<script>
+// Block common dev tools shortcuts silently
+document.addEventListener('keydown', function(e) {
+  // F12
+  if (e.key === 'F12') e.preventDefault();
+
+  // Ctrl+Shift+I (Windows/Linux) or Cmd+Opt+I (Mac)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'i') e.preventDefault();
+
+  // Ctrl+Shift+J or Cmd+Opt+J (console)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'j') e.preventDefault();
+
+  // Ctrl+U or Cmd+U (View Source)
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') e.preventDefault();
+});
+
+    window.addEventListener("scroll", () => {
+    document.getElementById("goTop").style.display =
+      window.scrollY > 900 ? "block" : "none";    //go up button
+}); 
+
+  const homeTitle = document.getElementById("homeTitle");  //home relander
+
+// Make clicking the header reland (reload) the current page
+homeTitle.addEventListener("click", () => {
+  window.location.href = window.location.href;  //reland current page
+    location.reload(true);  // force reload
+});
+</script>
+
+   
 </body>
 </html>
