@@ -8,8 +8,8 @@
   "contact": "📫 İletişim",
   "email": "E-posta",
   "linkedin": "LinkedIn",
-  "quote": "\"Öğrenmeye başlamak için kimseden izin ya da belge beklemedim. Sadece başladım.\" —Ümit"
-    
+  "quote": "\"Öğrenmeye başlamak için kimseden izin ya da belge beklemedim. Sadece başladım.\" —Ümit",
+
   "build_automate": "🧠 <strong>Oluştur & Otomatikleştir:</strong> AHK betikleri yazıyorum, özel GUI araçları geliştiriyorum ve tekrarlayan işleri otomatikleştiriyorum.<br>",
   "test_break": "🧪 <strong>Test Et & Boz:</strong> VM’lerde kötü amaçlı yazılım testleri yapıyorum, şüpheli betikleri tersine mühendislik ile inceliyorum, sistem kısıtlamalarını devre dışı bırakıyorum ve kendi araçlarımı oluşturuyorum.<br>",
   "translate_document": "🌐 <strong>Çevir & Belgele:</strong> 20+ projeyi çevirdim ve çevrimdışı bir bilgi deposunu sürdürüyorum.<br>",
@@ -19,5 +19,5 @@
   "gui_apps": "🔧 4 adet C++ GUI uygulaması tasarladım.<br>",
   "research_study": "📚 28 Türk ortaokulunda bir araştırma çalışması yürüttüm.<br>",
   "yds_score": "🎓 YDS İngilizce Puanı: 90/100.<br>"
-
 }
+
