@@ -9,40 +9,15 @@
   "email": "E-posta",
   "linkedin": "LinkedIn",
   "quote": "\"Öğrenmeye başlamak için kimseden izin ya da belge beklemedim. Sadece başladım.\" —Ümit"
-  <li id="build_automate">
-  🧠 <strong>Oluştur & Otomatikleştir:</strong> AHK betikleri yazıyorum, özel GUI araçları geliştiriyorum ve tekrarlayan işleri otomatikleştiriyorum.<br>
-</li>
-
-<li id="test_break">
-  🧪 <strong>Test Et & Boz:</strong> VM’lerde kötü amaçlı yazılım testleri yapıyorum, şüpheli betikleri tersine mühendislik ile inceliyorum, sistem kısıtlamalarını devre dışı bırakıyorum ve kendi araçlarımı oluşturuyorum.<br>
-</li>
-
-<li id="translate_document">
-  🌐 <strong>Çevir & Belgele:</strong> 20+ projeyi çevirdim ve çevrimdışı bir bilgi deposunu sürdürüyorum.<br>
-</li>
-
-<li id="rescue_troubleshoot">
-  🛠️ <strong>Kurtar & Sorun Gider:</strong> USB virüs kurtarmadan laptopları canlandırmaya kadar her türlü işleri yapıyorum.<br>
-</li>
-
-<li id="create_future">
-  🎮 <strong>Gelecek İçin Yarat:</strong> Solo oyun projeleri ve çevrimdışı HTML/C++/WordPress siteleri geliştiriyorum.<br>
-</li>
-
-<li id="vm_maintenance">
-  🛡️ Birden fazla sandboxed Windows & Linux VM’i kurdum ve yönettim.<br>
-</li>
-
-<li id="gui_apps">
-  🔧 4 adet C++ GUI uygulaması tasarladım.<br>
-</li>
-
-<li id="research_study">
-  📚 28 Türk ortaokulunda bir araştırma çalışması yürüttüm.<br>
-</li>
-
-<li id="yds_score">
-  🎓 YDS İngilizce Puanı: 90/100.<br>
-</li>
+    
+  "build_automate": "🧠 <strong>Oluştur & Otomatikleştir:</strong> AHK betikleri yazıyorum, özel GUI araçları geliştiriyorum ve tekrarlayan işleri otomatikleştiriyorum.<br>",
+  "test_break": "🧪 <strong>Test Et & Boz:</strong> VM’lerde kötü amaçlı yazılım testleri yapıyorum, şüpheli betikleri tersine mühendislik ile inceliyorum, sistem kısıtlamalarını devre dışı bırakıyorum ve kendi araçlarımı oluşturuyorum.<br>",
+  "translate_document": "🌐 <strong>Çevir & Belgele:</strong> 20+ projeyi çevirdim ve çevrimdışı bir bilgi deposunu sürdürüyorum.<br>",
+  "rescue_troubleshoot": "🛠️ <strong>Kurtar & Sorun Gider:</strong> USB virüs kurtarmadan laptopları canlandırmaya kadar her türlü işleri yapıyorum.<br>",
+  "create_future": "🎮 <strong>Gelecek İçin Yarat:</strong> Solo oyun projeleri ve çevrimdışı HTML/C++/WordPress siteleri geliştiriyorum.<br>",
+  "vm_maintenance": "🛡️ Birden fazla sandboxed Windows & Linux VM’i kurdum ve yönettim.<br>",
+  "gui_apps": "🔧 4 adet C++ GUI uygulaması tasarladım.<br>",
+  "research_study": "📚 28 Türk ortaokulunda bir araştırma çalışması yürüttüm.<br>",
+  "yds_score": "🎓 YDS İngilizce Puanı: 90/100.<br>"
 
 }
