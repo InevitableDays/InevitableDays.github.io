@@ -128,7 +128,32 @@ blockquote {
   border: 1px solid #333333;
   display: block;
 }
+/* go to top mobile optimisation*/
+#goTop {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 48px;       /* fixed width */
+  height: 48px;      /* fixed height */
+  font-size: 24px;   /* make arrow fit */
+  line-height: 48px; /* center emoji vertically */
+  text-align: center; 
+  cursor: pointer;
+  border-radius: 50%; /* circular button */
+  background-color: rgba(0,0,0,0.7);
+  color: #00bfff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
 
+#goTop:hover {
+  background-color: rgba(0,0,0,0.9);
+  transform: scale(1.1);
+}
+
+    
 /* =============================
    Minesweeper Styles
 ============================= */
