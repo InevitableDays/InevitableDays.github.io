@@ -6,18 +6,21 @@
   <title>Ümit Özkul — Tech Generalist</title>
   <style type="text/css">   
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+/* =============================
+   Google Fonts
+============================= */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Fira+Code:wght@400;700&display=swap');
 
-  <style>
-    /* Global Reset & Fonts */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+/* =============================
+   Global Reset & Base Styles
+============================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    body {
+html, body {
   font-family: 'Roboto', sans-serif;
   color: #ffffff;
   background-color: #000;
@@ -27,108 +30,269 @@
   background-position: center;
   background-repeat: no-repeat;
   line-height: 1.6;
-  padding: 2rem;
+  padding: 1rem 2%;
+  scroll-behavior: smooth;
 }
-    }
 
-    h1, h2, h3 {
-      font-family: 'Fira Code', monospace;
-      margin-bottom: 1rem;
-    }
+h1, h2, h3 {
+  font-family: 'Fira Code', monospace;
+  margin-bottom: 1rem;
+}
 
-    h1 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
+h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  color: #00bfff;
+}
 
-    img.profile {
-      display: block;
-      margin: 1rem auto;
-      width: 150px;
-      border-radius: 50%;
-      border: 2px solid #ffffff;
-    }
+h2 {
+  font-size: 1.8rem;
+}
 
-    .section {
-      background-color: #111111; /* dark card for readability */
-      padding: 2rem;
-      margin: 2rem auto;
-      max-width: 800px;
-      border-radius: 12px;
-    }
-    .section {
+h3 {
+  font-size: 1.4rem;
+}
+
+/* =============================
+   Profile Image
+============================= */
+img.profile {
+  display: block;
+  margin: 1rem auto;
+  width: 120px;
+  max-width: 35%;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+/* =============================
+   Sections
+============================= */
+.section {
   background: rgba(0, 0, 0, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  padding: 1.5rem;
+  margin: 1.5rem auto;
+  width: 90%;
+  max-width: 800px;
 }
 
+/* =============================
+   Lists
+============================= */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
 
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
+li {
+  margin-bottom: 0.8rem;
+}
 
-    li {
-      margin-bottom: 0.8rem;
-    }
+/* =============================
+   Links
+============================= */
+a {
+  color: #00bfff;
+  text-decoration: none;
+}
 
-    a {
-      color: #00bfff;
-      text-decoration: none;
-    }
+a:hover {
+  text-decoration: underline;
+}
 
-    a:hover {
-      text-decoration: underline;
-    }
+/* =============================
+   Blockquotes
+============================= */
+blockquote {
+  font-style: italic;
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 90%;
+  color: #cccccc;
+}
 
-    blockquote {
-      font-style: italic;
-      text-align: center;
-      margin: 2rem auto;
-      max-width: 700px;
-      color: #cccccc;
-    }
+/* =============================
+   Images inside sections
+============================= */
+.section img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-top: 1rem;
+  border: 1px solid #333333;
+  display: block;
+}
 
-    /* Responsive Images inside sections */
-    .section img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-top: 1rem;
-      border: 1px solid #333333;
-    }
-
-   /* fit minesweeper */
-    #minesweeper-section {
-  background: transparent;
+/* =============================
+   Minesweeper Styles
+============================= */
+#minesweeper-section {
+  background-image: url("images/illustration-defense-redim3.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 1rem;
+  width: 100%;
 }
 
 #minesweeper-container {
-  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
   max-width: 100%;
-  padding: 14px;
-  background: #000;
+  padding: 1rem;
+  background: rgba(0,0,0,0.85);
   border-radius: 14px;
   margin: 0 auto;
 }
 
 #ms-topbar {
-  width: auto;
-  max-width: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
-/* game backdrop */
-#minesweeper-section{
-  background-image: url("images/illustration-defense-redim3.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;  
+
+#ms-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
-  </style>
+
+#ms-status {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  min-height: 1.6rem;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Pop animation for status */
+#ms-status.pop {
+  transform: scale(1.08);
+  opacity: 1;
+}
+
+#ms-newgame-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #00bfff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+}
+
+#ms-newgame-btn:hover {
+  background-color: #009acd;
+}
+
+/* Minesweeper Grid */
+#minesweeper {
+  user-select: none;
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.ms-row {
+  display: flex;
+  justify-content: center;
+}
+
+.ms-cell {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #555;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  background-color: #222;
+  color: #fff;
+  font-weight: bold;
+  font-family: monospace;
+  transition: transform 0.08s ease, background-color 0.12s ease;
+}
+
+.ms-cell:active {
+  transform: scale(0.95);
+}
+
+.ms-cell.revealed {
+  background-color: #444;
+  cursor: default;
+}
+
+.ms-cell.mine {
+  background-color: #a00;
+}
+
+#minesweeper.win .ms-cell.mine {
+  background-color: #0a0;
+}
+
+/* =============================
+   Buttons
+============================= */
+button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+#goTop {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 14px;
+}
+
+/* =============================
+   Responsive Media Queries
+============================= */
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+  p { font-size: 0.95rem; }
+  .section { padding: 1rem; margin: 1rem auto; }
+  .ms-cell { width: 26px; height: 26px; line-height: 26px; font-size: 0.85rem; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.4rem; }
+  p { font-size: 0.9rem; }
+  .section { padding: 0.8rem; margin: 0.8rem auto; }
+  .ms-cell { width: 24px; height: 24px; line-height: 24px; font-size: 0.8rem; }
+  button { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+}
+
+@media (max-width: 360px) {
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.2rem; }
+  p { font-size: 0.85rem; }
+  .section { padding: 0.6rem; margin: 0.6rem auto; }
+  .ms-cell { width: 20px; height: 20px; line-height: 20px; font-size: 0.7rem; }
+  button { padding: 0.35rem 0.7rem; font-size: 0.75rem; }
+}
+</style>
 </head>
 
 <body>
