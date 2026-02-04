@@ -8,5 +8,14 @@
   "contact": "📫 Contact",
   "email": "E-mail",
   "linkedin": "LinkedIn",
-  "quote": "\"Je n'ai pas attendu la permission pour commencer à apprendre. J'ai juste commencé.\" —Ümit"
+  "quote": "\"Je n'ai pas attendu la permission pour commencer à apprendre. J'ai juste commencé.\" —Ümit",
+  "build_automate_text": "🧠 Construire & Automatiser : Je crée des scripts AHK, des outils GUI personnalisés et j'automatise les tâches répétitives.",
+  "test_break_text": "🧪 Tester & Casser : Je teste des malwares dans des VM, reverse-engineering des scripts douteux, désactive les restrictions système et crée mes propres outils.",
+  "translate_doc_text": "🌐 Traduire & Documenter : J’ai traduit plus de 20 projets et maintiens une base de connaissances hors ligne.",
+  "rescue_troubleshoot_text": "🛠️ Secourir & Dépanner : De la récupération USB aux ordinateurs portables en panne.",
+  "create_future_text": "🎮 Créer pour l'avenir : Projet de jeu solo et sites HTML/C++/WordPress hors ligne.",
+  "vm_setup_text": "🛡️ Construit et maintenu plusieurs VM Windows et Linux sandboxées.",
+  "gui_apps_text": "🔧 Conçu 4 applications GUI en C++.",
+  "research_text": "📚 Réalisé une étude dans 28 collèges turcs.",
+  "yds_score_text": "🎓 Score YDS Anglais : 90/100."
 }
