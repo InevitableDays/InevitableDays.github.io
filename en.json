@@ -8,5 +8,14 @@
   "contact": "📫 Contact",
   "email": "Email",
   "linkedin": "LinkedIn",
-  "quote": "\"I didn’t wait for permission or a certificate to start learning. I just started.\" —Ümit"
+  "quote": "\"I didn’t wait for permission or a certificate to start learning. I just started.\" —Ümit",
+  "build_automate_text": "🧠 Build & Automate: I write AHK scripts, custom GUI tools, and automate repetitive tasks.",
+  "test_break_text": "🧪 Test & Break Things: I run malware tests in VMs, reverse sketchy scripts, disable system restrictions, and create my own tools.",
+  "translate_doc_text": "🌐 Translate & Document: I’ve translated 20+ projects and maintain an offline knowledge base.",
+  "rescue_troubleshoot_text": "🛠️ Rescue & Troubleshoot: From USB virus recovery to reviving laptops.",
+  "create_future_text": "🎮 Create for the Future: Solo game project and offline HTML/C++/WordPress sites.",
+  "vm_setup_text": "🛡️ Built and maintained multiple sandboxed Windows & Linux VMs.",
+  "gui_apps_text": "🔧 Designed 4 GUI apps in C++.",
+  "research_text": "📚 Conducted a research study in 28 Turkish middle schools.",
+  "yds_score_text": "🎓 YDS English Score: 90/100."
 }
