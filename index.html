@@ -533,7 +533,7 @@ button {
 </div>
 
 <img 
-  src="images/21.png" alt="updated" title="..." id="ivyMusicBtn"
+  src="images/21.png" alt="updated" title="..." id="Btn"
   style="
     position: fixed;      
     bottom: 0;              
@@ -833,20 +833,23 @@ initGame();
     // allow right click inside minesweeper (for flags)
     if (minesweeper && minesweeper.contains(e.target)) return;
 
-    // block right click everywhere else
     e.preventDefault();
 });
 
-  ivyBtn.addEventListener("click", () => {
-    if (ivyMusic.paused) {
-      ivyMusic.play();
-      ivyBtn.style.opacity = "1";
+
+  const Btn = document.getElementById("Btn");  
+  const Music = document.getElementById("Music");
+  Btn.addEventListener("click", () => {
+    if (Music.paused) {
+      Music.play();
+      Btn.style.opacity = "1";
     } else {
-      ivyMusic.pause();
-      ivyBtn.style.opacity = "0.65";
+      Music.pause();
+      Btn.style.opacity = "0.65";
     }
 });
 
+// block right click everywhere else
 // Block common dev tools shortcuts silently
 document.addEventListener('keydown', function(e) {
   // F12
