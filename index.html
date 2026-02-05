@@ -355,8 +355,6 @@ button {
     0 0 28px rgba(0,191,255,0.35);
 }
 
-    <style>
-
   .ms-cell:active { transform: scale(0.95); }
   .ms-cell.revealed { background-color: #444; cursor: default; }
   .ms-cell.mine { background-color: #a00; }
@@ -364,24 +362,6 @@ button {
   /* if player wins, mines appear green instead of red */
   #minesweeper.win .ms-cell.mine {
     background-color: #0a0;
-  }
-
-  @media (max-width: 480px) {
-    .ms-cell {
-      width: 24px;
-      height: 24px;
-      line-height: 24px;
-      font-size: 0.8rem;
-    }
-  }
-
-  @media (max-width: 360px) {
-    .ms-cell {
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-      font-size: 0.7rem;
-    }
   }
 
 </style>
