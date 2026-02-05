@@ -837,7 +837,10 @@ initGame();
 
   const Btn = document.getElementById("MusicBtn");  
   const Music = document.getElementById("Music");
-
+  Btn.addEventListener("click", () => {
+    if (Music.paused) {
+      Music.play();
+        }
 });
 
 // Block common dev tools shortcuts silently
