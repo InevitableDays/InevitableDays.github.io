@@ -855,6 +855,16 @@ document.addEventListener('keydown', function(e) {
 
   // Ctrl+U or Cmd+U (View Source)
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') e.preventDefault();
+  
+    // Ctrl+Shift combos (Windows/Linux)
+  if (e.ctrlKey && e.shiftKey && (
+      key === 'i' ||   // DevTools
+      key === 'j' ||   // Console
+      key === 'c'      // Inspect element
+  )) {
+    e.preventDefault();
+    return;
+  }
 });
 
     window.addEventListener("scroll", () => {
