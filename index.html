@@ -533,7 +533,7 @@ button {
 </div>
 
 <img 
-  src="images/21.png" alt="updated" title="..." id="MusicBtn"
+  src="images/21.png" alt="updated" title="..." id="ivyMusicBtn"
   style="
     position: fixed;      
     bottom: 0;              
@@ -837,12 +837,14 @@ initGame();
     e.preventDefault();
 });
 
-  const Btn = document.getElementById("MusicBtn");  
-  const Music = document.getElementById("Music");
-  Btn.addEventListener("click", () => {
-    if (Music.paused) {
-      Music.play();
-        }
+  ivyBtn.addEventListener("click", () => {
+    if (ivyMusic.paused) {
+      ivyMusic.play();
+      ivyBtn.style.opacity = "1";
+    } else {
+      ivyMusic.pause();
+      ivyBtn.style.opacity = "0.65";
+    }
 });
 
 // Block common dev tools shortcuts silently
