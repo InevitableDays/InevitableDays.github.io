@@ -354,6 +354,113 @@ button {
     0 0 28px rgba(0,191,255,0.35);
 }
 
+    <style>
+  #minesweeper-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #ms-topbar {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #ms-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #ms-status {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-align: center;
+    min-height: 1.6rem;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  /* little animation */
+  #ms-status.pop {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+
+  #ms-newgame-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #00bfff;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+  }
+  #ms-newgame-btn:hover { background-color: #009acd; }
+
+  /* Minesweeper Grid */
+#minesweeper {
+  user-select: none;
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: hidden;   /* remove horizontal scrollbar */
+  overflow-y: hidden;   /* remove vertical scrollbar */
+}
+
+
+  .ms-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  .ms-cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #555;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    background-color: #222;
+    color: #fff;
+    font-weight: bold;
+    font-family: monospace;
+    transition: transform 0.08s ease, background-color 0.12s ease;
+  }
+
+  .ms-cell:active { transform: scale(0.95); }
+  .ms-cell.revealed { background-color: #444; cursor: default; }
+  .ms-cell.mine { background-color: #a00; }
+
+  /* if player wins, mines appear green instead of red */
+  #minesweeper.win .ms-cell.mine {
+    background-color: #0a0;
+  }
+
+  @media (max-width: 480px) {
+    .ms-cell {
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .ms-cell {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      font-size: 0.7rem;
+    }
+  }
+</style>
+
 </style>
 </head>
 
@@ -482,7 +589,7 @@ button {
 </div>
 
 <img 
-  src="images/21.png" alt="updated" title="..." 
+  src="images/21.png" alt="updated" title="..." id="MusicBtn"
   style="
     position: fixed;      
     bottom: 0;              
@@ -497,8 +604,46 @@ button {
 >
 
   
-  <!-- multilanguage inclusion via script -->
-  <script>
+<!-- Minesweeper Section -->
+<div class="section" id="minesweeper-section">
+  <h2 id="ms-title" style="text-align:center;">Minesweeper</h2>
+
+  <div id="minesweeper-container">
+    <!-- TOP BAR -->
+    <div id="ms-topbar">
+      <div id="ms-status"></div>
+
+      <div id="ms-controls">
+        <button id="ms-newgame-btn">New Game</button>
+      </div>
+    </div>
+
+    <!-- GAME GRID -->
+    <div id="minesweeper"></div>
+  </div>
+</div>
+
+<audio id="Music" src="Blurry.mp3"></audio>
+  <button
+  id="goTop"
+  title="Scroll to top"
+  style="
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 14px;
+    cursor: pointer;
+  "
+  onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+>
+  🢁
+</button>
+  
+<script>
+
+    <!-- multilanguage inclusion via script -->
+
 async function loadLanguage(lang) {
   try {
     const res = await fetch(`${lang}.json`);
@@ -521,135 +666,6 @@ async function loadLanguage(lang) {
 
 // Load default language
 loadLanguage('en');
-</script>
-
-<!-- Minesweeper Section -->
-<div class="section" id="minesweeper-section">
-  <h2 id="ms-title" style="text-align:center;">Minesweeper</h2>
-
-  <div id="minesweeper-container">
-    <!-- TOP BAR -->
-    <div id="ms-topbar">
-      <div id="ms-status"></div>
-
-      <div id="ms-controls">
-        <button id="ms-newgame-btn">New Game</button>
-      </div>
-    </div>
-
-    <!-- GAME GRID -->
-    <div id="minesweeper"></div>
-  </div>
-</div>
-
-<style>
-  #minesweeper-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-
-  #ms-topbar {
-    width: 100%;
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-
-  #ms-controls {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #ms-status {
-    font-weight: bold;
-    font-size: 1.2rem;
-    text-align: center;
-    min-height: 1.6rem;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-
-  /* little animation */
-  #ms-status.pop {
-    transform: scale(1.08);
-    opacity: 1;
-  }
-
-  #ms-newgame-btn {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: #00bfff;
-    color: #000;
-    border: none;
-    border-radius: 6px;
-  }
-  #ms-newgame-btn:hover { background-color: #009acd; }
-
-  /* Minesweeper Grid */
-#minesweeper {
-  user-select: none;
-  display: inline-block;
-  max-width: 100%;
-  overflow-x: hidden;   /* remove horizontal scrollbar */
-  overflow-y: hidden;   /* remove vertical scrollbar */
-}
-
-
-  .ms-row {
-    display: flex;
-    justify-content: center;
-  }
-
-  .ms-cell {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #555;
-    text-align: center;
-    line-height: 30px;
-    cursor: pointer;
-    background-color: #222;
-    color: #fff;
-    font-weight: bold;
-    font-family: monospace;
-    transition: transform 0.08s ease, background-color 0.12s ease;
-  }
-
-  .ms-cell:active { transform: scale(0.95); }
-  .ms-cell.revealed { background-color: #444; cursor: default; }
-  .ms-cell.mine { background-color: #a00; }
-
-  /* if player wins, mines appear green instead of red */
-  #minesweeper.win .ms-cell.mine {
-    background-color: #0a0;
-  }
-
-  @media (max-width: 480px) {
-    .ms-cell {
-      width: 24px;
-      height: 24px;
-      line-height: 24px;
-      font-size: 0.8rem;
-    }
-  }
-
-  @media (max-width: 360px) {
-    .ms-cell {
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-      font-size: 0.7rem;
-    }
-  }
-</style>
-
-<script>
 /* -----------------------------
    Minesweeper (Intermediate only)
    16x16 / 40 mines
@@ -807,27 +823,8 @@ document.getElementById('ms-newgame-btn').addEventListener('click', initGame);
 
 // Start immediately (Intermediate default)
 initGame();
-</script>
 
-
-
-<button
-  id="goTop"
-  title="Scroll to top"
-  style="
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px 14px;
-    cursor: pointer;
-  "
-  onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
->
-  🢁
-</button>
         
-<script>
   // Disable right-click everywhere EXCEPT Minesweeper grid
   document.addEventListener("contextmenu", function (e) {
     const minesweeper = document.getElementById("minesweeper");
@@ -837,11 +834,13 @@ initGame();
 
     // block right click everywhere else
     e.preventDefault();
-  });
-</script>
+});
 
+  const Btn = document.getElementById("MusicBtn");  
+  const Music = document.getElementById("Music");
 
-<script>
+});
+
 // Block common dev tools shortcuts silently
 document.addEventListener('keydown', function(e) {
   // F12
