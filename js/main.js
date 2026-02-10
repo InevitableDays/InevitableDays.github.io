@@ -35,3 +35,5 @@ document.querySelectorAll('.section img').forEach(img => {
 document.addEventListener('click', () => {
   images.forEach(img => img.classList.remove('zoomed'));
 });
+
+  });
