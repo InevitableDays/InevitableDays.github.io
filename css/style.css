@@ -122,9 +122,15 @@ img.profile {
   transform: translateX(-2px);
 }
 
+/* Hide on phones */
+@media (max-width: 900px) {
+  .quick-links {
+    display: none;
+  }
+}
+/* cut off for bar & under testing */
 
-
-    
+ 
 /* =============================
    Lists
 ============================= */
