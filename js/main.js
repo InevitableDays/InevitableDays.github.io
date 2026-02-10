@@ -1,8 +1,11 @@
-import { loadLanguage } from "../js/lang.js";
+import { loadLanguage } from "./lang.js";
 // Load default language
 loadLanguage('en');
 
-import { initMinesweeper } from "../js/minesweeper.js";
+import { initMinesweeper } from "./minesweeper.js";
+// Start modules
+loadLanguage('en');
+initMinesweeper();
        
   // Disable right-click everywhere EXCEPT Minesweeper grid
   document.addEventListener("contextmenu", function (e) {
