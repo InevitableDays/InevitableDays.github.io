@@ -1,6 +1,6 @@
 export async function loadLanguage(lang) {
   try {
-    const res = await fetch(`../lang/${lang}.json`);
+    const res = await fetch(`/lang/${lang}.json`); // absolute path
     const data = await res.json();
     for (const key in data) {
       const el = document.getElementById(key);
