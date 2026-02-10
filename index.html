@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> <!-- Oh look! We have ourselves a stalker-->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -417,6 +417,12 @@ button {
 </style>
 </head>
 <body>
+<!-- js required -->
+  <noscript>
+  <div style="background: #ffdddd; padding: 20px; text-align: center; font-weight: bold;">
+    ⚠️ JavaScript is required to view this site. Please enable JS in your browser.
+  </div>
+</noscript>
 
   <!-- Header -->
   <div class="section">
@@ -424,10 +430,9 @@ button {
     <img src="images/profile.jpg" alt="Ümit Özkul" class="profile">
     <p id="intro">Welcome to my digital corner. I’m Ümit Özkul — a self-taught technologist and developer with BSc in Science Education. I keep improving through hands-on work in software, HTML5, visual editing, music, and game design.
 </p>
+<p id="intro_global">• 30+ tools built (HTML, JS, C++, Electron) • System recovery & Security • Automation • Photoshop & Video Editing • Offline web archive project • Indie game in development • English-Turkish Translation</p>
   </div>
-  <div class="section" id="global_header">
-  <p id="intro_global">• 30+ tools built (HTML, JS, C++) • System recovery & Security • Automation • Photoshop & Video Editing • Offline web archive project • Indie game in development • English-Turkish Translation</p>
-    </div>
+
 <!-- =============================
      What I Do - Division 1
 ============================= -->
@@ -516,8 +521,15 @@ button {
 ============================= -->
 <div class="quick-links">
   <h3>Links</h3>
+
   <!-- Replace # with your URLs -->
+  <a href="#" target="_blank">GitHub</a>
+  <a href="#" target="_blank">Projects</a>
+  <a href="#" target="_blank">Games</a>
   <a href="https://archive.org/details/@tech_forever" target="_blank">Archive.org</a>
+  <a href="#" target="_blank">Blog</a>
+  <a href="#" target="_blank">Resume</a>
+
 </div>
 
 
@@ -774,8 +786,17 @@ document.getElementById('ms-newgame-btn').addEventListener('click', initGame);
 // Start immediately (Intermediate default)
 initGame();
 
-  
-// Globals for player & player
+        
+  // Disable right-click everywhere EXCEPT Minesweeper grid
+  document.addEventListener("contextmenu", function (e) {
+    const minesweeper = document.getElementById("minesweeper");
+
+    // allow right click inside minesweeper (for flags)
+    if (minesweeper && minesweeper.contains(e.target)) return;
+
+    e.preventDefault();
+});
+
   const Btn = document.getElementById("Btn");  
   const Music = document.getElementById("Music");
   Btn.addEventListener("click", () => {
@@ -786,6 +807,32 @@ initGame();
       Music.pause();
       Btn.style.opacity = "0.65";
     }
+});
+
+// block right click everywhere else
+// Block common dev tools shortcuts silently
+document.addEventListener('keydown', function(e) {
+  // F12
+  if (e.key === 'F12') e.preventDefault();
+
+  // Ctrl+Shift+I (Windows/Linux) or Cmd+Opt+I (Mac)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'i') e.preventDefault();
+
+  // Ctrl+Shift+J or Cmd+Opt+J (console)
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'j') e.preventDefault();
+
+  // Ctrl+U or Cmd+U (View Source)
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') e.preventDefault();
+  
+    // Ctrl+Shift combos (Windows/Linux)
+  if (e.ctrlKey && e.shiftKey && (
+      key === 'i' ||   // DevTools
+      key === 'j' ||   // Console
+      key === 'c'      // Inspect element
+  )) {
+    e.preventDefault();
+    return;
+  }
 });
 
     window.addEventListener("scroll", () => {
