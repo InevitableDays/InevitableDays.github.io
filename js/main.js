@@ -31,4 +31,7 @@ document.querySelectorAll('.section img').forEach(img => {
   img.addEventListener('click', () => {
     img.classList.toggle('zoomed');
   });
+// Click anywhere else closes zoom
+document.addEventListener('click', () => {
+  images.forEach(img => img.classList.remove('zoomed'));
 });
