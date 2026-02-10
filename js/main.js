@@ -3,8 +3,6 @@ import { loadLanguage } from "./lang.js";
 loadLanguage('en');
 
 import { initMinesweeper } from "./minesweeper.js";
-// Start modules
-loadLanguage('en');
 initMinesweeper();
        
   // Disable right-click everywhere EXCEPT Minesweeper grid
