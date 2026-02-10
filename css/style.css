@@ -177,6 +177,8 @@ blockquote {
   margin-top: 1rem;
   border: 1px solid #333333;
   display: block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: zoom-in;
 }
 
 .section img.zoomed {
