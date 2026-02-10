@@ -810,9 +810,13 @@ initGame();
     }
 });
 
+  
 // block right click everywhere else
 // Block common dev tools shortcuts silently
 document.addEventListener('keydown', function(e) {
+
+  const key = e.key.toLowerCase(); // <-- FIX: define key
+
   // F12
   if (e.key === 'F12') e.preventDefault();
 
@@ -829,12 +833,13 @@ document.addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.shiftKey && (
       key === 'i' ||   // DevTools
       key === 'j' ||   // Console
-      key === 'c' ||   // Inspect element
+      key === 'c'      // Inspect element
   )) {
     e.preventDefault();
     return;
   }
 });
+
 
     window.addEventListener("scroll", () => {
     document.getElementById("goTop").style.display =
