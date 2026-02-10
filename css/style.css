@@ -34,13 +34,12 @@ html, body {
 
 h1, h2, h3 {
   font-family: 'Fira Code', monospace;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 h1 {
   text-align: center;
   font-size: 2.2rem;
-  margin-bottom: 1rem;
   cursor: pointer;
   color: #00bfff;
 }
@@ -74,8 +73,8 @@ img.profile {
   border-radius: 16px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  padding: 1.5rem;
-  margin: 1.5rem auto;
+  padding: 2rem;
+  margin: 2rem auto;
   width: 90%;
   max-width: 800px;
 }
@@ -402,4 +401,9 @@ button {
     0 0 6px rgba(0,191,255,0.8),
     0 0 14px rgba(0,191,255,0.6),
     0 0 28px rgba(0,191,255,0.35);
+}
+
+.section .row:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
 }
