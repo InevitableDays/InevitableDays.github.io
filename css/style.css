@@ -403,8 +403,3 @@ button {
     0 0 28px rgba(0,191,255,0.35);
 }
 
-/* hover for images*/
-.row:hover {
-  transform: translateY(-2px);
-  transition: transform 0.2s ease;
-}
