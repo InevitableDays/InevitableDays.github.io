@@ -129,11 +129,6 @@ img.profile {
     display: none;
   }
 }
-@media (max-width: 900px) {
-  .section img.zoomed {
-    display: none;
-  }
-}
 /* cut off for bar & under testing */
 
     
