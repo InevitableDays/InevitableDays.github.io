@@ -28,24 +28,15 @@ homeTitle.addEventListener("click", () => {
 
 //zoomer
 document.querySelectorAll('.section img').forEach(img => {
-  // Zoom on press
-  img.addEventListener('mousedown', () => {
-    img.classList.add('zoomed');
+  img.addEventListener('click', (e) => {
+    if (e.button === 0) { // left mouse button only
+      img.classList.toggle('zoomed');
+    }
   });
 
-
-  // Also handle case when mouse leaves the image while pressed
-  img.addEventListener('mouseleave', () => {
-    img.classList.remove('zoomed');
-  });
-
-  // Optional: handle touch devices
+  // Optional: touch support
   img.addEventListener('touchstart', () => {
-    img.classList.add('zoomed');
-  });
-
-  img.addEventListener('touchend', () => {
-    img.classList.remove('zoomed');
+    img.classList.toggle('zoomed');
   });
 });
 
