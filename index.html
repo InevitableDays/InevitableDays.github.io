@@ -91,6 +91,58 @@ img.profile {
   max-width: 800px;
 }
 
+
+/* =============================
+   Quick Links (Desktop Bar)
+============================= */
+
+.quick-links {
+  position: fixed;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+  width: 160px;
+
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  padding: 0.8rem;
+  z-index: 999;
+}
+
+.quick-links h3 {
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #00bfff;
+}
+
+.quick-links a {
+  display: block;
+  padding: 6px 8px;
+  margin: 4px 0;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.quick-links a:hover {
+  background: rgba(0,191,255,0.12);
+  transform: translateX(-2px);
+}
+
+/* Hide on phones */
+@media (max-width: 900px) {
+  .quick-links {
+    display: none;
+  }
+}
+/* cut off for bar & under testing */
+
+    
 /* =============================
    Lists
 ============================= */
@@ -462,6 +514,23 @@ button {
     <h2 id="workethic">🧷 Work Ethic in 3 Words</h2>
     <p id="workethictext"><strong>Learn. Hack. Repeat.</strong></p>
   </div>
+
+  <!-- =============================
+     Quick Links (Desktop)
+============================= -->
+<div class="quick-links">
+  <h3>Links</h3>
+
+  <!-- Replace # with your URLs -->
+  <a href="#" target="_blank">GitHub</a>
+  <a href="#" target="_blank">Projects</a>
+  <a href="#" target="_blank">Games</a>
+  <a href="#" target="https://archive.org/details/@tech_forever">Archive.org</a>
+  <a href="#" target="_blank">Blog</a>
+  <a href="#" target="_blank">Resume</a>
+
+</div>
+
 
   <!-- Contact -->
 <div class="section">
