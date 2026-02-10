@@ -1,25 +1,4 @@
 import { initMinesweeper } from "./minesweeper.js";
-async function loadLanguage(lang) {
-  try {
-    const res = await fetch(`/lang/${lang}.json`); // absolute path
-    const data = await res.json();
-    for (const key in data) {
-      const el = document.getElementById(key);
-      if (el) {
-        if (key === 'workethictext') {
-          el.innerHTML = `<strong>${data[key]}</strong>`;
-        } else {
-          el.textContent = data[key];
-        }
-      }
-    }
-    document.documentElement.lang = lang;
-  } catch (err) {
-    console.error("Error loading language:", err);
-  }
-}
-// Load default language
-loadLanguage('en');
 initMinesweeper();
        
   // Disable right-click everywhere EXCEPT Minesweeper grid
