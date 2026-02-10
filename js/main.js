@@ -1,7 +1,7 @@
 import { initMinesweeper } from "./minesweeper.js";
 initMinesweeper();
        
-
+//player
   const Btn = document.getElementById("Btn");  
   const Music = document.getElementById("Music");
   Btn.addEventListener("click", () => {
@@ -14,6 +14,7 @@ initMinesweeper();
     }
 });
 
+//go up
     window.addEventListener("scroll", () => {
     document.getElementById("goTop").style.display =
       window.scrollY > 900 ? "block" : "none";    //go up button
@@ -21,7 +22,13 @@ initMinesweeper();
 
   const homeTitle = document.getElementById("homeTitle");  //home relander
 
-// Make clicking the header reland (reload) the current page
 homeTitle.addEventListener("click", () => {
     location.reload();  // force reload when you add true
+});
+
+//zoomer
+document.querySelectorAll('.section img').forEach(img => {
+  img.addEventListener('click', () => {
+    img.classList.toggle('zoomed');
+  });
 });
