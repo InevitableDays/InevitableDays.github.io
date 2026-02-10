@@ -417,12 +417,6 @@ button {
 </style>
 </head>
 <body>
-<!-- js required -->
-  <noscript>
-  <div style="background: #ffdddd; padding: 20px; text-align: center; font-weight: bold;">
-    ⚠️ JavaScript is required to view this site. Please enable JS in your browser.
-  </div>
-</noscript>
 
   <!-- Header -->
   <div class="section">
@@ -786,17 +780,8 @@ document.getElementById('ms-newgame-btn').addEventListener('click', initGame);
 // Start immediately (Intermediate default)
 initGame();
 
-        
-  // Disable right-click everywhere EXCEPT Minesweeper grid
-  document.addEventListener("contextmenu", function (e) {
-    const minesweeper = document.getElementById("minesweeper");
-
-    // allow right click inside minesweeper (for flags)
-    if (minesweeper && minesweeper.contains(e.target)) return;
-
-    e.preventDefault();
-});
-
+  
+// Globals for player & player
   const Btn = document.getElementById("Btn");  
   const Music = document.getElementById("Music");
   Btn.addEventListener("click", () => {
@@ -807,32 +792,6 @@ initGame();
       Music.pause();
       Btn.style.opacity = "0.65";
     }
-});
-
-// block right click everywhere else
-// Block common dev tools shortcuts silently
-document.addEventListener('keydown', function(e) {
-  // F12
-  if (e.key === 'F12') e.preventDefault();
-
-  // Ctrl+Shift+I (Windows/Linux) or Cmd+Opt+I (Mac)
-  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'i') e.preventDefault();
-
-  // Ctrl+Shift+J or Cmd+Opt+J (console)
-  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'j') e.preventDefault();
-
-  // Ctrl+U or Cmd+U (View Source)
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') e.preventDefault();
-  
-    // Ctrl+Shift combos (Windows/Linux)
-  if (e.ctrlKey && e.shiftKey && (
-      key === 'i' ||   // DevTools
-      key === 'j' ||   // Console
-      key === 'c'      // Inspect element
-  )) {
-    e.preventDefault();
-    return;
-  }
 });
 
     window.addEventListener("scroll", () => {
