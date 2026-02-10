@@ -39,9 +39,5 @@ document.querySelectorAll('.section img').forEach(img => {
     img.classList.remove('zoomed');
   });
 
-  // Optional: touch support
-  img.addEventListener('touchstart', () => {
-    img.classList.toggle('zoomed');
-  });
 });
 
