@@ -34,6 +34,11 @@ document.querySelectorAll('.section img').forEach(img => {
     }
   });
 
+  // Also handle case when mouse leaves the image while pressed
+  img.addEventListener('mouseleave', () => {
+    img.classList.remove('zoomed');
+  });
+
   // Optional: touch support
   img.addEventListener('touchstart', () => {
     img.classList.toggle('zoomed');
