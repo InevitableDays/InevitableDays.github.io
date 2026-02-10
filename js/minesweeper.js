@@ -156,15 +156,5 @@ document.getElementById('ms-newgame-btn').addEventListener('click', initGame);
 
 // Start immediately (Intermediate default)
 initGame();
-
-        
-  // Disable right-click everywhere EXCEPT Minesweeper grid
-  document.addEventListener("contextmenu", function (e) {
-    const minesweeper = document.getElementById("minesweeper");
-
-    // allow right click inside minesweeper (for flags)
-    if (minesweeper && minesweeper.contains(e.target)) return;
-
-    e.preventDefault();
-});
+   
 }
