@@ -202,8 +202,8 @@
 >
   🢁
 </button>
-<script type="module">
-  async function loadLanguage(lang) {
+<script>  //multilanguage
+async function loadLanguage(lang) {
   try {
     const res = await fetch(`${lang}.json`);
     const data = await res.json();
@@ -225,7 +225,6 @@
 
 // Load default language
 loadLanguage('en');
-</script>
   
 <script type="module" src="js/main.js"></script>
 
