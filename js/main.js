@@ -28,12 +28,28 @@ homeTitle.addEventListener("click", () => {
 
 //zoomer
 document.querySelectorAll('.section img').forEach(img => {
-  img.addEventListener('click', () => {
-    img.classList.toggle('zoomed');
+  // Zoom on press
+  img.addEventListener('mousedown', () => {
+    img.classList.add('zoomed');
   });
-// Click anywhere else closes zoom
-document.addEventListener('click', () => {
-  images.forEach(img => img.classList.remove('zoomed'));
+
+  // Remove zoom on release
+  img.addEventListener('mouseup', () => {
+    img.classList.remove('zoomed');
+  });
+
+  // Also handle case when mouse leaves the image while pressed
+  img.addEventListener('mouseleave', () => {
+    img.classList.remove('zoomed');
+  });
+
+  // Optional: handle touch devices
+  img.addEventListener('touchstart', () => {
+    img.classList.add('zoomed');
+  });
+
+  img.addEventListener('touchend', () => {
+    img.classList.remove('zoomed');
+  });
 });
 
-  });
