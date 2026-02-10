@@ -229,7 +229,7 @@ blockquote {
    Minesweeper Styles
 ============================= */
 #minesweeper-section {
-  background-image: url("images/illustration-defense-redim3.jpg");
+  background-image: url("../images/illustration-defense-redim3.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
