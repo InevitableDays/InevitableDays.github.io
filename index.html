@@ -257,7 +257,7 @@ blockquote {
   margin: 0 auto;
 }
 
-  #ms-topbar {
+#ms-topbar {
     width: 100%;
     max-width: 800px;
     display: flex;
@@ -345,9 +345,10 @@ blockquote {
   background-color: #a00;
 }
 
+/* if player wins, mines appear green instead of red */
 #minesweeper.win .ms-cell.mine {
-  background-color: #0a0;
-}
+ background-color: #0a0;
+  }
 
 /* =============================
    Buttons
@@ -404,15 +405,6 @@ button {
     0 0 14px rgba(0,191,255,0.6),
     0 0 28px rgba(0,191,255,0.35);
 }
-
-  .ms-cell:active { transform: scale(0.95); }
-  .ms-cell.revealed { background-color: #444; cursor: default; }
-  .ms-cell.mine { background-color: #a00; }
-
-  /* if player wins, mines appear green instead of red */
-  #minesweeper.win .ms-cell.mine {
-    background-color: #0a0;
-  }
 
 </style>
 </head>
