@@ -33,10 +33,6 @@ document.querySelectorAll('.section img').forEach(img => {
     img.classList.add('zoomed');
   });
 
-  // Remove zoom on release
-  img.addEventListener('mouseup', () => {
-    img.classList.remove('zoomed');
-  });
 
   // Also handle case when mouse leaves the image while pressed
   img.addEventListener('mouseleave', () => {
