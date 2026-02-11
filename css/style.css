@@ -402,3 +402,71 @@ button {
     0 0 28px rgba(0,191,255,0.35);
 }
 
+/* Neon animated frame */
+#neonFrame {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 998;
+}
+
+#neonFrame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+background: linear-gradient(
+  45deg,
+  violet,
+  indigo,
+  blue,
+  cyan,
+  lime,
+  yellow,
+  orange,
+  red,
+  violet
+);
+
+
+  background-size: 400% 400%;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+}
+
+
+#neonFrame.active::before {
+  opacity: 1;
+  animation:
+    borderFlow 6s ease-in-out infinite,
+    neonBeat 1.2s ease-in-out infinite;
+}
+
+/* outer glow layer */
+#neonFrame.active {
+  box-shadow:
+    0 0 20px violet,
+    0 0 40px blue,
+    0 0 60px cyan;
+}
+
+
+
+@keyframes neonBeat {
+  0%   { filter: blur(1px) brightness(1); }
+  50%  { filter: blur(2px) brightness(1.8); }
+  100% { filter: blur(1px) brightness(1); }
+}
+
+
+@keyframes borderFlow {
+  0%   { background-position: 0% 0%; }
+  25%  { background-position: 100% 0%; }
+  50%  { background-position: 100% 100%; }
+  75%  { background-position: 0% 100%; }
+  100% { background-position: 0% 0%; }
+}
