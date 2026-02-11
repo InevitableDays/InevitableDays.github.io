@@ -62,5 +62,17 @@ document.querySelectorAll('.section img').forEach(img => {
     img.classList.remove('zoomed');
   });
 
+  // loader js test
+
+window.addEventListener("load", () => {
+  const loader = document.getElementById("loader");
+  loader.style.opacity = "0";
+  loader.style.transition = "opacity 0.6s ease";
+
+  setTimeout(() => {
+    loader.style.display = "none";
+  }, 600);
 });
+       
+});   // Valid 
 
