@@ -122,6 +122,10 @@ img.profile {
   transform: translateX(-2px);
 }
 
+.intro_global a:hover {
+  background: rgba(0,191,255,0.12);
+  transform: translateX(-2px);
+}
 /* Hide on phones */
 @media (max-width: 900px) {
   .quick-links {
