@@ -481,24 +481,28 @@ background: linear-gradient(
 
   #neonFrame.active {
     box-shadow: none !important;
+    }
+   }
 
 /* loader test */
-    #loader {
+#loader {
   position: fixed;
   inset: 0;
   background: #000;
   z-index: 99999;
+
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* wrapper for image + text */
 .loaderContent {
   text-align: center;
 }
 
 .loaderContent img {
-  width: 120px;       /* size of gif */
+  width: 120px;       /* size of webp/gif */
   margin-bottom: 20px;
   filter: drop-shadow(0 0 15px cyan);
 }
@@ -515,8 +519,5 @@ background: linear-gradient(
   0%   { opacity: 0.3; text-shadow: 0 0 5px cyan; }
   50%  { opacity: 1;   text-shadow: 0 0 20px cyan, 0 0 40px blue; }
   100% { opacity: 0.3; text-shadow: 0 0 5px cyan; }
-}
-
-  }
 }
 
