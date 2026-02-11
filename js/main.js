@@ -64,14 +64,39 @@ document.querySelectorAll('.section img').forEach(img => {
 
   // loader js test
 
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
+  const images = document.querySelectorAll("img.critical");
   const loader = document.getElementById("loader");
-  loader.style.opacity = "0";
-  loader.style.transition = "opacity 0.6s ease";
+  let loaded = 0;
 
-  setTimeout(() => {
-    loader.style.display = "none";
-  }, 600);
+  if (images.length === 0) {
+    hideLoader();
+    return;
+  }
+
+  images.forEach(img => {
+    if (img.complete) {
+      check();
+    } else {
+      img.addEventListener("load", check);
+      img.addEventListener("error", check);
+    }
+  });
+
+  function check() {
+    loaded++;
+    if (loaded === images.length) {
+      hideLoader();
+    }
+  }
+
+  function hideLoader() {
+    loader.style.transition = "opacity 0.6s ease";
+    loader.style.opacity = "0";
+    setTimeout(() => {
+      loader.style.display = "none";
+    }, 600);
+  }
 });
        
 });   // Valid 
