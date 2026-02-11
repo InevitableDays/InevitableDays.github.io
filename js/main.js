@@ -65,7 +65,7 @@ document.querySelectorAll('.section img').forEach(img => {
   // loader js test
 
 document.addEventListener("DOMContentLoaded", () => {
-  const images = document.querySelectorAll("img.critical");
+  const images = document.querySelectorAll("img.profile");
   const loader = document.getElementById("loader");
   let loaded = 0;
 
