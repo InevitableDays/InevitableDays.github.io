@@ -470,8 +470,17 @@ background: linear-gradient(
   75%  { background-position: 0% 100%; }
   100% { background-position: 0% 0%; }
 }
-@media (max-width: 900px) {  /* NFrame only  mobiel off.*/
+
+/* Disable neon effects on mobile */
+@media (max-width: 900px) {
+
+  #neonFrame.active::before {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
   #neonFrame.active {
-    box-shadow: none;
+    box-shadow: none !important;
   }
 }
+
