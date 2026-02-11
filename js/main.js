@@ -32,6 +32,11 @@ function stopClubLights() {
     }
 });
 
+Music.addEventListener("ended", () => {  // stop Nframe when ended
+  stopClubLights();
+  running = false;
+});
+
 //go up
     window.addEventListener("scroll", () => {
     document.getElementById("goTop").style.display =
