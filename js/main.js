@@ -4,7 +4,7 @@ initMinesweeper();
 //player
   const Btn = document.getElementById("Btn");  
   const Music = document.getElementById("Music");
-  const frameElement = document.getElementById("neonFrame"); //Nframe Start
+  const frameElement = document.getElementById("neonFrame"); //Nframe p 1
 
 let running = false;
 
@@ -13,7 +13,7 @@ function startClubLights() {
 }
 
 function stopClubLights() {
-  frameElement.classList.remove("active");
+  frameElement.classList.remove("active");  //nf end p 1
 }
 
   Btn.addEventListener("click", () => {
