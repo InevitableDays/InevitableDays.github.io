@@ -98,6 +98,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 600);
   }
 });
-       
+
+        new Snowflakes({
+            color: '#ffffff',
+            count: 125,
+            minSize: 11,
+            maxSize: 22,
+            speed: 1,
+            wind: true,
+            zIndex: 9999
+        });
+     
 });   // Valid 
 
