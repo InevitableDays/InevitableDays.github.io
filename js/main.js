@@ -43,11 +43,21 @@ Music.addEventListener("ended", () => {  // stop Nframe when ended
       window.scrollY > 900 ? "block" : "none";    //go up button
 }); 
 
-  const homeTitle = document.getElementById("homeTitle");  //home relander
+/*  const homeTitle = document.getElementById("homeTitle");  //home relander
 
 homeTitle.addEventListener("click", () => {
     location.reload();  // force reload when you add true
+});   */
+const homeTitle = document.getElementById("homeTitle");
+
+homeTitle.addEventListener("click", () => {
+    const target = document.getElementById("welcome");
+    if (target) {
+        target.scrollIntoView({ behavior: "smooth" });  // smooth scroll
+        history.replaceState(null, null, " ");           // clean URL
+    }
 });
+
 
 //zoomer
 document.querySelectorAll('.section img').forEach(img => {
