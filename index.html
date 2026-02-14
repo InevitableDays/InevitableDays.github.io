@@ -211,7 +211,14 @@ setTimeout(() => {
     wind: false,
     zIndex: 9999 
   });
+    document.querySelectorAll('.snowflake').forEach(el => {
+    el.style.pointerEvents = 'auto'; 
+    el.style.cursor = 'pointer';      
+    el.addEventListener('click', () => {
+      window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+    });
+  });
 }, 500);
-  </script>
+   </script>
 </body>
 </html>
