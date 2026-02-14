@@ -102,24 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 600);
   }
 });
-
-
-/* snowdrizzle */
-<script src="https://cdn.jsdelivr.net/npm/magic-snowflakes/dist/snowflakes.min.js"></script>
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    new Snowflakes({
-      color: '#ffffff',
-      count: 5,
-      minSize: 11,
-      maxSize: 42,
-      speed: 1,
-      wind: false,
-      zIndex: 1000
-    });
-  }, 500); // delay by 0.5s to reduce initial load lag
-});
-
      
-});   // Valid 
+});   // Valid dom wrapper 
 
