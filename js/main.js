@@ -102,6 +102,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 600);
   }
 });
-     
+ new Snowflakes({
+  color: '#ffffff',
+  count: 5,
+  minSize: 11,
+  maxSize: 42,
+  speed: 0.5,
+  wind: false,
+  zIndex: 1000,
+  target: document.getElementById('snow-container-left')
+});
+
+new Snowflakes({
+  color: '#ffffff',
+  count: 5,
+  minSize: 11,
+  maxSize: 42,
+  speed: 0.5,
+  wind: false,
+  zIndex: 1000,
+  target: document.getElementById('snow-container-right')
+});
+    
 });   // Valid 
 
