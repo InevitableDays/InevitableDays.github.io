@@ -537,3 +537,7 @@ background: linear-gradient(
   100% { opacity: 0.3; text-shadow: 0 0 5px cyan; }
 }
 
+.snowflake {
+  pointer-events: auto; /* allow clicks, regularly it gets none for styled js */
+  cursor: pointer;      
+}
