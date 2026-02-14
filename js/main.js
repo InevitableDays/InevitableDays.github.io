@@ -105,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* snowfall */
 setTimeout(() => {
- document.querySelectorAll('.snowflake').forEach(el => el.remove());
   new Snowflakes({
     color: '#ffffff',
     count: 3,
