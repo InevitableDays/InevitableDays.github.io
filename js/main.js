@@ -102,26 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 600);
   }
 });
-
-/* snowfall */
-setTimeout(() => {
-  new Snowflakes({
-    color: '#ffffff',
-    count: 3,
-    minSize: 11,
-    maxSize: 22,
-    speed: 0.6,
-    wind: false,
-    zIndex: 1000 
-  });
-  document.querySelectorAll('.snowflake').forEach(el => {
-    el.style.pointerEvents = 'auto'; 
-    el.style.cursor = 'pointer';      
-    el.addEventListener('click', () => {
-      window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
-    });
-  });
-}, 500);
      
 });   // Valid 
 
