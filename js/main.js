@@ -48,16 +48,10 @@ Music.addEventListener("ended", () => {  // stop Nframe when ended
 homeTitle.addEventListener("click", () => {
     location.reload();  // force reload when you add true
 });   */
-const homeTitle = document.getElementById("homeTitle");
-
 homeTitle.addEventListener("click", () => {
-    const target = document.getElementById("welcome");
-    if (target) {
-        target.scrollIntoView({ behavior: "smooth" });  // smooth scroll
-        history.replaceState(null, null, " ");           // clean URL
-    }
+    // Go to base URL without hash
+    window.location.href = window.location.origin + window.location.pathname;
 });
-
 
 //zoomer
 document.querySelectorAll('.section img').forEach(img => {
