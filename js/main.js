@@ -104,24 +104,25 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* snowfall */
-  setTimeout(() => {
-  document.querySelectorAll('.snowflake').forEach(el => el.remove());
-    new Snowflakes({
-      color: '#ffffff',
-      count: 5,
-      minSize: 11,
-      maxSize: 42,
-      speed: 0.6,
-      wind: false,
-      zIndex: 9999
-    });
-      document.querySelectorAll('.snowflake').forEach(el => {
-    el.style.cursor = 'pointer';
+setTimeout(() => {
+ document.querySelectorAll('.snowflake').forEach(el => el.remove());
+  new Snowflakes({
+    color: '#ffffff',
+    count: 5,
+    minSize: 11,
+    maxSize: 42,
+    speed: 0.6,
+    wind: false,
+    zIndex: 9999 
+  });
+  document.querySelectorAll('.snowflake').forEach(el => {
+    el.style.pointerEvents = 'auto'; 
+    el.style.cursor = 'pointer';      
     el.addEventListener('click', () => {
       window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
     });
   });
-  }, 500); // delay by .5s to reduce initial load lag
+}, 500);
      
 });   // Valid dom wrapper 
 
