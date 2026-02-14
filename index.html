@@ -195,20 +195,7 @@ async function loadLanguage(lang) {
 // Load default language
 loadLanguage('en');
 </script>  
+<script src="https://cdn.jsdelivr.net/npm/magic-snowflakes/dist/snowflakes.min.js"></script> 
 <script type="module" src="js/main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/magic-snowflakes/dist/snowflakes.min.js"></script>
-<script>
-  setTimeout(() => {
-    new Snowflakes({
-      color: '#ffffff',
-      count: 5,
-      minSize: 11,
-      maxSize: 42,
-      speed: 0.6,
-      wind: false,
-      zIndex: 1000
-    });
-  }, 3500); // delay by 1.5s to reduce initial load lag
-</script>
 </body>
 </html>
