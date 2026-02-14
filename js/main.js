@@ -108,12 +108,12 @@ setTimeout(() => {
  document.querySelectorAll('.snowflake').forEach(el => el.remove());
   new Snowflakes({
     color: '#ffffff',
-    count: 5,
+    count: 3,
     minSize: 11,
-    maxSize: 42,
+    maxSize: 22,
     speed: 0.6,
     wind: false,
-    zIndex: 9999 
+    zIndex: 1000 
   });
   document.querySelectorAll('.snowflake').forEach(el => {
     el.style.pointerEvents = 'auto'; 
