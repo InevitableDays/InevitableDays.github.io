@@ -8,7 +8,6 @@ code, pre {
                "Liberation Mono", monospace;
 }
 
-
 /* =============================
    Global Reset & Base Styles
 ============================= */
@@ -78,7 +77,6 @@ img.profile {
   width: 90%;
   max-width: 800px;
 }
-
 
 /* =============================
    Quick Links (Desktop Bar)
@@ -444,7 +442,6 @@ background: linear-gradient(
   violet
 );
 
-
   background-size: 400% 400%;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -470,14 +467,11 @@ background: linear-gradient(
     0 0 60px cyan;
 }
 
-
-
 @keyframes neonBeat {
   0%   { filter: blur(1px) brightness(1); }
   50%  { filter: blur(2px) brightness(1.8); }
   100% { filter: blur(1px) brightness(1); }
 }
-
 
 @keyframes borderFlow {
   0%   { background-position: 0% 0%; }
@@ -536,15 +530,3 @@ background: linear-gradient(
   50%  { opacity: 1;   text-shadow: 0 0 20px cyan, 0 0 40px blue; }
   100% { opacity: 0.3; text-shadow: 0 0 5px cyan; }
 }
-/* le container*/
-#snow-container-left, #snow-container-right {
-  position: fixed;
-  top: 0;
-  width: 80px;          /* narrow column */
-  height: 100%;
-  pointer-events: none; /* so clicks pass through */
-  z-index: 1000;
-}
-#snow-container-left { left: 0; }
-#snow-container-right { right: 0; }
-
