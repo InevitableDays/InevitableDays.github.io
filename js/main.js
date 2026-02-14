@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
       maxSize: 42,
       speed: 0.6,
       wind: false,
-      zIndex: 1000
+      zIndex: 9999
     });
       document.querySelectorAll('.snowflake').forEach(el => {
     el.style.cursor = 'pointer';
