@@ -357,11 +357,27 @@ button {
 }
 
 #goTop {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 0px;
-  padding: 10px 14px;
+  display: none;                /* hidden by default */
+  position: fixed;              /* fixed on screen */
+  bottom: 20px;                 /* distance from bottom */
+  right: 20px;                  /* distance from right */
+  width: 50px;                  /* make it circular */
+  height: 50px;                 /* make it circular */
+  background-color: #28a745;    /* green background */
+  color: white;                 /* arrow color */
+  font-size: 1.8rem;            /* arrow size */
+  border: none;                 /* no default border */
+  border-radius: 50%;           /* perfectly round */
+  cursor: pointer;              /* pointer on hover */
+  text-align: center;           /* center the arrow */
+  line-height: 50px;            /* vertically center the arrow */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* subtle shadow */
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#goTop:hover {
+  background-color: #218838;    /* darker green on hover */
+  transform: translateY(-2px);  /* slight lift */
 }
 
 /* =============================
