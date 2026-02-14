@@ -124,5 +124,5 @@ setTimeout(() => {
   });
 }, 500);
      
-});   // Valid dom wrapper 
+});   // Valid 
 
