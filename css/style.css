@@ -536,3 +536,15 @@ background: linear-gradient(
   50%  { opacity: 1;   text-shadow: 0 0 20px cyan, 0 0 40px blue; }
   100% { opacity: 0.3; text-shadow: 0 0 5px cyan; }
 }
+/* le container*/
+#snow-container-left, #snow-container-right {
+  position: fixed;
+  top: 0;
+  width: 80px;          /* narrow column */
+  height: 100%;
+  pointer-events: none; /* so clicks pass through */
+  z-index: 1000;
+}
+#snow-container-left { left: 0; }
+#snow-container-right { right: 0; }
+
