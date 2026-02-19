@@ -314,19 +314,42 @@ const randomBtn = document.getElementById("randomBtn");
 const refreshBtn = document.getElementById("refreshBtn");
 
 // GitHub API URL for PDFs
-const repoApi = 'https://api.github.com/repos/inevitabledays/pdf-archive/contents/pdfs';
+const repoApi = 'https://api.github.com/repos/InevitableDays/pdf-archive/contents/pdfs';
+  const token = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN';
+const res = await fetch(repoApi, {
+  headers: {
+    Authorization: `token ${token}`
+  }
+});
+
 
 async function loadLibrary() {
   grid.innerHTML = '';
-  library.length = 0; // clear
+  library.length = 0; // clear existing library
+
   const res = await fetch(repoApi);
+  if (!res.ok) {
+    console.error('Failed to fetch PDF list:', res.status);
+    return;
+  }
+
   const files = await res.json();
-  files.filter(f => f.name.endsWith('.pdf')).forEach(f => {
-    const item = { title: f.name.replace('.pdf',''), file: f.download_url, tags: [] };
-    library.push(item);
-    grid.appendChild(makeCard(item));
-  });
+
+  files
+    .filter(f => f.name.endsWith('.pdf'))  // only PDFs
+    .forEach(f => {
+      const item = {
+        title: f.name.replace('.pdf', ''),
+        file: f.download_url,  // raw GitHub link
+        tags: []
+      };
+      library.push(item);
+
+      const card = makeCard(item);
+      grid.appendChild(card);
+    });
 }
+
 
 function makeCard(item){
   const card = document.createElement("div");
@@ -452,6 +475,7 @@ button img[src="home.png"]:hover {
 
 </body>
 </html>
+
 
 
 
