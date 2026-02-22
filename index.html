@@ -218,6 +218,19 @@ new Snowflakes({
     });
   });
 }, 500);
+
+
+  // watery watermark
+  document.addEventListener('copy', function(e) {
+    var selectedText = window.getSelection().toString();
+    if (!selectedText) return;
+
+    var credit = "\n\nTaken from https://inevitabledays.github.io , umit ozkul 2026";
+    var newText = selectedText + credit;
+
+    e.clipboardData.setData('text/plain', newText);
+    e.preventDefault();
+});
    </script>
 </body>
 </html>
