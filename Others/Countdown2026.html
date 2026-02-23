@@ -106,7 +106,7 @@ body {
         <button id="btn15" onclick="startTimer(900, '15mins')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">15 Mins</button>
         <button id="btn12" onclick="startTimer(720, '12mins')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">12 Mins</button>
         <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
-        <button id="btn10" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">5 Mins</button>
+        <button id="btn5" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">5 Mins</button>
     </div>
 
 
@@ -206,14 +206,12 @@ const langData = {
         stop: "Stop",
         restart: "Restart",
         buttons: {
-            btn3h: "3 Hours",
-            btn2h: "2 Hours",
-            btn1h: "1 Hour",
             btn30: "30 Mins",
             btn20: "20 Mins",
             btn15: "15 Mins",
             btn12: "12 Mins",
-            btn10: "10 Mins"
+            btn10: "10 Mins",
+            btn5: "5 Mins"
         }
     },
     tr: {
@@ -225,14 +223,12 @@ const langData = {
         stop: "Durdur",
         restart: "Yeniden Başlat",
         buttons: {
-            btn3h: "3 Saat",
-            btn2h: "2 Saat",
-            btn1h: "1 Saat",
             btn30: "30 Dakika",
             btn20: "20 Dakika",
             btn15: "15 Dakika",
             btn12: "12 Dakika",
-            btn10: "10 Dakika"
+            btn10: "10 Dakika",
+            btn5: "5 Dakika"
         }
     }
 };
@@ -336,6 +332,7 @@ function startTimer(seconds, bgType) {
             enterFullscreen();
             alarmAudio.play();
             startFlash();
+            notifyAlarm(); // add this line
             return;
         }
 
