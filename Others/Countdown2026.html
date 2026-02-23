@@ -41,7 +41,6 @@ body {
     transition: background 0.5s ease;
 
     background:
-/*         linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), */
         url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1600");
 
     background-size: cover;
@@ -92,7 +91,6 @@ body {
         max-width: 90vw;
      ">
 
-
     <h2 id="appTitle" style="margin-bottom:20px; cursor: pointer; color:#333;">Countdown Timer</h2>
     
     <div id="display" style="font-size:48px; font-weight:bold; margin-bottom:25px; color:#222;">
@@ -101,7 +99,6 @@ body {
     </div>
     <pre> </pre>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <button id="btn3h" onclick="startTimer(10800, '3hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">3 Hours</button>
         <button id="btn2h" onclick="startTimer(7200, '2hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">2 Hours</button>
         <button id="btn1h" onclick="startTimer(3600, 'mountain')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">1 Hour</button>
         <button id="btn30" onclick="startTimer(1800, 'ocean')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">30 Mins</button>
@@ -109,8 +106,8 @@ body {
         <button id="btn15" onclick="startTimer(900, '15mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">15 Mins</button>
         <button id="btn12" onclick="startTimer(720, '12mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">12 Mins</button>
         <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
+        <button id="btn5" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">5 Mins</button>
     </div>
-
 
 <!-- External Control Buttons -->
 <div style="margin-top:15px; display:flex; gap:10px;">
@@ -193,7 +190,7 @@ let currentBg = null;
 let currentLang = "en";
 
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-alarmAudio.loop = false;
+alarmAudio.loop = true;
 
 /* ---------- LANGUAGE SYSTEM ---------- */
 
@@ -207,14 +204,14 @@ const langData = {
         stop: "Stop",
         restart: "Restart",
         buttons: {
-            btn3h: "3 Hours",
             btn2h: "2 Hours",
             btn1h: "1 Hour",
             btn30: "30 Mins",
             btn20: "20 Mins",
             btn15: "15 Mins",
             btn12: "12 Mins",
-            btn10: "10 Mins"
+            btn10: "10 Mins",
+            btn5: "5 Mins"
         }
     },
     tr: {
@@ -226,14 +223,14 @@ const langData = {
         stop: "Durdur",
         restart: "Yeniden Başlat",
         buttons: {
-            btn3h: "3 Saat",
             btn2h: "2 Saat",
             btn1h: "1 Saat",
             btn30: "30 Dakika",
             btn20: "20 Dakika",
             btn15: "15 Dakika",
             btn12: "12 Dakika",
-            btn10: "10 Dakika"
+            btn10: "10 Dakika",
+            btn5: "5 Dakika"
         }
     }
 };
@@ -264,14 +261,14 @@ applyLanguage();
 function setBackground(type) {
     const body = document.getElementById("body");
     const backgrounds = {
-        "3hours": "url('https://images.unsplash.com/photo-1692699203597-b5a4464f3f9c?q=80&w=1600')",
         "2hours": "url('https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600')",
         "mountain": "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600')",
         "ocean": "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600')",
         "forest": "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600')",
         "15mins": "url('https://images.unsplash.com/photo-1764150673466-da28d5d5ad5d?q=80&w=1600')",
         "12mins": "url('https://images.unsplash.com/photo-1576698961197-48ba14d8265c?q=80&w=1600')",
-        "10mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')"
+        "10mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')",
+        "5mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')"
     };
     body.style.backgroundImage = backgrounds[type];
 }
@@ -359,38 +356,18 @@ function restartTimer() {
     }
 }
 
-
 //relander
-    appTitle.addEventListener("click", () => {
-    // Go to base URL without hash
+appTitle.addEventListener("click", () => {
     window.location.href = window.location.origin + window.location.pathname;
 });
-
-let wakeLock = null;
-
-async function initWakeLock() {
-    if ('wakeLock' in navigator) {
-        try {
-            wakeLock = await navigator.wakeLock.request("screen");
-            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
-        } catch (err) {
-            console.log("Wake Lock request failed:", err);
-        }
-    }
-}
-
-// Call once on page load
-initWakeLock();
 </script>
-
-
 
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
         style="
           position: fixed;
-          top: 19px;               /* distance from top */
-          left: 17%;              /* center horizontally */
-          transform: translateX(-50%);  /* adjust exact center */
+          top: 19px;
+          left: 17%;
+          transform: translateX(-50%);
           width: 32px;
           height: 32px;
           padding: 0;
@@ -400,14 +377,13 @@ initWakeLock();
           z-index: 9999;">
   <img src="home.png" title="Home" alt="Home" width="32" height="32" style="display:block;">
 <style>
-/* Hover effect for all buttons that contain home.png */
 button img[src="home.png"] {
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 button img[src="home.png"]:hover {
-  transform: scale(1.2);       /* slightly bigger on hover */
-  filter: brightness(1.1);     /* brighten a little */
+  transform: scale(1.2);
+  filter: brightness(1.1);
 }
 </style>
 </button>
