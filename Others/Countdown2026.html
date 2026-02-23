@@ -19,18 +19,16 @@ body {
     min-height: 100vh;
     font-family: Arial, sans-serif;
 
-    /* layout */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
-    overflow:auto;
+    overflow: auto;
     overscroll-behavior-y: auto;
     transition: background 0.5s ease;
 
-    /* landing background */
     background:
         linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
         url('https://plus.unsplash.com/premium_photo-1669750819731-027917ff651a?q=80&w=1600');
@@ -38,21 +36,17 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: scroll;
-
-    /* mobile */
-    /* Better background behavior */
-
-    background-size: cover;
-    background-position: center;
-
-
-/* Mobile adjustment to reduce zoom feeling */
-@media (max-width: 600px) {
-    background-position: center top;
-    
-
 }
-    #app {
+
+/* Mobile adjustment */
+@media (max-width: 600px) {
+    body {
+        background-position: center top;
+    }
+}
+
+/* App width */
+#app {
     width: 320px;
     max-width: 90vw;
 }
