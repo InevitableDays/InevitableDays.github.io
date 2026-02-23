@@ -64,12 +64,41 @@ body {
 
 <!-- External Control Buttons -->
 <div style="margin-top:15px; display:flex; gap:10px;">
-    <button id="stopBtn" onclick="stopTimer()" style="padding:12px 30px; border:none; border-radius:8px; background:#555; color:white; font-size:16px; cursor:pointer;">
+    
+    <button id="stopBtn" onclick="stopTimer()" style="
+        padding:12px 30px;
+        border:none;
+        border-radius:8px;
+        background:#666;
+        color:white;
+        font-size:16px;
+        cursor:pointer;
+        box-shadow:0 4px 10px rgba(0,0,0,0.25);
+        outline:2px solid rgba(255,255,255,0.2);
+        transition:all 0.2s ease;
+    "
+    onmouseover="this.style.background='#777'"
+    onmouseout="this.style.background='#666'">
         Stop
     </button>
-    <button id="restartBtn" onclick="restartTimer()" style="padding:12px 30px; border:none; border-radius:8px; background:#000; color:white; font-size:16px; cursor:pointer;">
+
+    <button id="restartBtn" onclick="restartTimer()" style="
+        padding:12px 30px;
+        border:none;
+        border-radius:8px;
+        background:#222;
+        color:white;
+        font-size:16px;
+        cursor:pointer;
+        box-shadow:0 4px 10px rgba(0,0,0,0.3);
+        outline:2px solid rgba(255,255,255,0.15);
+        transition:all 0.2s ease;
+    "
+    onmouseover="this.style.background='#333'"
+    onmouseout="this.style.background='#222'">
         Restart
     </button>
+
 </div>
 
 <!-- Flash Screen -->
