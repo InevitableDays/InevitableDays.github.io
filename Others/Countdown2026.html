@@ -193,7 +193,7 @@ let currentBg = null;
 let currentLang = "en";
 
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-alarmAudio.loop = true;
+alarmAudio.loop = false;
 
 /* ---------- LANGUAGE SYSTEM ---------- */
 
@@ -282,6 +282,18 @@ function formatTime(seconds) {
     return hrs + ":" + mins + ":" + secs;
 }
 
+function enterFullscreen() {
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+    }
+}
+
+function exitFullscreen() {
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    }
+}
+
 function startFlash() {
     const flash = document.getElementById("flashScreen");
     flash.style.display = "flex";
@@ -303,6 +315,7 @@ function stopAlert() {
     stopFlash();
     alarmAudio.pause();
     alarmAudio.currentTime = 0;
+    exitFullscreen();
 }
 
 function startTimer(seconds, bgType) {
@@ -356,34 +369,25 @@ function restartTimer() {
     /* testing */
 
 // ----- Background Permissions + Non-Throttled Timer -----
+
 let wakeLock = null;
 
-// Request wake lock
-async function requestWakeLock() {
+async function initBackgroundPermissions() {
+    // Notifications
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        await Notification.requestPermission();
+    }
+
+    // Wake Lock
     if ('wakeLock' in navigator) {
         try {
             wakeLock = await navigator.wakeLock.request("screen");
-            console.log("Wake Lock acquired");
-            wakeLock.addEventListener('release', () => {
-                console.log("Wake Lock released");
-                // try to re-acquire automatically
-                requestWakeLock();
-            });
+            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
         } catch (err) {
             console.log("Wake Lock request failed:", err);
         }
     }
 }
-
-// Re-acquire wake lock on visibility change
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-        requestWakeLock();
-    }
-});
-
-// Initial wake lock request
-requestWakeLock();
 
 // Non-throttled countdown timer (works better in background)
 function startTimerNonThrottled(durationSec, bgType) {
@@ -410,34 +414,7 @@ function startTimerNonThrottled(durationSec, bgType) {
     }, 200); // update every 200ms
 }
 
-// Non-throttled countdown timer (works better in background)
-function startTimerNonThrottled(durationSec, bgType) {
-    stopTimer(); // stop any previous timer
-    originalDuration = durationSec;
-    currentBg = bgType;
-    setBackground(bgType);
-
-    const startTime = Date.now();
-    const endTime = startTime + durationSec * 1000;
-
-    interval = setInterval(() => {
-        const now = Date.now();
-        const remainingSec = Math.round((endTime - now) / 1000);
-
-        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
-
-        if (remainingSec <= 0) {
-            clearInterval(interval);
-            document.getElementById("display").textContent = langData[currentLang].done;
-
-            stopSilentAudio();    // stop silent audio before real alarm
-            alarmAudio.play();    // play the real alarm sound
-            startFlash();
-        }
-    }, 200); // update every 200ms
-}
-
-// ---------- Silent Audio Unlock ----------
+// create silent audio buffer
 let audioContext = null;
 let silentSource = null;
 
@@ -445,7 +422,7 @@ function startSilentAudio() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
-    if (!silentSource) {
+    if (!silentSource || silentSource.playbackState === silentSource.FINISHED_STATE) {
         const buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
         silentSource = audioContext.createBufferSource();
         silentSource.buffer = buffer;
@@ -453,8 +430,6 @@ function startSilentAudio() {
         silentSource.connect(audioContext.destination);
         silentSource.start();
         console.log("Silent audio started");
-    } else if (audioContext.state === "suspended") {
-        audioContext.resume();
     }
 }
 
@@ -467,10 +442,22 @@ function stopSilentAudio() {
     }
 }
 
-// Unlock audio when user clicks anywhere (including timer buttons)
+// Usage with your timer
 document.body.addEventListener("click", () => {
+    // unlock audio + start silent loop
+    if (audioContext && audioContext.state === "suspended") audioContext.resume();
     startSilentAudio();
 });
+
+// In your timer end:
+if (remainingSec <= 0) {
+    clearInterval(interval);
+    document.getElementById("display").textContent = langData[currentLang].done;
+
+    stopSilentAudio();    // stop the silent buffer
+    alarmAudio.play();    // play the real alarm sound
+    startFlash();
+}
     
 // Re-wire all buttons to use background-friendly timer
 const buttons = [
