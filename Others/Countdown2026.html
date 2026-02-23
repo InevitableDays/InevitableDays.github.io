@@ -410,7 +410,34 @@ function startTimerNonThrottled(durationSec, bgType) {
     }, 200); // update every 200ms
 }
 
-// create silent audio buffer
+// Non-throttled countdown timer (works better in background)
+function startTimerNonThrottled(durationSec, bgType) {
+    stopTimer(); // stop any previous timer
+    originalDuration = durationSec;
+    currentBg = bgType;
+    setBackground(bgType);
+
+    const startTime = Date.now();
+    const endTime = startTime + durationSec * 1000;
+
+    interval = setInterval(() => {
+        const now = Date.now();
+        const remainingSec = Math.round((endTime - now) / 1000);
+
+        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
+
+        if (remainingSec <= 0) {
+            clearInterval(interval);
+            document.getElementById("display").textContent = langData[currentLang].done;
+
+            stopSilentAudio();    // stop silent audio before real alarm
+            alarmAudio.play();    // play the real alarm sound
+            startFlash();
+        }
+    }, 200); // update every 200ms
+}
+
+// ---------- Silent Audio Unlock ----------
 let audioContext = null;
 let silentSource = null;
 
@@ -418,7 +445,7 @@ function startSilentAudio() {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
-    if (!silentSource || silentSource.playbackState === silentSource.FINISHED_STATE) {
+    if (!silentSource) {
         const buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
         silentSource = audioContext.createBufferSource();
         silentSource.buffer = buffer;
@@ -426,6 +453,8 @@ function startSilentAudio() {
         silentSource.connect(audioContext.destination);
         silentSource.start();
         console.log("Silent audio started");
+    } else if (audioContext.state === "suspended") {
+        audioContext.resume();
     }
 }
 
@@ -438,28 +467,11 @@ function stopSilentAudio() {
     }
 }
 
-// Only attach to your timer buttons
-const timerButtons = ["btn2h", "btn1h", "btn30", "btn20", "btn15", "btn12", "btn10", "btn5", "restartBtn"];
-timerButtons.forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) {
-        btn.addEventListener("click", () => {
-            if (audioContext && audioContext.state === "suspended") audioContext.resume();
-            startSilentAudio();
-        });
-    }
+// Unlock audio when user clicks anywhere (including timer buttons)
+document.body.addEventListener("click", () => {
+    startSilentAudio();
 });
-
-// In your timer end:
-if (remainingSec <= 0) {
-    clearInterval(interval);
-    document.getElementById("display").textContent = langData[currentLang].done;
-
-    stopSilentAudio();    // stop the silent buffer
-    alarmAudio.play();    // play the real alarm sound
-    startFlash();
-}
-
+    
 // Re-wire all buttons to use background-friendly timer
 const buttons = [
     {id: "btn2h", sec: 7200, bg: "2hours"},
