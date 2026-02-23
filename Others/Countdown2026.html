@@ -368,6 +368,75 @@ function restartTimer() {
 
 
     /* testing */
+    <script>
+// ----- Background Permissions + Non-Throttled Timer -----
+
+let wakeLock = null;
+
+async function initBackgroundPermissions() {
+    // Notifications
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        await Notification.requestPermission();
+    }
+
+    // Wake Lock
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
+        } catch (err) {
+            console.log("Wake Lock request failed:", err);
+        }
+    }
+}
+
+// Non-throttled countdown timer (works better in background)
+function startTimerNonThrottled(durationSec, bgType) {
+    stopTimer(); // stop any previous timer
+    originalDuration = durationSec;
+    currentBg = bgType;
+    setBackground(bgType);
+
+    const startTime = Date.now();
+    const endTime = startTime + durationSec * 1000;
+
+    interval = setInterval(() => {
+        const now = Date.now();
+        const remainingSec = Math.round((endTime - now) / 1000);
+
+        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
+
+        if (remainingSec <= 0) {
+            clearInterval(interval);
+            document.getElementById("display").textContent = langData[currentLang].done;
+            alarmAudio.play();
+            startFlash();
+        }
+    }, 200); // update every 200ms
+}
+
+// Re-wire all buttons to use background-friendly timer
+const buttons = [
+    {id: "btn3h", sec: 10800, bg: "3hours"},
+    {id: "btn2h", sec: 7200, bg: "2hours"},
+    {id: "btn1h", sec: 3600, bg: "mountain"},
+    {id: "btn30", sec: 1800, bg: "ocean"},
+    {id: "btn20", sec: 1200, bg: "forest"},
+    {id: "btn15", sec: 900, bg: "15mins"},
+    {id: "btn12", sec: 720, bg: "12mins"},
+    {id: "btn10", sec: 600, bg: "10mins"}
+];
+
+buttons.forEach(btn => {
+    const el = document.getElementById(btn.id);
+    if (el) {
+        el.removeAttribute("onclick"); // remove old handler
+        el.addEventListener("click", () => {
+            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
+        });
+    }
+});
+</script>
 </script>
 
 
