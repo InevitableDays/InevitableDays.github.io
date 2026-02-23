@@ -94,8 +94,6 @@ body {
 
 
     <h2 id="appTitle" style="margin-bottom:20px; cursor: pointer; color:#333;">Countdown Timer</h2>
-<div id="enableSoundContainer" style="margin-bottom:15px;"> <button id="enableSoundBtn" style=" padding:10px 20px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer; font-size:16px; "> Enable Alarm Sound 🔊 </button> </div>
-
     <div id="display" style="font-size:48px; font-weight:bold; margin-bottom:25px; color:#222;">
         00:00:00
     </div>
@@ -423,17 +421,11 @@ const buttons = [
 buttons.forEach(btn => {
     const el = document.getElementById(btn.id);
     if (el) {
-        el.removeAttribute("onclick"); // remove old handler
         el.addEventListener("click", () => {
             initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
         });
     }
 });
-
-const enableSoundBtn = document.getElementById("enableSoundBtn");
-enableSoundBtn.addEventListener("click", () => { alarmAudio.play().then(() => { alarmAudio.pause();
-alarmAudio.currentTime = 0; alert("Alarm sound enabled! Timer alarms will now play even if the screen is off."); 
-enableSoundBtn.style.display = "none"; }).catch(err => { console.log("User gesture required to enable audio:", err); }); });
 </script>
 
 
