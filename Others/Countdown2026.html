@@ -363,7 +363,7 @@ function restartTimer() {
 
 let wakeLock = null;
 
-    // Wake Lock
+async function initWakeLock() {
     if ('wakeLock' in navigator) {
         try {
             wakeLock = await navigator.wakeLock.request("screen");
@@ -373,6 +373,9 @@ let wakeLock = null;
         }
     }
 }
+
+// Call once on page load
+initWakeLock();
 
 // Non-throttled countdown timer (works better in background)
 function startTimerNonThrottled(durationSec, bgType) {
@@ -412,9 +415,9 @@ const buttons = [
 buttons.forEach(btn => {
     const el = document.getElementById(btn.id);
     if (el) {
-        el.addEventListener("click", () => {
-            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
-        });
+el.addEventListener("click", () => {
+    startTimerNonThrottled(btn.sec, btn.bg);
+});
     }
 </script>
 
