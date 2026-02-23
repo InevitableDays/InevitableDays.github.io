@@ -107,7 +107,18 @@ body {
         <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
         <button id="btn5" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">5 Mins</button>
     </div>
-
+<button id="enableAudioBtn" style="
+    padding:12px 20px;
+    margin-top:15px;
+    border:none;
+    border-radius:8px;
+    background:#28a745;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+">
+    Enable Background Alarm
+</button>
 
 <!-- External Control Buttons -->
 <div style="margin-top:15px; display:flex; gap:10px;">
@@ -425,6 +436,22 @@ buttons.forEach(btn => {
             initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
         });
     }
+});
+
+// still testing
+    const enableAudioBtn = document.getElementById("enableAudioBtn");
+
+enableAudioBtn.addEventListener("click", () => {
+    // Play a tiny silent sound to unlock audio context
+    alarmAudio.play().then(() => {
+        alarmAudio.pause();       // stop immediately
+        alarmAudio.currentTime = 0;
+        alert("Background alarm enabled! You can now close or switch tabs.");
+    }).catch(err => {
+        console.error("Audio unlock failed:", err);
+    });
+
+    enableAudioBtn.style.display = "none"; // hide after use
 });
 </script>
 
