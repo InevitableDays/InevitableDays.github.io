@@ -281,5 +281,31 @@ function restartTimer() {
 }
 </script>
 
+<button onclick="window.location.href='https://inevitabledays.github.io/'"
+        style="
+          position: fixed;
+          top: 19px;               /* distance from top */
+          left: 17%;              /* center horizontally */
+          transform: translateX(-50%);  /* adjust exact center */
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          z-index: 9999;">
+  <img src="home.png" title="Home" alt="Home" width="32" height="32" style="display:block;">
+<style>
+/* Hover effect for all buttons that contain home.png */
+button img[src="home.png"] {
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+button img[src="home.png"]:hover {
+  transform: scale(1.2);       /* slightly bigger on hover */
+  filter: brightness(1.1);     /* brighten a little */
+}
+</style>
+</button>
 </body>
 </html>
