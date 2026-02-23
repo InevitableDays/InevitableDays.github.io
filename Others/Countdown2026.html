@@ -9,7 +9,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#111111">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1692699203597-b5a4464f3f9c?q=80&w=1600">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600">
@@ -186,13 +185,13 @@ OK
 </div>
 
 <script>
-    
 let interval = null;
 let flashInterval = null;
 let remaining = 0;
 let originalDuration = 0;
 let currentBg = null;
 let currentLang = "en";
+let wakeLock = null;
 
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
 alarmAudio.loop = false;
@@ -301,11 +300,11 @@ function startFlash() {
     flash.style.display = "flex";
     let on = false;
 
-flashInterval = setInterval(function () {
-    on = !on;
-    flash.style.background = on ? "#a8f0c6" : "#1f4733"; // gentle mint / muted green
-    flash.style.color = on ? "#1f4733" : "#a8f0c6";       // inverse for contrast
-}, 300);
+    flashInterval = setInterval(function () {
+        on = !on;
+        flash.style.background = on ? "#a8f0c6" : "#1f4733";
+        flash.style.color = on ? "#1f4733" : "#a8f0c6";
+    }, 300);
 }
 
 function stopFlash() {
@@ -320,31 +319,68 @@ function stopAlert() {
     exitFullscreen();
 }
 
-function startTimer(seconds, bgType) {
-    clearInterval(interval);
-    stopAlert();
+/* ---------- WAKE LOCK ---------- */
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            wakeLock.addEventListener('release', () => {
+                console.log('Wake lock released, requesting again...');
+                requestWakeLock(); // re-acquire automatically
+            });
+        }
+    } catch (err) {
+        console.log('Wake lock failed:', err);
+    }
+}
 
-    originalDuration = seconds;
+async function initBackgroundPermissions() {
+    // Notifications
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        await Notification.requestPermission();
+    }
+    // Wake lock
+    await requestWakeLock();
+}
+
+/* ---------- ALERT SYSTEM ---------- */
+function alertUser() {
+    // Vibrate if supported
+    if ('vibrate' in navigator) navigator.vibrate([500, 200, 500]);
+    // Play audio
+    alarmAudio.play().catch(e => console.log('Audio failed:', e));
+    // Send notification if in background
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification("Timer Done!", {
+            body: "Your countdown finished!",
+            icon: "icon-192.png",
+            vibrate: [500, 200, 500]
+        });
+    }
+    // Flash screen
+    startFlash();
+}
+
+/* ---------- TIMER ---------- */
+function startTimerNonThrottled(durationSec, bgType) {
+    stopTimer(); // stop previous timer
+    originalDuration = durationSec;
     currentBg = bgType;
-    remaining = seconds;
-
     setBackground(bgType);
-    document.getElementById("display").textContent = formatTime(remaining);
+    requestWakeLock();
 
-    interval = setInterval(function () {
-        remaining--;
+    const endTime = Date.now() + durationSec * 1000;
 
-        if (remaining <= 0) {
+    interval = setInterval(() => {
+        const remainingSec = Math.round((endTime - Date.now()) / 1000);
+        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
+
+        if (remainingSec <= 0) {
             clearInterval(interval);
             document.getElementById("display").textContent = langData[currentLang].done;
-            enterFullscreen();
-            alarmAudio.play();
-            startFlash();
-            return;
+            alertUser();
         }
-
-        document.getElementById("display").textContent = formatTime(remaining);
-    }, 1000);
+    }, 200); // frequent updates reduce drift
 }
 
 function stopTimer() {
@@ -356,67 +392,11 @@ function stopTimer() {
 
 function restartTimer() {
     if (originalDuration > 0) {
-        startTimer(originalDuration, currentBg);
+        startTimerNonThrottled(originalDuration, currentBg);
     }
 }
 
-
-//relander
-    appTitle.addEventListener("click", () => {
-    // Go to base URL without hash
-    window.location.href = window.location.origin + window.location.pathname;
-});
-
-
-    /* testing */
-
-// ----- Background Permissions + Non-Throttled Timer -----
-
-let wakeLock = null;
-
-async function initBackgroundPermissions() {
-    // Notifications
-    if ('Notification' in window && Notification.permission !== 'granted') {
-        await Notification.requestPermission();
-    }
-
-    // Wake Lock
-    if ('wakeLock' in navigator) {
-        try {
-            wakeLock = await navigator.wakeLock.request("screen");
-            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
-        } catch (err) {
-            console.log("Wake Lock request failed:", err);
-        }
-    }
-}
-
-// Non-throttled countdown timer (works better in background)
-function startTimerNonThrottled(durationSec, bgType) {
-    stopTimer(); // stop any previous timer
-    originalDuration = durationSec;
-    currentBg = bgType;
-    setBackground(bgType);
-
-    const startTime = Date.now();
-    const endTime = startTime + durationSec * 1000;
-
-    interval = setInterval(() => {
-        const now = Date.now();
-        const remainingSec = Math.round((endTime - now) / 1000);
-
-        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
-
-        if (remainingSec <= 0) {
-            clearInterval(interval);
-            document.getElementById("display").textContent = langData[currentLang].done;
-            alarmAudio.play();
-            startFlash();
-        }
-    }, 200); // update every 200ms
-}
-
-// Re-wire all buttons to use background-friendly timer
+/* ---------- BUTTONS ---------- */
 const buttons = [
     {id: "btn3h", sec: 10800, bg: "3hours"},
     {id: "btn2h", sec: 7200, bg: "2hours"},
@@ -438,6 +418,11 @@ buttons.forEach(btn => {
             initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
         });
     }
+});
+
+/* ---------- APP RELOAD ---------- */
+document.getElementById("appTitle").addEventListener("click", () => {
+    window.location.href = window.location.origin + window.location.pathname;
 });
 </script>
 
