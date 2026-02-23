@@ -41,6 +41,7 @@ body {
     transition: background 0.5s ease;
 
     background:
+/*         linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), */
         url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1600");
 
     background-size: cover;
@@ -91,6 +92,7 @@ body {
         max-width: 90vw;
      ">
 
+
     <h2 id="appTitle" style="margin-bottom:20px; cursor: pointer; color:#333;">Countdown Timer</h2>
     
     <div id="display" style="font-size:48px; font-weight:bold; margin-bottom:25px; color:#222;">
@@ -108,6 +110,7 @@ body {
         <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
         <button id="btn5" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">5 Mins</button>
     </div>
+
 
 <!-- External Control Buttons -->
 <div style="margin-top:15px; display:flex; gap:10px;">
@@ -182,6 +185,7 @@ OK
 </div>
 
 <script>
+    
 let interval = null;
 let flashInterval = null;
 let remaining = 0;
@@ -190,7 +194,7 @@ let currentBg = null;
 let currentLang = "en";
 
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-alarmAudio.loop = true;
+alarmAudio.loop = false;
 
 /* ---------- LANGUAGE SYSTEM ---------- */
 
@@ -257,7 +261,6 @@ function applyLanguage() {
 applyLanguage();
 
 /* ---------- TIMER SYSTEM ---------- */
-
 function setBackground(type) {
     const body = document.getElementById("body");
     const backgrounds = {
@@ -356,18 +359,93 @@ function restartTimer() {
     }
 }
 
+
 //relander
-appTitle.addEventListener("click", () => {
+    appTitle.addEventListener("click", () => {
+    // Go to base URL without hash
     window.location.href = window.location.origin + window.location.pathname;
 });
+
+
+    /* testing */
+
+// ----- Background Permissions + Non-Throttled Timer -----
+
+let wakeLock = null;
+
+async function initBackgroundPermissions() {
+    // Notifications
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        await Notification.requestPermission();
+    }
+
+    // Wake Lock
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
+        } catch (err) {
+            console.log("Wake Lock request failed:", err);
+        }
+    }
+}
+
+// Non-throttled countdown timer (works better in background)
+function startTimerNonThrottled(durationSec, bgType) {
+    stopTimer(); // stop any previous timer
+    originalDuration = durationSec;
+    currentBg = bgType;
+    setBackground(bgType);
+
+    const startTime = Date.now();
+    const endTime = startTime + durationSec * 1000;
+
+    interval = setInterval(() => {
+        const now = Date.now();
+        const remainingSec = Math.round((endTime - now) / 1000);
+
+        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
+
+        if (remainingSec <= 0) {
+            clearInterval(interval);
+            document.getElementById("display").textContent = langData[currentLang].done;
+            alarmAudio.play();
+            startFlash();
+        }
+    }, 200); // update every 200ms
+}
+
+// Re-wire all buttons to use background-friendly timer
+const buttons = [
+    {id: "btn3h", sec: 10800, bg: "3hours"},
+    {id: "btn2h", sec: 7200, bg: "2hours"},
+    {id: "btn1h", sec: 3600, bg: "mountain"},
+    {id: "btn30", sec: 1800, bg: "ocean"},
+    {id: "btn20", sec: 1200, bg: "forest"},
+    {id: "btn15", sec: 900, bg: "15mins"},
+    {id: "btn12", sec: 720, bg: "12mins"},
+    {id: "btn10", sec: 300, bg: "10mins"}
+];
+
+buttons.forEach(btn => {
+    const el = document.getElementById(btn.id);
+    if (el) {
+        el.removeAttribute("onclick"); // remove old handler
+        el.addEventListener("click", () => {
+            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
+        });
+    }
+});
 </script>
+
+
 
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
         style="
           position: fixed;
-          top: 19px;
-          left: 17%;
-          transform: translateX(-50%);
+          top: 19px;               /* distance from top */
+          left: 17%;              /* center horizontally */
+          transform: translateX(-50%);  /* adjust exact center */
           width: 32px;
           height: 32px;
           padding: 0;
@@ -377,13 +455,14 @@ appTitle.addEventListener("click", () => {
           z-index: 9999;">
   <img src="home.png" title="Home" alt="Home" width="32" height="32" style="display:block;">
 <style>
+/* Hover effect for all buttons that contain home.png */
 button img[src="home.png"] {
   transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 button img[src="home.png"]:hover {
-  transform: scale(1.2);
-  filter: brightness(1.1);
+  transform: scale(1.2);       /* slightly bigger on hover */
+  filter: brightness(1.1);     /* brighten a little */
 }
 </style>
 </button>
