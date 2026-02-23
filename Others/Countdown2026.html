@@ -9,6 +9,15 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111111">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1692699203597-b5a4464f3f9c?q=80&w=1600">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1764150673466-da28d5d5ad5d?q=80&w=1600">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1576698961197-48ba14d8265c?q=80&w=1600">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600">
 <link rel="icon" href="icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
@@ -18,209 +27,376 @@ body {
     margin: 0;
     min-height: 100vh;
     font-family: Arial, sans-serif;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
     overscroll-behavior-y: auto;
+
     transition: background 0.5s ease;
-    background: url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1600");
+
+    background:
+/*         linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), */
+        url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1600");
+
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-attachment: fixed; /* smoother look on most devices */
 }
+
+/* Better mobile background fit */
 @media (max-width: 900px) {
-    body { background-attachment: scroll; }
+    body {
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll; /* prevents mobile lag */
+    }
 }
 
 /* App container (glass effect) */
 #app {
     width: 320px;
     max-width: 90vw;
-    background: rgba(255, 255, 255, 0.25);
+
+    background: rgba(255, 255, 255, 0.25); /* transparent, pick one later you have override now #app */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
+
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    text-align: center;
-}
 
-/* Flash Screen */
-#flashScreen {
-    position: fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    display:none;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    font-size:80px;
-    font-weight:bold;
-    color:#003d1f;
-    z-index:9999;
+    text-align: center;
 }
 </style>
 </head>
 
 <body id="body">
+ <!-- Main Timer Container -->
+<div id="app"
+     style="
+        background: rgba(255, 228, 200, 0.27);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.20);
+        text-align: center;
+        width: 320px;
+        max-width: 90vw;
+     ">
 
-<div id="app" style="background: rgba(255, 228, 200, 0.27); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); padding:20px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.20); text-align:center; width:320px; max-width:90vw;">
-    <h2 id="appTitle" style="margin-bottom:20px; cursor:pointer; color:#333;">Countdown Timer</h2>
-    <div id="display" style="font-size:48px; font-weight:bold; margin-bottom:25px; color:#222;">00:00:00</div>
+
+    <h2 id="appTitle" style="margin-bottom:20px; cursor: pointer; color:#333;">Countdown Timer</h2>
+    
+    <div id="display" style="font-size:48px; font-weight:bold; margin-bottom:25px; color:#222;">
+        00:00:00
+    </div>
+    </div>
+    <pre> </pre>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <button id="btn3h" onclick="startTimer(10800, '3hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">3 Hours</button>
+        <button id="btn2h" onclick="startTimer(7200, '2hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">2 Hours</button>
+        <button id="btn1h" onclick="startTimer(3600, 'mountain')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">1 Hour</button>
+        <button id="btn30" onclick="startTimer(1800, 'ocean')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">30 Mins</button>
+        <button id="btn20" onclick="startTimer(1200, 'forest')" style="padding:10px; border:none; border-radius:8px; background:#FF9800; color:white; cursor:pointer;">20 Mins</button>
+        <button id="btn15" onclick="startTimer(900, '15mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">15 Mins</button>
+        <button id="btn12" onclick="startTimer(720, '12mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">12 Mins</button>
+        <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
+    </div>
+
+
+<!-- External Control Buttons -->
+<div style="margin-top:15px; display:flex; gap:10px;">
+    
+    <button id="stopBtn" onclick="stopTimer()" style="
+        padding:12px 30px;
+        border:none;
+        border-radius:8px;
+        background:#666;
+        color:white;
+        font-size:16px;
+        cursor:pointer;
+        box-shadow:0 4px 10px rgba(0,0,0,0.25);
+        outline:2px solid rgba(255,255,255,0.2);
+        transition:all 0.2s ease;
+    "
+    onmouseover="this.style.background='#777'"
+    onmouseout="this.style.background='#666'">
+        Stop
+    </button>
+
+    <button id="restartBtn" onclick="restartTimer()" style="
+        padding:12px 30px;
+        border:none;
+        border-radius:8px;
+        background:#222;
+        color:white;
+        font-size:16px;
+        cursor:pointer;
+        box-shadow:0 4px 10px rgba(0,0,0,0.3);
+        outline:2px solid rgba(255,255,255,0.15);
+        transition:all 0.2s ease;
+    "
+    onmouseover="this.style.background='#333'"
+    onmouseout="this.style.background='#222'">
+        Restart
+    </button>
+
 </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
-    <button id="btn3h" onclick="startTimer(10800,'3hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">3 Hours</button>
-    <button id="btn2h" onclick="startTimer(7200,'2hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">2 Hours</button>
-    <button id="btn1h" onclick="startTimer(3600,'mountain')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">1 Hour</button>
-    <button id="btn30" onclick="startTimer(1800,'ocean')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">30 Mins</button>
-    <button id="btn20" onclick="startTimer(1200,'forest')" style="padding:10px; border:none; border-radius:8px; background:#FF9800; color:white; cursor:pointer;">20 Mins</button>
-    <button id="btn15" onclick="startTimer(900,'15mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">15 Mins</button>
-    <button id="btn12" onclick="startTimer(720,'12mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">12 Mins</button>
-    <button id="btn10" onclick="startTimer(600,'10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
-</div>
-
-<div style="display:flex; gap:10px; margin-bottom:15px;">
-    <button id="stopBtn" onclick="stopTimer()" style="padding:12px 30px; border:none; border-radius:8px; background:#666; color:white; font-size:16px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.25);">Stop</button>
-    <button id="restartBtn" onclick="restartTimer()" style="padding:12px 30px; border:none; border-radius:8px; background:#222; color:white; font-size:16px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3);">Restart</button>
-</div>
-
-<div id="flashScreen" onclick="stopAlert()">
-    <div id="doneText">DONE</div>
-    <button id="okBtn" onclick="stopAlert(); event.stopPropagation();" style="margin-top:30px; padding:15px 40px; font-size:20px; border:none; border-radius:10px; background:#ffffff; color:#003d1f; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.2);">OK</button>
+<!-- Flash Screen -->
+<div id="flashScreen" onclick="stopAlert()" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#00ff66;
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+font-size:80px;
+font-weight:bold;
+color:#003d1f;
+z-index:9999;
+">
+<div id="doneText">DONE</div>
+<button id="okBtn" onclick="stopAlert(); event.stopPropagation();" style="
+margin-top:30px;
+padding:15px 40px;
+font-size:20px;
+border:none;
+border-radius:10px;
+background:#ffffff;
+color:#003d1f;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+">
+OK
+</button>
 </div>
 
 <script>
-/* ------------------ GLOBALS ------------------ */
 let interval = null;
 let flashInterval = null;
 let remaining = 0;
 let originalDuration = 0;
 let currentBg = null;
 let currentLang = "en";
-let wakeLock = null;
 
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
 alarmAudio.loop = true;
 
-/* ------------------ LANGUAGE ------------------ */
+/* ---------- LANGUAGE SYSTEM ---------- */
+
 const langData = {
-    en:{title:"Countdown Now", header:"Countdown Timer", done:"Done!", flashDone:"DONE", ok:"OK", stop:"Stop", restart:"Restart",
-        buttons:{btn3h:"3 Hours", btn2h:"2 Hours", btn1h:"1 Hour", btn30:"30 Mins", btn20:"20 Mins", btn15:"15 Mins", btn12:"12 Mins", btn10:"10 Mins"}},
-    tr:{title:"Kronometre", header:"Zamanlayıcı", done:"Bitti!", flashDone:"Süre Doldu!", ok:"Tamam", stop:"Durdur", restart:"Yeniden Başlat",
-        buttons:{btn3h:"3 Saat", btn2h:"2 Saat", btn1h:"1 Saat", btn30:"30 Dakika", btn20:"20 Dakika", btn15:"15 Dakika", btn12:"12 Dakika", btn10:"10 Dakika"}}
+    en: {
+        title: "Countdown Now",
+        header: "Countdown Timer",
+        done: "Done!",
+        flashDone: "DONE",
+        ok: "OK",
+        stop: "Stop",
+        restart: "Restart",
+        buttons: {
+            btn3h: "3 Hours",
+            btn2h: "2 Hours",
+            btn1h: "1 Hour",
+            btn30: "30 Mins",
+            btn20: "20 Mins",
+            btn15: "15 Mins",
+            btn12: "12 Mins",
+            btn10: "10 Mins"
+        }
+    },
+    tr: {
+        title: "Kronometre",
+        header: "Zamanlayıcı",
+        done: "Bitti!",
+        flashDone: "Süre Doldu!",
+        ok: "Tamam",
+        stop: "Durdur",
+        restart: "Yeniden Başlat",
+        buttons: {
+            btn3h: "3 Saat",
+            btn2h: "2 Saat",
+            btn1h: "1 Saat",
+            btn30: "30 Dakika",
+            btn20: "20 Dakika",
+            btn15: "15 Dakika",
+            btn12: "12 Dakika",
+            btn10: "10 Dakika"
+        }
+    }
 };
+
 function applyLanguage() {
     currentLang = navigator.language.startsWith("tr") ? "tr" : "en";
     const t = langData[currentLang];
+
     document.documentElement.lang = currentLang;
     document.title = t.title;
+
     document.getElementById("appTitle").textContent = t.header;
     document.getElementById("doneText").textContent = t.flashDone;
     document.getElementById("okBtn").textContent = t.ok;
     document.getElementById("stopBtn").textContent = t.stop;
     document.getElementById("restartBtn").textContent = t.restart;
-    for(let id in t.buttons){const el=document.getElementById(id); if(el) el.textContent=t.buttons[id];}
+
+    for (let id in t.buttons) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = t.buttons[id];
+    }
 }
+
 applyLanguage();
 
-/* ------------------ BACKGROUNDS ------------------ */
-function setBackground(type){
-    const body=document.getElementById("body");
-    const backgrounds={
-        "3hours":"url('https://images.unsplash.com/photo-1692699203597-b5a4464f3f9c?q=80&w=1600')",
-        "2hours":"url('https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600')",
-        "mountain":"url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600')",
-        "ocean":"url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600')",
-        "forest":"url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600')",
-        "15mins":"url('https://images.unsplash.com/photo-1764150673466-da28d5d5ad5d?q=80&w=1600')",
-        "12mins":"url('https://images.unsplash.com/photo-1576698961197-48ba14d8265c?q=80&w=1600')",
-        "10mins":"url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')"
+/* ---------- TIMER SYSTEM ---------- */
+
+function setBackground(type) {
+    const body = document.getElementById("body");
+    const backgrounds = {
+        "3hours": "url('https://images.unsplash.com/photo-1692699203597-b5a4464f3f9c?q=80&w=1600')",
+        "2hours": "url('https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600')",
+        "mountain": "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600')",
+        "ocean": "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600')",
+        "forest": "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600')",
+        "15mins": "url('https://images.unsplash.com/photo-1764150673466-da28d5d5ad5d?q=80&w=1600')",
+        "12mins": "url('https://images.unsplash.com/photo-1576698961197-48ba14d8265c?q=80&w=1600')",
+        "10mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')"
     };
-    body.style.backgroundImage=backgrounds[type]||backgrounds["3hours"];
+    body.style.backgroundImage = backgrounds[type];
 }
 
-/* ------------------ FORMAT TIME ------------------ */
-function formatTime(seconds){
-    const hrs=String(Math.floor(seconds/3600)).padStart(2,'0');
-    const mins=String(Math.floor((seconds%3600)/60)).padStart(2,'0');
-    const secs=String(seconds%60).padStart(2,'0');
-    return `${hrs}:${mins}:${secs}`;
+function formatTime(seconds) {
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+    const secs = String(seconds % 60).padStart(2, '0');
+    return hrs + ":" + mins + ":" + secs;
 }
 
-/* ------------------ WAKE LOCK ------------------ */
-async function requestWakeLock(){
-    if("wakeLock" in navigator){
-        try{wakeLock=await navigator.wakeLock.request("screen"); wakeLock.addEventListener('release',()=>console.log("Wake Lock released"));} 
-        catch(err){console.log("Wake Lock failed:",err);}
-    }
-}
-function releaseWakeLock(){ if(wakeLock) wakeLock.release(); wakeLock=null; }
-
-/* ------------------ NOTIFICATIONS ------------------ */
-if("Notification" in window) Notification.requestPermission();
-function notifyUser(message="Timer Done!"){
-    if(Notification.permission==="granted"){
-        new Notification(message,{body:"Your countdown has finished!",icon:"icon-192.png",silent:false});
-        alarmAudio.play().catch(()=>console.log("Audio blocked in background"));
+function enterFullscreen() {
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
     }
 }
 
-/* ------------------ FLASH ------------------ */
-function startFlash(){
-    const flash=document.getElementById("flashScreen"); flash.style.display="flex";
-    let on=false;
-    flashInterval=setInterval(()=>{
-        on=!on;
-        flash.style.background=on?"#a8f0c6":"#1f4733";
-        flash.style.color=on?"#1f4733":"#a8f0c6";
-    },300);
-}
-function stopFlash(){ clearInterval(flashInterval); document.getElementById("flashScreen").style.display="none"; }
-
-/* ------------------ TIMER ------------------ */
-function startTimer(seconds,bgType){
-    stopTimer();
-    remaining=seconds; currentBg=bgType;
-    setBackground(bgType);
-    document.getElementById("display").textContent=formatTime(remaining);
-    requestWakeLock();
-    interval=setInterval(()=>{
-        remaining--;
-        document.getElementById("display").textContent=formatTime(remaining);
-        if(remaining<=0){
-            clearInterval(interval);
-            document.getElementById("display").textContent=langData[currentLang].done;
-            releaseWakeLock();
-            notifyUser();
-            startFlash();
-        }
-    },1000);
+function exitFullscreen() {
+    if (document.fullscreenElement) {
+        document.exitFullscreen();
+    }
 }
 
-function stopTimer(){
-    clearInterval(interval);
+function startFlash() {
+    const flash = document.getElementById("flashScreen");
+    flash.style.display = "flex";
+    let on = false;
+
+flashInterval = setInterval(function () {
+    on = !on;
+    flash.style.background = on ? "#a8f0c6" : "#1f4733"; // gentle mint / muted green
+    flash.style.color = on ? "#1f4733" : "#a8f0c6";       // inverse for contrast
+}, 300);
+}
+
+function stopFlash() {
+    clearInterval(flashInterval);
+    document.getElementById("flashScreen").style.display = "none";
+}
+
+function stopAlert() {
     stopFlash();
-    releaseWakeLock();
     alarmAudio.pause();
-    alarmAudio.currentTime=0;
-    remaining=0;
-    document.getElementById("display").textContent="00:00:00";
+    alarmAudio.currentTime = 0;
+    exitFullscreen();
 }
 
-function restartTimer(){
-    if(originalDuration>0) startTimer(originalDuration,currentBg);
+function startTimer(seconds, bgType) {
+    clearInterval(interval);
+    stopAlert();
+
+    originalDuration = seconds;
+    currentBg = bgType;
+    remaining = seconds;
+
+    setBackground(bgType);
+    document.getElementById("display").textContent = formatTime(remaining);
+
+    interval = setInterval(function () {
+        remaining--;
+
+        if (remaining <= 0) {
+            clearInterval(interval);
+            document.getElementById("display").textContent = langData[currentLang].done;
+            enterFullscreen();
+            alarmAudio.play();
+            startFlash();
+            return;
+        }
+
+        document.getElementById("display").textContent = formatTime(remaining);
+    }, 1000);
 }
 
-/* ------------------ RENDERER ------------------ */
-document.getElementById("appTitle").addEventListener("click",()=>{ window.location.href=window.location.origin+window.location.pathname; });
+function stopTimer() {
+    clearInterval(interval);
+    stopAlert();
+    remaining = 0;
+    document.getElementById("display").textContent = "00:00:00";
+}
 
+function restartTimer() {
+    if (originalDuration > 0) {
+        startTimer(originalDuration, currentBg);
+    }
+}
+
+
+//relander
+    appTitle.addEventListener("click", () => {
+    // Go to base URL without hash
+    window.location.href = window.location.origin + window.location.pathname;
+});
+
+
+    /* testing */
 </script>
 
+
+
+<button onclick="window.location.href='https://inevitabledays.github.io/'"
+        style="
+          position: fixed;
+          top: 19px;               /* distance from top */
+          left: 17%;              /* center horizontally */
+          transform: translateX(-50%);  /* adjust exact center */
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          z-index: 9999;">
+  <img src="home.png" title="Home" alt="Home" width="32" height="32" style="display:block;">
+<style>
+/* Hover effect for all buttons that contain home.png */
+button img[src="home.png"] {
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+button img[src="home.png"]:hover {
+  transform: scale(1.2);       /* slightly bigger on hover */
+  filter: brightness(1.1);     /* brighten a little */
+}
+</style>
+</button>
 </body>
 </html>
