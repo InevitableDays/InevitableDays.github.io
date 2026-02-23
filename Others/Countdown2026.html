@@ -369,25 +369,34 @@ function restartTimer() {
     /* testing */
 
 // ----- Background Permissions + Non-Throttled Timer -----
-
 let wakeLock = null;
 
-async function initBackgroundPermissions() {
-    // Notifications
-    if ('Notification' in window && Notification.permission !== 'granted') {
-        await Notification.requestPermission();
-    }
-
-    // Wake Lock
+// Request wake lock
+async function requestWakeLock() {
     if ('wakeLock' in navigator) {
         try {
             wakeLock = await navigator.wakeLock.request("screen");
-            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
+            console.log("Wake Lock acquired");
+            wakeLock.addEventListener('release', () => {
+                console.log("Wake Lock released");
+                // try to re-acquire automatically
+                requestWakeLock();
+            });
         } catch (err) {
             console.log("Wake Lock request failed:", err);
         }
     }
 }
+
+// Re-acquire wake lock on visibility change
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        requestWakeLock();
+    }
+});
+
+// Initial wake lock request
+requestWakeLock();
 
 // Non-throttled countdown timer (works better in background)
 function startTimerNonThrottled(durationSec, bgType) {
@@ -412,6 +421,51 @@ function startTimerNonThrottled(durationSec, bgType) {
             startFlash();
         }
     }, 200); // update every 200ms
+}
+
+// create silent audio buffer
+let audioContext = null;
+let silentSource = null;
+
+function startSilentAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (!silentSource || silentSource.playbackState === silentSource.FINISHED_STATE) {
+        const buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
+        silentSource = audioContext.createBufferSource();
+        silentSource.buffer = buffer;
+        silentSource.loop = true;
+        silentSource.connect(audioContext.destination);
+        silentSource.start();
+        console.log("Silent audio started");
+    }
+}
+
+function stopSilentAudio() {
+    if (silentSource) {
+        silentSource.stop();
+        silentSource.disconnect();
+        silentSource = null;
+        console.log("Silent audio stopped");
+    }
+}
+
+// Usage with your timer
+document.body.addEventListener("click", () => {
+    // unlock audio + start silent loop
+    if (audioContext && audioContext.state === "suspended") audioContext.resume();
+    startSilentAudio();
+});
+
+// In your timer end:
+if (remainingSec <= 0) {
+    clearInterval(interval);
+    document.getElementById("display").textContent = langData[currentLang].done;
+
+    stopSilentAudio();    // stop the silent buffer
+    alarmAudio.play();    // play the real alarm sound
+    startFlash();
 }
 
 // Re-wire all buttons to use background-friendly timer
