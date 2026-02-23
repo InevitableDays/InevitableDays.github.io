@@ -81,7 +81,7 @@ body {
  <!-- Main Timer Container -->
 <div id="app"
      style="
-        background: rgba(255, 228, 200, 0.17);
+        background: rgba(255, 228, 200, 0.27);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
         padding: 20px;
@@ -99,6 +99,7 @@ body {
         00:00:00
     </div>
     </div>
+    <pre> </pre>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <button id="btn3h" onclick="startTimer(10800, '3hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">3 Hours</button>
         <button id="btn2h" onclick="startTimer(7200, '2hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">2 Hours</button>
@@ -299,11 +300,11 @@ function startFlash() {
     flash.style.display = "flex";
     let on = false;
 
-    flashInterval = setInterval(function () {
-        on = !on;
-        flash.style.background = on ? "#00ff66" : "#003d1f";
-        flash.style.color = on ? "#003d1f" : "#00ff66";
-    }, 300);
+flashInterval = setInterval(function () {
+    on = !on;
+    flash.style.background = on ? "#a8f0c6" : "#1f4733"; // gentle mint / muted green
+    flash.style.color = on ? "#1f4733" : "#a8f0c6";       // inverse for contrast
+}, 300);
 }
 
 function stopFlash() {
