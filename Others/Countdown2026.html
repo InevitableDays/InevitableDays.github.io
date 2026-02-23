@@ -94,20 +94,24 @@ body {
 
 
     <h2 id="appTitle" style="margin-bottom:20px; cursor: pointer; color:#333;">Countdown Timer</h2>
+    
     <div id="display" style="font-size:48px; font-weight:bold; margin-bottom:25px; color:#222;">
         00:00:00
     </div>
     </div>
     <pre> </pre>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <button id="btn3h" onclick="startTimer(10800, '3hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">3 Hours</button>
+        <button id="btn2h" onclick="startTimer(7200, '2hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">2 Hours</button>
+        <button id="btn1h" onclick="startTimer(3600, 'mountain')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">1 Hour</button>
         <button id="btn30" onclick="startTimer(1800, 'ocean')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">30 Mins</button>
         <button id="btn20" onclick="startTimer(1200, 'forest')" style="padding:10px; border:none; border-radius:8px; background:#FF9800; color:white; cursor:pointer;">20 Mins</button>
-        <button id="btn15" onclick="startTimer(900, '15mins')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">15 Mins</button>
-        <button id="btn12" onclick="startTimer(720, '12mins')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">12 Mins</button>
+        <button id="btn15" onclick="startTimer(900, '15mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">15 Mins</button>
+        <button id="btn12" onclick="startTimer(720, '12mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">12 Mins</button>
         <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
-        <button id="btn5" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">5 Mins</button>
     </div>
-    
+
+
 <!-- External Control Buttons -->
 <div style="margin-top:15px; display:flex; gap:10px;">
     
@@ -180,7 +184,7 @@ OK
 </button>
 </div>
 
-<script>    
+<script>
 let interval = null;
 let flashInterval = null;
 let remaining = 0;
@@ -203,12 +207,14 @@ const langData = {
         stop: "Stop",
         restart: "Restart",
         buttons: {
+            btn3h: "3 Hours",
+            btn2h: "2 Hours",
+            btn1h: "1 Hour",
             btn30: "30 Mins",
             btn20: "20 Mins",
             btn15: "15 Mins",
             btn12: "12 Mins",
-            btn10: "10 Mins",
-            btn5: "5 Mins"
+            btn10: "10 Mins"
         }
     },
     tr: {
@@ -220,12 +226,14 @@ const langData = {
         stop: "Durdur",
         restart: "Yeniden Başlat",
         buttons: {
+            btn3h: "3 Saat",
+            btn2h: "2 Saat",
+            btn1h: "1 Saat",
             btn30: "30 Dakika",
             btn20: "20 Dakika",
             btn15: "15 Dakika",
             btn12: "12 Dakika",
-            btn10: "10 Dakika",
-            btn5: "5 Dakika"
+            btn10: "10 Dakika"
         }
     }
 };
@@ -256,12 +264,14 @@ applyLanguage();
 function setBackground(type) {
     const body = document.getElementById("body");
     const backgrounds = {
+        "3hours": "url('https://images.unsplash.com/photo-1692699203597-b5a4464f3f9c?q=80&w=1600')",
+        "2hours": "url('https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600')",
+        "mountain": "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600')",
         "ocean": "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600')",
-        "forest": "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600')",
+        "forest": "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600')",
         "15mins": "url('https://images.unsplash.com/photo-1764150673466-da28d5d5ad5d?q=80&w=1600')",
         "12mins": "url('https://images.unsplash.com/photo-1576698961197-48ba14d8265c?q=80&w=1600')",
-        "10mins": "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600')",
-        "5mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')"
+        "10mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')"
     };
     body.style.backgroundImage = backgrounds[type];
 }
@@ -355,71 +365,9 @@ function restartTimer() {
     // Go to base URL without hash
     window.location.href = window.location.origin + window.location.pathname;
 });
-
-
-    /* testing */
-
-// ----- Background Permissions + Non-Throttled Timer -----
-
-let wakeLock = null;
-
-async function initWakeLock() {
-    if ('wakeLock' in navigator) {
-        try {
-            wakeLock = await navigator.wakeLock.request("screen");
-            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
-        } catch (err) {
-            console.log("Wake Lock request failed:", err);
-        }
-    }
-}
-
-// Call once on page load
-initWakeLock();
-
-// Non-throttled countdown timer (works better in background)
-function startTimerNonThrottled(durationSec, bgType) {
-    stopTimer(); // stop any previous timer
-    originalDuration = durationSec;
-    currentBg = bgType;
-    setBackground(bgType);
-
-    const startTime = Date.now();
-    const endTime = startTime + durationSec * 1000;
-
-    interval = setInterval(() => {
-        const now = Date.now();
-        const remainingSec = Math.round((endTime - now) / 1000);
-
-        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
-
-        if (remainingSec <= 0) {
-            clearInterval(interval);
-            document.getElementById("display").textContent = langData[currentLang].done;
-            alarmAudio.play();
-            startFlash();
-        }
-    }, 200); // update every 200ms
-}
-
-// Re-wire all buttons to use background-friendly timer
-const buttons = [
-    {id: "btn30", sec: 1800, bg: "ocean"},
-    {id: "btn20", sec: 1200, bg: "forest"},
-    {id: "btn15", sec: 900, bg: "15mins"},
-    {id: "btn12", sec: 720, bg: "12mins"},
-    {id: "btn10", sec: 600, bg: "10mins"},
-    {id: "btn5", sec: 300, bg: "5mins"}
-];
-
-buttons.forEach(btn => {
-    const el = document.getElementById(btn.id);
-    if (el) {
-el.addEventListener("click", () => {
-    startTimerNonThrottled(btn.sec, btn.bg);
-});
-    }
+    
 </script>
+
 
 
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
