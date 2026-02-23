@@ -9,7 +9,6 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#111111">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1692699203597-b5a4464f3f9c?q=80&w=1600">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600">
@@ -104,11 +103,11 @@ body {
         <button id="btn2h" onclick="startTimer(7200, '2hours')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">2 Hours</button>
         <button id="btn1h" onclick="startTimer(3600, 'mountain')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">1 Hour</button>
         <button id="btn30" onclick="startTimer(1800, 'ocean')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">30 Mins</button>
-        <button id="btn20" onclick="startTimer(1200, 'forest')" style="padding:10px; border:none; border-radius:8px; background:#FF9800; color:white; cursor:pointer;">20 Mins</button>
-        <button id="btn15" onclick="startTimer(900, '15mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">15 Mins</button>
-        <button id="btn12" onclick="startTimer(720, '12mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">12 Mins</button>
+        <button id="btn20" onclick="startTimer(1200, 'forest')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">20 Mins</button>
+        <button id="btn15" onclick="startTimer(900, '15mins')" style="padding:10px; border:none; border-radius:8px; background:#FF9800; color:white; cursor:pointer;">15 Mins</button>
+        <button id="btn12" onclick="startTimer(720, '12mins')" style="padding:10px; border:none; border-radius:8px; background:#FF9800; color:white; cursor:pointer;">12 Mins</button>
         <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
-        <button id="btn5" onclick="startTimer(60, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">5 Mins</button>
+        <button id="btn5" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">5 Mins</button>
     </div>
 
 
@@ -367,7 +366,53 @@ function restartTimer() {
 });
 
 
+    /* testing */
 
+// ----- Background Permissions + Non-Throttled Timer -----
+
+let wakeLock = null;
+
+async function initBackgroundPermissions() {
+    // Notifications
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        await Notification.requestPermission();
+    }
+
+    // Wake Lock
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
+        } catch (err) {
+            console.log("Wake Lock request failed:", err);
+        }
+    }
+}
+
+// Non-throttled countdown timer (works better in background)
+function startTimerNonThrottled(durationSec, bgType) {
+    stopTimer(); // stop any previous timer
+    originalDuration = durationSec;
+    currentBg = bgType;
+    setBackground(bgType);
+
+    const startTime = Date.now();
+    const endTime = startTime + durationSec * 1000;
+
+    interval = setInterval(() => {
+        const now = Date.now();
+        const remainingSec = Math.round((endTime - now) / 1000);
+
+        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
+
+        if (remainingSec <= 0) {
+            clearInterval(interval);
+            document.getElementById("display").textContent = langData[currentLang].done;
+            alarmAudio.play();
+            startFlash();
+        }
+    }, 200); // update every 200ms
+}
 
 // Re-wire all buttons to use background-friendly timer
 const buttons = [
@@ -378,7 +423,7 @@ const buttons = [
     {id: "btn15", sec: 900, bg: "15mins"},
     {id: "btn12", sec: 720, bg: "12mins"},
     {id: "btn10", sec: 600, bg: "10mins"},
-    {id: "btn5", sec: 60, bg: "1min"}
+    {id: "btn5", sec: 300, bg: "10mins"}
 ];
 
 buttons.forEach(btn => {
