@@ -73,7 +73,7 @@ width:320px;
 max-width:90vw;
 ">
     
-    <h2 id="appTitle" style="margin-bottom:20px; color:#333;">Countdown Timer</h2>
+    <h2 id="appTitle" style="margin-bottom:20px; cursor: pointer; color:#333;">Countdown Timer</h2>
     
     <div id="display" style="font-size:48px; font-weight:bold; margin-bottom:25px; color:#222;">
         00:00:00
@@ -337,7 +337,16 @@ function restartTimer() {
         startTimer(originalDuration, currentBg);
     }
 }
+
+
+//relander
+    appTitle.addEventListener("click", () => {
+    // Go to base URL without hash
+    window.location.href = window.location.origin + window.location.pathname;
+});
 </script>
+
+
 
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
         style="
