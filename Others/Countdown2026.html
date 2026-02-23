@@ -94,19 +94,8 @@ body {
 
 
     <h2 id="appTitle" style="margin-bottom:20px; cursor: pointer; color:#333;">Countdown Timer</h2>
-    <div id="enableSoundContainer" style="margin-bottom:15px;">
-    <button id="enableSoundBtn" style="
-        padding:10px 20px;
-        border:none;
-        border-radius:8px;
-        background:#4CAF50;
-        color:white;
-        cursor:pointer;
-        font-size:16px;
-    ">
-        Enable Alarm Sound 🔊
-    </button>
-</div>
+<div id="enableSoundContainer" style="margin-bottom:15px;"> <button id="enableSoundBtn" style=" padding:10px 20px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer; font-size:16px; "> Enable Alarm Sound 🔊 </button> </div>
+
     <div id="display" style="font-size:48px; font-weight:bold; margin-bottom:25px; color:#222;">
         00:00:00
     </div>
@@ -440,33 +429,9 @@ buttons.forEach(btn => {
         });
     }
 });
+
+    // enable alarm const enableSoundBtn = document.getElementById("enableSoundBtn"); enableSoundBtn.addEventListener("click", () => { alarmAudio.play().then(() => { alarmAudio.pause(); // don’t actually sound yet alarmAudio.currentTime = 0; alert("Alarm sound enabled! Timer alarms will now play even if the screen is off."); // hide the button now that it’s enabled enableSoundBtn.style.display = "none"; }).catch(err => { console.log("User gesture required to enable audio:", err); }); });
 </script>
-<script>
-const enableSoundBtn = document.getElementById("enableSoundBtn");
-const alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-
-// make it loop only when the timer actually fires
-alarmAudio.loop = false;
-
-enableSoundBtn.addEventListener("click", () => {
-    // This user gesture unlocks audio
-    alarmAudio.play().then(() => {
-        alarmAudio.pause();      // stop it immediately
-        alarmAudio.currentTime = 0; // reset
-        enableSoundBtn.style.display = "none"; // hide button
-        alert("Alarm sound enabled! Timer will now play sounds even if screen is off.");
-    }).catch(err => {
-        console.log("Audio unlock failed:", err);
-    });
-});
-
-// Example: play alarm later
-function triggerAlarm() {
-    alarmAudio.loop = false; // play once
-    alarmAudio.play().catch(err => console.log("Alarm play failed:", err));
-}
-</script>
-
 
 
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
