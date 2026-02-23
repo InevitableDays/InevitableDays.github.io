@@ -100,6 +100,20 @@ body {
     </div>
     </div>
     <pre> </pre>
+    <!-- Add this inside your #app container, above the timer buttons -->
+<div id="enableSoundContainer" style="margin-bottom:15px;">
+    <button id="enableSoundBtn" style="
+        padding:10px 20px;
+        border:none;
+        border-radius:8px;
+        background:#4CAF50;
+        color:white;
+        cursor:pointer;
+        font-size:16px;
+    ">
+        Enable Alarm Sound 🔊
+    </button>
+</div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <button id="btn30" onclick="startTimer(1800, 'ocean')" style="padding:10px; border:none; border-radius:8px; background:#2196F3; color:white; cursor:pointer;">30 Mins</button>
         <button id="btn20" onclick="startTimer(1200, 'forest')" style="padding:10px; border:none; border-radius:8px; background:#FF9800; color:white; cursor:pointer;">20 Mins</button>
@@ -427,6 +441,21 @@ buttons.forEach(btn => {
             initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
         });
     }
+});
+
+
+ // enable alarm 
+    const enableSoundBtn = document.getElementById("enableSoundBtn");
+enableSoundBtn.addEventListener("click", () => {
+    alarmAudio.play().then(() => {
+        alarmAudio.pause(); // don’t actually sound yet
+        alarmAudio.currentTime = 0;
+        alert("Alarm sound enabled! Timer alarms will now play even if the screen is off.");
+        // hide the button now that it’s enabled
+        enableSoundBtn.style.display = "none";
+    }).catch(err => {
+        console.log("User gesture required to enable audio:", err);
+    });
 });
 </script>
 
