@@ -32,23 +32,35 @@ body {
     background:
         linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
         url('https://plus.unsplash.com/premium_photo-1669750819731-027917ff651a?q=80&w=1600');
+    
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: scroll;
+    background-attachment: fixed; /* smoother look on most devices */
 }
 
-/* Mobile adjustment */
+/* Better mobile background fit */
 @media (max-width: 600px) {
     body {
-        background-position: center top;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll; /* prevents mobile lag */
     }
 }
 
-/* App width */
+/* App container */
 #app {
     width: 320px;
     max-width: 90vw;
+
+    background: rgba(255, 255, 255, 0.35); /* more transparent */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
 }
 </style>
 </head>
