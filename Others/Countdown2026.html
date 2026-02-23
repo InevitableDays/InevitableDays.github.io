@@ -365,7 +365,22 @@ function restartTimer() {
     // Go to base URL without hash
     window.location.href = window.location.origin + window.location.pathname;
 });
-    
+
+let wakeLock = null;
+
+async function initWakeLock() {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request("screen");
+            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
+        } catch (err) {
+            console.log("Wake Lock request failed:", err);
+        }
+    }
+}
+
+// Call once on page load
+initWakeLock();
 </script>
 
 
