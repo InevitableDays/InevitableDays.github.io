@@ -185,21 +185,6 @@ OK
 </div>
 
 <script>
-
-// preload audio
-
-let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-alarmAudio.loop = true;
-alarmAudio.preload = "auto"; // <- tells browser to preload
-
-// Optional: unlock audio on first tap for mobile autoplay restrictions
-function unlockAudio() {
-    alarmAudio.play().then(() => alarmAudio.pause());
-}
-document.body.addEventListener("click", unlockAudio, { once: true });
-
-// end   
-
     
 let interval = null;
 let flashInterval = null;
