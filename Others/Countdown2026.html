@@ -282,18 +282,6 @@ function formatTime(seconds) {
     return hrs + ":" + mins + ":" + secs;
 }
 
-function enterFullscreen() {
-    if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-    }
-}
-
-function exitFullscreen() {
-    if (document.fullscreenElement) {
-        document.exitFullscreen();
-    }
-}
-
 function startFlash() {
     const flash = document.getElementById("flashScreen");
     flash.style.display = "flex";
@@ -313,9 +301,9 @@ function stopFlash() {
 
 function stopAlert() {
     stopFlash();
+    stopSilentAudio();  
     alarmAudio.pause();
     alarmAudio.currentTime = 0;
-    exitFullscreen();
 }
 
 function startTimer(seconds, bgType) {
@@ -347,6 +335,7 @@ function startTimer(seconds, bgType) {
 
 function stopTimer() {
     clearInterval(interval);
+    stopSilentAudio();  
     stopAlert();
     remaining = 0;
     document.getElementById("display").textContent = "00:00:00";
@@ -451,11 +440,16 @@ function stopSilentAudio() {
     }
 }
 
-// Usage with your timer
-document.body.addEventListener("click", () => {
-    // unlock audio + start silent loop
-    if (audioContext && audioContext.state === "suspended") audioContext.resume();
-    startSilentAudio();
+// Only attach to your timer buttons
+const timerButtons = ["btn2h", "btn1h", "btn30", "btn20", "btn15", "btn12", "btn10", "btn5", "restartBtn"];
+timerButtons.forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+        btn.addEventListener("click", () => {
+            if (audioContext && audioContext.state === "suspended") audioContext.resume();
+            startSilentAudio();
+        });
+    }
 });
 
 // In your timer end:
