@@ -193,50 +193,14 @@ let currentBg = null;
 let currentLang = "en";
 let wakeLock = null;
 
+// Alarm audio
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
 alarmAudio.loop = false;
 
 /* ---------- LANGUAGE SYSTEM ---------- */
-
 const langData = {
-    en: {
-        title: "Countdown Now",
-        header: "Countdown Timer",
-        done: "Done!",
-        flashDone: "DONE",
-        ok: "OK",
-        stop: "Stop",
-        restart: "Restart",
-        buttons: {
-            btn2h: "2 Hours",
-            btn1h: "1 Hour",
-            btn30: "30 Mins",
-            btn20: "20 Mins",
-            btn15: "15 Mins",
-            btn12: "12 Mins",
-            btn10: "10 Mins",
-            btn5: "5 Mins"
-        }
-    },
-    tr: {
-        title: "Kronometre",
-        header: "Zamanlayıcı",
-        done: "Bitti!",
-        flashDone: "Süre Doldu!",
-        ok: "Tamam",
-        stop: "Durdur",
-        restart: "Yeniden Başlat",
-        buttons: {
-            btn2h: "2 Saat",
-            btn1h: "1 Saat",
-            btn30: "30 Dakika",
-            btn20: "20 Dakika",
-            btn15: "15 Dakika",
-            btn12: "12 Dakika",
-            btn10: "10 Dakika",
-            btn5: "5 Dakika"
-        }
-    }
+    en: { /* ... your language data ... */ },
+    tr: { /* ... your language data ... */ }
 };
 
 function applyLanguage() {
@@ -245,13 +209,11 @@ function applyLanguage() {
 
     document.documentElement.lang = currentLang;
     document.title = t.title;
-
     document.getElementById("appTitle").textContent = t.header;
     document.getElementById("doneText").textContent = t.flashDone;
     document.getElementById("okBtn").textContent = t.ok;
     document.getElementById("stopBtn").textContent = t.stop;
     document.getElementById("restartBtn").textContent = t.restart;
-
     for (let id in t.buttons) {
         const el = document.getElementById(id);
         if (el) el.textContent = t.buttons[id];
@@ -263,16 +225,7 @@ applyLanguage();
 /* ---------- TIMER SYSTEM ---------- */
 function setBackground(type) {
     const body = document.getElementById("body");
-    const backgrounds = {
-        "2hours": "url('https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600')",
-        "mountain": "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600')",
-        "ocean": "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600')",
-        "forest": "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600')",
-        "15mins": "url('https://images.unsplash.com/photo-1764150673466-da28d5d5ad5d?q=80&w=1600')",
-        "12mins": "url('https://images.unsplash.com/photo-1576698961197-48ba14d8265c?q=80&w=1600')",
-        "10mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')",
-        "5mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')"
-    };
+    const backgrounds = { /* ... your backgrounds ... */ };
     body.style.backgroundImage = backgrounds[type];
 }
 
@@ -299,8 +252,7 @@ function startFlash() {
     const flash = document.getElementById("flashScreen");
     flash.style.display = "flex";
     let on = false;
-
-    flashInterval = setInterval(function () {
+    flashInterval = setInterval(() => {
         on = !on;
         flash.style.background = on ? "#a8f0c6" : "#1f4733";
         flash.style.color = on ? "#1f4733" : "#a8f0c6";
@@ -326,7 +278,7 @@ async function requestWakeLock() {
             wakeLock = await navigator.wakeLock.request('screen');
             wakeLock.addEventListener('release', () => {
                 console.log('Wake lock released, requesting again...');
-                requestWakeLock(); // re-acquire automatically
+                requestWakeLock(); // auto re-acquire
             });
         }
     } catch (err) {
@@ -345,11 +297,13 @@ async function initBackgroundPermissions() {
 
 /* ---------- ALERT SYSTEM ---------- */
 function alertUser() {
-    // Vibrate if supported
+    // Vibrate even if screen is off
     if ('vibrate' in navigator) navigator.vibrate([500, 200, 500]);
-    // Play audio
-    alarmAudio.play().catch(e => console.log('Audio failed:', e));
-    // Send notification if in background
+
+    // Play audio (works only if screen on)
+    alarmAudio.play().catch(e => console.log('Audio blocked:', e));
+
+    // Notifications
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification("Timer Done!", {
             body: "Your countdown finished!",
@@ -357,13 +311,14 @@ function alertUser() {
             vibrate: [500, 200, 500]
         });
     }
-    // Flash screen
+
+    // Flash the screen
     startFlash();
 }
 
 /* ---------- TIMER ---------- */
 function startTimerNonThrottled(durationSec, bgType) {
-    stopTimer(); // stop previous timer
+    stopTimer(); 
     originalDuration = durationSec;
     currentBg = bgType;
     setBackground(bgType);
@@ -378,9 +333,9 @@ function startTimerNonThrottled(durationSec, bgType) {
         if (remainingSec <= 0) {
             clearInterval(interval);
             document.getElementById("display").textContent = langData[currentLang].done;
-            alertUser();
+            alertUser(); // <----- REPLACE previous alarmAudio.play() + startFlash()
         }
-    }, 200); // frequent updates reduce drift
+    }, 200);
 }
 
 function stopTimer() {
@@ -413,7 +368,7 @@ const buttons = [
 buttons.forEach(btn => {
     const el = document.getElementById(btn.id);
     if (el) {
-        el.removeAttribute("onclick"); // remove old handler
+        el.removeAttribute("onclick");
         el.addEventListener("click", () => {
             initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
         });
