@@ -9,6 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111111">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1692699203597-b5a4464f3f9c?q=80&w=1600">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600">
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600">
@@ -108,7 +109,6 @@ body {
         <button id="btn12" onclick="startTimer(720, '12mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">12 Mins</button>
         <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
         <button id="btn5" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">5 Mins</button>
-        <button id="btn1" onclick="startTimer(60, '1min')" style="padding:10px; border:none; border-radius:8px; background:#4CAF50; color:white; cursor:pointer;">1 Min</button>
     </div>
 
 
@@ -185,22 +185,58 @@ OK
 </div>
 
 <script>
+    
 let interval = null;
 let flashInterval = null;
 let remaining = 0;
 let originalDuration = 0;
 let currentBg = null;
 let currentLang = "en";
-let wakeLock = null;
 
-// Alarm audio
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
 alarmAudio.loop = false;
 
 /* ---------- LANGUAGE SYSTEM ---------- */
+
 const langData = {
-    en: { /* ... your language data ... */ },
-    tr: { /* ... your language data ... */ }
+    en: {
+        title: "Countdown Now",
+        header: "Countdown Timer",
+        done: "Done!",
+        flashDone: "DONE",
+        ok: "OK",
+        stop: "Stop",
+        restart: "Restart",
+        buttons: {
+            btn2h: "2 Hours",
+            btn1h: "1 Hour",
+            btn30: "30 Mins",
+            btn20: "20 Mins",
+            btn15: "15 Mins",
+            btn12: "12 Mins",
+            btn10: "10 Mins",
+            btn5: "5 Mins"
+        }
+    },
+    tr: {
+        title: "Kronometre",
+        header: "Zamanlayıcı",
+        done: "Bitti!",
+        flashDone: "Süre Doldu!",
+        ok: "Tamam",
+        stop: "Durdur",
+        restart: "Yeniden Başlat",
+        buttons: {
+            btn2h: "2 Saat",
+            btn1h: "1 Saat",
+            btn30: "30 Dakika",
+            btn20: "20 Dakika",
+            btn15: "15 Dakika",
+            btn12: "12 Dakika",
+            btn10: "10 Dakika",
+            btn5: "5 Dakika"
+        }
+    }
 };
 
 function applyLanguage() {
@@ -209,11 +245,13 @@ function applyLanguage() {
 
     document.documentElement.lang = currentLang;
     document.title = t.title;
+
     document.getElementById("appTitle").textContent = t.header;
     document.getElementById("doneText").textContent = t.flashDone;
     document.getElementById("okBtn").textContent = t.ok;
     document.getElementById("stopBtn").textContent = t.stop;
     document.getElementById("restartBtn").textContent = t.restart;
+
     for (let id in t.buttons) {
         const el = document.getElementById(id);
         if (el) el.textContent = t.buttons[id];
@@ -225,7 +263,16 @@ applyLanguage();
 /* ---------- TIMER SYSTEM ---------- */
 function setBackground(type) {
     const body = document.getElementById("body");
-    const backgrounds = { /* ... your backgrounds ... */ };
+    const backgrounds = {
+        "2hours": "url('https://images.unsplash.com/photo-1576164285450-6d26c5b1a2a6?q=80&w=1600')",
+        "mountain": "url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600')",
+        "ocean": "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600')",
+        "forest": "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600')",
+        "15mins": "url('https://images.unsplash.com/photo-1764150673466-da28d5d5ad5d?q=80&w=1600')",
+        "12mins": "url('https://images.unsplash.com/photo-1576698961197-48ba14d8265c?q=80&w=1600')",
+        "10mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')",
+        "5mins": "url('https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1600')"
+    };
     body.style.backgroundImage = backgrounds[type];
 }
 
@@ -252,11 +299,12 @@ function startFlash() {
     const flash = document.getElementById("flashScreen");
     flash.style.display = "flex";
     let on = false;
-    flashInterval = setInterval(() => {
-        on = !on;
-        flash.style.background = on ? "#a8f0c6" : "#1f4733";
-        flash.style.color = on ? "#1f4733" : "#a8f0c6";
-    }, 300);
+
+flashInterval = setInterval(function () {
+    on = !on;
+    flash.style.background = on ? "#a8f0c6" : "#1f4733"; // gentle mint / muted green
+    flash.style.color = on ? "#1f4733" : "#a8f0c6";       // inverse for contrast
+}, 300);
 }
 
 function stopFlash() {
@@ -270,6 +318,58 @@ function stopAlert() {
     alarmAudio.currentTime = 0;
     exitFullscreen();
 }
+
+function startTimer(seconds, bgType) {
+    clearInterval(interval);
+    stopAlert();
+
+    originalDuration = seconds;
+    currentBg = bgType;
+    remaining = seconds;
+
+    setBackground(bgType);
+    document.getElementById("display").textContent = formatTime(remaining);
+
+    interval = setInterval(function () {
+        remaining--;
+
+        if (remaining <= 0) {
+            clearInterval(interval);
+            document.getElementById("display").textContent = langData[currentLang].done;
+            enterFullscreen();
+            alarmAudio.play();
+            startFlash();
+            return;
+        }
+
+        document.getElementById("display").textContent = formatTime(remaining);
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(interval);
+    stopAlert();
+    remaining = 0;
+    document.getElementById("display").textContent = "00:00:00";
+}
+
+function restartTimer() {
+    if (originalDuration > 0) {
+        startTimer(originalDuration, currentBg);
+    }
+}
+
+
+//relander
+    appTitle.addEventListener("click", () => {
+    // Go to base URL without hash
+    window.location.href = window.location.origin + window.location.pathname;
+});
+
+
+    /* testing */
+
+// ----- Background Permissions + Non-Throttled Timer -----
 
 /* ---------- WAKE LOCK ---------- */
 async function requestWakeLock() {
@@ -351,33 +451,25 @@ function restartTimer() {
     }
 }
 
-/* ---------- BUTTONS ---------- */
+// Re-wire all buttons to use background-friendly timer
 const buttons = [
-    {id: "btn3h", sec: 10800, bg: "3hours"},
     {id: "btn2h", sec: 7200, bg: "2hours"},
     {id: "btn1h", sec: 3600, bg: "mountain"},
     {id: "btn30", sec: 1800, bg: "ocean"},
     {id: "btn20", sec: 1200, bg: "forest"},
     {id: "btn15", sec: 900, bg: "15mins"},
     {id: "btn12", sec: 720, bg: "12mins"},
-    {id: "btn10", sec: 600, bg: "10mins"},
-    {id: "btn5", sec: 300, bg: "5mins"},
-    {id: "btn1", sec: 60, bg: "1min"}
+    {id: "btn10", sec: 300, bg: "10mins"}
 ];
 
 buttons.forEach(btn => {
     const el = document.getElementById(btn.id);
     if (el) {
-        el.removeAttribute("onclick");
+        el.removeAttribute("onclick"); // remove old handler
         el.addEventListener("click", () => {
             initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
         });
     }
-});
-
-/* ---------- APP RELOAD ---------- */
-document.getElementById("appTitle").addEventListener("click", () => {
-    window.location.href = window.location.origin + window.location.pathname;
 });
 </script>
 
