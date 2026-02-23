@@ -120,6 +120,8 @@ body {
     Enable Background Alarm
 </button>
 
+
+    
 <!-- External Control Buttons -->
 <div style="margin-top:15px; display:flex; gap:10px;">
     
@@ -193,6 +195,25 @@ OK
 </div>
 
 <script>
+
+// Re-wire all buttons to use background-friendly timer
+const buttons = [
+    {id: "btn30", sec: 1800, bg: "ocean"},
+    {id: "btn20", sec: 1200, bg: "forest"},
+    {id: "btn15", sec: 900, bg: "15mins"},
+    {id: "btn12", sec: 720, bg: "12mins"},
+    {id: "btn10", sec: 600, bg: "10mins"},
+    {id: "btn5", sec: 300, bg: "5mins"}
+];
+
+buttons.forEach(btn => {
+    const el = document.getElementById(btn.id);
+    if (el) {
+        el.addEventListener("click", () => {
+            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
+        });
+    }
+});
     
 let interval = null;
 let flashInterval = null;
@@ -419,24 +440,7 @@ function startTimerNonThrottled(durationSec, bgType) {
     }, 200); // update every 200ms
 }
 
-// Re-wire all buttons to use background-friendly timer
-const buttons = [
-    {id: "btn30", sec: 1800, bg: "ocean"},
-    {id: "btn20", sec: 1200, bg: "forest"},
-    {id: "btn15", sec: 900, bg: "15mins"},
-    {id: "btn12", sec: 720, bg: "12mins"},
-    {id: "btn10", sec: 600, bg: "10mins"},
-    {id: "btn5", sec: 300, bg: "5mins"}
-];
 
-buttons.forEach(btn => {
-    const el = document.getElementById(btn.id);
-    if (el) {
-        el.addEventListener("click", () => {
-            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
-        });
-    }
-});
 
 // still testing
     const enableAudioBtn = document.getElementById("enableAudioBtn");
