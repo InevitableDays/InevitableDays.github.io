@@ -430,7 +430,10 @@ buttons.forEach(btn => {
     }
 });
 
-enable alarm const enableSoundBtn = document.getElementById("enableSoundBtn"); enableSoundBtn.addEventListener("click", () => { alarmAudio.play().then(() => { alarmAudio.pause(); // don’t actually sound yet alarmAudio.currentTime = 0; alert("Alarm sound enabled! Timer alarms will now play even if the screen is off."); // hide the button now that it’s enabled enableSoundBtn.style.display = "none"; }).catch(err => { console.log("User gesture required to enable audio:", err); }); });
+const enableSoundBtn = document.getElementById("enableSoundBtn");
+enableSoundBtn.addEventListener("click", () => { alarmAudio.play().then(() => { alarmAudio.pause();
+alarmAudio.currentTime = 0; alert("Alarm sound enabled! Timer alarms will now play even if the screen is off."); 
+enableSoundBtn.style.display = "none"; }).catch(err => { console.log("User gesture required to enable audio:", err); }); });
 </script>
 
 
