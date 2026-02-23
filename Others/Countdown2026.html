@@ -107,20 +107,6 @@ body {
         <button id="btn10" onclick="startTimer(600, '10mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">10 Mins</button>
         <button id="btn5" onclick="startTimer(300, '5mins')" style="padding:10px; border:none; border-radius:8px; background:#f44336; color:white; cursor:pointer;">5 Mins</button>
     </div>
-<button id="enableAudioBtn" style="
-    padding:12px 20px;
-    margin-top:15px;
-    border:none;
-    border-radius:8px;
-    background:#28a745;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-">
-    Enable Background Alarm
-</button>
-
-
     
 <!-- External Control Buttons -->
 <div style="margin-top:15px; display:flex; gap:10px;">
@@ -194,27 +180,7 @@ OK
 </button>
 </div>
 
-<script>
-
-// Re-wire all buttons to use background-friendly timer
-const buttons = [
-    {id: "btn30", sec: 1800, bg: "ocean"},
-    {id: "btn20", sec: 1200, bg: "forest"},
-    {id: "btn15", sec: 900, bg: "15mins"},
-    {id: "btn12", sec: 720, bg: "12mins"},
-    {id: "btn10", sec: 600, bg: "10mins"},
-    {id: "btn5", sec: 300, bg: "5mins"}
-];
-
-buttons.forEach(btn => {
-    const el = document.getElementById(btn.id);
-    if (el) {
-        el.addEventListener("click", () => {
-            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
-        });
-    }
-});
-    
+<script>    
 let interval = null;
 let flashInterval = null;
 let remaining = 0;
@@ -363,7 +329,6 @@ function startTimer(seconds, bgType) {
             enterFullscreen();
             alarmAudio.play();
             startFlash();
-            notifyAlarm(); // add this line
             return;
         }
 
@@ -397,12 +362,6 @@ function restartTimer() {
 // ----- Background Permissions + Non-Throttled Timer -----
 
 let wakeLock = null;
-
-async function initBackgroundPermissions() {
-    // Notifications
-    if ('Notification' in window && Notification.permission !== 'granted') {
-        await Notification.requestPermission();
-    }
 
     // Wake Lock
     if ('wakeLock' in navigator) {
@@ -440,22 +399,23 @@ function startTimerNonThrottled(durationSec, bgType) {
     }, 200); // update every 200ms
 }
 
+// Re-wire all buttons to use background-friendly timer
+const buttons = [
+    {id: "btn30", sec: 1800, bg: "ocean"},
+    {id: "btn20", sec: 1200, bg: "forest"},
+    {id: "btn15", sec: 900, bg: "15mins"},
+    {id: "btn12", sec: 720, bg: "12mins"},
+    {id: "btn10", sec: 600, bg: "10mins"},
+    {id: "btn5", sec: 300, bg: "5mins"}
+];
 
-
-// still testing
-    const enableAudioBtn = document.getElementById("enableAudioBtn");
-
-enableAudioBtn.addEventListener("click", () => {
-    // Play a tiny silent sound to unlock audio context
-    alarmAudio.play().then(() => {
-        alarmAudio.pause();       // stop immediately
-        alarmAudio.currentTime = 0;
-        alert("Background alarm enabled! You can now close or switch tabs.");
-    }).catch(err => {
-        console.error("Audio unlock failed:", err);
-    });
-
-    enableAudioBtn.style.display = "none"; // hide after use
+buttons.forEach(btn => {
+    const el = document.getElementById(btn.id);
+    if (el) {
+        el.addEventListener("click", () => {
+            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
+        });
+    }
 });
 </script>
 
