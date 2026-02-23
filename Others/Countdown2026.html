@@ -368,26 +368,34 @@ function restartTimer() {
 
     /* testing */
 
-// ----- Background Permissions + Non-Throttled Timer -----
-
+// ----- wake lock + Non-Throttled Timer -----
+// Request wake lock
 let wakeLock = null;
-
-async function initBackgroundPermissions() {
-    // Notifications
-    if ('Notification' in window && Notification.permission !== 'granted') {
-        await Notification.requestPermission();
-    }
-
-    // Wake Lock
+async function requestWakeLock() {
     if ('wakeLock' in navigator) {
         try {
             wakeLock = await navigator.wakeLock.request("screen");
-            wakeLock.addEventListener('release', () => console.log("Wake Lock released"));
+            console.log("Wake Lock acquired");
+            wakeLock.addEventListener('release', () => {
+                console.log("Wake Lock released");
+                // try to re-acquire automatically
+                requestWakeLock();
+            });
         } catch (err) {
             console.log("Wake Lock request failed:", err);
         }
     }
 }
+
+// Re-acquire wake lock on visibility change
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        requestWakeLock();
+    }
+});
+
+// Initial wake lock request
+requestWakeLock();
 
 // Non-throttled countdown timer (works better in background)
 function startTimerNonThrottled(durationSec, bgType) {
