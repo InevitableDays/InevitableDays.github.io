@@ -365,8 +365,8 @@ function restartTimer() {
     window.location.href = window.location.origin + window.location.pathname;
 });
     /* testing */
-
 // ----- wake lock + Non-Throttled Timer -----
+// Request wake lock
 let wakeLock = null;
 async function requestWakeLock() {
     if ('wakeLock' in navigator) {
@@ -375,6 +375,7 @@ async function requestWakeLock() {
             console.log("Wake Lock acquired");
             wakeLock.addEventListener('release', () => {
                 console.log("Wake Lock released");
+                // try to re-acquire automatically
                 requestWakeLock();
             });
         } catch (err) {
@@ -382,36 +383,20 @@ async function requestWakeLock() {
         }
     }
 }
+
+// Re-acquire wake lock on visibility change
 document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') requestWakeLock();
+    if (document.visibilityState === 'visible') {
+        requestWakeLock();
+    }
 });
+
+// Initial wake lock request
 requestWakeLock();
 
-// ----- Silent alarm keep-alive (real alarm at volume 0) -----
-let keepAliveAudio = null;
-
-function startSilentAudio() {
-    if (!keepAliveAudio) {
-        keepAliveAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-        keepAliveAudio.loop = true;
-        keepAliveAudio.volume = 0; // silent but keeps audio active
-        keepAliveAudio.play().catch(e => console.log("Silent audio blocked:", e));
-        console.log("Silent alarm loop started");
-    }
-}
-
-function stopSilentAudio() {
-    if (keepAliveAudio) {
-        keepAliveAudio.pause();
-        keepAliveAudio.currentTime = 0;
-        keepAliveAudio = null;
-        console.log("Silent alarm loop stopped");
-    }
-}
-
-// ----- Non-Throttled Countdown Timer -----
+// Non-throttled countdown timer (works better in background)
 function startTimerNonThrottled(durationSec, bgType) {
-    stopTimer();
+    stopTimer(); // stop any previous timer
     originalDuration = durationSec;
     currentBg = bgType;
     setBackground(bgType);
@@ -419,30 +404,68 @@ function startTimerNonThrottled(durationSec, bgType) {
     const startTime = Date.now();
     const endTime = startTime + durationSec * 1000;
 
-    // Start silent audio loop (volume 0) only once per click
-    startSilentAudio();
-
     interval = setInterval(() => {
         const now = Date.now();
         const remainingSec = Math.round((endTime - now) / 1000);
+
         document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
 
         if (remainingSec <= 0) {
             clearInterval(interval);
             document.getElementById("display").textContent = langData[currentLang].done;
-
-            // Stop silent loop and play real alarm at full volume
-            stopSilentAudio();
-            alarmAudio.currentTime = 0;
-            alarmAudio.volume = 1;
             alarmAudio.play();
-
             startFlash();
         }
     }, 200); // update every 200ms
 }
 
-// ----- Hook buttons -----
+// create silent audio buffer
+let audioContext = null;
+let silentSource = null;
+
+function startSilentAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (!silentSource || silentSource.playbackState === silentSource.FINISHED_STATE) {
+        const buffer = audioContext.createBuffer(1, audioContext.sampleRate, audioContext.sampleRate);
+        silentSource = audioContext.createBufferSource();
+        silentSource.buffer = buffer;
+        silentSource.loop = true;
+        silentSource.connect(audioContext.destination);
+        silentSource.start();
+        console.log("Silent audio started");
+    }
+}
+
+function stopSilentAudio() {
+    if (silentSource) {
+        silentSource.stop();
+        silentSource.disconnect();
+        silentSource = null;
+        console.log("Silent audio stopped");
+    }
+}
+
+// Usage with your timer
+document.body.addEventListener("click", () => {
+    // unlock audio + start silent loop
+    if (audioContext && audioContext.state === "suspended") audioContext.resume();
+    startSilentAudio();
+});
+
+// In your timer end:
+if (remainingSec <= 0) {
+    clearInterval(interval);
+    document.getElementById("display").textContent = langData[currentLang].done;
+
+    stopSilentAudio();    // stop the silent buffer
+    alarmAudio.play();    // play the real alarm sound
+    startFlash(); 
+}
+
+
+// Re-wire all buttons to use background-friendly timer
 const buttons = [
     {id: "btn2h", sec: 7200, bg: "2hours"},
     {id: "btn1h", sec: 3600, bg: "mountain"},
@@ -451,13 +474,13 @@ const buttons = [
     {id: "btn15", sec: 900, bg: "15mins"},
     {id: "btn12", sec: 720, bg: "12mins"},
     {id: "btn10", sec: 600, bg: "10mins"},
-    {id: "btn5", sec: 300, bg: "5mins"}
+    {id: "btn5", sec: 300, bg: "10mins"}
 ];
 
 buttons.forEach(btn => {
     const el = document.getElementById(btn.id);
     if (el) {
-        el.removeAttribute("onclick");
+        el.removeAttribute("onclick"); // remove old handler
         el.addEventListener("click", () => {
             initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
         });
