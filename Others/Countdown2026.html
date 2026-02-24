@@ -481,6 +481,25 @@ buttons.forEach(btn => {
         });
     }
 });
+
+
+// 1% beep every 5 minutes
+function playBeep() {
+    if (!audioContext) return;
+    let osc = audioContext.createOscillator();
+    let gain = audioContext.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 440; // A4
+    gain.gain.value = 0.01;    // 1% volume
+    osc.connect(gain).connect(audioContext.destination);
+    osc.start();
+    osc.stop(audioContext.currentTime + 0.2); // 200ms beep
+}
+
+let beepInterval = setInterval(() => {
+    if (audioContext && audioContext.state === 'suspended') audioContext.resume();
+    playBeep();
+}, 10 * 60 * 1000);
 </script>
 
 
