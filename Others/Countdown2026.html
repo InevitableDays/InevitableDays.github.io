@@ -282,18 +282,6 @@ function formatTime(seconds) {
     return hrs + ":" + mins + ":" + secs;
 }
 
-function enterFullscreen() {
-    if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-    }
-}
-
-function exitFullscreen() {
-    if (document.fullscreenElement) {
-        document.exitFullscreen();
-    }
-}
-
 function startFlash() {
     const flash = document.getElementById("flashScreen");
     flash.style.display = "flex";
@@ -364,7 +352,15 @@ function restartTimer() {
     // Go to base URL without hash
     window.location.href = window.location.origin + window.location.pathname;
 });
-
+// ----- Vibration -----
+function vibrateAlarm() {
+    if ("vibrate" in navigator) {
+        navigator.vibrate([500, 200, 500, 200, 800]);
+        console.log("Vibration triggered");
+    } else {
+        console.log("Vibration not supported");
+    }
+}
 
     /* testing */
 
@@ -465,6 +461,7 @@ if (remainingSec <= 0) {
     stopSilentAudio();    // stop the silent buffer
     alarmAudio.play();    // play the real alarm sound
     startFlash();
+    vibrateAlarm(); 
 }
     
 // Re-wire all buttons to use background-friendly timer
