@@ -419,7 +419,7 @@ function startTimerNonThrottled(durationSec, bgType) {
         }
     }, 200); // update every 200ms
 }
-/*   
+ 
 // create silent audio buffer
 let audioContext = null;
 let silentSource = null;
@@ -464,71 +464,7 @@ if (remainingSec <= 0) {
     alarmAudio.play();    // play the real alarm sound
     startFlash(); 
 }
- */
 
-// ----- Silent alarm keep-alive (real alarm at volume 0) -----
-let keepAliveAudio = null;
-
-function startSilentAudio() {
-    if (!keepAliveAudio) {
-        keepAliveAudio = new Audio(alarmAudio.src); // use your real alarm
-        keepAliveAudio.loop = true;
-        keepAliveAudio.volume = 0; // silent but keeps browser "awake"
-        keepAliveAudio.play().catch(e => console.log("Silent audio blocked:", e));
-        console.log("Silent alarm loop started");
-    }
-}
-
-function stopSilentAudio() {
-    if (keepAliveAudio) {
-        keepAliveAudio.pause();
-        keepAliveAudio.currentTime = 0;
-        keepAliveAudio = null;
-        console.log("Silent alarm loop stopped");
-    }
-}
-
-// Only start silent audio on timer button clicks
-const timerButtonIds = ["btn5","btn10","btn12","btn15","btn20","btn30","btn1h","btn2h"];
-timerButtonIds.forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) {
-        btn.addEventListener("click", () => {
-            startSilentAudio();
-        });
-    }
-});
-
-// ----- Non-throttled countdown timer (unchanged) -----
-function startTimerNonThrottled(durationSec, bgType) {
-    stopTimer(); // stop any previous timer
-    originalDuration = durationSec;
-    currentBg = bgType;
-    setBackground(bgType);
-
-    const startTime = Date.now();
-    const endTime = startTime + durationSec * 1000;
-
-    interval = setInterval(() => {
-        const now = Date.now();
-        const remainingSec = Math.round((endTime - now) / 1000);
-
-        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
-
-        if (remainingSec <= 0) {
-            clearInterval(interval);
-            document.getElementById("display").textContent = langData[currentLang].done;
-
-            // Stop the 0-volume loop and play alarm at full volume
-            stopSilentAudio();
-            alarmAudio.currentTime = 0;
-            alarmAudio.volume = 1;
-            alarmAudio.play();
-
-            startFlash();
-        }
-    }, 200);
-}
 // Re-wire all buttons to use background-friendly timer
 const buttons = [
     {id: "btn2h", sec: 7200, bg: "2hours"},
