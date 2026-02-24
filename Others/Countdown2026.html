@@ -194,7 +194,7 @@ let currentBg = null;
 let currentLang = "en";
 
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-alarmAudio.loop = false;
+alarmAudio.loop = true;
 
 /* ---------- LANGUAGE SYSTEM ---------- */
 
@@ -359,15 +359,6 @@ function restartTimer() {
     }
 }
 
-// ----- Vibration -----
-function vibrateAlarm() {
-    if ("vibrate" in navigator) {
-        navigator.vibrate([500, 200, 500, 200, 800]);
-        console.log("Vibration triggered");
-    } else {
-        console.log("Vibration not supported");
-    }
-}
 //relander
     appTitle.addEventListener("click", () => {
     // Go to base URL without hash
@@ -471,8 +462,7 @@ if (remainingSec <= 0) {
 
     stopSilentAudio();    // stop the silent buffer
     alarmAudio.play();    // play the real alarm sound
-    startFlash();
-    vibrateAlarm();  
+    startFlash(); 
 }
     
 // Re-wire all buttons to use background-friendly timer
