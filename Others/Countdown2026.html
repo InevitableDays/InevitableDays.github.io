@@ -419,46 +419,7 @@ function startTimerNonThrottled(durationSec, bgType) {
         }
     }, 200); // update every 200ms
 }
-/*
-// ----- Silent alarm keep-alive (real audio, volume = 0) -----
-let keepAliveAudio = null;
-
-function startSilentAudio() {
-    if (!keepAliveAudio) {
-        keepAliveAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-        keepAliveAudio.loop = true;
-        keepAliveAudio.volume = 0; // silent but active
-        keepAliveAudio.play().catch(e => console.log("Silent audio blocked:", e));
-        console.log("Silent alarm loop started");
-    }
-}
-
-function stopSilentAudio() {
-    if (keepAliveAudio) {
-        keepAliveAudio.pause();
-        keepAliveAudio.currentTime = 0;
-        keepAliveAudio = null;
-        console.log("Silent alarm loop stopped");
-    }
-}
-
-// Start silent loop only after user interaction
-document.body.addEventListener("click", () => {
-    startSilentAudio();
-});
-
-if (remainingSec <= 0) {
-    clearInterval(interval);
-    document.getElementById("display").textContent = langData[currentLang].done;
-
-    stopSilentAudio();            // stop silent loop
-    alarmAudio.currentTime = 0;
-    alarmAudio.volume = 1;
-    alarmAudio.play();
-
-    startFlash();
-}    */
-    
+/*   
 // create silent audio buffer
 let audioContext = null;
 let silentSource = null;
@@ -503,7 +464,65 @@ if (remainingSec <= 0) {
     alarmAudio.play();    // play the real alarm sound
     startFlash(); 
 }
-    
+ */
+
+    // ----- Silent alarm keep-alive (real audio, volume = 0) -----
+let keepAliveAudio = null;
+
+function startSilentAudio() {
+    if (!keepAliveAudio) {
+        keepAliveAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
+        keepAliveAudio.loop = true;
+        keepAliveAudio.volume = 0; // silent but active
+        keepAliveAudio.play().catch(e => console.log("Silent audio blocked:", e));
+        console.log("Silent alarm loop started");
+    }
+}
+
+function stopSilentAudio() {
+    if (keepAliveAudio) {
+        keepAliveAudio.pause();
+        keepAliveAudio.currentTime = 0;
+        keepAliveAudio = null;
+        console.log("Silent alarm loop stopped");
+    }
+}
+
+// Start silent loop only after user interaction
+document.body.addEventListener("click", () => {
+    startSilentAudio();
+});
+
+// ---- Integrate into your existing timer safely ----
+function startTimerNonThrottled(durationSec, bgType) {
+    stopTimer(); // stop any previous timer
+    originalDuration = durationSec;
+    currentBg = bgType;
+    setBackground(bgType);
+
+    const startTime = Date.now();
+    const endTime = startTime + durationSec * 1000;
+
+    interval = setInterval(() => {
+        const now = Date.now();
+        const remainingSec = Math.round((endTime - now) / 1000);
+
+        document.getElementById("display").textContent = formatTime(Math.max(0, remainingSec));
+
+        if (remainingSec <= 0) {
+            clearInterval(interval);
+            document.getElementById("display").textContent = langData[currentLang].done;
+
+            // Stop the volume 0 loop and play real alarm
+            stopSilentAudio();
+            alarmAudio.currentTime = 0;
+            alarmAudio.volume = 1;
+            alarmAudio.play();
+
+            startFlash();
+        }
+    }, 200); // update every 200ms
+}
 // Re-wire all buttons to use background-friendly timer
 const buttons = [
     {id: "btn2h", sec: 7200, bg: "2hours"},
