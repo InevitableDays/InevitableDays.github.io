@@ -413,7 +413,7 @@ function startTimerNonThrottled(durationSec, bgType) {
         }
     }, 200); // update every 200ms
 }
-/*
+
 // create silent audio buffer
 let audioContext = null;
 let silentSource = null;
@@ -457,7 +457,7 @@ if (remainingSec <= 0) {
     stopSilentAudio();    // stop the silent buffer
     alarmAudio.play();    // play the real alarm sound
     startFlash(); 
-}   */
+}   
 
 // Re-wire all buttons to use background-friendly timer
 const buttons = [
