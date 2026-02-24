@@ -413,7 +413,7 @@ function startTimerNonThrottled(durationSec, bgType) {
         }
     }, 200); // update every 200ms
 }
-
+/*
 // create silent audio buffer
 let audioContext = null;
 let silentSource = null;
@@ -447,7 +447,6 @@ document.body.addEventListener("click", () => {
     // unlock audio + start silent loop
     if (audioContext && audioContext.state === "suspended") audioContext.resume();
     startSilentAudio();
-    startHeartbeatBeep();
 });
 
 // In your timer end:
@@ -458,23 +457,7 @@ if (remainingSec <= 0) {
     stopSilentAudio();    // stop the silent buffer
     alarmAudio.play();    // play the real alarm sound
     startFlash(); 
-}
-
-    // heartbeat test
-let heartbeatInterval = null;
-function startHeartbeatBeep() {
-    if (heartbeatInterval) return; // already running
-
-    const beepAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
-    beepAudio.volume = 0.5; // 50% volume
-
-    heartbeatInterval = setInterval(() => {
-        // small 1-second play
-        beepAudio.currentTime = 0;
-        beepAudio.play().catch(e => console.log("Heartbeat beep play failed:", e));
-        setTimeout(() => beepAudio.pause(), 1000);
-    }, 10 * 60 * 1000); // every 10 minutes
-}
+}   */
 
 // Re-wire all buttons to use background-friendly timer
 const buttons = [
@@ -498,8 +481,6 @@ buttons.forEach(btn => {
     }
 });
 </script>
-
-
 
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
         style="
