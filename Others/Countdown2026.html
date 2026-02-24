@@ -436,24 +436,6 @@ buttons.forEach(btn => {
     }
 });
 
-// 1% beep every 5 minutes
-function playBeep() {
-    if (!audioContext) return;
-    let osc = audioContext.createOscillator();
-    let gain = audioContext.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = 440; // A4
-    gain.gain.value = 0.01;    // 1% volume
-    osc.connect(gain).connect(audioContext.destination);
-    osc.start();
-    osc.stop(audioContext.currentTime + 0.2); // 200ms beep
-}
-
-let beepInterval = setInterval(() => {
-    playBeep();
-}, 10 * 60 * 1000);
-
-
 // create silent audio buffer
 let audioContext = null;
 let silentSource = null;
@@ -487,7 +469,6 @@ document.body.addEventListener("click", () => {
     // unlock audio + start silent loop
     if (audioContext && audioContext.state === "suspended") audioContext.resume();
     startSilentAudio();
-    playBeep()
 });
 
 // In your timer end:
