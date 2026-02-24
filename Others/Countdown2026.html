@@ -414,6 +414,46 @@ function startTimerNonThrottled(durationSec, bgType) {
     }, 200); // update every 200ms
 }
 
+// Re-wire all buttons to use background-friendly timer
+const buttons = [
+    {id: "btn2h", sec: 7200, bg: "2hours"},
+    {id: "btn1h", sec: 3600, bg: "mountain"},
+    {id: "btn30", sec: 1800, bg: "ocean"},
+    {id: "btn20", sec: 1200, bg: "forest"},
+    {id: "btn15", sec: 900, bg: "15mins"},
+    {id: "btn12", sec: 720, bg: "12mins"},
+    {id: "btn10", sec: 600, bg: "10mins"},
+    {id: "btn5", sec: 300, bg: "10mins"}
+];
+
+buttons.forEach(btn => {
+    const el = document.getElementById(btn.id);
+    if (el) {
+        el.removeAttribute("onclick"); // remove old handler
+        el.addEventListener("click", () => {
+            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
+        });
+    }
+});
+
+// 1% beep every 5 minutes
+function playBeep() {
+    if (!audioContext) return;
+    let osc = audioContext.createOscillator();
+    let gain = audioContext.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 440; // A4
+    gain.gain.value = 0.01;    // 1% volume
+    osc.connect(gain).connect(audioContext.destination);
+    osc.start();
+    osc.stop(audioContext.currentTime + 0.2); // 200ms beep
+}
+
+let beepInterval = setInterval(() => {
+    playBeep();
+}, 10 * 60 * 1000);
+
+
 // create silent audio buffer
 let audioContext = null;
 let silentSource = null;
@@ -447,6 +487,7 @@ document.body.addEventListener("click", () => {
     // unlock audio + start silent loop
     if (audioContext && audioContext.state === "suspended") audioContext.resume();
     startSilentAudio();
+    playBeep()
 });
 
 // In your timer end:
@@ -460,46 +501,10 @@ if (remainingSec <= 0) {
 }
 
 
-// Re-wire all buttons to use background-friendly timer
-const buttons = [
-    {id: "btn2h", sec: 7200, bg: "2hours"},
-    {id: "btn1h", sec: 3600, bg: "mountain"},
-    {id: "btn30", sec: 1800, bg: "ocean"},
-    {id: "btn20", sec: 1200, bg: "forest"},
-    {id: "btn15", sec: 900, bg: "15mins"},
-    {id: "btn12", sec: 720, bg: "12mins"},
-    {id: "btn10", sec: 600, bg: "10mins"},
-    {id: "btn5", sec: 300, bg: "10mins"}
-];
-
-buttons.forEach(btn => {
-    const el = document.getElementById(btn.id);
-    if (el) {
-        el.removeAttribute("onclick"); // remove old handler
-        el.addEventListener("click", () => {
-            initBackgroundPermissions().then(() => startTimerNonThrottled(btn.sec, btn.bg));
-        });
-    }
-});
 
 
-// 1% beep every 5 minutes
-function playBeep() {
-    if (!audioContext) return;
-    let osc = audioContext.createOscillator();
-    let gain = audioContext.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = 440; // A4
-    gain.gain.value = 0.01;    // 1% volume
-    osc.connect(gain).connect(audioContext.destination);
-    osc.start();
-    osc.stop(audioContext.currentTime + 0.2); // 200ms beep
-}
 
-let beepInterval = setInterval(() => {
-    if (audioContext && audioContext.state === 'suspended') audioContext.resume();
-    playBeep();
-}, 10 * 60 * 1000);
+
 </script>
 
 
