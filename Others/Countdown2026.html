@@ -216,6 +216,11 @@ const langData = {
             btn12: "12 Mins",
             btn10: "10 Mins",
             btn5: "5 Mins"
+        },
+                mobileReminder: {
+            title: "📌 Mobile Reminder",
+            message: "You can play music, watch videos, and probably even play games.\n or keep the screen on — don't let it stay off for more than 15 minutes.",
+            tapToHide: "Tap to hide."
         }
     },
     tr: {
@@ -235,6 +240,11 @@ const langData = {
             btn12: "12 Dakika",
             btn10: "10 Dakika",
             btn5: "5 Dakika"
+        },
+        mobileReminder: {
+            title: "📌 Mobil Hatırlatıcı",
+            message: "Müzik çalabilir, video izleyebilir ve muhtemelen oyun oynayabilirsiniz.\n Ya da ekranı açık tutun — 15 dakikadan uzun süre kapalı kalmasına izin vermeyin.\n Mobil cihazlarda 15den uzun ve uykuda cihazlarda çalışmayabilir",
+            tapToHide: "Gizlemek için dokunun."
         }
     }
 };
@@ -259,7 +269,7 @@ function applyLanguage() {
 }
 
 applyLanguage();
-
+showMobileReminder();
 /* ---------- TIMER SYSTEM ---------- */
 function setBackground(type) {
     const body = document.getElementById("body");
@@ -480,6 +490,37 @@ buttons.forEach(btn => {
         });
     }
 });
+
+
+function showMobileReminder() {
+    if (!/Mobi|Android/i.test(navigator.userAgent)) return; // only on mobile
+    if (document.getElementById("mobileReminder")) return;   // already shown
+
+    const reminder = langData[currentLang].mobileReminder;
+    const div = document.createElement("div");
+    div.id = "mobileReminder";
+    div.style = `
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #fff8c4;
+        color: #333;
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+        font-size: 14px;
+        line-height: 1.4;
+        z-index: 9999;
+        text-align: center;
+        cursor: pointer;
+        white-space: pre-wrap;
+        max-width: 90vw;
+    `;
+    div.innerText = `${reminder.title}\n${reminder.message}\n${reminder.tapToHide}`;
+    div.addEventListener("click", () => div.remove());
+    document.body.appendChild(div);
+}
 </script>
 
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
