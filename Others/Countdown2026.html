@@ -74,11 +74,25 @@ body {
 
     text-align: center;
 }
+    
     * {
-    user-select: none;
+    user-select: none;             /* text not selectable */
     -webkit-user-select: none;
     -ms-user-select: none;
     -webkit-touch-callout: none; /* removes long-press menu on iOS */
+}
+
+    /* Homebtn css override inline style during testing */
+button img[src="home.png"] {
+    transition: transform 0.2s ease !important;
+    filter: brightness(1) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25) !important; /* baseline shadow */
+}
+
+button img[src="home.png"]:hover {
+    transform: scale(1.2) rotate(-5deg) !important;   /* friendly pop & tilt */
+    filter: brightness(1.15) !important;              /* brighten slightly */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3) !important; /* lifted hover shadow */
 }
 </style>
 </head>
