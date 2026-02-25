@@ -205,6 +205,55 @@ alarmAudio.loop = true;
 /* ---------- LANGUAGE SYSTEM ---------- */
 
 const langData = {
+    de: {
+    title: "Countdown",
+    header: "Countdown-Timer",
+    done: "Fertig!",
+    flashDone: "FERTIG",
+    ok: "OK",
+    stop: "Stopp",
+    restart: "Neu starten",
+    buttons: {
+        btn2h: "2 Stunden",
+        btn1h: "1 Stunde",
+        btn30: "30 Min",
+        btn20: "20 Min",
+        btn15: "15 Min",
+        btn12: "12 Min",
+        btn10: "10 Min",
+        btn5: "5 Min"
+    },
+    mobileReminder: {
+        title: "📌 Mobile-Hinweis",
+        message: "Sie können Musik hören, Videos ansehen und wahrscheinlich sogar Spiele spielen.\nOder lassen Sie den Bildschirm eingeschaltet — lassen Sie ihn nicht länger als 15 Minuten ausgeschaltet, da mobile Geräte die App einfrieren könnten.",
+        tapToHide: "Zum Ausblenden tippen."
+    }
+},
+
+fr: {
+    title: "Compte à rebours",
+    header: "Minuteur",
+    done: "Terminé !",
+    flashDone: "TERMINÉ",
+    ok: "OK",
+    stop: "Arrêter",
+    restart: "Redémarrer",
+    buttons: {
+        btn2h: "2 heures",
+        btn1h: "1 heure",
+        btn30: "30 min",
+        btn20: "20 min",
+        btn15: "15 min",
+        btn12: "12 min",
+        btn10: "10 min",
+        btn5: "5 min"
+    },
+    mobileReminder: {
+        title: "📌 Rappel mobile",
+        message: "Vous pouvez écouter de la musique, regarder des vidéos et probablement même jouer à des jeux.\nOu gardez l’écran allumé — ne le laissez pas éteint plus de 15 minutes, car les appareils mobiles peuvent suspendre l’application.",
+        tapToHide: "Appuyez pour masquer."
+    }
+},
     en: {
         title: "Countdown Now",
         header: "Countdown Timer",
@@ -225,7 +274,7 @@ const langData = {
         },
                 mobileReminder: {
             title: "📌 Mobile Reminder",
-            message: "You can play music, watch videos, and probably even play games.\n or keep the screen on — don't let it stay off for more than 15 minutes.",
+            message: "You can play music, watch videos, and probably even play games.\n or keep the screen on — don't let your phone stay passive & off for more than 15 minutes for mobile devices may freeze the app.",
             tapToHide: "Tap to hide."
         }
     },
@@ -249,14 +298,17 @@ const langData = {
         },
         mobileReminder: {
             title: "📌 Mobil Hatırlatıcı",
-            message: "Müzik çalabilir, video izleyebilir ve muhtemelen oyun oynayabilirsiniz.\n Ya da ekranı açık tutun — 15 dakikadan uzun süre kapalı kalmasına izin vermeyin.\n Mobil cihazlarda 15den uzun ve uykuda cihazlarda çalışmayabilir",
+            message: "Müzik çalabilir, video izleyebilir ve muhtemelen oyun oynayabilirsiniz.\n Ya da ekranı açık tutun — 15 dakikadan uzun süre pasif ve kapalı kalmasına izin vermeyin.\n Çünkü mobil cihazlar uygulamayı durdurabilir.",
             tapToHide: "Gizlemek için dokunun."
         }
     }
 };
 
 function applyLanguage() {
-    currentLang = navigator.language.startsWith("tr") ? "tr" : "en";
+currentLang = navigator.language.startsWith("tr") ? "tr" 
+            : navigator.language.startsWith("de") ? "de" 
+            : navigator.language.startsWith("fr") ? "fr" 
+            : "en";
     const t = langData[currentLang];
 
     document.documentElement.lang = currentLang;
@@ -497,7 +549,7 @@ buttons.forEach(btn => {
     }
 });
 
-
+// reminder
 function showMobileReminder() {
     if (!/Mobi|Android/i.test(navigator.userAgent)) return; // only on mobile
     if (document.getElementById("mobileReminder")) return;   // already shown
