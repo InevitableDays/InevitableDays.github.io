@@ -655,7 +655,44 @@ function showMobileReminder() {
     document.body.appendChild(div);
 }
 </script>
+<script> // extra extra extra
+(function() {
+ 
+    const screenHintText = {
+        en: "🔆 This screen won’t go black while visible",
+        tr: "🔆 Bu ekran görünürken otomatik olarak kararmaz",
+        fr: "🔆 Cet écran ne s’éteindra pas tant qu’il est visible",
+        de: "🔆 Dieser Bildschirm wird sichtbar bleiben und nicht schwarz werden"
+    };
 
+    
+    const userLang = navigator.language.startsWith("tr") ? "tr" :
+                     navigator.language.startsWith("fr") ? "fr" :
+                     navigator.language.startsWith("de") ? "de" : "en";
+
+    // --- 3. Only  mobile ---
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+        const div = document.createElement("div");
+        div.id = "screenHint";
+        div.style = `
+            margin-top: 8px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            font-style: italic;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+        `;
+        div.textContent = screenHintText[userLang];
+
+        // Append right under timer container (assumes #app exists)
+        const app = document.getElementById("app");
+        if (app) app.appendChild(div);
+    }
+})();
+</script>
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
         style="
           position: fixed;
