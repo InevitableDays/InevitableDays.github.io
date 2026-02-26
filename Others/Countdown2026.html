@@ -106,10 +106,25 @@ button img[src="home.png"]:hover {
     perspective: 1000 !important;
     transition: background 0.3s ease !important;
 }
+
+/* desktop banner*/
+    .desktop-banner {
+    display: block;
+    margin: 0 auto 20px auto;  /* center + spacing below */
+    max-width: 100%;
+    height: auto;
+}
+@media (max-width: 768px) {
+    .desktop-banner {
+        display: none;
+    }
+}
+    
 </style>
 </head>
 
 <body id="body">
+    <img src="desktop1.png" class="desktop-banner" alt="">
  <!-- Main Timer Container -->
 <div id="app"
      style="
