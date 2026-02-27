@@ -126,7 +126,8 @@ img.profile {
     display: none;
   }  */
 @media (max-width: 900px) {
-  .quick-links {  
+  .quick-links { 
+right: 0px;
 width: 80px;
   }
   .quick-links h3 {
