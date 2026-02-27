@@ -128,19 +128,22 @@ img.profile {
 @media (max-width: 900px) {
 
   .quick-links {
+    position: fixed;
     bottom: 20px;
-    right: -150px;
+    right: -180px;           /* fully hidden */
     width: 200px;
     border-radius: 14px 0 0 14px;
+    transition: right 0.3s ease;
   }
 
+  /* visible tab */
   .quick-links::before {
     content: "☰";
     position: absolute;
-    left: -40px;
+    right: 100%;              /* stick exactly to edge */
     top: 50%;
     transform: translateY(-50%);
-    width: 40px;
+    width: 45px;
     height: 60px;
     background: #00bfff;
     color: black;
@@ -148,12 +151,15 @@ img.profile {
     align-items: center;
     justify-content: center;
     border-radius: 10px 0 0 10px;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    cursor: pointer;
   }
 
-  .quick-links:hover {
+  /* open when focused (mobile tap triggers focus) */
+  .quick-links:focus-within {
     right: 0;
   }
+
 }
 }
 /* cut off for bar & under testing */
