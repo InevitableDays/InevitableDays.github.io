@@ -126,25 +126,9 @@ img.profile {
     display: none;
   }  */
 @media (max-width: 900px) {
-
-  .quick-links {
-    position: fixed;
-    bottom: 20px;
-    right: 10px;
-    width: auto;
-    padding: 6px 10px;
-    border-radius: 20px;
-    display: flex;
-    gap: 8px;
-    font-size: 0.8rem;
+  .quick-links {  
+width: 80px;
   }
-
-  .quick-links a {
-    padding: 4px 8px;
-  }
-
-}
-
 /* cut off for bar & under testing */
  
 /* =============================
