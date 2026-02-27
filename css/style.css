@@ -127,16 +127,16 @@ img.profile {
   }  */
 @media (max-width: 900px) {
   .quick-links { 
-top: 10%;
+top: 20%;
 right: 0px;
 width: 50px;
   }
   .quick-links h3 {
-  font-size: 0.3rem;
+  font-size: 0.5rem;
   }
   
 .quick-links a {
-  font-size: 0.3rem;
+  font-size: 0.5rem;
 }
 }
 /* cut off for bar & under testing */
