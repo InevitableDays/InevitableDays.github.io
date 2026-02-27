@@ -128,15 +128,14 @@ img.profile {
 @media (max-width: 900px) {
   .quick-links { 
 right: 0px;
-width: 80px;
-background: rgba(0, 0, 0, 0.25);
+width: 60px;
   }
   .quick-links h3 {
-  font-size: 0.6rem;
+  font-size: 0.4rem;
   }
   
 .quick-links a {
-  font-size: 0.6rem;
+  font-size: 0.4rem;
 }
 }
 /* cut off for bar & under testing */
