@@ -133,7 +133,7 @@ img.profile {
     width: 220px;
 
     /* hide off screen */
-    transform: translate(100%, -50%);
+    transform: translate(100%, 0%);
     transition: transform 0.35s ease;
 
     border-radius: 14px 0 0 14px;
@@ -156,11 +156,6 @@ img.profile {
     color: #00bfff;
     font-size: 20px;
     cursor: pointer;
-  }
-
-  /* Slide out on hover (desktop) */
-  .quick-links:hover {
-    transform: translate(0, -50%);
   }
 
   /* Slide out on tap (mobile) */
