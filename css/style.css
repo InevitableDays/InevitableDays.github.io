@@ -130,34 +130,44 @@ img.profile {
   .quick-links {
     top: 50%;
     right: 0;
-    transform: translate(100%, -50%); /* hidden off screen */
-    width: 200px;
+    width: 220px;
+
+    /* hide off screen */
+    transform: translate(85%, -50%);
+    transition: transform 0.35s ease;
+
     border-radius: 14px 0 0 14px;
   }
 
-  /* Slide in when focused */
-  .quick-links:focus-within {
-    transform: translate(0, -50%);
-  }
-
-  /* Optional: small visible tab handle */
+  /* visible handle area */
   .quick-links::before {
     content: "≡";
     position: absolute;
-    left: -30px;
+    left: -38px;
     top: 50%;
     transform: translateY(-50%);
-    width: 30px;
-    height: 60px;
-    background: rgba(0,0,0,0.7);
-    border-radius: 8px 0 0 8px;
+    width: 38px;
+    height: 65px;
+    background: rgba(0,0,0,0.75);
+    border-radius: 10px 0 0 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #00bfff;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
   }
+
+  /* Slide out on hover (desktop) */
+  .quick-links:hover {
+    transform: translate(0, -50%);
+  }
+
+  /* Slide out on tap (mobile) */
+  .quick-links:active {
+    transform: translate(0, -50%);
+  }
+
 }
 /* cut off for bar & under testing */
  
