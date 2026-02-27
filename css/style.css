@@ -126,18 +126,38 @@ img.profile {
     display: none;
   }  */
 @media (max-width: 900px) {
-  .quick-links { 
-top: 20%;
-right: 0px;
-width: 50px;
+
+  .quick-links {
+    top: 50%;
+    right: 0;
+    transform: translate(100%, -50%); /* hidden off screen */
+    width: 200px;
+    border-radius: 14px 0 0 14px;
   }
-  .quick-links h3 {
-  font-size: 0.5rem;
+
+  /* Slide in when focused */
+  .quick-links:focus-within {
+    transform: translate(0, -50%);
   }
-  
-.quick-links a {
-  font-size: 0.5rem;
-}
+
+  /* Optional: small visible tab handle */
+  .quick-links::before {
+    content: "≡";
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 60px;
+    background: rgba(0,0,0,0.7);
+    border-radius: 8px 0 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00bfff;
+    font-size: 18px;
+    cursor: pointer;
+  }
 }
 /* cut off for bar & under testing */
  
