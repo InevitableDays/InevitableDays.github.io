@@ -129,7 +129,7 @@ img.profile {
 
   .quick-links {
     top: 50%;
-    right: -240;
+    right: 0;
     width: 220px;
 
     /* hide off screen */
@@ -143,7 +143,7 @@ img.profile {
   .quick-links::before {
     content: "≡";
     position: absolute;
-    left: -38px;
+    left: -88px;
     top: 50%;
     transform: translateY(-50%);
     width: 38px;
