@@ -130,17 +130,32 @@ img.profile {
   .quick-links {
     position: fixed;
     bottom: 20px;
-    right: -180px;           /* fully hidden */
+    right: -180px;
     width: 200px;
     border-radius: 14px 0 0 14px;
     transition: right 0.3s ease;
   }
 
-  /* visible tab */
+  /* Disable clicking links while collapsed */
+  .quick-links a {
+    pointer-events: none;
+  }
+
+  /* Slide open when focused */
+  .quick-links:focus-within {
+    right: 0;
+  }
+
+  /* Enable links only when open */
+  .quick-links:focus-within a {
+    pointer-events: auto;
+  }
+
+  /* The visible tab */
   .quick-links::before {
     content: "☰";
     position: absolute;
-    right: 100%;              /* stick exactly to edge */
+    right: 100%;
     top: 50%;
     transform: translateY(-50%);
     width: 45px;
@@ -153,11 +168,6 @@ img.profile {
     border-radius: 10px 0 0 10px;
     font-size: 1.4rem;
     cursor: pointer;
-  }
-
-  /* open when focused (mobile tap triggers focus) */
-  .quick-links:focus-within {
-    right: 0;
   }
 
 }
