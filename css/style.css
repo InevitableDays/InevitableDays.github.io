@@ -130,44 +130,17 @@ img.profile {
   .quick-links {
     position: fixed;
     bottom: 20px;
-    right: -180px;
-    width: 200px;
-    border-radius: 14px 0 0 14px;
-    transition: right 0.3s ease;
-  }
-
-  /* Disable clicking links while collapsed */
-  .quick-links a {
-    pointer-events: none;
-  }
-
-  /* Slide open when focused */
-  .quick-links:focus-within {
-    right: 0;
-  }
-
-  /* Enable links only when open */
-  .quick-links:focus-within a {
-    pointer-events: auto;
-  }
-
-  /* The visible tab */
-  .quick-links::before {
-    content: "☰";
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 45px;
-    height: 60px;
-    background: #00bfff;
-    color: black;
+    right: 10px;
+    width: auto;
+    padding: 6px 10px;
+    border-radius: 20px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px 0 0 10px;
-    font-size: 1.4rem;
-    cursor: pointer;
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+
+  .quick-links a {
+    padding: 4px 8px;
   }
 
 }
