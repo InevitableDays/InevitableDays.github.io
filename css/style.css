@@ -129,6 +129,14 @@ img.profile {
   .quick-links {  
 width: 80px;
   }
+  .quick-links h3 {
+  font-size: 0.6rem;
+  }
+  
+.quick-links a {
+  font-size: 0.6rem;
+}
+}
 /* cut off for bar & under testing */
  
 /* =============================
