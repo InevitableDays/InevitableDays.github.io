@@ -120,10 +120,44 @@ button img[src="home.png"]:hover {
     }
 }
     
+/*weather gadget*/
+    
+.weather-widget {
+  position: fixed;   /* stays in place even when scrolling */
+  top: 10px;         /* distance from top */
+  right: 10px;        /* distance from left */
+  z-index: 9999;     /* keeps it above other elements */
+}
+
+.weather-inner {
+  background: white;
+  padding: 10px 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: Arial, sans-serif;
+}
+
+.weather-icon {
+  font-size: 22px;
+}
+
+.temperature {
+  font-size: 18px;
+  font-weight: bold;
+}
 </style>
 </head>
 
 <body id="body">
+    <div class="weather-widget">
+  <div class="weather-inner">
+    <span id="icon" class="weather-icon">☀️</span>
+    <div id="temp" class="temperature">Loading...</div>
+  </div>
+</div>
     <img src="desktop1.png" class="desktop-banner" alt="">
  <!-- Main Timer Container -->
 <div id="app"
@@ -708,6 +742,61 @@ function showMobileReminder() {
         if (app) app.appendChild(div);
     }
 })();
+</script>
+    <script>
+// Fethiye coordinates
+const lat = 36.6219;
+const lon = 29.1164;
+
+function getWeather() {
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+    .then(response => response.json())
+    .then(data => {
+      const temp = Math.round(data.current_weather.temperature);
+      const code = data.current_weather.weathercode;
+
+      document.getElementById("temp").innerHTML = temp + "°C";
+
+      const icon = document.getElementById("icon");
+
+      // Simple weather code mapping
+      if (code === 0) icon.textContent = "☀️";
+      else if (code <= 3) icon.textContent = "⛅";
+      else if (code <= 48) icon.textContent = "☁️";
+      else if (code <= 67) icon.textContent = "🌧️";
+      else if (code <= 77) icon.textContent = "❄️";
+      else if (code <= 99) icon.textContent = "⛈️";
+      else icon.textContent = "☀️";
+
+      localStorage.setItem("weatherData", JSON.stringify({
+        date: new Date().toDateString(),
+        temp: temp,
+        code: code
+      }));
+    });
+}
+
+function loadWeather() {
+  const saved = JSON.parse(localStorage.getItem("weatherData"));
+
+  if (saved && saved.date === new Date().toDateString()) {
+    document.getElementById("temp").innerHTML = saved.temp + "°C";
+
+    const icon = document.getElementById("icon");
+
+    if (saved.code === 0) icon.textContent = "☀️";
+    else if (saved.code <= 3) icon.textContent = "⛅";
+    else if (saved.code <= 48) icon.textContent = "☁️";
+    else if (saved.code <= 67) icon.textContent = "🌧️";
+    else if (saved.code <= 77) icon.textContent = "❄️";
+    else if (saved.code <= 99) icon.textContent = "⛈️";
+    else icon.textContent = "☀️";
+  } else {
+    getWeather();
+  }
+}
+
+loadWeather();
 </script>
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
         style="
