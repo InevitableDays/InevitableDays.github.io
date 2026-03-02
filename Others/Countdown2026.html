@@ -169,7 +169,7 @@ button img[src="home.png"]:hover {
         border-radius: 12px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.20);
         text-align: center;
-        width: 320px;
+        width: 220px;
         max-width: 90vw;
      ">
 
@@ -784,13 +784,13 @@ function loadWeather() {
 
     const icon = document.getElementById("icon");
 
-    if (saved.code === 0) icon.textContent = "☀️";
-    else if (saved.code <= 3) icon.textContent = "⛅";
-    else if (saved.code <= 48) icon.textContent = "☁️";
-    else if (saved.code <= 67) icon.textContent = "🌧️";
-    else if (saved.code <= 77) icon.textContent = "❄️";
-    else if (saved.code <= 99) icon.textContent = "⛈️";
-    else icon.textContent = "☀️";
+    if (saved.code === 0) icon.textContent = "Fethiye ☀️";
+    else if (saved.code <= 3) icon.textContent = "Fethiye ⛅";
+    else if (saved.code <= 48) icon.textContent = "Fethiye ☁️";
+    else if (saved.code <= 67) icon.textContent = "Fethiye 🌧️";
+    else if (saved.code <= 77) icon.textContent = "Fethiye ❄️";
+    else if (saved.code <= 99) icon.textContent = "Fethiye ⛈️";
+    else icon.textContent = "Fethiye ☀️";
   } else {
     getWeather();
   }
