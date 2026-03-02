@@ -1,3 +1,3 @@
-A few of my personal project showcases
-against the future of dead internet.
+Some of my personal project showcases
+against the future of the dead internet.
 See you there.
