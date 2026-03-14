@@ -177,6 +177,42 @@ Light_Surf
 <br><br>
 <!-- <iframe src="https://www5.cbox.ws/box/?boxid=961916&boxtag=2Mjd0f" width="800px" height="450" allowtransparency="no" allow="no" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe> -->	
 </center>
+<div id="calendar-container" style="display:flex; justify-content:flex-end;">
+  <div id="js-calendar"></div>
+</div>
+
+<script>
+(function() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const dayToday = today.getDate();
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  let html = `<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;">
+                <tr><th colspan="7">${monthNames[month]} ${year}</th></tr>
+                <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr><tr>`;
+
+  for(let i=0;i<firstDay;i++) html += "<td></td>";
+
+  for(let d=1;d<=daysInMonth;d++){
+    if(d === dayToday){
+      html += `<td style="background-color:rgba(255,204,0,0.4); font-weight:bold;">${d}</td>`;
+    } else {
+      html += `<td>${d}</td>`;
+    }
+
+    if((d + firstDay) % 7 === 0) html += "</tr><tr>";
+  }
+
+  html += "</tr></table>";
+  document.getElementById("js-calendar").innerHTML = html;
+})();
+</script>
+</div>
 <script>
 var backgrounds = [
 "SS/bg/bg1.jpg",
