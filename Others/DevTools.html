@@ -173,7 +173,7 @@
     }
   </script>
 
-<script>
+  <script>
 function formatHTML() {
   try {
     let raw = input.value;
@@ -236,11 +236,6 @@ function formatHTML() {
     blocks.forEach((block, i) => {
       result = result.replace(`___BLOCK_${i}___`, block);
     });
-
-    /* ---------- FINAL CLEANUP (SCRIPT/SPACING FIX) ---------- */
-    result = result
-      .replace(/<\/script>\s*/gi, '</script>\n\n')
-      .replace(/<\/style>\s*/gi, '</style>\n\n');
 
     output.value = result;
 
