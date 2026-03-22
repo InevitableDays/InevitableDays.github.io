@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevTools Lite</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0 12px;
+      background: url('https://raw.githubusercontent.com/InevitableDays/InevitableDays.github.io/main/Others/SS/bg/bg1.jpg') no-repeat center/cover fixed;
+      color: #e2e8f0;
+    }
+    header {
+      padding: 20px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 1500px;
+      margin: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 460px;
+      background: rgba(2,6,23,0.7);
+      backdrop-filter: blur(6px);
+      color: #e2e8f0;
+      border: 1px solid #1e293b;
+      padding: 10px;
+      border-radius: 8px;
+      resize: none;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    button {
+      background: #1e293b;
+      color: #e2e8f0;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      box-shadow: 0 0 14px rgba(59,130,246,0.8);
+      background: #334155;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      textarea {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>DevTools Lite</header>
+
+  <div class="controls">
+    <button onclick="formatJSON()">Format JSON</button>
+    <button onclick="minifyJSON()">Minify JSON</button>
+    <button onclick="toBase64()">Encode Base64</button>
+    <button onclick="fromBase64()">Decode Base64</button>
+    <button onclick="textToBinary()">Text → Binary</button>
+    <button onclick="binaryToText()">Binary → Text</button>
+    <button onclick="clearAll()">Clear</button>
+    <button onclick="copyOutput()">Copy Result</button>
+  </div>
+
+  <div class="container">
+    <textarea id="input" placeholder="Input..."></textarea>
+    <textarea id="output" placeholder="Output..."></textarea>
+  </div>
+
+  <script>
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+
+    function formatJSON() {
+      try {
+        const obj = JSON.parse(input.value);
+        output.value = JSON.stringify(obj, null, 2);
+      } catch (e) {
+        output.value = 'Invalid JSON';
+      }
+    }
+
+    function minifyJSON() {
+      try {
+        const obj = JSON.parse(input.value);
+        output.value = JSON.stringify(obj);
+      } catch (e) {
+        output.value = 'Invalid JSON';
+      }
+    }
+
+    function toBase64() {
+      try {
+        output.value = btoa(input.value);
+      } catch {
+        output.value = 'Encoding error';
+      }
+    }
+
+    function fromBase64() {
+      try {
+        output.value = atob(input.value);
+      } catch {
+        output.value = 'Decoding error';
+      }
+    }
+
+    function textToBinary() {
+      try {
+        output.value = input.value
+          .split('')
+          .map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
+          .join(' ');
+      } catch {
+        output.value = 'Conversion error';
+      }
+    }
+
+    function binaryToText() {
+      try {
+        output.value = input.value
+          .split(' ')
+          .map(bin => String.fromCharCode(parseInt(bin, 2)))
+          .join('');
+      } catch {
+        output.value = 'Conversion error';
+      }
+    }
+
+    function clearAll() {
+      input.value = '';
+      output.value = '';
+    }
+
+    function copyOutput() {
+      try {
+        navigator.clipboard.writeText(output.value);
+      } catch {
+        alert('Copy failed');
+      }
+    }
+  </script>
+</body>
+</html>
