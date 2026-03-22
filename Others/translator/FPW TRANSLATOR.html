@@ -109,7 +109,7 @@ function swapLanguages() {
   tgt.value = temp;
 }
 
-// Voice input
+// Voice input (Chrome)
 function startListening() {
   if (!isVoiceSupported) return;
 
@@ -129,35 +129,30 @@ function startListening() {
   };
 }
 
-// Manual translate
+// Manual translate (Firefox)
 function translateTextFromInput() {
   const text = document.getElementById("inputText").value;
   if (!text) return alert("Enter text");
   translateText(text);
 }
 
-// MyMemory translation
+// Translation (Google endpoint)
 async function translateText(text) {
   const target = document.getElementById("targetLang").value;
 
   try {
     const res = await fetch(
-      `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${target}`
+      `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${target}&dt=t&q=${encodeURIComponent(text)}`
     );
 
     const data = await res.json();
 
-    if (!data.responseData || !data.responseData.translatedText) {
-      alert("Translation failed");
-      return;
-    }
-
-    translated = data.responseData.translatedText;
+    translated = data[0][0][0];
     document.getElementById("translatedText").innerText = translated;
 
   } catch (e) {
     console.error(e);
-    alert("Translation error");
+    alert("Translation failed");
   }
 }
 
