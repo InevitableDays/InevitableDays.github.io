@@ -174,27 +174,10 @@
   </script>
 
   <script>
-/* ---------- HTML TOOLS (FIXED) ---------- */
+/* ---------- HTML TOOLS (CLEAN) ---------- */
 function formatHTML() {
   try {
-    let raw = input.value;
-
-    /* ---------- EXTRACT ASSETS ---------- */
-    const cssFiles = [];
-    const jsFiles = [];
-
-    raw.replace(/<link[^>]+href=["']([^"']+)["'][^>]*>/gi, (m, href) => {
-      if (m.includes('rel="stylesheet"') || m.includes("rel='stylesheet'")) {
-        cssFiles.push(href.split('/').pop());
-      }
-    });
-
-    raw.replace(/<script[^>]+src=["']([^"']+)["'][^>]*>/gi, (m, src) => {
-      jsFiles.push(src.split('/').pop());
-    });
-
-    /* ---------- NORMALIZE ---------- */
-    let html = raw
+    let html = input.value
       .replace(/>\s*</g, '><')
       .replace(/\s*\n\s*/g, '')
       .trim();
@@ -233,6 +216,13 @@ function formatHTML() {
         }
       }
     });
+
+    output.value = formatted.trim();
+
+  } catch {
+    output.value = 'Formatting error';
+  }
+}
 //    working 
 function minifyHTML() {
   try {
