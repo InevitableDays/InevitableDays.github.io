@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voice Translator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.container {
+  max-width: 500px;
+  margin: auto;
+}
+
+select {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  width: 100%;
+  padding: 18px;
+  font-size: 18px;
+  margin: 10px 0;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.listen { background: #00c853; }
+.read { background: #2962ff; }
+.swap { background: #ff6d00; }
+
+#output {
+  margin-top: 20px;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.box {
+  background: #222;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 10px;
+  font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>🎤 Voice Translator</h2>
+
+  <select id="sourceLang">
+    <option value="en">English</option>
+    <option value="tr">Turkish</option>
+    <option value="fr">French</option>
+    <option value="de">German</option>
+    <option value="zh">Chinese</option>
+    <option value="ru">Russian</option>
+    <option value="ar">Arabic</option>
+  </select>
+
+  <button class="swap" onclick="swapLanguages()">🔄 Swap Languages</button>
+
+  <select id="targetLang">
+    <option value="tr">Turkish</option>
+    <option value="en">English</option>
+    <option value="fr">French</option>
+    <option value="de">German</option>
+    <option value="zh">Chinese</option>
+    <option value="ru">Russian</option>
+    <option value="ar">Arabic</option>
+  </select>
+
+  <button class="listen" onclick="startListening()">🎤 Speak</button>
+  <button class="read" onclick="speakText()">🔊 Read Translation</button>
+
+  <div id="output">
+    <div class="box"><b>Original:</b><br><span id="originalText"></span></div>
+    <div class="box"><b>Translated:</b><br><span id="translatedText"></span></div>
+  </div>
+</div>
+
+<script>
+let original = "";
+let translated = "";
+
+// Swap languages
+function swapLanguages() {
+  let src = document.getElementById("sourceLang");
+  let tgt = document.getElementById("targetLang");
+  let temp = src.value;
+  src.value = tgt.value;
+  tgt.value = temp;
+}
+
+// Speech Recognition
+function startListening() {
+  const lang = document.getElementById("sourceLang").value;
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = lang;
+  recognition.start();
+
+  recognition.onresult = function(event) {
+    original = event.results[0][0].transcript;
+    document.getElementById("originalText").innerText = original;
+    translateText(original);
+  };
+
+  recognition.onerror = function(event) {
+    alert("Speech error: " + event.error);
+  };
+}
+
+// Translation
+async function translateText(text) {
+  const target = document.getElementById("targetLang").value;
+
+  try {
+    const response = await fetch("https://libretranslate.de/translate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        q: text,
+        source: "auto",
+        target: target,
+        format: "text"
+      })
+    });
+
+    const data = await response.json();
+    translated = data.translatedText;
+    document.getElementById("translatedText").innerText = translated;
+
+  } catch (e) {
+    alert("Translation failed");
+  }
+}
+
+// Text-to-Speech
+function speakText() {
+  if (!translated) return;
+
+  const lang = document.getElementById("targetLang").value;
+
+  const utterance = new SpeechSynthesisUtterance(translated);
+  utterance.lang = lang;
+
+  speechSynthesis.speak(utterance);
+}
+</script>
+
+</body>
+</html>
