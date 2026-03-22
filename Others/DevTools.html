@@ -179,27 +179,43 @@
 function formatHTML() {
   try {
     let html = input.value
-      .replace(/>\s*</g, '><')
+      .replace(/>\s*</g, '><')   // normalize
+      .replace(/\s*\n\s*/g, '')  // remove weird newlines
       .trim();
 
     let formatted = '';
     let indent = 0;
 
-    const voidTags = ['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'];
+    const voidTags = new Set([
+      'area','base','br','col','embed','hr','img','input',
+      'link','meta','param','source','track','wbr'
+    ]);
 
-    html.split(/(?=<)/g).forEach(node => {
-      node = node.trim();
+    const tokens = html.split(/(<[^>]+>)/g).filter(Boolean);
 
-      if (node.match(/^<\/\w/)) indent--;
+    tokens.forEach(token => {
+      if (token.startsWith('</')) {
+        indent--;
+      }
 
-      formatted += '  '.repeat(indent) + node + '\n';
+      if (token.startsWith('<')) {
+        const tag = token.match(/^<\/?([a-zA-Z0-9-]+)/);
+        const tagName = tag ? tag[1].toLowerCase() : '';
 
-      const tagMatch = node.match(/^<(\w+)/);
-      const isOpening = /^<\w[^>]*[^\/]>$/.test(node);
-      const tagName = tagMatch ? tagMatch[1].toLowerCase() : '';
+        formatted += '  '.repeat(Math.max(indent, 0)) + token + '\n';
 
-      if (isOpening && !voidTags.includes(tagName)) {
-        indent++;
+        if (
+          token.match(/^<[^\/!][^>]*>$/) &&
+          !token.endsWith('/>') &&
+          !voidTags.has(tagName)
+        ) {
+          indent++;
+        }
+      } else {
+        const text = token.trim();
+        if (text) {
+          formatted += '  '.repeat(indent) + text + '\n';
+        }
       }
     });
 
