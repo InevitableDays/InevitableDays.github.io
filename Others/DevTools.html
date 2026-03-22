@@ -175,12 +175,28 @@
 <!-- ugh -->
   <script>
 /* ---------- HTML TOOLS (FIXED) ---------- */
-
 function formatHTML() {
   try {
-    let html = input.value
-      .replace(/>\s*</g, '><')   // normalize
-      .replace(/\s*\n\s*/g, '')  // remove weird newlines
+    let raw = input.value;
+
+    /* ---------- EXTRACT ASSETS ---------- */
+    const cssFiles = [];
+    const jsFiles = [];
+
+    raw.replace(/<link[^>]+href=["']([^"']+)["'][^>]*>/gi, (m, href) => {
+      if (m.includes('rel="stylesheet"') || m.includes("rel='stylesheet'")) {
+        cssFiles.push(href.split('/').pop());
+      }
+    });
+
+    raw.replace(/<script[^>]+src=["']([^"']+)["'][^>]*>/gi, (m, src) => {
+      jsFiles.push(src.split('/').pop());
+    });
+
+    /* ---------- NORMALIZE ---------- */
+    let html = raw
+      .replace(/>\s*</g, '><')
+      .replace(/\s*\n\s*/g, '')
       .trim();
 
     let formatted = '';
@@ -191,12 +207,10 @@ function formatHTML() {
       'link','meta','param','source','track','wbr'
     ]);
 
-    const tokens = html.split(/(<[^>]+>)/g).filter(Boolean);
+    const tokens = html.match(/<\/?[^>]+>|[^<]+/g) || [];
 
     tokens.forEach(token => {
-      if (token.startsWith('</')) {
-        indent--;
-      }
+      if (token.startsWith('</')) indent--;
 
       if (token.startsWith('<')) {
         const tag = token.match(/^<\/?([a-zA-Z0-9-]+)/);
@@ -211,6 +225,7 @@ function formatHTML() {
         ) {
           indent++;
         }
+
       } else {
         const text = token.trim();
         if (text) {
@@ -219,12 +234,28 @@ function formatHTML() {
       }
     });
 
-    output.value = formatted.trim();
+    /* ---------- PREPEND ASSET SUMMARY ---------- */
+    let summary = '';
+
+    if (cssFiles.length) {
+      summary += '/* CSS FILES */\n';
+      cssFiles.forEach(f => summary += f + '\n');
+      summary += '\n';
+    }
+
+    if (jsFiles.length) {
+      summary += '/* JS FILES */\n';
+      jsFiles.forEach(f => summary += f + '\n');
+      summary += '\n';
+    }
+
+    output.value = (summary + formatted).trim();
+
   } catch {
     output.value = 'Formatting error';
   }
 }
-
+//    working 
 function minifyHTML() {
   try {
     output.value = input.value
