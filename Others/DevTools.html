@@ -174,10 +174,22 @@
   </script>
 
   <script>
-/* ---------- HTML TOOLS (CLEAN) ---------- */
 function formatHTML() {
   try {
-    let html = input.value
+    let raw = input.value;
+
+    /* ---------- PROTECT SENSITIVE BLOCKS ---------- */
+    const blocks = [];
+    raw = raw.replace(
+      /<(script|style|pre|code)[^>]*>[\s\S]*?<\/\1>/gi,
+      match => {
+        blocks.push(match);
+        return `___BLOCK_${blocks.length - 1}___`;
+      }
+    );
+
+    /* ---------- NORMALIZE ---------- */
+    let html = raw
       .replace(/>\s*</g, '><')
       .replace(/\s*\n\s*/g, '')
       .trim();
@@ -193,16 +205,18 @@ function formatHTML() {
     const tokens = html.match(/<\/?[^>]+>|[^<]+/g) || [];
 
     tokens.forEach(token => {
-      if (token.startsWith('</')) indent--;
+      if (token.startsWith('</')) {
+        indent = Math.max(indent - 1, 0);
+      }
 
       if (token.startsWith('<')) {
         const tag = token.match(/^<\/?([a-zA-Z0-9-]+)/);
         const tagName = tag ? tag[1].toLowerCase() : '';
 
-        formatted += '  '.repeat(Math.max(indent, 0)) + token + '\n';
+        formatted += '  '.repeat(indent) + token + '\n';
 
         if (
-          token.match(/^<[^\/!][^>]*>$/) &&
+          /^<[^\/!][^>]*>$/.test(token) &&
           !token.endsWith('/>') &&
           !voidTags.has(tagName)
         ) {
@@ -217,7 +231,13 @@ function formatHTML() {
       }
     });
 
-    output.value = formatted.trim();
+    /* ---------- RESTORE BLOCKS ---------- */
+    let result = formatted.trim();
+    blocks.forEach((block, i) => {
+      result = result.replace(`___BLOCK_${i}___`, block);
+    });
+
+    output.value = result;
 
   } catch {
     output.value = 'Formatting error';
