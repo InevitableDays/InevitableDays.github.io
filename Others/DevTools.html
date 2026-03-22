@@ -172,7 +172,7 @@
       }
     }
   </script>
-<!-- ugh -->
+
   <script>
 /* ---------- HTML TOOLS (FIXED) ---------- */
 function formatHTML() {
@@ -233,28 +233,6 @@ function formatHTML() {
         }
       }
     });
-
-    /* ---------- PREPEND ASSET SUMMARY ---------- */
-    let summary = '';
-
-    if (cssFiles.length) {
-      summary += '/* CSS FILES */\n';
-      cssFiles.forEach(f => summary += f + '\n');
-      summary += '\n';
-    }
-
-    if (jsFiles.length) {
-      summary += '/* JS FILES */\n';
-      jsFiles.forEach(f => summary += f + '\n');
-      summary += '\n';
-    }
-
-    output.value = (summary + formatted).trim();
-
-  } catch {
-    output.value = 'Formatting error';
-  }
-}
 //    working 
 function minifyHTML() {
   try {
