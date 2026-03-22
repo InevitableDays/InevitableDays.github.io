@@ -77,7 +77,7 @@ button { cursor: pointer; }
   <button id="translateBtn" class="translate" onclick="translateTextFromInput()">Translate</button>
 
   <button class="read" onclick="speakText()">🔊 Read</button>
-
+  <button onclick="speakBetter()">🔊 Better Voice</button>
   <div class="box">
     <b>Translated:</b><br>
     <span id="translatedText"></span>
@@ -169,6 +169,17 @@ function speakText() {
   speechSynthesis.speak(u);
 }
 </script>
+<script>
+function speakBetter() {
+  if (!translated) return;
 
+  const lang = document.getElementById("targetLang").value;
+
+  const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(translated)}&tl=${lang}&client=tw-ob`;
+
+  const audio = new Audio(url);
+  audio.play();
+}
+</script>
 </body>
 </html>
