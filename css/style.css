@@ -265,9 +265,6 @@ blockquote {
   transform: scale(1.05);
 }
 
-button:active {
-  transform: scale(0.96);
-}
 /* =============================
    Minesweeper Styles
 ============================= */
@@ -574,4 +571,7 @@ background: linear-gradient(
   0%   { opacity: 0.3; text-shadow: 0 0 5px cyan; }
   50%  { opacity: 1;   text-shadow: 0 0 20px cyan, 0 0 40px blue; }
   100% { opacity: 0.3; text-shadow: 0 0 5px cyan; }
+}
+button:active {
+  transform: scale(0.96);
 }
