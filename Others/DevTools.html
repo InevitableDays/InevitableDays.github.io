@@ -82,6 +82,8 @@
   <header>DevTools Lite</header>
 
   <div class="controls">
+    <button onclick="formatHTML()">Format HTML</button>
+    <button onclick="minifyHTML()">Minify HTML</button>
     <button onclick="formatJSON()">Format JSON</button>
     <button onclick="minifyJSON()">Minify JSON</button>
     <button onclick="toBase64()">Encode Base64</button>
@@ -170,5 +172,40 @@
       }
     }
   </script>
+  <script>  // simplfy html test
+function formatHTML() {
+  try {
+    let formatted = '';
+    let indent = 0;
+
+    input.value
+      .replace(/>\s*</g, '><')
+      .split(/(?=<)/g)
+      .forEach(node => {
+        if (node.match(/^<\/\w/)) indent--;
+
+        formatted += '  '.repeat(indent) + node.trim() + '\n';
+
+        if (node.match(/^<\w[^>]*[^\/]>$/)) indent++;
+      });
+
+    output.value = formatted.trim();
+  } catch {
+    output.value = 'Formatting error';
+  }
+}
+
+function minifyHTML() {
+  try {
+    output.value = input.value
+      .replace(/\n/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .replace(/>\s+</g, '><')
+      .trim();
+  } catch {
+    output.value = 'Minify error';
+  }
+}
+</script>
 </body>
 </html>
