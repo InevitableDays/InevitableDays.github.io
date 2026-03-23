@@ -54,6 +54,50 @@ body {
   animation: fadeZoom 0.25s ease;
 }
 
+
+/* trying mobile again */
+
+@media (max-width: 900px) {
+
+  /* FORCE vertical stacking (1 → 2 → 3 → 4) */
+  .grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 0 14px !important;
+  }
+
+  /* Each card full width */
+  .card {
+    width: 100% !important;
+  }
+
+  /* Remove desktop hover/parallax (feels broken on mobile) */
+  .card {
+    transform: none !important;
+  }
+
+  .glow::before {
+    display: none !important;
+  }
+
+  /* Make previews look better on phones */
+  .card iframe {
+    height: 180px !important;
+  }
+
+  /* Header tighter */
+  header {
+    padding: 20px 0 !important;
+    font-size: 22px !important;
+  }
+
+  /* Reduce bottom spacing so list isn’t floating */
+  .grid {
+    padding-bottom: 40px !important;
+  }
+
+}
 </style>
 </head>
 
