@@ -8,14 +8,14 @@
 <style>
 @media (max-width: 900px) {
 
-  /* HEADER → compact + usable */
+  /* HEADER */
   header {
     flex-wrap: wrap;
     gap: 8px !important;
     padding: 10px 12px !important;
   }
 
-  /* SEARCH → full width row */
+  /* SEARCH full row */
   header > div:nth-child(2) {
     order: 3;
     width: 100%;
@@ -25,17 +25,17 @@
     font-size: 16px !important;
   }
 
-  /* ACTIONS → tighter */
   header > div:last-child {
     gap: 10px !important;
   }
 
-  /* MAIN LAYOUT */
+  /* ✅ FIX: dynamic spacing for taller header */
   .flex.pt-16 {
     flex-direction: column;
+    padding-top: 110px !important; /* was 16 → now matches wrapped header */
   }
 
-  /* SIDEBAR → turn into top horizontal menu */
+  /* SIDEBAR → horizontal */
   aside {
     display: flex !important;
     width: 100% !important;
@@ -50,18 +50,24 @@
     font-size: 14px;
   }
 
-  /* GRID → 2 columns (best balance) */
+  /* GRID */
   #grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 14px !important;
   }
 
-  /* CARDS → tighter */
   #grid img {
     height: 120px !important;
   }
 
-  /* MODAL → full mobile dialog */
+  /* ✅ FIX: avatar distortion */
+  #grid .flex img {
+    flex-shrink: 0;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+  }
+
+  /* MODAL */
   #modal > div {
     max-width: 100% !important;
     height: 85vh !important;
@@ -69,11 +75,9 @@
     flex-direction: column;
   }
 
-  /* VIDEO AREA stays proportional */
   .aspect-video {
     flex-shrink: 0;
   }
-
 }
 </style>
 </head>
