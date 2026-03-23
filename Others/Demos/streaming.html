@@ -5,6 +5,77 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Platform</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+@media (max-width: 900px) {
+
+  /* HEADER → compact + usable */
+  header {
+    flex-wrap: wrap;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* SEARCH → full width row */
+  header > div:nth-child(2) {
+    order: 3;
+    width: 100%;
+  }
+
+  header input {
+    font-size: 16px !important;
+  }
+
+  /* ACTIONS → tighter */
+  header > div:last-child {
+    gap: 10px !important;
+  }
+
+  /* MAIN LAYOUT */
+  .flex.pt-16 {
+    flex-direction: column;
+  }
+
+  /* SIDEBAR → turn into top horizontal menu */
+  aside {
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 10px 12px !important;
+  }
+
+  aside div {
+    white-space: nowrap;
+    font-size: 14px;
+  }
+
+  /* GRID → 2 columns (best balance) */
+  #grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  /* CARDS → tighter */
+  #grid img {
+    height: 120px !important;
+  }
+
+  /* MODAL → full mobile dialog */
+  #modal > div {
+    max-width: 100% !important;
+    height: 85vh !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* VIDEO AREA stays proportional */
+  .aspect-video {
+    flex-shrink: 0;
+  }
+
+}
+</style>
 </head>
 
 <body class="bg-neutral-950 text-white">
