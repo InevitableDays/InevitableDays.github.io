@@ -5,6 +5,64 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Social Platform</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+@media (max-width: 900px) {
+
+  /* BACKGROUND → fix mobile lag */
+  body {
+    background-attachment: scroll !important;
+  }
+
+  /* GRID → single column */
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* REMOVE SIDEBARS (clean mobile feed) */
+  .md\:block {
+    display: none !important;
+  }
+
+  /* MAIN CONTAINER → tighter padding */
+  .max-w-7xl {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* TITLE → scale down */
+  h1 {
+    font-size: 22px !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* CREATE POST → tighter */
+  textarea {
+    font-size: 16px !important;
+  }
+
+  input {
+    font-size: 16px !important;
+  }
+
+  /* POSTS → spacing + readability */
+  #feed > div {
+    border-radius: 14px !important;
+  }
+
+  /* IMAGES → better fit */
+  #feed img {
+    max-height: 300px !important;
+  }
+
+  /* ACTION BUTTONS → thumb-friendly */
+  button {
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+  }
+
+}
+</style>
 </head>
 <body class="bg-neutral-950 text-white"><body class="bg-neutral-950 text-white"
 style="
