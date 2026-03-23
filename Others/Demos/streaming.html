@@ -145,9 +145,14 @@
 
 <!-- VIDEO MODAL -->
 <div id="modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
-  <div class="bg-neutral-900 w-full max-w-3xl rounded-xl overflow-hidden">
+<div class="aspect-video bg-black overflow-hidden relative">
 
-<div class="aspect-video bg-black overflow-hidden">
+  <!-- CLOSE BUTTON -->
+  <button onclick="closeModal()"
+    class="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white text-sm px-3 py-1 rounded-full z-10">
+    ✕
+  </button>
+
   <img 
     src="https://media.giphy.com/media/13borq7Zo2kulO/giphy.gif" 
     class="w-full h-full object-cover"
@@ -252,6 +257,11 @@ modal.onclick = (e)=>{
 };
 
 render();
+
+
+function closeModal() {
+  modal.classList.add('hidden');
+}
 </script>
 
 </body>
