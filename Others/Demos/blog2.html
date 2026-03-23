@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health System</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { background:#f5f5f5; color:#111; font-family: Arial, sans-serif; }
+.block { border:2px solid #000; padding:20px; }
+.skew { transform: rotate(-1deg); }
+img { width:100%; display:block; }
+</style>
+
+</head>
+<body>
+
+<div class="max-w-6xl mx-auto p-6 space-y-10">
+
+<!-- HERO -->
+<div class="block skew">
+  <h1 class="text-4xl font-bold">
+    Personal Health System
+  </h1>
+  <p class="mt-4">
+    structure → consistency → long-term results
+  </p>
+</div>
+
+<div class="flex flex-wrap gap-3">
+  <a href="#whatido-division1">NUTRITION</a>
+  <a href="#whatido-division2">RECOVERY</a>
+  <a href="#whatido-division3">MIND</a>
+</div>
+
+<!-- NUTRITION -->
+<div id="whatido-division1" class="grid md:grid-cols-2 gap-6">
+  <div class="block">whole foods / hydration / low-noise diet</div>
+  <img src="https://picsum.photos/800/400?random=1" class="skew">
+  <img src="https://picsum.photos/800/400?random=2" class="skew">
+</div>
+
+<!-- RECOVERY -->
+<div id="whatido-division2" class="grid md:grid-cols-2 gap-6">
+  <img src="https://picsum.photos/800/400?random=3" class="skew">
+  <div class="block">sleep / sunlight / stress reduction</div>
+  <img src="https://picsum.photos/800/400?random=4" class="skew">
+</div>
+
+<!-- MIND -->
+<div id="whatido-division3" class="space-y-4">
+  <div class="block">focus / clarity / attention control</div>
+  <div class="block">reduce noise / increase signal</div>
+  <div class="block">mental consistency</div>
+
+  <img src="https://picsum.photos/800/400?random=5">
+</div>
+
+<!-- SYSTEM -->
+<div class="block">
+  <div>small habits → long-term outcomes</div>
+  <img src="https://picsum.photos/800/400?random=6">
+</div>
+
+<!-- OPTIMIZATION -->
+<div class="block">
+  <div>tracking / adjustment / iteration</div>
+  <img src="https://picsum.photos/800/400?random=7">
+</div>
+
+<!-- METRICS -->
+<div class="block">
+  <div>sleep / energy / consistency</div>
+  <img src="https://picsum.photos/800/400?random=8">
+</div>
+
+<!-- ETHIC -->
+<div class="block skew">
+  <h2>Principle</h2>
+  <p><strong>consistency over intensity</strong></p>
+</div>
+
+<!-- LINKS -->
+<div class="flex gap-4">
+  <a href="#">log</a>
+  <a href="#">notes</a>
+  <a href="#">archive</a>
+</div>
+
+<!-- CONTACT -->
+<div class="block">
+  <h2>Contact</h2>
+  <a href="mailto:umitozkul2015@gmail.com">email</a>
+</div>
+
+<blockquote>
+"health compounds quietly"
+</blockquote>
+
+<!-- MODES (replaces language system) -->
+<div>
+  <button onclick="setMode('focus')">FOCUS</button>
+  <button onclick="setMode('recovery')">RECOVERY</button>
+  <button onclick="setMode('lowstim')">LOW STIM</button>
+</div>
+
+</div>
+
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})"
+class="fixed bottom-5 right-5 border px-3 py-1">
+↑
+</button>
+
+<script>
+function setMode(mode){
+  if(mode === 'focus'){
+    document.body.style.filter = "contrast(110%)";
+  }
+  if(mode === 'recovery'){
+    document.body.style.filter = "brightness(95%)";
+  }
+  if(mode === 'lowstim'){
+    document.body.style.filter = "grayscale(40%)";
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal Log</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #e2e8f0;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.glow {
+  text-shadow: 0 0 20px rgba(59,130,246,0.6);
+}
+
+.soft {
+  color:#94a3b8;
+}
+
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 20px;
+}
+
+img {
+  width:100%;
+  border-radius:12px;
+  opacity:0.9;
+  transition:0.4s;
+}
+
+img:hover {
+  opacity:1;
+  transform: scale(1.02);
+}
+
+.divider {
+  height:1px;
+  background: linear-gradient(to right, transparent, #334155, transparent);
+  margin:60px 0;
+}
+
+a { color:#60a5fa; }
+
+/* MOBILE */
+@media (max-width: 900px) {
+
+  .section {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 80px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+  }
+
+  img {
+    max-height: 300px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="section text-center">
+  <h1 class="text-5xl md:text-7xl font-semibold glow">
+    Signal Log // Independent Systems
+  </h1>
+
+  <p class="mt-6 max-w-2xl mx-auto text-lg soft">
+    Notes from an ongoing experiment: building tools, preserving knowledge, and documenting the process in real time.
+  </p>
+
+  <div class="mt-8 flex justify-center gap-6 text-sm">
+    <a href="#whatido-division1">build logs</a>
+    <a href="#whatido-division2">archives</a>
+    <a href="#whatido-division3">process</a>
+    <a href="#highlights-division1">systems</a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 1 -->
+<div class="section grid md:grid-cols-2 gap-10 items-center" id="whatido-division1">
+  <div class="text-xl">
+    Ongoing build logs: small tools, experimental interfaces, and systems designed for autonomy rather than scale.
+  </div>
+  <div class="space-y-6">
+    <img src="https://picsum.photos/900/600?random=60">
+    <img src="https://picsum.photos/900/600?random=61">
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 2 -->
+<div class="section grid md:grid-cols-2 gap-10 items-center" id="whatido-division2">
+  <div class="space-y-6">
+    <img src="https://picsum.photos/900/600?random=62">
+    <img src="https://picsum.photos/900/600?random=63">
+  </div>
+  <div class="text-xl">
+    Constructing an offline-first archive — resilient, portable, and independent of centralized infrastructure.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 3 -->
+<div class="section" id="whatido-division3">
+  <div class="grid md:grid-cols-3 gap-6 text-center">
+    <div>Documentation / Translation Layers</div>
+    <div>System Recovery & Diagnostics</div>
+    <div>Interactive Prototypes & Worlds</div>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6 mt-8">
+    <img src="https://picsum.photos/900/600?random=64">
+    <img src="https://picsum.photos/900/600?random=65">
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- HIGHLIGHTS -->
+<div class="section grid md:grid-cols-2 gap-10" id="highlights-division1">
+  <div>Virtualized environments, isolated systems, controlled experiments</div>
+  <img src="https://picsum.photos/900/600?random=66">
+
+  <img src="https://picsum.photos/900/600?random=67">
+  <div>Minimal interfaces, custom-built tools, function over noise</div>
+
+  <div>
+    <div>Independent research, iterative learning</div>
+    <div class="soft">Language Index: Over9999</div>
+  </div>
+  <img src="https://picsum.photos/900/600?random=68">
+</div>
+
+<div class="divider"></div>
+
+<!-- WORK ETHIC -->
+<div class="section text-center">
+  <h2 class="text-3xl glow">Operating Principle</h2>
+  <p class="mt-4 text-xl"><strong>Observe. Build. Refine. Repeat.</strong></p>
+</div>
+
+<div class="divider"></div>
+
+<!-- LINKS -->
+<div class="section text-center space-x-6">
+  <a href="https://www.youtube.com/shorts/St-h77TVBKM" target="_blank">video logs</a>
+  <a href="https://archive.org/details/@tech_forever" target="_blank">open archive</a>
+  <a href="https://github.com/InevitableDays/InevitableDays.github.io/tree/main" target="_blank">source</a>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<div class="section text-center">
+  <h2>Channel</h2>
+  <a href="mailto:umitozkul2015@gmail.com">umitozkul2015@gmail.com</a>
+
+  <blockquote class="mt-10 soft">
+    "No roadmap. Just iteration."
+  </blockquote>
+</div>
+
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-5 right-5">
+↑
+</button>
+
+</body>
+</html>
