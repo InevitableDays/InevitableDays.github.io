@@ -84,13 +84,27 @@ textarea {
   opacity:0.8;
 }
 
-@media (max-width: 900px){
+@media (max-width: 900px) {
+  body {
+    padding: 0 8px;
+  }
+
   .container {
-    grid-template-columns:1fr;
-    
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    margin: 0;
+    gap: 12px;
+  }
+  .label {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    text-align: left;
+    padding: 0 2px;
+  }
   textarea {
-  width:500px;
-  height:120px;
+    height: 140px;
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 
