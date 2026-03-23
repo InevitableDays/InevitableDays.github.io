@@ -53,6 +53,58 @@ body {
 .animate-in {
   animation: fadeZoom 0.25s ease;
 }
+
+/* mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile */
+  @media (max-width: 900px) {
+
+  /* GRID → single column + tighter spacing */
+  .grid {
+    grid-template-columns: 1fr !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    gap: 20px !important;
+  }
+
+  /* HEADER → less vertical waste */
+  header {
+    padding: 20px 0 !important;
+    font-size: 22px !important;
+  }
+
+  /* CARDS → remove heavy effects for performance */
+  .card {
+    transform: none !important;
+  }
+
+  .glow::before {
+    display: none !important;
+  }
+
+  /* IFRAME PREVIEWS → slightly taller for mobile */
+  .card iframe {
+    height: 180px !important;
+  }
+
+  /* MODAL → true edge fit with slight margin */
+  #modal {
+    width: 95vw !important;
+    height: 85vh !important;
+    border-radius: 14px !important;
+  }
+
+  /* CONTROLS → thumb-friendly */
+  #controls {
+    bottom: 12px !important;
+    gap: 8px !important;
+    padding: 8px 10px !important;
+  }
+
+  #controls button {
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+  }
+
+}
 </style>
 </head>
 
