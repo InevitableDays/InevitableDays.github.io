@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-neutral-950 text-white" style="background-image:url('https://images.unsplash.com/photo-1515168833906-d2a3b82b302a?q=80&w=1920'); background-size:cover; background-attachment:fixed; background-blend-mode:overlay;">
+<!-- HEADER SWANSON-->
+
+<!-- HEADER -->
+<header class="w-full bg-black/70 backdrop-blur border-b border-neutral-800 sticky top-0 z-1000">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
+
+    <!-- LOGO -->
+    <div class="text-xl font-semibold tracking-wide cursor-pointer">
+      Store
+    </div>
+
+
+    <!-- NAV -->
+    <div class="flex items-center gap-4 text-sm">
+
+      <div class="hidden md:block cursor-pointer hover:opacity-70">
+        Explore
+      </div>
+
+      <div class="hidden md:block cursor-pointer hover:opacity-70">
+        Deals
+      </div>
+
+      <div class="cursor-pointer hover:opacity-70">
+        Sign in
+      </div>
+
+      <!-- CART ICON -->
+      <div class="relative cursor-pointer">
+        🛒
+        <span class="absolute -top-2 -right-2 bg-white text-black text-[10px] px-1 rounded-full">
+          ?
+        </span>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+
+
+<div class="max-w-7xl mx-auto p-4 sm:p-6">
+  <h1 id="store-home" class="text-3xl sm:text-4xl font-semibold mb-6 cursor-pointer">Store</h1>
+
+  <div class="flex flex-wrap gap-2 sm:gap-3 mb-6">
+    <input id="search" placeholder="Search..." class="bg-neutral-800 p-2 rounded w-full sm:w-48">
+
+    <select id="category" class="bg-neutral-800 p-2 rounded w-full sm:w-auto">
+      <option value="all">All</option>
+      <option value="tech">Tech</option>
+      <option value="home">Home</option>
+      <option value="fashion">Fashion</option>
+    </select>
+
+    <select id="price" class="bg-neutral-800 p-2 rounded w-full sm:w-auto">
+      <option value="all">All Prices</option>
+      <option value="low">$0-50</option>
+      <option value="mid">$50-100</option>
+      <option value="high">$100+</option>
+    </select>
+
+    <button id="clear-filters" class="bg-neutral-700 px-3 py-2 rounded">✕</button>
+  </div>
+
+  <div class="fixed bottom-4 right-4 sm:top-6 sm:bottom-auto w-72 bg-neutral-900 p-4 rounded-xl">
+    <div class="flex justify-between mb-2">
+      <div>Cart</div>
+      <div id="cart-count">0</div>
+    </div>
+    <div id="cart-items" class="space-y-1 max-h-40 overflow-auto text-xs"></div>
+    <div class="border-t border-neutral-700 mt-2 pt-2">
+      <div class="flex justify-between text-sm">
+        <span>Total</span>
+        <span id="cart-total">$0.00</span>
+      </div>
+      <button id="checkout-btn" class="w-full bg-green-500 text-black py-2 mt-2 rounded active:scale-95 hover:opacity-90 transition">Checkout</button>
+    </div>
+  </div>
+
+  <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+</div>
+
+<!-- PREVIEW -->
+<div id="preview" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4">
+  <div id="preview-box" class="bg-neutral-900 rounded-xl w-full max-w-2xl overflow-hidden">
+    <img id="preview-img" class="w-full h-72 object-cover">
+    <div class="p-5 space-y-3">
+      <div id="preview-name" class="text-xl"></div>
+      <div id="preview-price" class="text-lg"></div>
+      <div id="preview-stars"></div>
+      <div id="preview-stock" class="text-sm"></div>
+      <p class="text-sm opacity-70">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <div id="preview-comments" class="text-sm space-y-1 opacity-80"></div>
+
+      <div class="flex gap-2">
+        <button id="preview-add" class="flex-1 bg-white text-black py-2 rounded active:scale-95 hover:opacity-90 transition">Add</button>
+        <button id="preview-checkout" class="flex-1 bg-green-500 text-black py-2 rounded active:scale-95 hover:opacity-90 transition">Checkout</button>
+      </div>
+
+      <button id="preview-cancel" class="w-full text-gray-400 text-sm">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT -->
+<div id="modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4">
+  <div class="bg-neutral-900 p-4 rounded-xl w-full max-w-sm space-y-3">
+    <h2>Checkout</h2>
+    <input placeholder="Name" class="w-full bg-neutral-800 p-2 rounded" />
+    <input placeholder="Address" class="w-full bg-neutral-800 p-2 rounded" />
+    <div class="flex gap-2">
+      <img src="https://img.icons8.com/color/48/visa.png" class="h-5">
+      <img src="https://img.icons8.com/color/48/mastercard.png" class="h-5">
+      <img src="https://img.icons8.com/color/48/paypal.png" class="h-5">
+      <img src="https://img.icons8.com/color/48/amex.png" class="h-5">
+    </div>
+    <div id="summary" class="text-xs"></div>
+    <div class="flex justify-between text-sm">
+      <span>Total</span>
+      <span id="final-total"></span>
+    </div>
+    <button id="confirm" class="w-full bg-white text-black py-2 rounded active:scale-95 hover:opacity-90 transition">Confirm</button>
+    <button id="close" class="text-gray-400">Cancel</button>
+    <div id="loader" class="hidden text-center text-sm">Processing...</div>
+  </div>
+</div>
+
+<script>
+const grid=document.getElementById('grid');
+const searchInput=document.getElementById('search');
+const categoryFilter=document.getElementById('category');
+const priceFilter=document.getElementById('price');
+
+const cartItemsEl=document.getElementById('cart-items');
+const cartCountEl=document.getElementById('cart-count');
+const cartTotalEl=document.getElementById('cart-total');
+const modal=document.getElementById('modal');
+const summary=document.getElementById('summary');
+const finalTotal=document.getElementById('final-total');
+const loader=document.getElementById('loader');
+
+let cart=[];
+let products=[];
+
+function stars(n){return '★'.repeat(n)+'☆'.repeat(5-n)}
+
+function updateCart(){
+ cartItemsEl.innerHTML='';let t=0;
+ cart.forEach(i=>{const s=i.price*i.qty;t+=s;
+ cartItemsEl.innerHTML+=`<div class='flex justify-between'><span>${i.name}</span><span>$${s.toFixed(2)}</span></div>`});
+ cartCountEl.textContent=cart.reduce((a,i)=>a+i.qty,0);
+ cartTotalEl.textContent='$'+t.toFixed(2);
+}
+
+function addToCart(n,p){const e=cart.find(i=>i.name===n);e?e.qty++:cart.push({name:n,price:p,qty:1});updateCart();}
+
+function renderProducts(){
+ grid.innerHTML='';
+ const s=searchInput.value.toLowerCase();
+ const c=categoryFilter.value;
+ const pr=priceFilter.value;
+
+ products.forEach(p=>{
+  if(s&&!p.name.toLowerCase().includes(s))return;
+  if(c!=='all'&&p.category!==c)return;
+  if(pr==='low'&&p.price>50)return;
+  if(pr==='mid'&&(p.price<50||p.price>100))return;
+  if(pr==='high'&&p.price<100)return;
+
+  const d=document.createElement('div');
+  d.className='bg-neutral-900 rounded-xl overflow-hidden cursor-pointer';
+
+  d.innerHTML=`
+  <img src='${p.img}' class='w-full h-32 object-cover'>
+  <div class='p-2 text-sm'>
+    <div>${p.name}</div>
+    <div>${stars(p.rating)}</div>
+    <div class='text-xs opacity-60'>${p.stock} left</div>
+    <div>$${p.price.toFixed(2)}</div>
+    <button class='mt-1 w-full bg-white text-black py-1 rounded text-xs active:scale-95 hover:opacity-90 transition'>Add</button>
+  </div>`;
+
+  d.onclick=(e)=>{if(e.target.tagName!=='BUTTON')openPreview(p)};
+  d.querySelector('button').onclick=(e)=>{e.stopPropagation();addToCart(p.name,p.price)};
+
+  grid.appendChild(d);
+ });
+}
+
+function openPreview(p){
+ document.getElementById('preview-img').src=p.img;
+ document.getElementById('preview-name').textContent=p.name;
+ document.getElementById('preview-price').textContent='$'+p.price.toFixed(2);
+ document.getElementById('preview-stars').textContent=stars(p.rating);
+ document.getElementById('preview-stock').textContent=p.stock+' in stock';
+ document.getElementById('preview-add').onclick=()=>addToCart(p.name,p.price);
+
+ const commentsEl=document.getElementById('preview-comments');
+ const sample=['Amazing quality','Would buy again','Exceeded expectations','Very solid product','Worth every cent','Fast shipping','Looks premium'];
+ commentsEl.innerHTML='';
+ for(let i=0;i<3;i++){
+  const c=sample[Math.floor(Math.random()*sample.length)];
+  commentsEl.innerHTML+=`<div>💬 ${c}</div>`;
+ }
+
+ document.getElementById('preview').classList.remove('hidden');
+ document.getElementById('preview').classList.add('flex');
+}
+
+document.getElementById('preview').onclick=(e)=>{
+ if(e.target.id==='preview'){document.getElementById('preview').classList.add('hidden');}
+};
+
+document.getElementById('preview-cancel').onclick=()=>document.getElementById('preview').classList.add('hidden');
+
+document.getElementById('preview-checkout').onclick=()=>{
+ document.getElementById('preview').classList.add('hidden');
+ document.getElementById('checkout-btn').click();
+};
+
+searchInput.oninput=renderProducts;
+categoryFilter.onchange=renderProducts;
+priceFilter.onchange=renderProducts;
+
+document.getElementById('clear-filters').onclick=()=>{searchInput.value='';categoryFilter.value='all';priceFilter.value='all';renderProducts();};
+document.getElementById('store-home').onclick=()=>{cart=[];updateCart();document.getElementById('clear-filters').click();};
+
+const cats=['tech','home','fashion'];
+for(let i=1;i<=50;i++){
+ products.push({name:`Item ${i}`,price:Math.random()*120+10,category:cats[i%3],img:`https://picsum.photos/800/600?random=${i}`,rating:Math.floor(Math.random()*5)+1,stock:Math.floor(Math.random()*20)+1});
+}
+
+renderProducts();
+
+document.getElementById('checkout-btn').onclick=()=>{
+ if(!cart.length)return alert('Cart empty');
+ summary.innerHTML='';let t=0;
+ cart.forEach(i=>{const s=i.price*i.qty;t+=s;summary.innerHTML+=`<div class='flex justify-between'><span>${i.name}</span><span>$${s.toFixed(2)}</span></div>`});
+ finalTotal.textContent='$'+t.toFixed(2);
+ modal.classList.remove('hidden');modal.classList.add('flex');
+};
+
+document.getElementById('close').onclick=()=>modal.classList.add('hidden');
+
+document.getElementById('confirm').onclick=()=>{
+ loader.classList.remove('hidden');
+ setTimeout(()=>{loader.classList.add('hidden');alert('Payment success');cart=[];updateCart();modal.classList.add('hidden');},1500);
+};
+</script>
+<!-- FOOTER -->
+<footer class="mt-16 border-t border-neutral-800 text-sm text-neutral-400 bg-black/60 backdrop-blur">
+  <div class="max-w-7xl mx-auto p-6 grid grid-cols-2 sm:grid-cols-4 gap-6">
+
+    <div>
+      <div class="text-white mb-2">Explore</div>
+      <div>Gift cards</div>
+      <div>Store Registry</div>
+      <div>Sitemap</div>
+      <div>Store blog</div>
+      <div>Store United Kingdom</div>
+      <div>Store Germany</div>
+      <div>Store Turkiye</div>
+    </div>
+
+    <div>
+      <div class="text-white mb-2">Sell</div>
+      <div>Sell on Store</div>
+      <div>Teams</div>
+      <div>Forums</div>
+      <div>Affiliates & Creators</div>
+    </div>
+
+    <div>
+      <div class="text-white mb-2">About</div>
+      <div>Store, Inc.</div>
+      <div>Policies</div>
+      <div>Investors</div>
+      <div>Careers</div>
+      <div>Press</div>
+      <div>Impact</div>
+      <div>Legal imprint</div>
+    </div>
+
+    <div>
+      <div class="text-white mb-2">Help</div>
+      <div>Help Centre</div>
+      <div>Privacy settings</div>
+      <div class="mt-2">Instagram</div>
+      <div>Facebook</div>
+      <div>Pinterest</div>
+      <div>Youtube</div>
+    </div>
+
+  </div>
+
+  <div class="border-t border-neutral-800 px-6 py-4 text-xs flex flex-col sm:flex-row justify-between gap-2">
+    <div>Turkiye | Türkçe (TR) |United Kingdom | English (UK) | TL (TRY)| £ (GBP)</div>
+    <div>© 2026 Store, Inc.</div>
+  </div>
+
+  <div class="px-6 pb-6 text-xs text-neutral-500">
+    Terms of Use · Privacy · Interest-based ads · Local Shops
+  </div>
+</footer>
+</body>
+</html>

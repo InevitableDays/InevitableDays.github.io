@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-neutral-950 text-white">
+
+<!-- HEADER -->
+<header class="fixed top-0 left-0 w-full bg-neutral-900/90 backdrop-blur z-50 px-4 py-3 flex items-center gap-4">
+
+  <!-- LOGO -->
+  <div class="font-semibold text-lg cursor-pointer hover:opacity-80">Stream</div>
+
+  <!-- SEARCH -->
+  <div class="flex-1 flex justify-center">
+    <div class="w-full max-w-xl flex">
+      <input 
+        id="search"
+        placeholder="Search videos..." 
+        class="flex-1 bg-neutral-800 px-4 py-2 rounded-l-full text-sm outline-none"
+      >
+      <button class="bg-neutral-700 px-4 rounded-r-full text-sm hover:bg-neutral-600 active:scale-95 transition">
+        🔍
+      </button>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="flex items-center gap-4 text-sm">
+
+    <button class="hidden sm:block bg-neutral-800 px-3 py-1 rounded-full hover:bg-neutral-700 active:scale-95 transition">
+      + Create
+    </button>
+
+    <div class="cursor-pointer hover:opacity-70">🔔</div>
+
+    <img 
+      src="https://i.pravatar.cc/40" 
+      class="w-8 h-8 rounded-full cursor-pointer hover:opacity-80"
+    >
+  </div>
+
+</header>
+
+<div class="flex pt-16">
+
+  <!-- SIDEBAR -->
+  <aside class="hidden md:block w-56 bg-neutral-900 h-screen p-4 space-y-3">
+    <div class="cursor-pointer hover:opacity-70">Home</div>
+    <div class="cursor-pointer hover:opacity-70">Trending</div>
+    <div class="cursor-pointer hover:opacity-70">Subscriptions</div>
+    <div class="cursor-pointer hover:opacity-70">Library</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="grid">
+  </main>
+
+</div>
+
+<!-- VIDEO MODAL -->
+<div id="modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50">
+  <div class="bg-neutral-900 w-full max-w-3xl rounded-xl overflow-hidden">
+
+<div class="aspect-video bg-black overflow-hidden">
+  <img 
+    src="https://media.giphy.com/media/13borq7Zo2kulO/giphy.gif" 
+    class="w-full h-full object-cover"
+  >
+</div>
+
+    <div class="p-4 space-y-2">
+      <div id="modal-title" class="text-lg font-semibold"></div>
+      <div class="text-sm opacity-60" id="modal-channel"></div>
+      <div class="text-sm opacity-70">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const grid = document.getElementById('grid');
+const searchInput = document.getElementById('search');
+
+let videos = [];
+
+// generate fake videos
+const titles = [
+  "This Should Be Illegal 😂",
+  "I Tried This So You Don't Have To",
+  "Top 5 Things Nobody Told You",
+  "This Video Will Cure Your Boredom",
+  "I Was Not Ready For This",
+  "The Internet Went Too Far",
+  "You Won’t Believe What Happened",
+  "This Changed Everything",
+  "I Regret Clicking This",
+  "Why Is Nobody Talking About This?",
+  "This Is Actually Genius",
+  "I Found This At 3AM...",
+  "This Makes No Sense 😂",
+  "This Shouldn't Exist",
+  "I Tested Viral Trends",
+  "Big Mistake…",
+  "This Is Getting Out Of Hand",
+  "Wait For It...",
+  "I Can't Stop Watching This",
+  "This Broke The Internet"
+];
+
+for(let i=1;i<=40;i++){
+  videos.push({
+    title: titles[Math.floor(Math.random()*titles.length)],
+    channel: "channel_" + Math.floor(Math.random()*1000),
+    views: Math.floor(Math.random()*10000),
+    img: `https://picsum.photos/400/250?random=${i}`
+  });
+}
+
+function render(){
+  grid.innerHTML='';
+  const s = searchInput.value.toLowerCase();
+
+  videos.forEach(v=>{
+    if(s && !v.title.toLowerCase().includes(s)) return;
+
+    const card = document.createElement('div');
+    card.className="cursor-pointer";
+
+    card.innerHTML = `
+      <div class="rounded-xl overflow-hidden">
+        <img src="${v.img}" class="w-full h-40 object-cover hover:scale-105 transition">
+      </div>
+
+      <div class="flex gap-3 mt-2">
+        <img src="https://i.pravatar.cc/40?random=${Math.random()}" class="w-8 h-8 rounded-full">
+        <div class="text-sm">
+          <div class="font-medium">${v.title}</div>
+          <div class="opacity-60 text-xs">${v.channel}</div>
+          <div class="opacity-40 text-xs">${v.views} views</div>
+        </div>
+      </div>
+    `;
+
+    card.onclick = ()=>openModal(v);
+    grid.appendChild(card);
+  });
+}
+
+searchInput.oninput = render;
+
+// modal
+const modal = document.getElementById('modal');
+
+function openModal(v){
+  document.getElementById('modal-title').textContent = v.title;
+  document.getElementById('modal-channel').textContent = v.channel;
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+modal.onclick = (e)=>{
+  if(e.target.id==='modal'){
+    modal.classList.add('hidden');
+  }
+};
+
+render();
+</script>
+
+</body>
+</html>

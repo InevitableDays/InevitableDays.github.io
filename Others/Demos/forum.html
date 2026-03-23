@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chimera Forum</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="text-gray-900"
+style="
+background-image:
+url('https://images.unsplash.com/photo-1542831371-d531d36971e6?q=80&w=1920');
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+">
+
+<!-- BIG HEADER -->
+<header class="bg-white border-b shadow px-6 py-6 flex items-center justify-between">
+  <div class="text-3xl font-bold">Chimera Forum</div>
+
+  <input 
+    id="search"
+    placeholder="Search threads..." 
+    class="bg-gray-100 px-4 py-2 rounded w-1/3"
+  >
+
+  <div class="text-sm opacity-70">Login | Register</div>
+</header>
+
+<div class="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+  <!-- SIDEBAR -->
+  <aside class="space-y-4">
+    <div class="bg-white/90 backdrop-blur p-4 rounded shadow">
+      <div class="font-semibold mb-2">Sections</div>
+      <div class="space-y-1 text-sm">
+        <div class="cursor-pointer section" data-section="all">All</div>
+        <div class="cursor-pointer section" data-section="gaming">Gaming</div>
+        <div class="cursor-pointer section" data-section="trading">Trading</div>
+        <div class="cursor-pointer section" data-section="coding">Coding</div>
+        <div class="cursor-pointer section" data-section="off">Off Topic</div>
+      </div>
+    </div>
+
+    <div class="bg-white/90 backdrop-blur p-4 rounded shadow text-sm">
+      <div class="font-semibold mb-2">Stats</div>
+      <div>Threads: 12,483</div>
+      <div>Members: 5,201</div>
+      <div>Online: 143</div>
+    </div>
+  </aside>
+
+  <!-- THREAD LIST -->
+  <main class="md:col-span-3 space-y-3" id="threads"></main>
+
+</div>
+
+<!-- THREAD VIEW MODAL -->
+<div id="threadModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4">
+  <div class="bg-white w-full max-w-3xl rounded shadow-lg overflow-hidden">
+
+    <div class="p-5 border-b">
+      <div id="thread-title" class="text-xl font-semibold mb-2"></div>
+      <div id="thread-user" class="text-sm text-gray-500"></div>
+      <div id="thread-body" class="mt-3 text-sm"></div>
+    </div>
+
+    <div id="replies" class="p-5 space-y-3 max-h-64 overflow-auto"></div>
+
+    <div class="p-4 border-t flex gap-2">
+      <input id="replyInput" placeholder="Write reply..." class="flex-1 bg-gray-100 p-2 rounded text-sm">
+      <button id="sendReply" class="bg-black text-white px-4 rounded">Send</button>
+      <button id="closeThread" class="text-gray-500">Close</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const threadsEl = document.getElementById('threads');
+const searchInput = document.getElementById('search');
+
+let currentSection = "all";
+let threads = [];
+
+const titles = [
+  "Best way to make money fast",
+  "Hidden tricks nobody talks about",
+  "Selling rare items cheap",
+  "Guide: Level up fast",
+  "Need help with bug",
+  "Marketplace tips",
+  "Top strategies 2026",
+  "Underrated tools you need"
+];
+
+const sections = ["gaming","trading","coding","off"];
+
+function lorem(){
+  return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+}
+
+// generate threads
+for(let i=0;i<30;i++){
+  threads.push({
+    title: titles[Math.floor(Math.random()*titles.length)],
+    user: "user_" + Math.floor(Math.random()*9999),
+    replies: [],
+    views: Math.floor(Math.random()*5000),
+    body: lorem(),
+    section: sections[Math.floor(Math.random()*sections.length)]
+  });
+}
+
+function render(){
+  threadsEl.innerHTML='';
+  const s = searchInput.value.toLowerCase();
+
+  threads.forEach((t,i)=>{
+    if(currentSection !== "all" && t.section !== currentSection) return;
+    if(s && !t.title.toLowerCase().includes(s)) return;
+
+    const div = document.createElement('div');
+    div.className="bg-white/90 backdrop-blur p-4 rounded shadow cursor-pointer hover:bg-gray-50";
+
+    div.innerHTML = `
+      <div class="flex justify-between">
+        <div>
+          <div class="font-medium">${t.title}</div>
+          <div class="text-xs text-gray-500">by ${t.user} • ${t.section}</div>
+        </div>
+        <div class="text-xs text-gray-500 text-right">
+          <div>${t.replies.length} replies</div>
+          <div>${t.views} views</div>
+        </div>
+      </div>
+    `;
+
+    div.onclick = ()=>openThread(i);
+    threadsEl.appendChild(div);
+  });
+}
+
+searchInput.oninput = render;
+
+document.querySelectorAll('.section').forEach(el=>{
+  el.onclick = ()=>{
+    currentSection = el.dataset.section;
+    render();
+  };
+});
+
+// THREAD VIEW
+const modal = document.getElementById('threadModal');
+const repliesEl = document.getElementById('replies');
+
+let currentThread = null;
+
+function openThread(index){
+  currentThread = threads[index];
+
+  document.getElementById('thread-title').textContent = currentThread.title;
+  document.getElementById('thread-user').textContent = "by " + currentThread.user;
+  document.getElementById('thread-body').textContent = currentThread.body;
+
+  renderReplies();
+
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function renderReplies(){
+  repliesEl.innerHTML='';
+  currentThread.replies.forEach(r=>{
+    const div = document.createElement('div');
+    div.className="bg-gray-100 p-2 rounded text-sm";
+    div.textContent = r;
+    repliesEl.appendChild(div);
+  });
+}
+
+document.getElementById('sendReply').onclick = ()=>{
+  const val = document.getElementById('replyInput').value;
+  if(!val) return;
+
+  currentThread.replies.push(val);
+  document.getElementById('replyInput').value='';
+  renderReplies();
+};
+
+document.getElementById('closeThread').onclick = ()=>{
+  modal.classList.add('hidden');
+};
+
+modal.onclick = (e)=>{
+  if(e.target.id==='threadModal'){
+    modal.classList.add('hidden');
+  }
+};
+
+render();
+</script>
+
+</body>
+</html>

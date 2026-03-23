@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-neutral-950 text-white"><body class="bg-neutral-950 text-white"
+style="
+background-image: 
+linear-gradient(rgba(10,10,10,0.35), rgba(10,10,10,0.35)),
+url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1920');
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="hidden md:block space-y-4">
+      <div class="bg-neutral-900 p-4 rounded-xl">
+        <div class="font-semibold mb-2">Profile</div>
+        <div class="opacity-70 text-sm">My Account</div>
+      </div>
+
+      <div class="bg-neutral-900 p-4 rounded-xl space-y-2 text-sm">
+        <div class="cursor-pointer hover:opacity-70">Home</div>
+        <div class="cursor-pointer hover:opacity-70">Explore</div>
+        <div class="cursor-pointer hover:opacity-70">Notifications</div>
+        <div class="cursor-pointer hover:opacity-70">Messages</div>
+      </div>
+    </div>
+
+    <!-- MAIN FEED -->
+    <div class="md:col-span-2">
+
+      <h1 class="text-3xl sm:text-4xl font-semibold mb-6">Social Feed</h1>
+
+      <!-- CREATE POST -->
+      <div class="bg-neutral-900 p-4 rounded-xl mb-8">
+        <textarea id="post-input" class="w-full bg-neutral-800 p-3 rounded mb-3" placeholder="Share something..."></textarea>
+        <input id="img-input" type="text" placeholder="Image URL (optional)" class="w-full bg-neutral-800 p-2 rounded mb-3">
+        <button id="post-btn" class="bg-white text-black px-5 py-2 rounded active:scale-95 transition">Post</button>
+      </div>
+
+      <!-- FEED -->
+      <div id="feed" class="space-y-10"></div>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR -->
+    <div class="hidden md:block">
+      <div class="bg-neutral-900 p-4 rounded-xl space-y-4">
+
+        <input 
+          type="text" 
+          placeholder="Search..." 
+          class="w-full bg-neutral-800 p-2 rounded text-sm"
+        >
+
+        <div class="text-sm">
+          <div class="font-semibold mb-1">Join the conversation</div>
+          <div class="opacity-70">English</div>
+        </div>
+
+        <div class="text-sm">
+          <div class="font-semibold mb-2">Trending</div>
+          <div class="space-y-1 opacity-80">
+            <div>1. NCAA Upset</div>
+            <div>2. Kansas Basketball</div>
+            <div>3. Wildflowers</div>
+            <div>4. Airport Politics</div>
+            <div>5. Kepa</div>
+          </div>
+        </div>
+
+        <div class="text-xs opacity-50 pt-2 border-t border-neutral-800">
+          Privacy ∙ Terms ∙ Help
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const feed = document.getElementById('feed');
+const input = document.getElementById('post-input');
+const imgInput = document.getElementById('img-input');
+const btn = document.getElementById('post-btn');
+
+function createPost(content, image) {
+  const div = document.createElement('div');
+  div.className = "bg-neutral-900 rounded-xl overflow-hidden";
+
+  let likes = Math.floor(Math.random()*20);
+  let comments = [];
+
+  const username = "user_" + Math.floor(Math.random()*10000);
+  const avatar = `https://i.pravatar.cc/50?random=${Math.random()}`;
+
+  div.innerHTML = `
+    <div class="p-4 flex items-center gap-3">
+      <img src="${avatar}" class="w-10 h-10 rounded-full">
+      <div class="font-medium">${username}</div>
+    </div>
+
+    <div class="px-4 pb-3">${content}</div>
+
+    ${image ? `<img src="${image}" class="w-full max-h-[500px] object-cover">` : ''}
+
+    <div class="p-4 flex justify-between text-sm">
+      <button class="like active:scale-95 transition">❤️ ${likes}</button>
+      <button class="comment-btn active:scale-95 transition">💬 Comment</button>
+      <button class="delete text-red-400 active:scale-95 transition">Delete</button>
+    </div>
+
+    <div class="px-4 pb-4 space-y-2 hidden comments-section">
+      <div class="comments-list text-sm"></div>
+      <input class="comment-input w-full bg-neutral-800 p-2 rounded text-sm" placeholder="Write a comment...">
+    </div>
+  `;
+
+  const likeBtn = div.querySelector('.like');
+  likeBtn.onclick = () => {
+    likes++;
+    likeBtn.textContent = `❤️ ${likes}`;
+  };
+
+  const commentBtn = div.querySelector('.comment-btn');
+  const commentsSection = div.querySelector('.comments-section');
+  const commentsList = div.querySelector('.comments-list');
+  const commentInput = div.querySelector('.comment-input');
+
+  commentBtn.onclick = () => {
+    commentsSection.classList.toggle('hidden');
+  };
+
+  commentInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && commentInput.value.trim()) {
+      const text = commentInput.value;
+      comments.push(text);
+
+      const c = document.createElement('div');
+      c.textContent = text;
+      commentsList.appendChild(c);
+
+      commentInput.value = '';
+    }
+  });
+
+  div.querySelector('.delete').onclick = () => div.remove();
+
+  return div;
+}
+
+btn.onclick = () => {
+  if (!input.value.trim()) return;
+  feed.prepend(createPost(input.value, imgInput.value));
+  input.value = '';
+  imgInput.value = '';
+};
+
+// seed posts
+for (let i = 1; i <= 10; i++) {
+  feed.appendChild(createPost(`Sample post ${i}`, `https://picsum.photos/800/500?random=${i}`));
+}
+</script>
+
+</body>
+</html>
