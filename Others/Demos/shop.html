@@ -5,6 +5,92 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shop</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<style>
+@media (max-width: 900px) {
+
+  /* BACKGROUND → prevent lag */
+  body {
+    background-attachment: scroll !important;
+  }
+
+  /* HEADER → compact + wrap */
+  header > div {
+    flex-wrap: wrap;
+    gap: 8px !important;
+  }
+
+  /* NAV → tighter */
+  header .flex.items-center.gap-4 {
+    gap: 10px !important;
+    font-size: 13px;
+  }
+
+  /* FILTER BAR → stacked */
+  .flex.flex-wrap {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .flex.flex-wrap input,
+  .flex.flex-wrap select,
+  .flex.flex-wrap button {
+    width: 100% !important;
+  }
+
+  /* GRID → 2 columns (best mobile layout) */
+  #grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  /* PRODUCT CARDS */
+  #grid img {
+    height: 110px !important;
+  }
+
+  #grid div {
+    font-size: 13px;
+  }
+
+  /* CART → full width bottom bar */
+  .fixed.bottom-4.right-4 {
+    width: calc(100% - 20px) !important;
+    right: 10px !important;
+    left: 10px !important;
+    bottom: 10px !important;
+    border-radius: 12px !important;
+  }
+
+  /* PREVIEW MODAL → mobile fit */
+  #preview-box {
+    max-width: 100% !important;
+    height: 90vh !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #preview-img {
+    height: 200px !important;
+  }
+
+  /* CHECKOUT MODAL */
+  #modal > div {
+    max-width: 100% !important;
+  }
+
+  /* FOOTER → cleaner stacking */
+  footer .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  footer .flex {
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+}
+</style>
 </head>
 <body class="bg-neutral-950 text-white" style="background-image:url('https://images.unsplash.com/photo-1515168833906-d2a3b82b302a?q=80&w=1920'); background-size:cover; background-attachment:fixed; background-blend-mode:overlay;">
 <!-- HEADER SWANSON-->
