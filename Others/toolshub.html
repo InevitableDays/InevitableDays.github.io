@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quick Hub</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #111827;
+    --text: #e5e7eb;
+    --accent: #38bdf8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+    opacity: 0.9;
+  }
+
+  .grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--card);
+    padding: 16px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+
+  .title {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .desc {
+    font-size: 0.8rem;
+    opacity: 0.6;
+  }
+
+  footer {
+    margin-top: 18px;
+    font-size: 0.7rem;
+    opacity: 0.4;
+    text-align: center;
+  }
+  /* Mobile optimization (≤900px) */
+  @media (max-width: 900px) {
+    body {
+      align-items: flex-start;
+      padding-top: 40px;
+    }
+
+    .container {
+      max-width: 100%;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+
+    .card {
+      padding: 14px;
+      border-radius: 12px;
+    }
+
+    .title {
+      font-size: 0.95rem;
+    }
+
+    .desc {
+      font-size: 0.75rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Quick Hub</h1>
+
+    <div class="grid">
+      <a class="card" href="https://inevitabledays.github.io/Others/DevTools">
+        <div class="title">Dev Tools</div>
+        <div class="desc">Utilities & helpers</div>
+      </a>
+
+      <a class="card" href="https://inevitabledays.github.io/Others/UnitConverter">
+        <div class="title">Unit Converter</div>
+        <div class="desc">Fast conversions</div>
+      </a>
+
+      <a class="card" href="https://inevitabledays.github.io/Others/fin">
+        <div class="title">Currency Converter</div>
+        <div class="desc">Money tools</div>
+      </a>
+    </div>
+
+    <footer>No trackers · No redirects</footer>
+  </div>
+</body>
+</html>
