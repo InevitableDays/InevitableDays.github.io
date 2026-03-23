@@ -54,61 +54,6 @@ body {
   animation: fadeZoom 0.25s ease;
 }
 
-/* mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile */
-@media (max-width: 900px) {
-
-  /* FORCE vertical layout (no grid behavior at all) */
-  .grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 18px !important;
-    padding: 0 16px !important;
-  }
-
-  /* Cards → full width */
-  .card {
-    width: 100% !important;
-  }
-
-  /* Header tighter */
-  header {
-    padding: 18px 0 !important;
-    font-size: 20px !important;
-  }
-
-  /* Remove heavy effects */
-  .card {
-    transform: none !important;
-  }
-
-  .glow::before {
-    display: none !important;
-  }
-
-  /* Preview height better ratio */
-  .card iframe {
-    height: 200px !important;
-  }
-
-  /* Modal fit */
-  #modal {
-    width: 95vw !important;
-    height: 85vh !important;
-    border-radius: 14px !important;
-  }
-
-  /* Controls */
-  #controls {
-    bottom: 10px !important;
-    gap: 8px !important;
-    padding: 8px 10px !important;
-  }
-
-  #controls button {
-    padding: 10px 14px !important;
-    font-size: 14px !important;
-  }
-}
 </style>
 </head>
 
@@ -181,6 +126,50 @@ body {
 
 </div>
 
+
+<div style="text-align:center; margin:5px 0 120px 0;">
+
+  <div style="font-size:14px; opacity:0.5; margin-bottom:20px; letter-spacing:2px;">
+    DIRECT ACCESS
+  </div>
+
+  <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; font-size:16px;">
+
+    <a href="https://inevitabledays.github.io/Others/Demos/forum"
+       target="_blank"
+       style="opacity:0.7; text-decoration:none; transition:0.2s;"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.7'">
+       Forum
+    </a>
+
+    <a href="https://inevitabledays.github.io/Others/Demos/streaming"
+       target="_blank"
+       style="opacity:0.7; text-decoration:none; transition:0.2s;"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.7'">
+       Streaming
+    </a>
+
+    <a href="https://inevitabledays.github.io/Others/Demos/shop"
+       target="_blank"
+       style="opacity:0.7; text-decoration:none; transition:0.2s;"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.7'">
+       Shop
+    </a>
+
+    <a href="https://inevitabledays.github.io/Others/Demos/socialmedia"
+       target="_blank"
+       style="opacity:0.7; text-decoration:none; transition:0.2s;"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.7'">
+       Social
+    </a>
+
+  </div>
+
+</div>
 <script>
 const projects = [
   "https://inevitabledays.github.io/Others/Demos/forum",
