@@ -191,8 +191,6 @@ const currencyData = {
   RUB: "Ruble (₽)",
   TWD: "Taiwan ($)",
   THB: "Thai Baht (฿)"
-  GOLD: "🪙 Gold g",
-  SILVER: "🥈 Silver g"
 };
 
 const list = Object.keys(currencyData);
@@ -206,9 +204,6 @@ const historyDiv = document.getElementById("history");
 let from = "TRY";
 let to = "USD";
 let rates = {};
-
-const goldPerGram = goldUSD / 31.1035;
-const silverPerGram = silverUSD / 31.1035;
 
 async function loadRates(){
   const res = await fetch("https://open.er-api.com/v6/latest/TRY");
@@ -367,19 +362,6 @@ async function pasteInput(){
     // fallback for restricted browsers
     alert("Paste not allowed. Use long-press → Paste.");
   }
-}
-
-
-
-async function loadMetals(){
-  const res = await fetch("https://api.metals.live/v1/spot");
-  const data = await res.json();
-
-  const goldUSD = data.find(x=>x.gold)?.gold;
-  const silverUSD = data.find(x=>x.silver)?.silver;
-
-  goldPerGram = goldUSD / 31.1035;
-  silverPerGram = silverUSD / 31.1035;
 }
 
 </script>
