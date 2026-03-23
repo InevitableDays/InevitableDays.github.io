@@ -55,23 +55,28 @@ body {
 }
 
 /* mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile mobile */
-  @media (max-width: 900px) {
+@media (max-width: 900px) {
 
-  /* GRID → single column + tighter spacing */
+  /* FORCE vertical layout (no grid behavior at all) */
   .grid {
-    grid-template-columns: 1fr !important;
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-    gap: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+    padding: 0 16px !important;
   }
 
-  /* HEADER → less vertical waste */
+  /* Cards → full width */
+  .card {
+    width: 100% !important;
+  }
+
+  /* Header tighter */
   header {
-    padding: 20px 0 !important;
-    font-size: 22px !important;
+    padding: 18px 0 !important;
+    font-size: 20px !important;
   }
 
-  /* CARDS → remove heavy effects for performance */
+  /* Remove heavy effects */
   .card {
     transform: none !important;
   }
@@ -80,21 +85,21 @@ body {
     display: none !important;
   }
 
-  /* IFRAME PREVIEWS → slightly taller for mobile */
+  /* Preview height better ratio */
   .card iframe {
-    height: 180px !important;
+    height: 200px !important;
   }
 
-  /* MODAL → true edge fit with slight margin */
+  /* Modal fit */
   #modal {
     width: 95vw !important;
     height: 85vh !important;
     border-radius: 14px !important;
   }
 
-  /* CONTROLS → thumb-friendly */
+  /* Controls */
   #controls {
-    bottom: 12px !important;
+    bottom: 10px !important;
     gap: 8px !important;
     padding: 8px 10px !important;
   }
@@ -103,7 +108,6 @@ body {
     padding: 10px 14px !important;
     font-size: 14px !important;
   }
-
 }
 </style>
 </head>
