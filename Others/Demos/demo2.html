@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Showcase</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 20% 30%, #3b82f6 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, #a855f7 0%, transparent 40%),
+    #050505;
+  color: white;
+}
+
+/* GLASS */
+.glass {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* PARALLAX */
+.card {
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease;
+}
+
+/* GLOW */
+.glow::before {
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:18px;
+  background: var(--accent, linear-gradient(120deg,#3b82f6,#a855f7));
+  filter: blur(30px);
+  opacity:0;
+  transition:0.3s;
+  z-index:-1;
+}
+.glow:hover::before {
+  opacity:0.7;
+}
+
+/* MODAL ANIMATION */
+@keyframes fadeZoom {
+  from { opacity:0; transform:scale(0.9); }
+  to { opacity:1; transform:scale(1); }
+}
+.animate-in {
+  animation: fadeZoom 0.25s ease;
+}
+</style>
+</head>
+
+<body class="min-h-screen font-sans">
+
+<header class="text-center py-10 text-3xl font-medium">
+  Showcase
+</header>
+
+<div class="grid md:grid-cols-2 gap-10 px-10 pb-20 max-w-7xl mx-auto">
+
+  <div class="relative glow card cursor-pointer"
+    onclick="openPreview(0)">
+    <div class="glass rounded-2xl overflow-hidden">
+      <iframe src="https://inevitabledays.github.io/Others/Demos/forum"
+        class="w-full h-60 pointer-events-none"></iframe>
+      <div class="p-5"><div class="text-xl">Forum</div></div>
+    </div>
+  </div>
+
+  <div class="relative glow card cursor-pointer"
+    onclick="openPreview(1)">
+    <div class="glass rounded-2xl overflow-hidden">
+      <iframe src="https://inevitabledays.github.io/Others/Demos/streaming"
+        class="w-full h-60 pointer-events-none"></iframe>
+      <div class="p-5"><div class="text-xl">Streaming</div></div>
+    </div>
+  </div>
+
+  <div class="relative glow card cursor-pointer"
+    onclick="openPreview(2)">
+    <div class="glass rounded-2xl overflow-hidden">
+      <iframe src="https://inevitabledays.github.io/Others/Demos/shop"
+        class="w-full h-60 pointer-events-none"></iframe>
+      <div class="p-5"><div class="text-xl">Shop</div></div>
+    </div>
+  </div>
+
+  <div class="relative glow card cursor-pointer"
+    onclick="openPreview(3)">
+    <div class="glass rounded-2xl overflow-hidden">
+      <iframe src="https://inevitabledays.github.io/Others/Demos/socialmedia"
+        class="w-full h-60 pointer-events-none"></iframe>
+      <div class="p-5"><div class="text-xl">Social</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FLOATING CONTROLS -->
+<div id="controls"
+  class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex gap-3 glass px-3 py-2 rounded-xl">
+
+  <button onclick="prev()" class="px-6">Previous</button>
+  <button onclick="closePreview()" class="px-6">✕</button>
+  <button onclick="next()" class="px-6">Next</button>
+
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay"
+  class="fixed inset-0 hidden z-40 flex items-center justify-center bg-black/40 backdrop-blur-xl">
+
+  <div id="modal"
+    class="w-[90vw] h-[90vh] glass rounded-2xl overflow-hidden relative animate-in shadow-2xl">
+
+    <iframe id="frame" class="w-full h-full"></iframe>
+
+  </div>
+
+</div>
+
+<script>
+const projects = [
+  "https://inevitabledays.github.io/Others/Demos/forum",
+  "https://inevitabledays.github.io/Others/Demos/streaming",
+  "https://inevitabledays.github.io/Others/Demos/shop",
+  "https://inevitabledays.github.io/Others/Demos/socialmedia"
+];
+
+let current = 0;
+
+/* OPEN */
+function openPreview(index) {
+  current = index;
+
+  document.getElementById("overlay").classList.remove("hidden");
+  document.getElementById("controls").classList.remove("hidden");
+
+  document.getElementById("frame").src = projects[index];
+}
+
+/* CLOSE */
+function closePreview() {
+  document.getElementById("overlay").classList.add("hidden");
+  document.getElementById("controls").classList.add("hidden");
+  document.getElementById("frame").src = "";
+}
+
+/* NAV */
+function next() {
+  current = (current + 1) % projects.length;
+  document.getElementById("frame").src = projects[current];
+}
+
+function prev() {
+  current = (current - 1 + projects.length) % projects.length;
+  document.getElementById("frame").src = projects[current];
+}
+
+/* PARALLAX */
+document.querySelectorAll(".card").forEach(card => {
+  card.addEventListener("mousemove", e => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+    card.style.transform = `rotateY(${x*10}deg) rotateX(${-y*10}deg)`;
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+  });
+});
+
+/* KEYS */
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closePreview();
+  if (e.key === "ArrowRight") next();
+  if (e.key === "ArrowLeft") prev();
+});
+</script>
+<script>
+const overlayEl = document.getElementById("overlay");
+const modalEl = document.getElementById("modal");
+
+overlayEl.addEventListener("click", (e) => {
+  // close only if the click is outside the modal panel
+  if (!modalEl.contains(e.target)) {
+    closePreview();
+  }
+});
+</script>
+</body>
+</html>
