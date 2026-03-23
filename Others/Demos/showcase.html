@@ -230,8 +230,9 @@ function openPreview(index) {
 
   document.getElementById("overlay").classList.remove("hidden");
   document.getElementById("controls").classList.remove("hidden");
-
   document.getElementById("frame").src = projects[index];
+
+  history.pushState({ preview: true }, "");
 }
 
 /* CLOSE */
@@ -239,6 +240,10 @@ function closePreview() {
   document.getElementById("overlay").classList.add("hidden");
   document.getElementById("controls").classList.add("hidden");
   document.getElementById("frame").src = "";
+
+  if (history.state && history.state.preview) {
+    history.back();
+  }
 }
 
 /* NAV */
@@ -282,6 +287,16 @@ overlayEl.addEventListener("click", (e) => {
   // close only if the click is outside the modal panel
   if (!modalEl.contains(e.target)) {
     closePreview();
+  }
+});
+
+window.addEventListener("popstate", () => {
+  const overlay = document.getElementById("overlay");
+
+  if (!overlay.classList.contains("hidden")) {
+    overlay.classList.add("hidden");
+    document.getElementById("controls").classList.add("hidden");
+    document.getElementById("frame").src = "";
   }
 });
 </script>
