@@ -73,7 +73,7 @@
     opacity: 0.4;
     text-align: center;
   }
-  /* Mobile optimization (≤900px) */
+  /* Mobile optimization 900 */
   @media (max-width: 900px) {
     body {
       align-items: flex-start;
@@ -103,38 +103,75 @@
       font-size: 0.75rem;
     }
   }
+
+
+/* icons belated */
+  .card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.card img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 8px;
+  opacity: 1.0;
+}
 </style>
 </head>
 <body>
   <div class="container">
-    <h1>Quick Hub</h1>
+    <h1>My Quick Hub</h1>
 
     <div class="grid">
 
-      <a class="card" href="https://inevitabledays.github.io/Others/Countdown2026">
-        <div class="title">Countdown Timer</div>
-        <div class="desc">Timer tool</div>
-      </a>
-    
-      <a class="card" href="https://inevitabledays.github.io/Others/DevTools">
-        <div class="title">Dev Tools</div>
-        <div class="desc">HTML, Binary, Json tools</div>
-      </a>
+<a class="card" href="https://inevitabledays.github.io/Others/Countdown2026">
+  <div class="card-text">
+    <div class="title">Countdown Timer</div>
+    <div class="desc">Timer tool</div>
+  </div>
+  <img src="ct1.jpg" alt="">
+</a>
 
-      <a class="card" href="https://inevitabledays.github.io/Others/UnitConverter">
-        <div class="title">Unit Converter</div>
-        <div class="desc">Fast conversions; temp, lenght, weight</div>
-      </a>
+<a class="card" href="https://inevitabledays.github.io/Others/DevTools">
+  <div class="card-text">
+    <div class="title">Dev Tools</div>
+    <div class="desc">HTML, Binary, Json tools</div>
+  </div>
+  <img src="dt2.jpg" alt="">
+</a>
 
-      <a class="card" href="https://inevitabledays.github.io/Others/CurrencyConverter">
-        <div class="title">Currency Converter</div>
-        <div class="desc">Currency Exchange tool</div>
-      </a>
+<a class="card" href="https://inevitabledays.github.io/Others/UnitConverter">
+  <div class="card-text">
+    <div class="title">Unit Converter</div>
+    <div class="desc">Fast conversions; temp, lenght, weight</div>
+  </div>
+  <img src="uc3.jpg" alt="">
+</a>
 
-      <a class="card" href="https://inevitabledays.github.io/Others/Demos/showcase">
-        <div class="title">Demos</div>
-        <div class="desc">Money tools</div>
-      </a>
+<a class="card" href="https://inevitabledays.github.io/Others/CurrencyConverter">
+  <div class="card-text">
+    <div class="title">Currency Converter</div>
+    <div class="desc">Currency Exchange tool</div>
+  </div>
+  <img src="cc4.jpg" alt="">
+</a>
+
+<a class="card" href="https://inevitabledays.github.io/Others/Demos/showcase">
+  <div class="card-text">
+    <div class="title">Demos</div>
+    <div class="desc">Money tools</div>
+  </div>
+  <img src="d5.jpg" alt="">
+</a>
       
     </div>
 
