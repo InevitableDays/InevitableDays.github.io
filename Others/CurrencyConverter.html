@@ -309,7 +309,7 @@ function saveHistory(i,o){
 
   let h = JSON.parse(localStorage.getItem('hist')||'[]');
   h.unshift({i,o,from,to});
-  h = h.slice(0,10);
+  h = h.slice(0,5);
 
   localStorage.setItem('hist', JSON.stringify(h));
   renderHistory();
