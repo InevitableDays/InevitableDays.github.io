@@ -279,7 +279,7 @@ function run(){
   const lines = input.value.split("\n");
   const results = lines.map(l=>convert(l));
   output.value = results.join("\n");
-  saveHistory(input.value, output.value);
+  //saveHistory(input.value, output.value); causes glitch 100tl = 4400$
 }
 
 function clearAll(){
@@ -347,7 +347,7 @@ setInterval(async ()=>{
 loadRates().then(()=>{
   createButtons(leftDiv,"left");
   createButtons(rightDiv,"right");
-  //renderHistory();  causes glitch on load 100tl = 4400$ 
+  renderHistory();
   input.focus();
 });
 
