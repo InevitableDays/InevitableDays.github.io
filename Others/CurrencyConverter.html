@@ -279,7 +279,7 @@ function run(){
   const lines = input.value.split("\n");
   const results = lines.map(l=>convert(l));
   output.value = results.join("\n");
-  //saveHistory(input.value, output.value); causes glitch 100tl = 4400$
+  saveHistory(input.value, output.value);
 }
 
 function clearAll(){
@@ -312,7 +312,7 @@ function saveHistory(i,o){
   h = h.slice(0,5);
 
   localStorage.setItem('hist', JSON.stringify(h));
-  renderHistory();
+  //renderHistory();
 }
 
 function renderHistory(){
