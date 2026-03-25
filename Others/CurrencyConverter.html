@@ -371,6 +371,14 @@ async function pasteInput(){
     alert("Paste not allowed. Use long-press → Paste.");
   }
 }
+
+
+// something something enter kills keyboard for mobile
+  input.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    input.blur(); // closes keyboard
+  }
+});
 </script>
 <div style="display:flex; justify-content:center; gap:-1px; margin-top:1px;">
   <iframe
