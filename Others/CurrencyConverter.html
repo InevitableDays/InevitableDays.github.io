@@ -89,10 +89,10 @@ textarea {
 }
 
 * {
-    user-select: none;             /* text not selectable */
+    user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    -webkit-touch-callout: none; /* removes long-press menu on iOS */
+    -webkit-touch-callout: none;
 }
   
 @media (max-width: 900px){
@@ -106,7 +106,7 @@ textarea {
   body{
     min-height:100dvh;
     padding:0 6px;
-    background-attachment:scroll; /* kills mobile whitespace bug */
+    background-attachment:scroll;
   }
 
   header{
@@ -143,7 +143,7 @@ textarea {
   .currency-buttons button{
     font-size:10px;
     padding:5px;
-    flex:1 1 calc(33.33% - 4px); /* nice grid feel */
+    flex:1 1 calc(33.33% - 4px);
   }
 
   textarea{
@@ -165,9 +165,7 @@ button.pressed {
 
 </style>
 </head>
-
 <body>
-
 <header>Currency Converter</header>
 
 <div class="topbar">
@@ -203,7 +201,14 @@ const currencyData = {
   CNY: "Yuan (¥)",
   RUB: "Ruble (₽)",
   TWD: "Taiwan ($)",
-  THB: "Thai Baht (฿)"
+  THB: "Thai Baht (฿)",
+
+  PHP: "Philippine Peso (₱)",
+  SAR: "Saudi Riyal (﷼)",
+  EGP: "Egypt Pound (£)",
+  VES: "Venezuelan Bolívar (Bs)",
+  ARS: "Argentine Peso ($)",
+  BRL: "Brazilian Real (R$)"
 };
 
 const list = Object.keys(currencyData);
@@ -246,10 +251,7 @@ function createButtons(container, side){
       run();
     };
 
-    // prevent losing focus
     btn.onmousedown = (e)=>e.preventDefault();
-
-
     container.appendChild(btn);
   });
 }
@@ -289,21 +291,19 @@ function clearAll(){
 function copyOutput(){
   navigator.clipboard.writeText(output.value);
 }
-// focus consistency fk
+
 document.querySelectorAll('.topbar button').forEach(btn=>{
   btn.onmousedown = (e)=>e.preventDefault();
-  btn.ontouchstart = (e)=>e.preventDefault();
 });
-input.addEventListener("input", ()=>{
-  // allow digits, dot, minus, and new lines
-  let cleaned = input.value
-    .replace(/[^\d.\-\n]/g, "")   // remove everything else
-    .replace(/(\..*)\./g, "$1");  // only one dot per line (basic)
 
-  input.value = cleaned;                    //input.addEventListener("input", run); 
+input.addEventListener("input", ()=>{
+  let cleaned = input.value
+    .replace(/[^\d.\-\n]/g, "")
+    .replace(/(\..*)\./g, "$1");
+
+  input.value = cleaned;
   run();
 });
-
 
 function saveHistory(i,o){
   if(!i.trim()) return;
@@ -340,13 +340,11 @@ function renderHistory(){
   });
 }
 
-// auto refresh every 10 min
 setInterval(async ()=>{
   await loadRates();
   run();
 }, 600000);
 
-// init
 loadRates().then(()=>{
   createButtons(leftDiv,"left");
   createButtons(rightDiv,"right");
@@ -354,7 +352,6 @@ loadRates().then(()=>{
   input.focus();
 });
 
-//btn transform fix
 document.querySelectorAll('button').forEach(btn=>{
   btn.addEventListener('touchstart', ()=>btn.classList.add('pressed'));
   btn.addEventListener('touchend', ()=>btn.classList.remove('pressed'));
@@ -364,7 +361,6 @@ document.querySelectorAll('button').forEach(btn=>{
   btn.addEventListener('mouseleave', ()=>btn.classList.remove('pressed'));
 });
 
-
 async function pasteInput(){
   try {
     const text = await navigator.clipboard.readText();
@@ -372,11 +368,25 @@ async function pasteInput(){
     run();
     input.focus();
   } catch(e){
-    // fallback for restricted browsers
     alert("Paste not allowed. Use long-press → Paste.");
   }
 }
-
 </script>
+<div style="display:flex; justify-content:center; gap:-1px; margin-top:1px;">
+  <iframe
+    src="https://goldbroker.com/widget/live-price/XAU?currency=TRY&weight_unit=g"
+    width="120"
+    height="100"
+    frameborder="0"
+    style="border:0; overflow:hidden;">
+  </iframe>
+  <iframe
+    src="https://goldbroker.com/widget/live-price/XAG?currency=TRY&weight_unit=g"
+    width="120"
+    height="100"
+    frameborder="0"
+    style="border:0; overflow:hidden;">
+  </iframe>
+</div>
 </body>
 </html>
