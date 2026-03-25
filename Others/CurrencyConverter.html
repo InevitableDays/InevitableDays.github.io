@@ -347,7 +347,7 @@ setInterval(async ()=>{
 loadRates().then(()=>{
   createButtons(leftDiv,"left");
   createButtons(rightDiv,"right");
-  renderHistory();
+  //renderHistory();  causes glitch on load 100tl = 4400$ 
   input.focus();
 });
 
