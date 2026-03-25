@@ -312,7 +312,7 @@ function saveHistory(i,o){
   h = h.slice(0,5);
 
   localStorage.setItem('hist', JSON.stringify(h));
-  //renderHistory();
+  renderHistory();
 }
 
 function renderHistory(){
@@ -378,6 +378,10 @@ async function pasteInput(){
     input.blur(); // closes keyboard
   }
 });
+
+  //clear input output on load
+  input.value = "";
+  output.value = "";
 </script>
 <div style="display:flex; justify-content:center; gap:-1px; margin-top:1px;">
   <iframe
