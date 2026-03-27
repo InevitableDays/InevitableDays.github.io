@@ -50,6 +50,8 @@ select { padding:8px; border-radius:6px; background:#020617; color:#fff; border:
 <option value="cm-in">Centimeter (cm) ↔ Inches (in)</option>
 <option value="c-f">Celcius (°C) ↔ Fahrenheit (°F)</option>
 <option value="kg-lbs">Pounds (lbs) ↔ Kilograms (kg)</option>
+<option value="cm-ft">Centimeter (cm) ↔ Feet (ft)</option>
+<option value="km-mil">Kilometer (km) ↔ Mile (mil)</option>
 </select>
 <div>
 <button onclick="swap()">↔ Swap</button>
@@ -83,6 +85,8 @@ function labels(){
     case 'cm-in': return reversed ? ['Input (in)','Output (cm)'] : ['Input (cm)','Output (in)'];
     case 'c-f': return reversed ? ['Input (°F)','Output (°C)'] : ['Input (°C)','Output (°F)'];
     case 'kg-lbs': return reversed ? ['Input (kg)','Output (lbs)'] : ['Input (lbs)','Output (kg)'];
+    case 'cm-ft': return reversed ? ['Input (cm)','Output (ft)'] : ['Input (ft)','Output (cm)'];
+    case 'km-mil': return reversed ? ['Input (km)','Output (mil)'] : ['Input (mil)','Output (km)'];
   }
 }
 
@@ -101,6 +105,8 @@ function convert(val){
     case 'cm-in': return reversed ? (n*2.54).toFixed(2)+' cm' : (n/2.54).toFixed(2)+' in';
     case 'c-f': return reversed ? ((n-32)*5/9).toFixed(2)+' °C' : (n*9/5+32).toFixed(2)+' °F';
     case 'kg-lbs': return reversed ? (n/0.453592).toFixed(2)+' lbs' : (n*0.453592).toFixed(2)+' kg';
+    case 'cm-ft': return reversed ? (n/0.032808).toFixed(2)+' ft' : (n*0.032808).toFixed(2)+' cm';
+    case 'km-mil': return reversed ? (n/0.621371).toFixed(2)+' mil' : (n*0.621371).toFixed(2)+' km';
   }
 }
 
