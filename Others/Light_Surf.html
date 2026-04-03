@@ -48,6 +48,12 @@ h1, h2 {
     color: #00071b; /* make headings pop */
 }
 * {cursor: url("https://inevitabledays.github.io/Others/Cursor_2.cur"), auto !important;}
+
+@media (max-width: 900px) {
+    .hide-on-mobile {
+      display: none;
+    }
+  }
 </style>
 </head>
 
@@ -177,22 +183,7 @@ Light_Surf
 </div>
 <br><br>
 <!-- <iframe src="https://www5.cbox.ws/box/?boxid=961916&boxtag=2Mjd0f" width="800px" height="450" allowtransparency="no" allow="no" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe> -->	
-</center>
-    <!-- p: fixed not good down here -->   
-<img 
-  src="./SS/ribbon.png" alt="updated" title="green ribbon" id="n/a"
-  style="
-    position: absolute;    
-    top: 55px;              
-    left: 466px;            
-    width: 60px;        
-    height: auto;        
-    opacity: 1.0;
-    pointer-events: auto;       
-    z-index: 9999; 
-    cursor:pointer;      
-  "
->
+</center>  
 <!-- <script>
 var backgrounds = [
 "../images/image_proxy.jpg",
@@ -206,5 +197,21 @@ document.body.style.backgroundImage = "url('" + pick + "')";
 document.body.style.backgroundSize = "cover";
 document.body.style.backgroundAttachment = "fixed";
 </script> -->
+    <!-- p: fixed not good down here --> 
+<img 
+  src="./SS/ribbon.png" alt="updated" title="green ribbon" id="n/a"
+  style="
+    position: absolute;    
+    top: 55px;              
+    left: 466px;            
+    width: 60px;        
+    height: auto;        
+    opacity: 1.0;
+    pointer-events: auto;       
+    z-index: 9999; 
+    cursor:pointer;      
+  "
+ class="hide-on-mobile"
+    >
 </body>
 </html>
