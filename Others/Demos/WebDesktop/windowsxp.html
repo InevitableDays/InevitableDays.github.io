@@ -1215,9 +1215,31 @@ function shutdown() {
   }, 1600);
 }
 
-function bootClick() { location.reload(); }
+// function bootClick() { location.reload(); }
+function bootClick() {
+  const video = document.getElementById("finalVideo");
+  video.style.zIndex = 99999; 
+  document.body.style.pointerEvents = "none";
+
+  video.src = "final.mp4";
+  video.style.display = "block";
+  video.currentTime = 0;
+// video.muted = true;
+  video.volume = 1.0;
+  video.play().catch(() => {});
+
+  video.onplaying = () => {
+    setTimeout(() => {
+      location.reload();
+    }, 30900);
+  };
+}
 
 
+/*  video.onended = () => {
+    location.reload();
+  };
+}*/
 
 
 
