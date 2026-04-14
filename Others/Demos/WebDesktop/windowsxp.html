@@ -648,7 +648,7 @@ button{
 </div>
 <audio id="shutdownSound" src="shutdown.wav"></audio>
 
-<video id="finalVideo" playsinline autoplay style=" position:fixed; inset:0; width:100%; height:100%; object-fit:cover; display:none; z-index:999999; pointer-events:none; "></video>
+<video id="finalVideo" playsinline autoplay preload="auto" style=" position:fixed; inset:0; width:100%; height:100%; object-fit:cover; display:none; z-index:999999; pointer-events:none; "></video>
 
 
 
@@ -1220,6 +1220,10 @@ function bootClick() {
   const video = document.getElementById("finalVideo");
   video.style.zIndex = 99999; 
   document.body.style.pointerEvents = "none";
+ 
+  // disable right click
+  const blockRightClick = (e) => e.preventDefault();
+  document.addEventListener("contextmenu", blockRightClick);
 
   video.src = "final.mp4";
   video.style.display = "block";
@@ -1228,6 +1232,10 @@ function bootClick() {
   video.volume = 1.0;
   video.play().catch(() => {});
 
+  function cleanup() {
+  document.removeEventListener("contextmenu", blockRightClick);
+  }
+  
   video.onplaying = () => {
     setTimeout(() => {
       location.reload();
