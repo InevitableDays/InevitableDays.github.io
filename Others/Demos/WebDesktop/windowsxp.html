@@ -1104,6 +1104,8 @@ function startBoot() {
 
   const audio = new Audio("startup.wav");
 
+  const blockRightClick = (e) => e.preventDefault();
+  document.addEventListener("contextmenu", blockRightClick);
   // initial state
   boot.style.display = "block";
   gif.style.display = "block";
@@ -1136,7 +1138,11 @@ function startBoot() {
       cleanup();
     }, 1000);
   }
-
+  
+  function cleanup() {
+    document.removeEventListener("contextmenu", blockRightClick);
+  }
+  
   function keyHandler(e) {
     if (e.key === "Enter") proceed();
   }
