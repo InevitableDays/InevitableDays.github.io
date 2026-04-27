@@ -22,7 +22,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
 <style>
-/* Page background */
+/* stripped and united one day.... never */
 body {
     margin: 0;
     min-height: 100vh;
@@ -122,13 +122,13 @@ button:active {
     }
 }
     
-/*weather gadget*/
+
     
 .weather-widget {
-  position: fixed;   /* stays in place even when scrolling */
-  top: 10px;         /* distance from top */
-  right: 10px;        /* distance from left */
-  z-index: 9999;     /* keeps it above other elements */
+  position: fixed;   
+  top: 10px;         
+  right: 10px;       
+  z-index: 9999;     
 }
 
 .weather-inner {
@@ -329,7 +329,7 @@ let currentLang = "en";
 let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/medium_bell_ringing_near.ogg");
 alarmAudio.loop = true;
 
-/* ---------- LANGUAGE SYSTEM ---------- */
+//LANGUAGE SYSTEM
 
 const langData = {
     de: {
@@ -455,7 +455,7 @@ currentLang = navigator.language.startsWith("tr") ? "tr"
 
 applyLanguage();
 showMobileReminder();
-/* ---------- TIMER SYSTEM ---------- */
+// TIMER SYSTEM ----------
 function setBackground(type) {
     const body = document.getElementById("body");
     const backgrounds = {
@@ -554,7 +554,7 @@ function restartTimer() {
     }
 }
 
-    /* testing */
+    
 // ----- wake lock + Non-Throttled Timer -----
 // Request wake lock
 let wakeLock = null;
@@ -803,8 +803,8 @@ loadWeather();
 <button onclick="window.location.href='https://inevitabledays.github.io/'"
         style="
           position: fixed;
-          top: 19px;               /* distance from top */
-          left: 17%;              /* center horizontally */
+          top: 19px;               
+          left: 17%;              
           transform: translateX(-50%);  /* adjust exact center */
           width: 32px;
           height: 32px;
