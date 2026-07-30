@@ -1,0 +1,3248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>XP Desktop</title>
+
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: Tahoma, sans-serif;
+}
+
+/* DESKTOP */
+#desktop {
+  width: 100%;
+  height: 100%;
+  background: url("img/collagexp.jpg") center/cover no-repeat; //bg.jpg, 47305056_p0.jpg
+  position: relative;
+  overflow: hidden;
+}
+
+    * {
+    user-select: none;             /* text not selectable */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none; /* removes long-press menu on iOS */
+}
+
+/* ICONS */
+.icon {
+  width: 80px;
+  text-align: center;
+  color: white;  /* color: white; */
+  text-shadow: 1px 1px 1px black;
+  font-size: 12px;
+  position: absolute;
+  cursor: pointer;
+}
+.icon2 {
+  width: 18px;
+  text-align: center;
+  color: white;  /* color: white; */
+  text-shadow: 1px 1px 1px black;
+  font-size: 12px;
+  position: absolute;
+  cursor: pointer;
+}
+
+
+.icon img {
+  width: 40px;
+  height: 40px;
+  display: block;
+  margin: 0 auto 5px;
+
+}
+.icon2 img {
+  width: 20px;
+  height: 20px;
+  display: block;
+  margin: 0 auto 5px;
+}
+
+/* 48 to 32 */
+
+/* WINDOWS (NO SKIN, JUST CONTENT CONTAINER) */
+.window {
+  position: absolute;
+  border: none;
+  background: transparent;
+  z-index: 100;
+}
+
+/* TASKBAR */
+#taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+
+  background: url("taskbar.png") repeat-x;
+  background-size: auto 100%;
+  z-index:9998;
+  width: 100%;  /*this needs a quicky w overflow: hidden;*/
+}
+
+
+
+
+#clock {
+  margin-left: auto;  /* pushes it to right */
+  margin-right: 17px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#clock2 {
+  /*margin-left: 780px;   pushes it to right 
+  margin-top: 925px;*/
+  margin-left: 40%;
+  margin-top: 5.3%;
+  color: white;
+  width: 100%;
+  font-size: 12px;
+  position: absolute;
+}
+
+
+/* GENERIC APP IMAGE */
+.app-img {
+  display: block;
+  pointer-events: none;
+}
+
+
+/* IE6 WINDOW */
+.ie6 {
+  width: 1020px; /* 920 */
+  height: 870px; /* 820 */
+  display: flex;
+  flex-direction: column;
+  background: #ece9d8;
+  border: 2px solid #3c65ff;
+  font-size: 12px;
+
+  position: relative; /* needed */
+}
+
+/* MENU */
+.ie6-menubar {
+  background: linear-gradient(to bottom, rgba(6,120,200,0.99), rgba(6,90,250,0.99));   /*   background:#3c65ff; */
+  color:#ffffff;
+  padding: 6px 6px;
+  display: flex;
+  gap: 18px;
+  border-bottom: 1px solid #808080;
+  border-top:1px solid #00b0f0; /* extra 18.06.2026, blue wallpaperchanger att. */
+  border-bottom:2px solid #1e3a8a;
+  font-weight:bold;
+}
+
+/* TOOLBAR */
+.ie6-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  background: #d4d0c8;
+  border-bottom: 1px solid #808080;
+}
+
+.ie6-btn {
+  min-width: 24px;
+  height: 22px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #d4d0c8;
+
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+
+  cursor: pointer;
+}
+
+.ie6-btn:active {
+  border-top: 2px solid #404040;
+  border-left: 2px solid #404040;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.ie6-address {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+}
+.ie6-bookmark {
+  background:#e0f6fd; */
+  color:#ffffff;
+  padding: 6px 6px;
+  display: flex;
+  gap: 18px;
+  border-bottom: 1px solid #808080;
+  border-top:1px solid #00b0f0; /* extra 18.06.2026, blue wallpaperchanger att. */
+  border-bottom:2px solid #1e3a8a;
+}
+
+.ie6-input {
+  flex: 1;
+  height: 18px;
+  border: 2px inset #d4d0c8;
+  font-size: 12px;
+}
+
+/* VIEWPORT */
+.ie6-frame {
+  flex: 1;
+  border: none;
+  background: white;
+}
+
+/* STATUS */
+.ie6-status {
+  height: 20px;
+  background: #d4d0c8;
+  border-top: 1px solid #808080;
+  padding-left: 6px;
+  display: flex;
+  align-items: center;
+}
+
+
+/* RED CLOSE X */
+.ie6::after {
+  content: "✕";
+  position: absolute;
+  top: 3.5px;  /* 0px 0px */
+  right: 2.9px;
+  width: 18px; /*24px 24px */
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  z-index: 9;
+  /* pointer-events: none; */
+  cursor: pointer;
+  background: #ff4e25;
+  color: #ffffff;
+  border:1px solid #ecf9ff;
+  font-weight: bold
+}
+
+
+
+
+
+
+
+
+
+
+
+#hotcorner {
+  position:fixed;
+  left:0;
+  bottom:0;
+  width:97px;
+  height:32px;
+  z-index:10;
+  cursor: pointer;
+  z-index:9999;
+
+}
+
+#startMenu {
+  position:fixed;
+  left:0;
+  bottom:0;
+  display:none;
+  z-index:9999;
+}
+
+.task-item:hover {background: linear-gradient(to bottom, rgba(60,160,260,1.75), rgba(60,160,270,1.75));}    /*{ box-shadow:0 0 14px rgba(0,128,255,0.8); } */
+.task-item:active {
+      transform: scale(0.96);
+      box-shadow: 0 0 6px rgba(251,146,60,0.6);
+    }
+
+
+
+
+#taskbar-icons {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 100%;
+
+  margin-left: 180px;   /* pushes away from start button area */
+}
+
+
+
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 140px;
+  height: 24px;
+  padding: 0 6px;
+  font-size: 12px;
+  color: white;
+
+
+  /* blends with taskbar2.png */
+  background: linear-gradient(to bottom, rgba(60,130,250,0.95), rgba(60,130,250,0.85)); /* rgba(30,80,170,0.95)); */
+
+  border-top: 1px solid rgba(180,220,255,0.3);
+  border-left: 1px solid rgba(10,40,90,0.3); /*1px solid rgba(180,220,255,0.9); */
+  border-right: 1px solid rgba(10,40,90,0.3);
+  border-bottom: 1px solid rgba(10,40,90,0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+
+  cursor: pointer;
+  user-select: none;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.task-item:active {
+  background: linear-gradient(to bottom, rgba(30,80,170,0.95), rgba(60,130,220,0.95));
+
+  border-top: 1px solid rgba(10,40,90,0.9);
+  border-left: 1px solid rgba(10,40,90,0.9);
+  border-right: 1px solid rgba(180,220,255,0.9);
+  border-bottom: 1px solid rgba(180,220,255,0.9);
+
+  box-shadow:
+    inset 0 2px 4px rgba(0,0,0,0.35);
+}
+
+
+
+
+
+
+
+
+#boot {
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  background:#000;
+}
+
+
+
+
+
+.window2 {
+  width:360px;
+  height:230px;
+  background:#ece9d8;
+  border:1px solid #1e3a8a;
+  position:absolute;
+  z-index:19;
+}
+.window3 {
+  width:0px;
+  height:0px;
+  background:#ece9d8;
+  border:0px solid #1e3a8a;
+  position:absolute;
+  z-index:19;
+}
+
+.titlebar {
+  background: linear-gradient(to bottom, rgba(6,120,200,0.99), rgba(6,90,250,0.99));   /*   background:#3c65ff; */
+  color:#ffffff;
+  padding:4px 6px;
+  font-weight:bold;
+  font-size:12px;
+  border-top:1px solid #00b0f0; /* extra 18.06.2026, blue wallpaperchanger att. */
+  border-bottom:2px solid #1e3a8a;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  user-select:none;
+}
+.titlebar3 {
+  background: linear-gradient(to bottom, rgba(6,120,200,0.99), rgba(6,90,250,0.99));   /*   background:#3c65ff; */
+  color:#ffffff;
+  padding:0px 0px;
+  font-weight:bold;
+  font-size:0px;
+  border-top:0px solid #00b0f0; /* extra 18.06.2026, blue wallpaperchanger att. */
+  border-bottom:0px solid #1e3a8a;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  user-select:none;
+}
+
+.content {
+  padding:8px;
+  font-size:12px;
+}
+
+.group {
+  /* border:5px solid #f4f3e9; #a0a0a0; */ 
+  padding:8px;
+  margin-bottom:8px;
+}
+
+label {
+  display:block;
+  margin-bottom:4px;
+}
+
+select {
+  width:100%;
+  font-family:Tahoma;
+  font-size:12px;
+  border:1px solid #357fff;
+  border-bottom: 2px solid #357fff;
+  border-top:2px solid #00b0f0;
+}
+
+.footer {
+  position:absolute;
+  bottom:10px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+button {
+  font-family:Tahoma;
+  font-size:12px;
+  padding:3px 12px;
+}
+
+.hoveringnow:hover {
+  cursor: pointer;
+}
+
+
+
+.img-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.hotspotA {
+  position: absolute;
+  left: 0;
+  top: 50px;
+  width: 200px;
+  height: 450px;
+  cursor: pointer;
+}
+.hotspotB {
+  position: absolute;
+  left: 0;
+  top: 50px;
+  width: 700px;
+  height: 490px;
+  cursor: pointer;
+}
+.hotspotC {
+  position: absolute;
+  left: 0;
+  top: 50px;
+  width: 200px;
+  height: 350px;
+  cursor: pointer;
+}
+
+.hotspotD {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+
+.hotspotE {
+  position: absolute;
+  left: 0;
+  bottom: 50;
+  width: 400px;
+  height: 320px;
+  cursor: pointer;
+}
+
+
+/*
+.start-box {
+  position: relative;
+  display: inline-block;
+  width: 379px;
+  height: 508px;
+  position:fixed;
+  left:255px;
+  bottom:45px;
+  z-index:999999;
+
+}
+
+
+.hotspot-start {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  left: 0;
+  bottom: 0;
+  z-index:999999;
+}
+*/
+
+
+
+
+
+
+  .desktop.blurred {
+    filter: blur(6px) brightness(0.5);
+  }
+
+  .dim {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .dim.show {
+    opacity: 1;
+  }
+
+  .trigger {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 18px;
+    background: #0078d7;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .prompt {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+  }
+
+  .prompt.show {
+    display: flex;
+  }
+
+  .prompt-box {
+    position: relative;
+    display: inline-block;
+    z-index: 2000;
+  }
+
+  .prompt-box img {
+    max-width: 80%;
+    height: auto;
+    display: block;
+    z-index: 2000;
+  }
+
+  .hotspotShut {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    left: 40%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+  .hotspotCancel {
+    position: absolute;
+    width: 35px;
+    height: 20px;
+    left: 70%;
+    top: 90%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+
+  .goodbye {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: black;
+    z-index: 30;
+    object-fit:cover;
+  }
+
+  .goodbye.show {
+    display: flex;
+  }
+
+  .goodbye img {        /*spaces are not supposed to function well, probably empty, very very likely but later */
+    max-width: 100%;
+    height: auto;
+  }
+
+
+
+.final {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  z-index: 40;
+}
+
+.final.show {
+  display: flex;
+}
+
+.final img {
+  max-width: 100%;
+}
+
+
+.hotspotLight {
+  position: absolute;
+  width: 75px;
+  height: 75px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+
+.blurred {
+    filter: blur(6px) brightness(0.7);
+    transform: scale(1.02);
+  }
+
+#closeBtn{
+  cursor: pointer;
+  background: #ff4e25;
+  color: #ffffff;
+  border:1px solid #ecf9ff;
+  width: 34px;
+  height: 24px;
+}
+
+#applyBtn{
+  cursor: pointer;
+  top: 79%;
+  width: 75px;
+  height: 24px;
+  border:2px solid #357fff;
+}
+
+
+/* god dammit please stop adding there ffs */
+.hotspotMplayer {
+  position: absolute;
+  width: 15px;
+  height: 30px;
+  left: 2%;
+  bottom: 6%;
+  cursor: pointer;
+}
+
+.hotspotduck {
+  position: absolute;
+  left: 7%;
+  bottom: 5%;
+  width: 15px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.hotspotduckgodown {
+  position: absolute;
+  right: 50px;
+  top: 0%;
+  width: 20px;
+  height: 25px;
+  cursor: pointer;
+}
+.hotspotquareQM {
+  position: absolute;
+  right: 27px;
+  top: 0%;
+  width: 20px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.hotspotduckdisk {
+  position: absolute;
+  left: 21%;
+  top: 38%;
+  width: 115px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.hotspotduckdisk2 {
+  position: absolute;
+  left: 21%;
+  top: 53%;
+  width: 115px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.hotspotduckdisk3 {
+  position: absolute;
+  left: 41%;
+  top: 53%;
+  width: 115px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.folder {
+  position: absolute;
+  left: 230px;
+  top: 120px;
+  width: 150px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.folder2 {
+  position: absolute;
+  left: 230px;
+  top: 190px;
+  width: 110px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.folder3 {
+  position: absolute;
+  left: 440px;
+  top: 120px;
+  width: 110px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.folder4 {
+  position: absolute;
+  left: 657px;
+  top: 120px;
+  width: 140px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.imgmusic1 {
+  position: absolute;
+  left: 230px;
+  top: 120px;
+  width: 90px;
+  height: 100px;
+  cursor: pointer;
+}
+.imgmusic2 {
+  position: absolute;
+  left: 355px;
+  top: 120px;
+  width: 90px;
+  height: 100px;
+  cursor: pointer;
+}
+.imgmusic3 {
+  position: absolute;
+  left: 475px;
+  top: 120px;
+  width: 90px;
+  height: 100px;
+  cursor: pointer;
+}
+.imgmusic4 {
+  position: absolute;
+  left: 605px;
+  top: 120px;
+  width: 90px;
+  height: 100px;
+  cursor: pointer;
+}
+
+.imgmusic5 {
+  position: absolute;
+  left: 735px;
+  top: 120px;
+  width: 90px;
+  height: 100px;
+  cursor: pointer;
+}
+
+.contextback1 {
+  position: absolute;
+  left: 5px;
+  top: 55px;
+  width: 50px;
+  height: 35px;
+  cursor: pointer;
+}
+.contextback2 {
+  position: absolute;
+  left: 125px;
+  top: 90px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+#wallpaper {
+  cursor: pointer;
+}
+
+
+.cp1 {
+  position: absolute;
+  left: 240px;
+  top: 180px;
+  width: 190px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp2 {
+  position: absolute;
+  left: 240px;
+  top: 240px;
+  width: 240px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp3 {
+  position: absolute;
+  left: 240px;
+  top: 310px;
+  width: 200px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp4 {
+  position: absolute;
+  left: 240px;
+  top: 370px;
+  width: 240px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp42 {
+  position: absolute;
+  left: 232px;
+  top: 402px;
+  width: 120px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp5 {
+  position: absolute;
+  left: 240px;
+  top: 430px;
+  width: 220px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp6 {
+  position: absolute;
+  left: 520px;
+  top: 180px;
+  width: 200px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp7 {
+  position: absolute;
+  left: 520px;
+  top: 240px;
+  width: 170px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp8 {
+  position: absolute;
+  left: 520px;
+  top: 310px;
+  width: 240px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp9 {
+  position: absolute;
+  left: 520px;
+  top: 370px;
+  width: 160px;
+  height: 40px;
+  cursor: pointer;
+}
+.cp10 {
+  position: absolute;
+  left: 520px;
+  top: 430px;
+  width: 160px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.Overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.Overlayie6 {  
+  position: absolute;
+  right: 3%;
+  top: 97.4%;
+  width: 2.5%;
+  height: 2.5%;
+  pointer-events: none;
+}
+.Overlayie62 {
+  position: absolute;
+  right: 33%;
+  top: 0.6%;
+  width: auto;
+  height: auto;
+  pointer-events: none;
+}
+.Overlayie63 {
+  position: absolute;
+  right: -2%;
+  top: 7%;
+  width: auto;
+  height: auto;
+  pointer-events: none;
+}
+.exit77 {
+  position: absolute;
+  right: 3.350px;
+  top: 3.5px;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+  z-index: 10;
+  pointer-events: none;
+
+}
+
+.rightds {
+ position: absolute;
+ right: 0.3%;
+ top: 45%;
+ pointer-events: none;
+ z-index: 10
+}
+.leftds {
+ position: absolute;
+ top: 45%;
+ left: 0%;
+ pointer-events: none;
+ z-index: 10
+}
+
+
+</style>
+</head>
+
+<body>
+<div id="boot">
+<img id="bootGif" src="boot.gif" style="
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:auto;
+  height:auto;
+  max-width:80%;
+  max-height:80%;
+">
+  <!-- <img id="bootGif" src="boot.gif" style="width:100%;height:100%;object-fit:cover;"> -->
+  <img id="loginScreen" src="loginscreen.png" usemap="#loginmap" style="display:none;width:100%;height:100%;object-fit:cover;">
+  <map name="loginmap">
+  <area shape="rect"
+      coords="980,410,1310,490"
+      style="cursor:pointer;">    
+</map>
+
+
+<img id="welcome" src="welcome.png" style="display:none;width:100%;height:100%;object-fit:cover;">
+</div>
+
+  <div id="hotcorner" title="Click Here to Begin"></div>
+  <img id="startMenu" src="start.png" class="n/a" usemap="#startmap" title="Navigate Yourself">
+  <map name="startmap" class="hoveringnow">
+  <area shape="rect"
+        coords="251,440,370,470"
+        onclick="showPrompt()" title="Click to Shutdown">
+<!--  <area shape="rect"
+        coords="21,76,380,260">  -->
+  <area shape="rect"
+        coords="2,2,177,50" onclick="openWindow('User Settings')" title="User Settings">
+  <area shape="rect"
+        coords="21,64,107,103"
+        onclick="openWindow('Internet Explorer')" title="Cracked Internet Explorer">
+  <area shape="rect"
+        coords="182,55,330,95"
+        onclick="openWindow('My Documents')" title="My Documents">
+  <area shape="rect"
+        coords="182,103,375,127"
+        onclick="openWindow('My Recent Documents')" title="My Recent Documents">
+  <area shape="rect"
+        coords="182,135,330,160"
+        onclick="openWindow('My Pictures')" title="My Pictures">
+  <area shape="rect"
+        coords="182,165,330,190"
+        onclick="openWindow('My Music')" title="My Music">
+  <area shape="rect"
+        coords="182,195,330,220"
+        onclick="openWindow('This Computer')" title="This Computer">
+  <area shape="rect"
+        coords="182,230,330,250"
+        onclick="openWindow('Control Panel')" title="Control Panel">
+  <area shape="rect"
+        coords="182,255,330,290"
+        onclick="openWindow('Set Program')" title="Set Program Access and Defaults">
+  <area shape="rect"
+        coords="182,295,330,325"
+        onclick="openWindow('Printers')" title="Printers and Faxes">
+  <area shape="rect"
+        coords="182,330,330,355"
+        onclick="ding.play(); openWindow('Help and Support')" title="Help and Support">
+  <area shape="rect"
+        coords="182,360,330,385"
+        onclick="openWindow('Windows Search')" title="Search for files">
+  <area shape="rect"
+        coords="182,390,330,420"
+        onclick="openWindow('Run')" title="Run Commands">
+  <area shape="rect"
+        coords="21,110,97,143"
+        onclick="openWindow('Internet Properties')" title="E-Mail Service">
+  <area shape="rect"
+        coords="21,148,97,183"
+        onclick="openWindow('Notepad')" title="Notepad">
+  <area shape="rect"
+        coords="21,199,97,238"
+        onclick="openWindow('WinRAR')" title="WinRAR">
+</map>
+<!-- class from hovering now to hotspotE hwn1 -->
+
+
+
+
+
+<div id="desktop">
+
+
+<div id="icons">
+
+  <!-- ICONS -->
+  <div class="icon" style="top:20px;left:20px;" onclick="sound3.play(); openWindow('My Documents')" title="My Documents">
+    <img src="myfiles.ico">My Documents 
+  </div>
+
+  <div class="icon" style="top:120px;left:20px;" onclick="sound3.play(); openWindow('This Computer')" title="This Computer">
+    <img src="computer.ico">This Computer
+  </div>
+
+  <div class="icon" style="top:220px;left:20px;" onclick="sound3.play(); openWindow('Control Panel')" title="Control Panel">
+    <img src="command.ico">Control Panel
+  </div>
+
+  <div class="icon" style="top:320px;left:20px;" onclick="sound3.play(); openWindow('Internet Explorer')" title="Connect to the Web, No, Really!">
+    <img src="ie.ico">Cracked Internet Explorer
+  </div>
+
+  <div class="icon" style="top:85%;right:20px;" onclick="sound3.play(); openWindow('Trash Bin')" title="Trash Bin">
+    <img src="trash.ico">Trash Bin
+  </div>
+
+  <div class="icon" style="top:420px;left:20px;" onclick="toggleFullscreen()" title="F11, Full Screen">
+    <img src="fst.ico">FS Toggle
+  </div>
+
+  <div class="icon" style="top:520px;left:20px;" onclick="sound3.play(); openWindow('Network')" title="Why do you see this?">
+    <img src="rasdlg.dll_14_563.ico">Network
+  </div>
+
+  <div class="icon" style="top:620px;left:20px;" onclick="sound3.play(); openWindow('hatsune-miku')" title="hatsune-miku-anime.jpg">
+    <img src="shimgvw.dll_14_4.ico">hatsune-miku-anime.jpg
+  </div>
+
+  <div class="icon" style="top:720px;left:20px;" onclick="sound3.play(); sound4.play(); sound5.pause(); sound6.pause(); sound7.pause(); what.pause(); openWindow('Media Player')" title="Endlessly.mp3">
+    <img src="009.ico">Endlessly.mp3
+  </div>
+
+  <div class="icon" style="top:820px;left:20px;" onclick="sound3.play(); sound5.play(); sound4.pause(); sound6.pause(); sound7.pause(); what.pause(); openWindow('Media Player')" title="Out_of_my_mind.mp3">
+    <img src="009.ico">Out_my_mind.mp3
+  </div>
+
+  <div class="icon" style="top:20px;right:20px;" onclick="openWindow('Notes')" title="Notification">
+    <img src="wab32res.dll_14_1918.ico">Notes
+  </div>
+
+  <div class="icon" style="top:320px;right:20px;" onclick="openWallpaperWindow3()" title="Videogaem Mem.jpg">
+    <img src="shimgvw.dll_14_4.ico">VideoGaem Mem.jpg
+  </div>
+
+  <div class="icon" style="top:20px;left:120px;" onclick="what.play(); sound5.pause(); sound4.pause(); sound6.pause(); sound7.pause(); openWindow('Media Player')" title="What Ive Waited For.mp3">
+    <img src="009.ico">What Ive Waited For.mp3
+  </div>
+
+  <div class="icon" style="top:120px;left:120px;" onclick="openWindow('New Folder')" title="New Folder">
+    <img src="explorer.exe_14_252.ico">New Folder
+  </div>
+
+  <div class="icon" style="top:220px;right:20px;" onclick="openWallpaperWindow4()" title="human game.jpg">
+    <img src="shimgvw.dll_14_4.ico">human game.jpg
+  </div>
+
+  <div class="icon" style="top:120px;right:20px;" onclick="openWallpaperWindow5()" title="W11??.jpg">
+    <img src="shimgvw.dll_14_4.ico">Windows11?.jpg
+  </div>
+
+  <div class="icon" style="top:20px;right:120px;" onclick="openWindow('Windows 95')" title="Win95 Vanilla Custom">
+    <img src="shimgvw.dll_14_4.ico">Windows95.jpg
+  </div>
+
+  <div class="icon" style="top:120px;right:120px;" onclick="openWindow('Weekend Plans')" title="???">
+    <img src="shimgvw.dll_14_4.ico">Weekend Plans.jpg
+  </div>
+
+  <div class="icon" style="top:220px;right:120px;" onclick="openWindow('Pretty Games')" title="???">
+    <img src="shimgvw.dll_14_4.ico">Pretty Games.jpg
+  </div>
+
+  <div class="icon" style="top:320px;right:120px;" onclick="openWindow('Windows 2000')" title="???">
+    <img src="shimgvw.dll_14_4.ico">Windows 2000.jpg
+  </div>
+
+
+
+
+</div>
+<div id="clock2" title="Version">XP Desktop Beta 0.98 - Ümit Özkul, 2026, inevitabledays.github.io</div>
+<div style="text-align:center;" title="Date">
+  <img src="0_9 numbers gifs/0.gif" loading="lazy">
+  <img src="0_9 numbers gifs/9.gif" loading="lazy">
+  <img src="0_9 numbers gifs/punc-comsm.gif" loading="lazy">
+  <img src="0_9 numbers gifs/0.gif" loading="lazy">
+  <img src="0_9 numbers gifs/7.gif" loading="lazy">
+  <img src="0_9 numbers gifs/punc-comsm.gif" loading="lazy">
+  <img src="0_9 numbers gifs/2.gif" loading="lazy">
+  <img src="0_9 numbers gifs/0.gif" loading="lazy">
+  <img src="0_9 numbers gifs/2.gif" loading="lazy">
+  <img src="0_9 numbers gifs/6.gif" loading="lazy">
+</div>
+
+   <!-- <div id="clock2" title="Version">XP Desktop Beta 0.98 - Ümit Özkul, 2026, inevitabledays.github.io</div> -->
+
+  <!-- TASKBAR -->
+  <div id="taskbar">
+  <div id="taskbar-icons"></div>
+    <div id="clock" onclick="openWindow('Date and Time')" title="Real Time">00:00</div>
+<div id="icons2">
+  <div class="icon2" style="top:6px;left:110px;" onclick="openWindow('Internet Explorer')" title="Connect to Internet">
+    <img src="ie.ico">
+  </div>
+  <div class="icon2" style="top:6px;left:133px;" onclick="openWindow('Command Prompt')" title="Command Prompt">
+    <img src="console.dll_14_1.ico">
+  </div>
+
+</div>
+
+
+  
+  </div>
+
+
+
+</div>
+
+<div id="screensaverLayer" style="
+  position:fixed;
+  inset:0;
+  background:black;
+  display:none;
+  z-index:999998;
+">
+  <img id="screensaver" src="screensave.png" style="
+    position:absolute;
+    width:220px;
+    height:auto;
+    pointer-events:none;
+  ">
+</div>
+
+<!-- some bs -->
+
+    
+
+
+
+
+
+
+
+<div class="dim" id="dim"></div>
+
+<div class="prompt" id="prompt">
+  <div class="prompt-box">
+    <img src="sdprompt2.png" alt="shutdown prompt">
+    <div class="hotspotShut" title="Shutdown Now" onclick="shutdown()"></div>
+    <div class="hotspotCancel" onclick="closePrompt()"></div>
+  </div>
+</div>
+
+<div class="goodbye" id="goodbye">
+  <img src="goodbye.png" alt="goodbye">
+</div>
+<div class="final" id="final">
+  <img src="321.gif" alt="final">
+  <div class="cursor"></div>
+  <div class="hotspotLight" onclick="bootClick()"></div>
+</div>
+<audio id="shutdownSound" src="shutdown.wav"></audio>
+<audio id="themeSound" src="Windows XP Logon Sound.wav"></audio>
+<audio id="clicksound" src="Windows XP Menu Command.wav"></audio>
+<audio id="playmusic" src="Declain - Endlessly.mp3"></audio>
+<audio id="playmusic2" src="loving_caliber_im_out_of_my_mind.mp3"></audio>
+<audio id="playmusic3" src="RUQOA - Close To You _ Diversity Release.MP3"></audio>
+<audio id="playmusic4" src="Pierce Fulton - No More ft. Eden.mp3"></audio>
+<audio id="playding1" src="Windows XP Ding.wav"></audio>
+<audio id="playding2" src="Windows XP Default.wav"></audio>
+<audio id="playding3" src="Windows XP Print complete.wav"></audio>
+<audio id="playwhat" src="Vicetone ft_ D Brown - What Ive Waited For.mp3"></audio>
+<audio id="hwinsert" src="Windows XP Hardware Insert.wav"></audio>
+
+
+
+<video id="finalVideo" playsinline autoplay style=" position:fixed; inset:0; width:100%; height:100%; object-fit:cover; display:none; z-index:999999; pointer-events:none; "></video>
+
+
+
+
+
+
+
+
+
+
+
+<!-- BODY BODY BODY BODY BODY
+BODY BODY BODY BODY BODY BODY
+BODY BODY BODY BODY BODY BODY
+BODY BODY BODY BODY BODY -->
+
+
+
+<script>
+let z = 1;
+const openApps = {};
+const closeApps = {};
+
+function closeWindow(title) {
+   if (closeApps[title]) {
+    const w = openApps[title];
+    w.style.display = "none"
+    return;
+  }
+  const win = document.createElement("div");
+  win.className = "window";
+ }
+
+
+/* WINDOW SYSTEM */
+function openWindow(title) {
+
+  if (openApps[title]) {
+    const w = openApps[title];
+    w.style.display = "block";
+    w.style.zIndex = ++z;
+    return;
+  }
+
+  const win = document.createElement("div");
+  win.className = "window";
+const offset = Object.keys(openApps).length * 30;
+
+win.style.top = (20 + offset) + "px";
+win.style.left = (220 + offset) + "px";
+win.style.zIndex = ++z;
+
+  let content = "";
+
+  if (title === "Internet Explorer") {
+    content = `
+      <div class="ie6">
+
+        <div class="ie6-menubar">
+
+          <div>File</div><div>Edit</div><div>View</div>
+          <div>Favorites</div><div>Tools</div><div>Help</div><div>   </div><div>   </div><div>Administrator - Microsoft Internet Explorer</div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>   </div><div>  </div>
+        </div>
+
+        <div class="ie6-toolbar">
+          <div class="ie6-btn">←</div>
+          <div class="ie6-btn">→</div>
+          <div class="ie6-btn">⟳</div>
+
+          <div class="ie6-address">
+            <span>Address</span>
+            <input class="ie6-input" id="ie-url" value="http://wiby.me">
+            <div class="ie6-btn" onclick="go(this)">Go</div>
+            <span>Beta Version</span>
+          </div>
+        </div>
+        <div class="ie6-bookmark">
+          <div>Wiby.me</div><div>Frogfind</div><div>News</div>
+          <div>Old Version</div><div>Hackernews</div><div>TextBase Searcher</div><div>LightSurf</div><div>Radio</div><div>Some Words Really, we need action here. love, me. 🚩 </div>
+        </div>
+
+        <iframe class="ie6-frame" src="http://wiby.me">sandbox="allow-scripts allow-forms allow-same-origin"</iframe>
+        <div class="ie6-status">Done</div>
+      <div class="hotspotduckgodown" title="Go down" onclick="closeWindow('Internet Explorer');"></div>
+      <img class="Overlayie6" src="img/8041_32x32x32.png">
+      <img class="Overlayie62" src="img/1113_20x20x32.png">
+      <img class="Overlayie63" src="img/RibbonToast.scale-100.png">
+      <img class="exit77" src="img/cornerbtn.png">
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+      </div>
+    `;
+  } //img class </div> is not correct but no time to css adjust again, do it later
+
+else if (title === "My Documents") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="myfiles.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('My Documents');"></div>
+      <div class="imgmusic1" onclick="sound3.play(); openWindow('Downloads');"></div>
+      <div class="imgmusic2" onclick="sound3.play(); openWindow('My Music');"></div>
+      <div class="imgmusic3" onclick="sound3.play(); openWindow('My Pictures');"></div>
+      <div class="imgmusic4" onclick="sound3.play();"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "This Computer") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="computer.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckdisk" onclick="sound3.play(); openWindow('Local Disk(C:)');"></div>
+      <div class="hotspotduckdisk2" onclick="ding.play(); openWindow('CD Drive');"></div>
+      <div class="hotspotduckdisk3" onclick="ding.play(); openWindow('CD Drive');"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('This Computer');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Control Panel") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="command.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="cp1" onclick="sound3.play(); openWindow('Appearance');"></div>
+      <div class="cp2" onclick="sound3.play(); openWindow('Internet Connections');"></div>
+      <div class="cp3" onclick="sound3.play(); openWindow('Add or Remove');"></div>
+      <div class="cp4" onclick="sound3.play(); openWindow('Sound and Speech');"></div>
+      <div class="cp5" onclick="sound3.play(); openWindow('Maintenance');"></div>
+      <div class="cp6" onclick="sound3.play(); openWindow('Other Hardware');"></div>
+      <div class="cp7" onclick="sound3.play(); openWindow('User Accounts');"></div>
+      <div class="cp8" onclick="sound3.play(); openWindow('Regional Options');"></div>
+      <div class="cp9" onclick="sound3.play(); openWindow('Accessibility');"></div>
+      <div class="cp10" onclick="sound3.play(); openWindow('Security Center');"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Trash Bin") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="trash.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Trash Bin');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "User Settings") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="usersettings.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('User Settings');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "Network") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="network.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "hatsune-miku") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="imagedesktop.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('hatsune-miku');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+
+
+
+
+
+
+
+
+  else if (title === "My Pictures") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="myimages.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('My Pictures');"></div>
+      <div class="imgmusic1" onclick="sound3.play(); openWindow('Blue hills')"></div>
+      <div class="imgmusic2" onclick="sound3.play(); openWindow('Sunset')"></div>
+      <div class="imgmusic3" onclick="sound3.play(); openWindow('Water lilies')"></div>
+      <div class="imgmusic4" onclick="sound3.play(); openWindow('Winter')"></div>
+      <div class="contextback1" title="Back to My Documents" onclick="sound3.play(); openWindow('My Documents');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "My Music") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="mymusic.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('My Music');"></div>
+      <div class="imgmusic1" onclick="sound3.play(); openWindow('Media Player'); sound4.play(); sound5.pause(); sound6.pause(); sound7.pause(); what.pause();"></div>
+      <div class="imgmusic2" onclick="sound3.play(); openWindow('Media Player'); sound5.play(); sound4.pause(); sound6.pause(); sound7.pause(); what.pause();"></div>
+      <div class="imgmusic3" onclick="sound3.play(); openWindow('Media Player'); sound6.play(); sound5.pause(); sound4.pause(); sound7.pause(); what.pause();"></div>
+      <div class="imgmusic4" onclick="sound3.play(); openWindow('Media Player'); sound7.play(); sound5.pause(); sound4.pause(); sound6.pause(); what.pause();"></div>
+      <div class="contextback1" title="Back to My Documents" onclick="sound3.play(); openWindow('My Documents');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Set Program") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="addremove.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Set Program');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Printers") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="printer.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Printers');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Help and Support") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="support.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Windows Search") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="rover.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Windows Search');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Run") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="run.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Internet Properties") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="ieprop.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Notepad") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="notepad.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Notepad');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "WinRAR") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="winrar.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('WinRAR');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+
+  else if (title === "Task Manager") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="taskmgr.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Task Manager');"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "Properties") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="props.png">
+      <div class="hotspotC" onclick="ding3.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "Media Player") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="wmp2.png">
+      <img class="Overlay" src="OneNoteAudio_RecordingPlayback.gif">
+
+      <div class="hotspotduckgodown" onclick="closeWindow('Media Player');"></div>
+    <div class="hotspotMplayer" title="Play Endlessly(Default)" onclick="sound4.play();"></div>
+    <div class="hotspotD" onclick="sound4.pause(); sound5.pause(); sound6.pause(); sound7.pause(); what.pause();"></div>
+    <div class="hotspotduck" title="Pause the Music" onclick="sound4.pause(); sound5.pause(); sound6.pause(); sound7.pause(); what.pause();"></div>
+    <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "Media Player ") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="wmp2.png">
+      <img class="app-img" src="OneNoteAudio_RecordingPlayback.gif">
+
+      <div class="hotspotduckgodown" onclick="ding3.play();"></div>
+    <div class="hotspotMplayer" onclick="sound5.play();"></div>
+    <div class="hotspotD" onclick="sound5.pause();"></div>
+    <div class="hotspotduck" onclick="sound5.pause();"></div>
+    </div>
+  `;
+}
+  else if (title === " Media Player ") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="wmp2.png">
+      <img class="app-img" src="OneNoteAudio_RecordingPlayback.gif">
+
+      <div class="hotspotduckgodown" onclick="ding3.play();"></div>
+    <div class="hotspotMplayer" onclick="sound6.play();"></div>
+    <div class="hotspotD" onclick="sound6.pause();"></div>
+    <div class="hotspotduck" onclick="sound6.pause();"></div>
+    </div>
+  `;
+}
+  else if (title === " Media Player") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="wmp2.png">
+      <img class="app-img" src="OneNoteAudio_RecordingPlayback.gif">
+
+      <div class="hotspotduckgodown" onclick="ding3.play();"></div>
+    <div class="hotspotMplayer" onclick="sound7.play();"></div>
+    <div class="hotspotD" onclick="sound7.pause();"></div>
+    <div class="hotspotduck" onclick="sound7.pause();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "Local Disk(C:)") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="localc.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Local Disk(C:)');"></div>
+      <div class="folder" onclick="sound3.play(); openWindow('Documents & Settings');"></div>
+      <div class="folder2" onclick="sound3.play(); openWindow('WINDOWS');"></div>
+      <div class="folder3" onclick="sound3.play(); openWindow('Program Files');"></div>
+      <div class="folder4" onclick="ding3.play(); openWindow('Program Files(x86)');"></div>
+      <div class="contextback1" title="Back to This Computer" onclick="sound3.play(); openWindow('This Computer');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "Blue hills") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="forest.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Blue hills');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Sunset") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="sunset.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Sunset');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Water lilies") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="lilies.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Water lilies');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Winter") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="forest2.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Winter');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "CD Drive") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cd.png">
+      <div class="hotspotD"></div>
+    </div>
+  `;
+}
+
+  else if (title === "WINDOWS") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="windows.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('WINDOWS');"></div>
+      <div class="contextback1" title="Back to Local Disk(C:)" onclick="sound3.play(); openWindow('Local Disk(C:)');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Program Files") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="program.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Program Files');"></div>
+      <div class="contextback1" title="Back to Local Disk(C:)" onclick="sound3.play(); openWindow('Local Disk(C:)');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "Documents & Settings") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="docs.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Documents & Settings');"></div>
+      <div class="contextback1" title="Back to Local Disk(C:)" onclick="sound3.play(); openWindow('Local Disk(C:)');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Program Files(x86)") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="x86.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Program Files(x86)');"></div>
+      <div class="contextback1" title="Back to Local Disk(C:)" onclick="sound3.play(); openWindow('Local Disk(C:)');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "System Properties") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="compuprops.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "My Recent Documents") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="recents.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" onclick="ding2.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('My Recent Documents');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Notes") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="noti2.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Notes');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Appearance") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp1.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Appearance');"></div>
+      <div class="cp42" title="Display Settings" onclick="sound3.play(); openWallpaperWindow();"></div>
+      <div class="contextback1" title="Back to Control Panel" onclick="sound3.play(); openWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Internet Connections") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp2.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Internet Connections');"></div>
+      <div class="contextback1" title="Back to Control Panel" onclick="sound3.play(); openWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Add or Remove") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp3.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" title="Back to Control Panel" onclick="closeWindow('Add or Remove');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Sound and Speech") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp4.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Sound and Speech');"></div>
+      <div class="contextback1" title="Back to Control Panel" onclick="sound3.play(); openWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Maintenance") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp5.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Maintenance');"></div>
+      <div class="contextback1" title="Back to Control Panel" onclick="sound3.play(); openWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Other Hardware") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp6.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Other Hardware');"></div>
+      <div class="contextback1" title="Back to Control Panel" onclick="sound3.play(); openWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "User Accounts") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp7.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('User Accounts');"></div>
+      <div class="contextback1" title="Back to Control Panel" onclick="sound3.play(); openWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Regional Options") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp8.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Regional Options');"></div>
+      <div class="contextback1" title="Back to Control Panel" onclick="sound3.play(); openWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Accessibility") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp9.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Accessibility');"></div>
+      <div class="contextback1" title="Back to Control Panel" onclick="sound3.play(); openWindow('Control Panel');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Security Center") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cp/cp10.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotB" title="Can be added but what's the point?" onclick="ding3.play();"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Security Center');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "New Folder") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="newfolder.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="imgmusic1" title="Time is funny" onclick="sound3.play(); openWindow('Time')"></div>
+      <div class="imgmusic2" title="No fear" onclick="sound3.play(); openWindow('Xp and Internet')"></div>
+      <div class="imgmusic3" title="Is there any hope?" onclick="sound3.play(); openWindow('The Millennials')"></div>
+      <div class="imgmusic4" title="Got oxygen?" onclick="sound3.play(); openWindow('Character')"></div>
+      <div class="imgmusic5" title="Win or Win" onclick="sound3.play(); openWindow('Win or Lose')"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('New Folder');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+
+  else if (title === "Time") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="time.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Time');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Xp and Internet") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="xpandinternet.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Xp and Internet');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "The Millennials") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="millennials.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('The Millennials');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Character") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="character.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Character');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Win or Lose") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="winorlose.png">
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Win or Lose');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Downloads") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="downloads.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Downloads');"></div>
+      <div class="contextback1" title="Back to My Documents" onclick="sound3.play(); openWindow('My Documents');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Windows 95") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="win95.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Windows 95');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Weekend Plans") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="raccoon.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Weekend Plans');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Windows 2000") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="win2k.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Windows 2000');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+    </div>
+  `;
+}
+  else if (title === "Pretty Games") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="gamesupport.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Pretty Games');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+     </div>
+  `;
+}
+  else if (title === "Command Prompt") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="cmd.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotduckgodown" onclick="closeWindow('Command Prompt');"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+     </div>
+  `;
+}
+  else if (title === "Date and Time") {
+  content = `
+    <div class="img-wrap">
+      <img class="app-img" src="date.png">
+      <div class="hotspotA" onclick="ding2.play();"></div>
+      <div class="hotspotD"></div>
+      <div class="hotspotquareQM" onclick="ding.play();"></div>
+     </div>
+  `;
+}
+
+
+
+
+
+  win.innerHTML = content;
+  win.dataset.hasClose = "true";                         // test
+
+  document.getElementById("desktop").appendChild(win);
+
+  makeDraggable(win);
+  addTaskbarItem(title, win);
+  openApps[title] = win;
+  closeApps[title] = win;
+}
+
+
+
+/* DRAG */
+function makeDraggable(win) {
+  let drag = false;
+  let ox = 0, oy = 0;
+
+  win.addEventListener("mousedown", (e) => {
+    drag = true;
+    ox = e.clientX - win.offsetLeft;
+    oy = e.clientY - win.offsetTop;
+    win.style.zIndex = ++z;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!drag) return;
+    win.style.left = (e.clientX - ox) + "px";
+    win.style.top = (e.clientY - oy) + "px";
+  });
+
+  document.addEventListener("mouseup", () => {
+    drag = false;
+  });
+}
+
+/* TASKBAR */
+function addTaskbarItem(title, win) {
+  const item = document.createElement("div");
+  item.className = "task-item";
+  item.innerText = title;
+  item.onclick = () => {
+  win.style.display = win.style.display === "none" ? "block" : "none";
+    win.style.zIndex = ++z;  
+  };
+
+
+  document.getElementById("taskbar-icons").appendChild(item);
+  win._taskItem = item;
+}
+
+/* IE6 NAV */
+function go(btn) {
+  const input = document.getElementById("ie-url");
+  const frame = btn.closest(".ie6").querySelector("iframe");
+
+  let url = input.value;
+  if (!url.startsWith("http")) url = "https://" + url;
+
+  frame.src = url;
+}
+
+/* CLOCK */
+setInterval(() => {
+  const d = new Date();
+  document.getElementById("clock").textContent =
+    String(d.getHours()).padStart(2, "0") + ":" +
+    String(d.getMinutes()).padStart(2, "0");
+}, 1000);
+
+
+
+
+
+function lockFrame(frame) {
+  frame.addEventListener("load", () => {
+    try {
+      const doc = frame.contentDocument; 
+      if (!doc) return;
+
+      doc.querySelectorAll("a").forEach(a => {
+        a.target = "_self";
+      });
+    } catch {}
+  });
+}
+
+
+const zone=document.getElementById("hotcorner");
+const menu=document.getElementById("startMenu");
+
+let open=false;
+
+/* TOGGLE */
+zone.addEventListener("click",(e)=>{
+  e.stopPropagation();
+
+  open = !open;
+  menu.style.display = open ? "block" : "none";
+});
+
+/* disengage after clicking elsewhere */
+document.addEventListener("click",()=>{
+  if(!open) return;
+  open = false;
+  menu.style.display = "none";
+});
+
+
+
+
+
+
+document.addEventListener("click", (e) => {
+  const win = e.target.closest(".window");
+  if (!win) return;
+
+  const rect = win.getBoundingClientRect();
+
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  // top-right "X zone"
+  const closeSize = 25;
+
+if (x > rect.width - closeSize && y < closeSize) {
+
+  if (win._taskItem) win._taskItem.remove(); // <-- REMOVE TASKBAR BUTTON
+
+  for (const key in openApps) {
+    if (openApps[key] === win) {
+      delete openApps[key];
+      break;
+    }
+  }
+
+  win.remove();
+
+}
+});
+
+
+
+
+(function () {
+  document.addEventListener("mousedown", (e) => {
+    const win = e.target.closest(".window");
+    if (win) {
+      win.style.zIndex = ++z;
+      return;
+    }
+
+    const task = e.target.closest(".task-item");
+    if (task && task.dataset.winId) {
+      const winRef = openApps[task.dataset.winId];
+      if (winRef) {
+        winRef.style.display = "block";
+        winRef.style.zIndex = ++z;
+      }
+    }
+  });
+})();
+
+
+
+
+
+
+
+
+const sound2 = document.getElementById('themeSound');
+const sound3 = document.getElementById('clicksound');
+const sound4 = document.getElementById('playmusic');
+const sound5 = document.getElementById('playmusic2');
+const sound6 = document.getElementById('playmusic3');
+const sound7 = document.getElementById('playmusic4');
+const ding = document.getElementById('playding1');
+const ding2 = document.getElementById('playding2');
+const ding3 = document.getElementById('playding3');
+const what = document.getElementById('playwhat');
+const hwi = document.getElementById('hwinsert');
+
+function openWallpaperWindow() {
+  const win = document.createElement("div");
+  win.className = "window2";
+  win.style.position = "absolute";
+  win.style.left = "750px"; //750px
+  win.style.top = "200px";  //250px
+  //win.style.transform = "translate(-50%, -50%)";
+  win.style.width = "398px"; //"360px";
+  win.style.height = "536px"; //"230px";
+  win.style.background = "#f4f3ef"; //"#f4f3e9";
+  //win.style.background = "#ffffff";
+  win.style.border = "2px solid #357fff";  //"2px solid #3c65ff";  "1px solid #357fff";   border:2px solid #3c65ff;
+  win.style.zIndex = ++z; 
+  win.onclick = () => {
+    win.style.zIndex = ++z;  
+  }; 
+
+  win.innerHTML = `
+    <div class="titlebar">
+      <span>Display Properties</span>
+      <button id="closeBtn" title="Close">✕</button>
+    </div>
+      <div class="fillerdiv" title="Navigate Yourself"> <img class="app-img" src="half2.png"></div>
+    <div class="content">
+      <div class="group" title="Change Your Wallpaper">
+        <label>Select A Background:</label>
+        <select id="wallpaper" title="Select A Wallpaper">
+          <option value="img/Ascent.jpg" selected>Ascent</option>
+          <option value="img/Azul.jpg">Azul</option>
+          <option value="img/Bliss.jpg" title="The famous Bliss">Bliss</option>
+          <option value="img/Follow.jpg">Follow</option>
+          <option value="img/Friend.jpg">Friend</option>
+          <option value="img/Radiance.jpg">Radiance</option>
+          <option value="img/bg.jpg">Red Moon Desert</option>
+          <option value="img/Stonehenge.jpg">Stonehenge</option>
+          <option value="img/Tulips.jpg">Tulips</option>
+          <option value="img/Vortecspace.jpg">Vortec space</option>
+          <option value="img/Venice.jpg">Venice</option>
+          <option value="img/Shells.jpg">Shells</option>
+          <option value="img/Bali.jpg">Bali</option>
+          <option value="img/639753.jpg">North Valley</option>
+          <option value="img/miku.jpg">Hatsune-Miku</option>
+          <option value="img/123zz.jpg">Zorin Lake</option>
+          <option value="img/123z.jpg">Desert Fox</option>
+          <option value="img/y123.jpg">Around Libya</option>
+          <option value="img/miku2.jpg">Miku 2</option>
+          <option value="img/Water.jpg">WaterLilies</option>
+          <option value="img/Wind.jpg">Wind</option>
+          <option value="img/rain-background.jpg">Rain</option>
+          <option value="img/black-cat-13.jpg">Black Cat</option>
+          <option value="img/tree-and-mist-zj-2560x1440.jpg">Tree Mist</option>
+          <option value="img/maldives_beach2.jpg">Maldives</option>
+          <option value="img/services_+on+couch+feline+behavioral+therapy.jpg">Couch Cat</option>
+          <option value="img/47305056_p0.jpg">Anime</option>
+          <option value="img/collagexp.jpg">CollageXP</option>
+          <option value="img/fish.jpg">Fish</option>
+          <option value="img/WD002091.jpg">Bear</option>
+          <option value="img/WO_SCN07.jpg">W2k Beach</option>6ae84f18bf7871fc92a09d8565d2c088
+          <option value="img/6ae84f18bf7871fc92a09d8565d2c088.jpg">Cactus</option>
+          <option value="img/backielandscape.jpg">Stairs</option>
+          <option value="img/wpdarkpurple.jpg">Fiber Optics</option>
+        </select>
+      </div>
+<img class="rightds" src="img/rightds.png">
+<img class="leftds" src="img/leftds.png">
+    </div>
+      <div class="fillerdiv" title="Navigate Yourself" onclick="ding3.play();"> <img class="app-img" src="half22.png"></div>
+    <div class="footer" title="Apply Changes">
+      <button id="applyBtn">Apply</button>
+    </div>
+  `;
+
+  document.body.appendChild(win);
+
+  const desktop = document.getElementById("desktop");
+
+  win.querySelector("#applyBtn").onclick = () => {
+    const url = win.querySelector("#wallpaper").value;
+    desktop.style.backgroundImage = `url(${url})`;
+    desktop.style.backgroundSize = "cover";
+    desktop.style.backgroundPosition = "center";
+    sound2.play();
+  };
+
+  win.querySelector("#closeBtn").onclick = () => {
+    win.remove();
+  };
+
+
+  // drag
+  const bar = win.querySelector(".titlebar");
+  bar.addEventListener("mousedown", (e) => {
+    const rect = win.getBoundingClientRect();
+    const ox = e.clientX - rect.left;
+    const oy = e.clientY - rect.top;
+  win.style.zIndex = ++z; 
+
+    function move(ev) {
+      win.style.left = ev.clientX - ox + "px";
+      win.style.top = ev.clientY - oy + "px";
+    }
+
+    function stop() {
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseup", stop);
+    }
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", stop);
+  });
+}
+
+
+
+
+
+// new??
+
+
+
+
+function openWallpaperWindow2() {
+  const win = document.createElement("div");
+  win.className = "window2";
+  win.style.position = "absolute";
+  win.style.left = "850px"; //750
+  win.style.top = "250px";  //250
+  //win.style.transform = "translate(-50%, -50%)";
+  win.style.width = "480px"; //"360px";
+  win.style.height = "397px"; //"230px";
+  win.style.background = "#f4f3e9";
+  //win.style.background = "#ffffff";
+  win.style.border = "2px solid #357fff"; // "1px solid #357fff";   border:2px solid #3c65ff;
+  win.style.zIndex = ++z; 
+  win.onclick = () => {
+    win.style.zIndex = ++z;  
+  }; 
+
+  win.innerHTML = `
+    <div class="titlebar">
+      <span>Something New??</span>
+      <button id="closeBtn" title="Close">✕</button>
+    </div>
+
+    <div class="fillerdiv" title="Don't Look!">
+    <img class="app-img" src="tumblr_4cb8f7801ada1de99c6644c2d08bab2a_4921cd8b_500.gif">
+    </div>
+  `;
+
+  document.body.appendChild(win);
+
+  const desktop = document.getElementById("desktop");
+
+  win.querySelector("#closeBtn").onclick = () => {
+    win.remove();
+  };
+
+
+  // drag
+  const bar = win.querySelector(".titlebar");
+  bar.addEventListener("mousedown", (e) => {
+    const rect = win.getBoundingClientRect();
+    const ox = e.clientX - rect.left;
+    const oy = e.clientY - rect.top;
+  win.style.zIndex = ++z; 
+
+    function move(ev) {
+      win.style.left = ev.clientX - ox + "px";
+      win.style.top = ev.clientY - oy + "px";
+    }
+    function stop() {
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseup", stop);
+    }
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", stop);
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(function () {
+  const desktop = document.getElementById("desktop");
+
+  const menu = document.createElement("div");
+  menu.style.position = "fixed";
+  menu.style.display = "none";
+  menu.style.zIndex = "99999";
+  menu.style.width = "130px";
+  menu.style.background = "#f5f5f5";
+  menu.style.border = "1px solid #0a246a";
+  menu.style.boxShadow = "2px 2px 6px rgba(0,0,0,0.3)";
+  menu.style.fontSize = "12px";
+  menu.style.padding = "2px 0";
+
+  function item(text, action, isFaint = false) {
+    const el = document.createElement("div");
+    el.textContent = text;
+    el.style.padding = "6px 10px";
+    el.style.cursor = "default";
+    el.style.color = "black";
+
+    if (isFaint) el.style.color = "#7a7a7a";
+
+    el.onmouseover = () => {
+      el.style.background = "#316ac5";
+      el.style.color = "white";
+    };
+
+    el.onmouseout = () => {
+      el.style.background = "transparent";
+      el.style.color = isFaint ? "#7a7a7a" : "black";
+    };
+
+    el.onclick = () => {
+      menu.style.display = "none";
+      action && action();
+    };
+
+    return el;
+  }
+
+
+  menu.appendChild(item("Arrange Icons By »", lazyprompt));
+
+
+  menu.appendChild(item("Refresh", desktopRefreshEffect));
+
+  /* menu.appendChild(item("Refresh", () => {
+    document.querySelectorAll(".window").forEach(w => w.style.zIndex = 1); 
+})); */
+
+  menu.appendChild(item("Paste", null, true));
+  menu.appendChild(item("Create Shortcut", null, true));
+  menu.appendChild(item("New »", openWallpaperWindow2));
+
+  menu.appendChild(item("Properties", openWallpaperWindow));
+
+  document.body.appendChild(menu);
+
+  desktop.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    menu.style.left = e.clientX + "px";
+    menu.style.top = e.clientY + "px";
+    menu.style.display = "block";
+  });
+
+  document.addEventListener("click", () => {
+    menu.style.display = "none";
+  });
+})();
+
+
+
+window.addEventListener("load", () => {
+  startBoot();
+});
+
+let stage = "boot";
+
+function startBoot() {
+  const boot = document.getElementById("boot");
+  const gif = document.getElementById("bootGif");
+  const login = document.getElementById("loginScreen");
+  const welcome = document.getElementById("welcome");
+  const desktop = document.getElementById("desktop");
+
+  const audio = new Audio("startup.wav");
+
+  const blockRightClick = (e) => e.preventDefault();
+  document.addEventListener("contextmenu", blockRightClick);
+
+  // initial state
+  boot.style.display = "block";
+  gif.style.display = "block";
+  login.style.display = "none";
+  welcome.style.display = "none";
+  desktop.style.display = "none";
+
+  // stage 1 → boot gif
+  setTimeout(() => {
+    gif.style.display = "none";
+    login.style.display = "block";
+    stage = "login";
+  }, 2000);
+
+   
+    function proceed() {
+    if (stage !== "login") return;
+    stage = "welcome";
+    toggleFullscreen(); //much better
+
+    login.style.display = "none";
+    welcome.style.display = "block";
+
+    audio.play().catch(() => {});
+
+    // short delay before desktop
+    setTimeout(() => {
+      welcome.style.display = "none";
+      boot.style.display = "none";
+      desktop.style.display = "block";
+
+      cleanup();
+    }, 1000);
+  }
+
+    setTimeout(() => {
+      openWallpaperWindow6()
+    }, 5500);
+
+    setTimeout(() => {
+      openWallpaperWindow7();
+    }, 25900);
+
+    setTimeout(() => {
+      openWallpaperWindow7();
+    }, 300000);
+
+    setTimeout(() => {
+      openWallpaperWindow7();
+    }, 600000);
+
+    setTimeout(() => {
+      openWallpaperWindow7();
+    }, 6000000);
+
+    setTimeout(() => {
+      openWallpaperWindow7();
+    }, 12000000);
+
+
+  function cleanup() {
+    document.removeEventListener("contextmenu", blockRightClick);
+  }
+
+
+  function keyHandler(e) {
+    if (e.key === "Enter") proceed();
+//toggleFullscreen();
+  }
+
+  function clickHandler() {
+    proceed(); 
+//toggleFullscreen();
+  } 
+
+  function cleanup() {
+//toggleFullscreen(); 
+    document.removeEventListener("keydown", keyHandler);
+    document.removeEventListener("click", clickHandler);
+  }
+
+  document.addEventListener("keydown", keyHandler);
+  document.addEventListener("click", clickHandler);
+}
+
+
+// ss
+const layer = document.getElementById("screensaverLayer");
+const saver = document.getElementById("screensaver");
+
+let saverActive = false;
+let saverTimer;
+
+function startScreensaver() {
+  if (saverActive) return;
+  saverActive = true;
+
+  layer.style.display = "block";
+
+  function moveLogo() {
+    if (!saverActive) return;
+
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 120);
+
+    saver.style.left = x + "px";
+    saver.style.top = y + "px";
+
+    saver.style.opacity = Math.random() * 1.0 + 1.0;
+
+    setTimeout(moveLogo, 3500);
+  }
+
+  moveLogo();
+}
+
+function stopScreensaver() {
+  saverActive = false;
+  layer.style.display = "none";
+}
+
+function resetScreensaverTimer() {
+  clearTimeout(saverTimer);
+  stopScreensaver();
+
+  saverTimer = setTimeout(startScreensaver, 600000);
+}
+
+document.addEventListener("mousemove", resetScreensaverTimer);
+document.addEventListener("keydown", resetScreensaverTimer);
+document.addEventListener("click", resetScreensaverTimer);
+
+resetScreensaverTimer();
+
+
+
+
+
+
+
+
+
+
+
+const dim = document.getElementById('dim');
+const promptEl = document.getElementById('prompt');
+const goodbyeEl = document.getElementById('goodbye');
+const sound = document.getElementById('shutdownSound');
+
+function showPrompt() {
+  desktop.classList.add('blurred');
+  dim.classList.add('show');
+  promptEl.classList.add('show');
+}
+
+function closePrompt() {
+    promptEl.classList.remove('show');
+    dim.classList.remove('show');
+    setTimeout(() => {
+      desktop.classList.remove('blurred');
+    }, 200);
+  }
+
+
+
+/*
+function shutdown() {
+  promptEl.classList.remove('show');
+  goodbyeEl.classList.add('show');
+  sound.play();
+}
+*/
+
+function shutdown() {
+  promptEl.classList.remove('show');
+
+  goodbyeEl.classList.add('show');
+  sound.play();
+  sound4.pause();
+  sound5.pause();
+  sound6.pause();  
+  sound7.pause(); 
+  what.pause();
+
+
+  setTimeout(() => {
+    goodbyeEl.classList.remove('show');
+    document.getElementById('final').classList.add('show');
+  }, 1600);
+}
+
+// function bootClick() { location.reload(); }
+function bootClick() {
+  const video = document.getElementById("finalVideo");
+  video.style.zIndex = 99999; 
+  document.body.style.pointerEvents = "none";
+
+
+
+
+  const blockRightClick = (e) => e.preventDefault();
+  document.addEventListener("contextmenu", blockRightClick);
+
+
+
+  video.src = "final.mp4";
+  video.style.display = "block";
+  video.currentTime = 0;
+// video.muted = true;
+  video.volume = 1.0;
+  video.play().catch(() => {});
+
+  function cleanup() {
+    document.removeEventListener("contextmenu", blockRightClick);
+  }
+
+  video.onplaying = () => {
+    setTimeout(() => {
+      location.reload();
+    }, 30900);
+  };
+}
+
+
+/*  video.onended = () => {
+    location.reload();
+  };
+}*/
+
+
+
+function toggleFullscreen() {
+if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+} else {
+    document.exitFullscreen();
+       }
+}
+
+
+
+
+
+function desktopRefreshEffect() {
+const items = document.querySelectorAll('.icon');
+
+ items.forEach((item, i) => {
+    item.animate([
+        {
+            opacity: 1,
+            transform: 'translateY(0) scale(1)'
+         },
+         {
+            opacity: 0,
+            transform: 'translateY(4px) scale(0.98)',
+            offset: 0.2  //0.4 slow!
+          },
+          {
+            opacity: 1,
+            transform: 'translateY(0) scale(1)'
+          }
+       ], {
+            duration: 250,
+            delay: i * 15,
+            easing: 'ease-out'
+          });
+       });
+     }
+
+
+
+
+
+
+// taskmgr
+
+(function () {
+  const desktop = document.getElementById("taskbar");
+  const menu = document.createElement("div");
+  menu.style.position = "fixed";
+  menu.style.display = "none";
+  menu.style.zIndex = "99999";
+  menu.style.width = "140px";
+  menu.style.background = "#f5f5f5";
+  menu.style.border = "1px solid #0a246a";
+  menu.style.boxShadow = "2px 2px 6px rgba(0,0,0,0.3)";
+  menu.style.fontSize = "12px";
+  menu.style.padding = "2px 0";
+
+  function item(text, action, isFaint = false) {
+    const el = document.createElement("div");
+    el.textContent = text;
+    el.style.padding = "6px 20px";
+    el.style.cursor = "default";
+    el.style.color = "black";
+
+    if (isFaint) el.style.color = "#7a7a7a";
+
+    el.onmouseover = () => {
+      el.style.background = "#316ac5";
+      el.style.color = "white";
+    };
+
+    el.onmouseout = () => {
+      el.style.background = "transparent";
+      el.style.color = isFaint ? "#7a7a7a" : "black";
+    };
+
+    el.onclick = () => {
+      menu.style.display = "none";
+      action && action();
+    };
+
+    return el;
+  }
+
+
+  menu.appendChild(item("Toolbars »", lazyprompt));
+  menu.appendChild(item("Cascade Windows", null, true));
+  menu.appendChild(item("Show the Desktop", lazyprompt));
+  menu.appendChild(item("Task Manager", taskmgrwindow));
+  menu.appendChild(item("Lock the Taskbar", null, true));
+  menu.appendChild(item("Properties", propwindow));
+
+
+  document.body.appendChild(menu);
+
+  desktop.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    menu.style.display = "block";
+    menu.style.left = e.clientX + "px";
+    menu.style.top = "85%"; //e.clientY + "0px";
+
+  });
+
+  document.addEventListener("click", () => {
+    menu.style.display = "none";
+  });
+})();
+
+
+
+function taskmgrwindow() {
+openWindow('Task Manager')
+};
+function propwindow() {
+openWindow('Properties')
+};
+
+
+
+
+
+
+
+
+// propertiesClick
+
+(function () {
+  const desktop = document.getElementById("icons");
+  const menu = document.createElement("div");
+  menu.style.position = "fixed";
+  menu.style.display = "none";
+  menu.style.zIndex = "99999";
+  menu.style.width = "140px";
+  menu.style.background = "#f5f5f5";
+  menu.style.border = "1px solid #0a246a";
+  menu.style.boxShadow = "2px 2px 6px rgba(0,0,0,0.3)";
+  menu.style.fontSize = "12px";
+  menu.style.padding = "2px 0";
+
+  function item(text, action, isFaint = false) {
+    const el = document.createElement("div");
+    el.textContent = text;
+    el.style.padding = "6px 20px";
+    el.style.cursor = "default";
+    el.style.color = "black";
+
+    if (isFaint) el.style.color = "#7a7a7a";
+
+    el.onmouseover = () => {
+      el.style.background = "#316ac5";
+      el.style.color = "white";
+    };
+
+    el.onmouseout = () => {
+      el.style.background = "transparent";
+      el.style.color = isFaint ? "#7a7a7a" : "black";
+    };
+
+    el.onclick = () => {
+      menu.style.display = "none";
+      action && action();
+    };
+
+    return el;
+  }
+
+
+  menu.appendChild(item("Open", null, true));
+  menu.appendChild(item("Explore", null, true));
+  menu.appendChild(item("Send To »", lazyprompt));
+  menu.appendChild(item("Create Shortcut", lazyprompt));
+  menu.appendChild(item("Delete", null, true));
+  menu.appendChild(item("Rename", null, true));
+  menu.appendChild(item("Properties", compuprops));
+
+
+  document.body.appendChild(menu);
+
+  desktop.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    menu.style.display = "block";
+    menu.style.left = e.clientX + "px";
+    menu.style.top = e.clientY + "px";
+
+  });
+
+  document.addEventListener("click", () => {
+    menu.style.display = "none";
+  });
+})();
+
+
+
+function compuprops() {
+openWindow('System Properties')
+};
+function lazyprompt() {
+ding.play()
+};
+
+
+
+
+
+
+// shaggy dogging
+
+function openWallpaperWindow3() {
+  const win = document.createElement("div");
+  win.className = "window2";
+  win.style.position = "absolute";
+  win.style.left = "450px"; //750
+  win.style.top = "150px";  //250
+  //win.style.transform = "translate(-50%, -50%)";
+  win.style.width = "538px"; //"360px";
+  win.style.height = "587px"; //"230px";
+  win.style.background = "#f4f3e9";
+  //win.style.background = "#ffffff";
+  win.style.border = "2px solid #357fff"; // "1px solid #357fff";   border:2px solid #3c65ff;
+  win.style.zIndex = ++z; 
+  win.onclick = () => {
+    win.style.zIndex = ++z;  
+  }; 
+
+  win.innerHTML = `
+    <div class="titlebar">
+      <span>VideoGaem Mem.jpg- Windows Picture and Fax Viewer</span>
+      <button id="closeBtn" title="Close">✕</button>
+    </div>
+
+    <div class="fillerdiv" title="Don't Look!">
+    <img class="app-img" src="img/images.jpeg-5.jpg">
+    </div>
+  `;
+
+  document.body.appendChild(win);
+
+  const desktop = document.getElementById("desktop");
+
+  win.querySelector("#closeBtn").onclick = () => {
+    win.remove();
+  };
+
+
+  // drag
+  const bar = win.querySelector(".titlebar");
+  bar.addEventListener("mousedown", (e) => {
+    const rect = win.getBoundingClientRect();
+    const ox = e.clientX - rect.left;
+    const oy = e.clientY - rect.top;
+  win.style.zIndex = ++z; 
+
+    function move(ev) {
+      win.style.left = ev.clientX - ox + "px";
+      win.style.top = ev.clientY - oy + "px";
+    }
+    function stop() {
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseup", stop);
+    }
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", stop);
+  });
+}
+
+
+function openWallpaperWindow4() {
+  const win = document.createElement("div");
+  win.className = "window2";
+  win.style.position = "absolute";
+  win.style.left = "250px"; //750
+  win.style.top = "50px";  //250
+  //win.style.transform = "translate(-50%, -50%)";
+  win.style.width = "640px"; //"360px";
+  win.style.height = "910px"; //"230px";
+  win.style.background = "#f4f3e9";
+  //win.style.background = "#ffffff";
+  win.style.border = "2px solid #357fff"; // "1px solid #357fff";   border:2px solid #3c65ff;
+  win.style.zIndex = ++z; 
+  win.onclick = () => {
+    win.style.zIndex = ++z;  
+  }; 
+
+  win.innerHTML = `
+    <div class="titlebar">
+      <span>human game.jpg- Windows Picture and Fax Viewer</span>
+      <button id="closeBtn" title="Close">✕</button>
+    </div>
+
+    <div class="fillerdiv" title="Don't Look!">
+    <img class="app-img" src="img/wanna-play-hooman-v0-avo9vibtk5sf1.webp">
+    </div>
+  `;
+
+  document.body.appendChild(win);
+
+  const desktop = document.getElementById("desktop");
+
+  win.querySelector("#closeBtn").onclick = () => {
+    win.remove();
+  };
+
+
+  // drag
+  const bar = win.querySelector(".titlebar");
+  bar.addEventListener("mousedown", (e) => {
+    const rect = win.getBoundingClientRect();
+    const ox = e.clientX - rect.left;
+    const oy = e.clientY - rect.top;
+  win.style.zIndex = ++z; 
+
+    function move(ev) {
+      win.style.left = ev.clientX - ox + "px";
+      win.style.top = ev.clientY - oy + "px";
+    }
+    function stop() {
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseup", stop);
+    }
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", stop);
+  });
+}
+
+// hold your ground soldier
+function openWallpaperWindow5() {
+  const win = document.createElement("div");
+  win.className = "window2";
+  win.style.position = "absolute";
+  win.style.left = "250px"; //750
+  win.style.top = "10px";  //250
+  //win.style.transform = "translate(-50%, -50%)";
+  win.style.width = "460px"; //"360px";
+  win.style.height = "669px"; //"230px";
+  win.style.background = "#f4f3e9";
+  //win.style.background = "#ffffff";
+  win.style.border = "2px solid #357fff"; // "1px solid #357fff";   border:2px solid #3c65ff;
+  win.style.zIndex = ++z; 
+  win.onclick = () => {
+    win.style.zIndex = ++z;  
+  }; 
+
+  win.innerHTML = `
+    <div class="titlebar">
+      <span>human game.jpg- Windows Picture and Fax Viewer</span>
+      <button id="closeBtn" title="Close">✕</button>
+    </div>
+
+    <div class="fillerdiv" title="Don't Look!">
+    <img class="app-img" src="img/6762a249460e7.jpg">
+    </div>
+  `;
+
+  document.body.appendChild(win);
+
+  const desktop = document.getElementById("desktop");
+
+  win.querySelector("#closeBtn").onclick = () => {
+    win.remove();
+  };
+
+
+  // drag
+  const bar = win.querySelector(".titlebar");
+  bar.addEventListener("mousedown", (e) => {
+    const rect = win.getBoundingClientRect();
+    const ox = e.clientX - rect.left;
+    const oy = e.clientY - rect.top;
+  win.style.zIndex = ++z; 
+
+    function move(ev) {
+      win.style.left = ev.clientX - ox + "px";
+      win.style.top = ev.clientY - oy + "px";
+    }
+    function stop() {
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseup", stop);
+    }
+
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", stop);
+  });
+}
+
+
+
+function openWallpaperWindow6() {
+  const win = document.createElement("div");
+  win.className = "window3";
+  win.style.position = "absolute";
+  win.style.right = "3%"; //750
+  win.style.bottom = "7%";  //250
+  //win.style.transform = "translate(-50%, -50%)";
+  win.style.width = "185px"; //"360px";
+  win.style.height = "20px"; //"230px";
+  win.style.background = "#f4f3e9";
+  //win.style.background = "#ffffff";
+  win.style.border = "0px solid #357fff"; // "1px solid #357fff";   border:2px solid #3c65ff;
+  win.style.zIndex = ++z; 
+  win.onclick = () => {
+    win.style.zIndex = ++z;  
+  }; 
+
+  win.innerHTML = `
+    <div class="titlebar3">
+      <span>Internet Connection Notifier</span>
+    </div>
+
+    <div class="fillerdiv" style="cursor: pointer;" title="Internet Connection Detected.">
+    <img class="app-img" src="img/cableplug.png">
+    </div>
+  `;
+
+  document.body.appendChild(win);
+
+  const desktop = document.getElementById("desktop");
+  win.querySelector(".fillerdiv").onclick = () => {
+    win.remove();
+  };
+  hwi.play();
+    setTimeout(() => {
+      win.remove();
+    }, 10900);
+}
+
+
+
+
+function openWallpaperWindow7() {
+  const win = document.createElement("div");
+  win.className = "window3";
+  win.style.position = "absolute";
+  win.style.right = "3%"; //750
+  win.style.bottom = "7%";  //250
+  //win.style.transform = "translate(-50%, -50%)";
+  win.style.width = "185px"; //"360px";
+  win.style.height = "20px"; //"230px";
+  win.style.background = "#f4f3e9";
+  //win.style.background = "#ffffff";
+  win.style.border = "0px solid #357fff"; // "1px solid #357fff";   border:2px solid #3c65ff;
+  win.style.zIndex = ++z; 
+  win.onclick = () => {
+    win.style.zIndex = ++z;  
+  }; 
+
+  win.innerHTML = `
+    <div class="titlebar3">
+      <span>Developer Information Notifier</span>
+    </div>
+
+    <div class="fillerdiv" style="cursor: pointer;" title="Developer Info">
+    <img class="app-img" src="img/devplug.png">
+    </div>
+  `;
+
+  document.body.appendChild(win);
+
+  const desktop = document.getElementById("desktop");
+  win.querySelector(".fillerdiv").onclick = () => {
+    openWallpaperWindow5();
+    win.remove();
+  };
+  hwi.play();
+    setTimeout(() => {
+      win.remove();
+    }, 10900);
+}
+
+
+</script>
+</body>
+</html>
