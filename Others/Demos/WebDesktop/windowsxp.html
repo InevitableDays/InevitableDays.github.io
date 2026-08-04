@@ -1339,11 +1339,12 @@ win.style.zIndex = ++z;
           </div>
         </div>
         <div class="ie6-bookmark">
-          <div>Wiby.me</div><div>Frogfind</div><div>News</div>
-          <div>Old Version</div><div>Hackernews</div><div>TextBase Searcher</div><div>LightSurf</div><div>Radio</div><div>Some Words Really, we need action here. love, me. 🚩 </div>
+          <div>Wiby.me</div>
+          <div>Wikipedia</div>
+          <div>LightSurf</div>
         </div>
 
-        <iframe class="ie6-frame" src="http://wiby.me">sandbox="allow-scripts allow-forms allow-same-origin"</iframe>
+        <iframe class="ie6-frame" src="http://wiby.me" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
         <div class="ie6-status">Done</div>
       <div class="hotspotduckgodown" title="Go down" onclick="closeWindow('Internet Explorer');"></div>
       <img class="Overlayie6" src="img/8041_32x32x32.png">
@@ -1353,7 +1354,7 @@ win.style.zIndex = ++z;
       <div class="hotspotquareQM" onclick="ding.play();"></div>
       </div>
     `;
-  } //img class </div> is not correct but no time to css adjust again, do it later
+  }  //img class </div> is not correct but no time to css adjust again, do it later
 
 else if (title === "My Documents") {
   content = `
@@ -3241,6 +3242,136 @@ function openWallpaperWindow7() {
     }, 10900);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+window.ieHistory = ["http://wiby.me"];
+window.ieHistoryIndex = 0;
+
+window.ieNavigate = function(url) {
+  const frame = document.querySelector(".ie6-frame");
+  const input = document.querySelector("#ie-url");
+
+  if (!frame || !input) return;
+
+  frame.src = url;
+  input.value = url;
+
+  ieHistory = ieHistory.slice(0, ieHistoryIndex + 1);
+  ieHistory.push(url);
+  ieHistoryIndex++;
+};
+
+window.ieBack = function() {
+  if (ieHistoryIndex > 0) {
+    ieHistoryIndex--;
+
+    const url = ieHistory[ieHistoryIndex];
+    const frame = document.querySelector(".ie6-frame");
+    const input = document.querySelector("#ie-url");
+
+    if (frame) frame.src = url;
+    if (input) input.value = url;
+  }
+};
+
+window.ieForward = function() {
+  if (ieHistoryIndex < ieHistory.length - 1) {
+    ieHistoryIndex++;
+
+    const url = ieHistory[ieHistoryIndex];
+    const frame = document.querySelector(".ie6-frame");
+    const input = document.querySelector("#ie-url");
+
+    if (frame) frame.src = url;
+    if (input) input.value = url;
+  }
+};
+
+window.go = function() {
+  const input = document.querySelector("#ie-url");
+  if (!input) return;
+
+  let value = input.value.trim();
+
+  if (!value) return;
+
+
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    ieNavigate(value);
+  } 
+ 
+  else {
+    ieNavigate("https://s.bloat.cat/?q=" + encodeURIComponent(value));
+  }
+};
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Enter" && document.activeElement?.id === "ie-url") {
+    go();
+  }
+});
+document.addEventListener("click", function(e) {
+
+  const btn = e.target;
+
+  if (!btn.classList.contains("ie6-btn")) return;
+
+  if (btn.textContent.trim() === "←") {
+    ieBack();
+  }
+
+  if (btn.textContent.trim() === "→") {
+    ieForward();
+  }
+
+  if (btn.textContent.trim() === "⟳") {
+    const frame = document.querySelector(".ie6-frame");
+    if (frame) frame.src = frame.src;
+  }
+
+});
+document.addEventListener("click", function(e) {
+
+  const item = e.target.closest(".ie6-bookmark div");
+
+  if (!item) return;
+
+  const links = {
+    "Wiby.me": "https://wiby.me",
+    "Wikipedia": "https://wikipedia.com",
+    "LightSurf": "https://inevitabledays.github.io/Others/Light_Surf"
+  };
+
+  if (links[item.textContent.trim()]) {
+    ieNavigate(links[item.textContent.trim()]);
+  }
+
+});
+document.addEventListener("DOMContentLoaded", function() {
+  const frame = document.querySelector(".ie6-frame");
+
+  if (frame) {
+    frame.setAttribute(
+      "sandbox",
+      "allow-scripts allow-forms allow-same-origin"
+    );
+  }
+});
 
 </script>
 </body>
