@@ -984,7 +984,50 @@ button {
  pointer-events: none;
  z-index: 10
 }
+.FaxImgChnL {
+  position: absolute;
+  left: 539px;
+  top: 644px;
+  width: 15px;
+  height: 25px;
+  cursor: pointer;
+}
 
+.FaxImgChnR {
+  position: absolute;
+  left: 559px;
+  top: 644px;
+  width: 15px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.CDClose1 {
+  position: absolute;
+  left: 260px;
+  top: 100px;
+  width: 69px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.CDClose2 {
+  position: absolute;
+  left: 170px;
+  top: 91px;
+  width: 69px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.CDClose3 {
+  position: absolute;
+  left: 280px;
+  top: 415px;
+  width: 73px;
+  height: 25px;
+  cursor: pointer;
+}
 
 </style>
 </head>
@@ -1473,6 +1516,7 @@ else if (title === "My Documents") {
       <div class="hotspotC" onclick="ding3.play();"></div>
       <div class="hotspotD"></div>
       <div class="hotspotquareQM" onclick="ding.play();"></div>
+      <div class="CDClose3" onclick="removeWindow('Network');"></div>
     </div>
   `;
 }
@@ -1558,6 +1602,7 @@ else if (title === "My Documents") {
       <div class="hotspotC" onclick="ding3.play();"></div>
       <div class="hotspotD"></div>
       <div class="hotspotquareQM" onclick="ding.play();"></div>
+      <div class="CDClose2" onclick="removeWindow('Help and Support');"></div>
     </div>
   `;
 }
@@ -1717,6 +1762,8 @@ else if (title === "My Documents") {
       <div class="hotspotD"></div>
       <div class="hotspotduckgodown" onclick="closeWindow('Blue hills');"></div>
       <div class="hotspotquareQM" onclick="ding.play();"></div>
+      <div class="FaxImgChnR" onclick="removeWindow('Blue hills'); openWindow('Sunset');" title="Sunset"></div>
+      <div class="FaxImgChnL" onclick="removeWindow('Blue hills'); openWindow('Winter');" title="Winter"></div>
     </div>
   `;
 }
@@ -1727,6 +1774,8 @@ else if (title === "My Documents") {
       <div class="hotspotD"></div>
       <div class="hotspotduckgodown" onclick="closeWindow('Sunset');"></div>
       <div class="hotspotquareQM" onclick="ding.play();"></div>
+      <div class="FaxImgChnR" onclick="removeWindow('Sunset'); openWindow('Water lilies');" title="Water lilies"></div>
+      <div class="FaxImgChnL" onclick="removeWindow('Sunset'); openWindow('Blue hills');" title="Blue hills"></div>
     </div>
   `;
 }
@@ -1737,6 +1786,8 @@ else if (title === "My Documents") {
       <div class="hotspotD"></div>
       <div class="hotspotduckgodown" onclick="closeWindow('Water lilies');"></div>
       <div class="hotspotquareQM" onclick="ding.play();"></div>
+      <div class="FaxImgChnR" onclick="removeWindow('Water lilies'); openWindow('Winter');" title="Winter"></div>
+      <div class="FaxImgChnL" onclick="removeWindow('Water lilies'); openWindow('Sunset');" title="Sunset"></div>
     </div>
   `;
 }
@@ -1747,6 +1798,8 @@ else if (title === "My Documents") {
       <div class="hotspotD"></div>
       <div class="hotspotduckgodown" onclick="closeWindow('Winter');"></div>
       <div class="hotspotquareQM" onclick="ding.play();"></div>
+      <div class="FaxImgChnR" onclick="removeWindow('Winter'); openWindow('Blue hills');" title="Blue hills"></div>
+      <div class="FaxImgChnL" onclick="removeWindow('Winter'); openWindow('Water lilies');" title="Water lilies"></div>
     </div>
   `;
 }
@@ -1755,6 +1808,7 @@ else if (title === "My Documents") {
     <div class="img-wrap">
       <img class="app-img" src="cd.png">
       <div class="hotspotD"></div>
+      <div class="CDClose1" onclick="removeWindow('CD Drive');"></div>
     </div>
   `;
 }
