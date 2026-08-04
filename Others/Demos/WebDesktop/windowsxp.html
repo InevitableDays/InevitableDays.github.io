@@ -2482,14 +2482,24 @@ function openWallpaperWindow2() {
       el.style.color = isFaint ? "#7a7a7a" : "black";
     };
 
-    el.onclick = () => {
+/* el.onclick = () => {
       menu.style.display = "none";
       action && action();
     };
 
     return el;
-  }
+  }  */
+  el.onclick = (e) => {
+    e.stopPropagation();
 
+   if (!action) return;
+
+   menu.style.display = "none";
+   action();
+  };
+
+  return el;
+ }
 
   menu.appendChild(item("Arrange Icons By »", lazyprompt));
 
