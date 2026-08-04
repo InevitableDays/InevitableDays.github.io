@@ -1290,6 +1290,13 @@ let z = 1;
 const openApps = {};
 const closeApps = {};
 
+
+function closeAllWindows() {
+  document.querySelectorAll(".window").forEach(win => {
+    win.style.display = "none";
+  });
+}
+  
 function closeWindow(title) {
    if (closeApps[title]) {
     const w = openApps[title];
