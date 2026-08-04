@@ -1296,6 +1296,31 @@ function closeAllWindows() {
     win.style.display = "none";
   });
 }
+
+function removeWindow(title) {
+  const win = openApps[title];
+
+  if (!win) return;
+
+  if (win._taskItem) {
+    win._taskItem.remove();
+  }
+
+  delete openApps[title];
+
+  win.remove();
+}
+function removeAllWindows() {
+  const titles = Object.keys(openApps);
+
+  titles.forEach(title => {
+    removeWindow(title);
+  });
+}
+
+
+
+
   
 function closeWindow(title) {
    if (closeApps[title]) {
@@ -1307,8 +1332,6 @@ function closeWindow(title) {
   win.className = "window";
  }
 
-
-/* WINDOW SYSTEM */
 function openWindow(title) {
 
   if (openApps[title]) {
@@ -2836,7 +2859,7 @@ const items = document.querySelectorAll('.icon');
 
 
 
-// taskmgr
+// taskbr
 
 (function () {
   const desktop = document.getElementById("taskbar");
@@ -2883,7 +2906,7 @@ const items = document.querySelectorAll('.icon');
   menu.appendChild(item("Cascade Windows", null, true));
   menu.appendChild(item("Show the Desktop", lazyprompt));
   menu.appendChild(item("Task Manager", taskmgrwindow));
-  menu.appendChild(item("Lock the Taskbar", null, true));
+  menu.appendChild(item("Close All Windows", removeAll));
   menu.appendChild(item("Properties", propwindow));
 
 
@@ -2910,7 +2933,10 @@ openWindow('Task Manager')
 function propwindow() {
 openWindow('Properties')
 };
-
+function removeAll() {
+removeAllWindows()
+sound4.pause(); sound5.pause(); sound6.pause(); sound7.pause(); what.pause();
+};
 
 
 
