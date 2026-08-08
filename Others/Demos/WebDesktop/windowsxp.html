@@ -3476,6 +3476,52 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
+
+
+
+
+
+
+
+
+
+  
+(function () {
+  const container = document.querySelector('[title="Date"]');
+  if (!container) return;
+
+  function updateDate() {
+    const now = new Date();
+
+    // European date: DD,MM,YYYY
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear());
+
+    const dateString = `${day},${month},${year}`;
+
+    container.innerHTML = '';
+
+    for (const char of dateString) {
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+
+      if (char === ',') {
+        img.src = '0_9 numbers gifs/punc-comsm.gif';
+      } else {
+        img.src = `0_9 numbers gifs/${char}.gif`;
+      }
+
+      container.appendChild(img);
+    }
+  }
+
+  updateDate();
+
+  // Check periodically so it updates automatically at midnight.
+  setInterval(updateDate, 60000);
+})();
+
 </script>
 </body>
 </html>
