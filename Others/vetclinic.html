@@ -1,0 +1,4166 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1118">
+<title>VetClinic — Veteriner Klinik Yönetimi</title>
+
+<style>
+:root{
+  --bg:#080d13;
+  --panel:#101821;
+  --panel2:#141f29;
+  --border:#22303d;
+  --text:#e8eef3;
+  --muted:#81909d;
+  --primary:#36c5a0;
+  --primary2:#1d9f82;
+  --danger:#ef6262;
+  --warning:#e5ad4e;
+  --blue:#5599e8;
+  --sidebar:250px;
+  --radius:12px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+button,input,select,textarea{font:inherit}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+.app{
+  min-height:100vh;
+  display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:var(--sidebar);
+  background:#0b1219;
+  border-right:1px solid var(--border);
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:50;
+  display:flex;
+  flex-direction:column;
+}
+
+.logo{
+  height:72px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 20px;
+  border-bottom:1px solid var(--border);
+}
+
+.logo-icon{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:rgba(54,197,160,.12);
+  color:var(--primary);
+  font-size:20px;
+  font-weight:800;
+}
+
+.logo-text{
+  font-size:17px;
+  font-weight:700;
+}
+
+.logo-sub{
+  color:var(--muted);
+  font-size:10px;
+  display:block;
+  margin-top:2px;
+  letter-spacing:.5px;
+}
+
+.nav{
+  padding:16px 10px;
+  flex:1;
+}
+
+.nav-label{
+  color:#52616e;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  padding:12px 12px 7px;
+}
+
+.nav button{
+  width:100%;
+  padding:11px 12px;
+  background:none;
+  color:#9ba8b3;
+  text-align:left;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin-bottom:3px;
+  transition:.15s;
+}
+
+.nav button:hover{
+  background:#121c25;
+  color:#e8eef3;
+}
+
+.nav button.active{
+  color:var(--primary);
+  background:rgba(54,197,160,.09);
+}
+
+.nav-icon{
+  width:21px;
+  text-align:center;
+  opacity:.9;
+}
+
+.sidebar-bottom{
+  padding:14px;
+  border-top:1px solid var(--border);
+}
+
+.storage-status{
+  padding:11px;
+  background:#0f1921;
+  border:1px solid var(--border);
+  border-radius:9px;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.storage-status strong{
+  color:var(--primary);
+  display:block;
+  margin-bottom:4px;
+}
+
+/* MAIN */
+
+.main{
+  margin-left:var(--sidebar);
+  width:calc(100% - var(--sidebar));
+  min-height:100vh;
+}
+
+.topbar{
+  height:72px;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,13,19,.92);
+  backdrop-filter:blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  position:sticky;
+  top:0;
+  z-index:30;
+}
+
+.page-title{
+  font-size:18px;
+  font-weight:650;
+}
+
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.clock{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.user{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  background:#20312f;
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  font-weight:700;
+}
+
+.mobile-menu{
+  display:none;
+  background:none;
+  color:var(--text);
+  font-size:22px;
+}
+
+.content{
+  padding:28px;
+  max-width:1600px;
+  margin:auto;
+}
+
+/* COMMON */
+
+.page{
+  display:none;
+}
+
+.page.active{
+  display:block;
+}
+
+.page-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:22px;
+}
+
+.page-heading h1{
+  margin:0;
+  font-size:24px;
+}
+
+.page-heading p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.btn{
+  padding:9px 14px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--text);
+  background:#17232d;
+  border:1px solid var(--border);
+}
+
+.btn:hover{background:#1c2a35}
+
+.btn-primary{
+  background:var(--primary);
+  color:#06130f;
+  border-color:var(--primary);
+}
+
+.btn-primary:hover{
+  background:#42d1ad;
+}
+
+.btn-danger{
+  color:#ff8888;
+  background:rgba(239,98,98,.08);
+  border-color:rgba(239,98,98,.2);
+}
+
+.btn-small{
+  padding:6px 9px;
+  font-size:11px;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+}
+
+.card-header{
+  padding:16px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.card-header h3{
+  margin:0;
+  font-size:14px;
+}
+
+.card-body{
+  padding:18px;
+}
+
+.muted{color:var(--muted)}
+
+.green{color:var(--primary)}
+.red{color:var(--danger)}
+.yellow{color:var(--warning)}
+.blue{color:var(--blue)}
+
+.grid{
+  display:grid;
+  gap:16px;
+}
+
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+.stat{
+  padding:18px;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:9px;
+}
+
+.stat-value{
+  font-size:25px;
+  font-weight:700;
+}
+
+.stat-bottom{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.form-group.full{
+  grid-column:1/-1;
+}
+
+.form-group label{
+  color:#9aa7b2;
+  font-size:11px;
+}
+
+input,select,textarea{
+  width:100%;
+  background:#0b131a;
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px 11px;
+  outline:none;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:var(--primary);
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  margin-top:18px;
+}
+
+/* TABLE */
+
+.table-wrap{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+th{
+  color:#697985;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  text-align:left;
+  font-weight:600;
+  padding:12px 15px;
+  border-bottom:1px solid var(--border);
+}
+
+td{
+  padding:13px 15px;
+  font-size:12px;
+  border-bottom:1px solid rgba(34,48,61,.65);
+}
+
+tr:last-child td{border-bottom:0}
+
+tbody tr:hover{
+  background:#111b24;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 7px;
+  border-radius:5px;
+  font-size:10px;
+  background:#17232d;
+  color:#9eacb7;
+}
+
+.badge-green{
+  background:rgba(54,197,160,.1);
+  color:var(--primary);
+}
+
+.badge-red{
+  background:rgba(239,98,98,.1);
+  color:#f07d7d;
+}
+
+.badge-yellow{
+  background:rgba(229,173,78,.1);
+  color:#e5ad4e;
+}
+
+.searchbar{
+  display:flex;
+  gap:9px;
+  margin-bottom:14px;
+}
+
+.searchbar input{
+  max-width:350px;
+}
+
+/* DASHBOARD */
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:1.6fr 1fr;
+  gap:16px;
+  margin-top:16px;
+}
+
+.appointment{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.appointment:last-child{border-bottom:0}
+
+.app-time{
+  width:52px;
+  color:var(--primary);
+  font-weight:650;
+  font-size:12px;
+}
+
+.avatar{
+  width:36px;
+  height:36px;
+  border-radius:9px;
+  background:#192832;
+  display:grid;
+  place-items:center;
+  color:#a9bbc5;
+  font-size:15px;
+}
+
+.app-info{
+  flex:1;
+}
+
+.app-info strong{
+  display:block;
+  font-size:12px;
+}
+
+.app-info span{
+  color:var(--muted);
+  font-size:10px;
+}
+
+.timer-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:13px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.timer-item:last-child{border:0}
+
+.timer-time{
+  font-size:17px;
+  font-weight:700;
+  color:var(--primary);
+  font-variant-numeric:tabular-nums;
+}
+
+/* PATIENT */
+
+.patient-layout{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:16px;
+}
+
+.patient-list{
+  max-height:650px;
+  overflow:auto;
+}
+
+.patient-row{
+  padding:13px 15px;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+}
+
+.patient-row:hover,.patient-row.selected{
+  background:#14212a;
+}
+
+.patient-row strong{
+  font-size:12px;
+}
+
+.patient-row small{
+  color:var(--muted);
+  display:block;
+  margin-top:4px;
+  font-size:10px;
+}
+
+.profile-head{
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.profile-avatar{
+  width:65px;
+  height:65px;
+  border-radius:15px;
+  background:#19302d;
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  font-size:27px;
+}
+
+.profile-name{
+  font-size:20px;
+  font-weight:700;
+}
+
+.profile-meta{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:20px;
+}
+
+.info-box{
+  background:#0d151c;
+  border:1px solid var(--border);
+  padding:12px;
+  border-radius:8px;
+}
+
+.info-box label{
+  display:block;
+  color:#667682;
+  font-size:9px;
+  margin-bottom:5px;
+}
+
+.info-box strong{
+  font-size:12px;
+}
+
+/* CALENDAR */
+
+.calendar{
+  overflow:hidden;
+}
+
+.calendar-head{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  background:#0d151c;
+}
+
+.calendar-head div{
+  padding:11px;
+  color:#657581;
+  font-size:10px;
+  text-align:center;
+  border-right:1px solid var(--border);
+}
+
+.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+}
+
+.day{
+  min-height:110px;
+  border-right:1px solid var(--border);
+  border-top:1px solid var(--border);
+  padding:8px;
+  cursor:pointer;
+}
+
+.day:hover{background:#111b24}
+
+.day.other{
+  opacity:.3;
+}
+
+.day-number{
+  font-size:11px;
+  color:#9eacb7;
+}
+
+.day.today .day-number{
+  background:var(--primary);
+  color:#06130f;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+}
+
+.event{
+  margin-top:7px;
+  padding:4px 5px;
+  border-radius:4px;
+  background:rgba(54,197,160,.1);
+  color:var(--primary);
+  font-size:9px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+/* INVENTORY */
+
+.low-stock{
+  color:var(--danger);
+  font-weight:700;
+}
+
+/* TIMER */
+
+.timer-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.timer-card{
+  padding:18px;
+}
+
+.timer-circle{
+  width:130px;
+  height:130px;
+  margin:10px auto 17px;
+  border:5px solid #203c37;
+  border-top-color:var(--primary);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+}
+
+.timer-large{
+  font-size:25px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+
+.timer-name{
+  text-align:center;
+  font-weight:650;
+  font-size:13px;
+}
+
+.timer-patient{
+  text-align:center;
+  color:var(--muted);
+  font-size:10px;
+  margin-top:4px;
+}
+
+.timer-actions{
+  display:flex;
+  gap:7px;
+  justify-content:center;
+  margin-top:15px;
+}
+
+/* REPORT */
+
+.report-bars{
+  height:220px;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  padding-top:20px;
+}
+
+.bar-wrap{
+  flex:1;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  align-items:center;
+}
+
+.bar{
+  width:75%;
+  max-width:45px;
+  background:var(--primary);
+  border-radius:4px 4px 0 0;
+  min-height:3px;
+  opacity:.75;
+}
+
+.bar-label{
+  font-size:9px;
+  color:var(--muted);
+  margin-top:7px;
+}
+
+.bar-value{
+  font-size:8px;
+  color:#91a0aa;
+  margin-bottom:4px;
+}
+
+/* MODAL */
+
+.modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,.7);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal-overlay.open{
+  display:flex;
+}
+
+.modal{
+  width:100%;
+  max-width:620px;
+  max-height:90vh;
+  overflow:auto;
+  background:#101821;
+  border:1px solid var(--border);
+  border-radius:13px;
+  box-shadow:0 25px 70px rgba(0,0,0,.5);
+}
+
+.modal-header{
+  padding:17px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.modal-header h2{
+  margin:0;
+  font-size:16px;
+}
+
+.modal-close{
+  background:none;
+  color:#7f8d98;
+  font-size:20px;
+}
+
+.modal-body{
+  padding:20px;
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  bottom:22px;
+  right:22px;
+  background:#16242c;
+  border:1px solid var(--border);
+  padding:12px 16px;
+  border-radius:9px;
+  font-size:12px;
+  z-index:200;
+  transform:translateY(20px);
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+}
+
+.toast.show{
+  transform:translateY(0);
+  opacity:1;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+  .sidebar{
+    transform:translateX(-100%);
+    transition:.2s;
+  }
+
+  .sidebar.open{
+    transform:translateX(0);
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  .mobile-menu{
+    display:block;
+  }
+
+  .topbar{
+    padding:0 15px;
+  }
+
+  .content{
+    padding:18px 14px;
+  }
+
+  .grid-4{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid-3{
+    grid-template-columns:1fr;
+  }
+
+  .dashboard-grid,
+  .patient-layout{
+    grid-template-columns:1fr;
+  }
+
+  .timer-grid{
+    grid-template-columns:1fr;
+  }
+
+  .calendar-grid{
+    min-width:700px;
+  }
+
+  .calendar{
+    overflow:auto;
+  }
+}
+
+@media(max-width:600px){
+  .grid-4,
+  .grid-2{
+    grid-template-columns:1fr;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .page-heading{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .clock{
+    display:none;
+  }
+}
+
+/* ============ LOGIN / AUTH (added layer) ============ */
+
+.login-overlay{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  background:radial-gradient(circle at 30% 20%, #10241f 0%, #060a0e 70%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.login-card{
+  width:100%;
+  max-width:380px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:30px 26px;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+}
+
+.login-logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:22px;
+}
+
+.login-title{
+  font-size:18px;
+  font-weight:700;
+  margin:0 0 4px;
+}
+
+.login-sub{
+  color:var(--muted);
+  font-size:12px;
+  margin:0 0 22px;
+}
+
+.login-error{
+  display:none;
+  background:rgba(239,98,98,.1);
+  border:1px solid rgba(239,98,98,.25);
+  color:#f07d7d;
+  font-size:12px;
+  padding:9px 11px;
+  border-radius:8px;
+  margin-bottom:14px;
+}
+
+.user-chip{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.user-chip-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1.25;
+}
+
+.user-chip-text strong{
+  font-size:11px;
+}
+
+.user-chip-text span{
+  font-size:9px;
+  color:var(--muted);
+}
+
+.logout-btn{
+  background:none;
+  color:#7f8d98;
+  font-size:11px;
+  border:1px solid var(--border);
+  padding:6px 9px;
+  border-radius:7px;
+}
+
+.logout-btn:hover{
+  color:var(--text);
+  background:#17232d;
+}
+
+/* Read-only mode: hide write-action controls without touching
+   any original markup or JS logic — these target the existing
+   onclick attributes that were already there. */
+body.role-readonly .btn-primary[onclick*="openModal"],
+body.role-readonly button[onclick*="adjustStock"],
+body.role-readonly button[onclick*="deleteTimer"],
+body.role-readonly button[onclick*="toggleTimer"],
+body.role-readonly button[onclick*="deletePatient"],
+body.role-readonly button[onclick*="openVisitModal"],
+body.role-readonly button[onclick="importFile.click()"]{
+  display:none !important;
+}
+
+body.role-readonly .storage-status strong::after{
+  content:" · Salt Okuma Modu";
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN OVERLAY (added) -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+
+    <div class="login-logo">
+      <div class="logo-icon">✚</div>
+      <div>
+        <div class="logo-text">VetClinic</div>
+        <span class="logo-sub">KLİNİK YÖNETİMİ</span>
+      </div>
+    </div>
+
+    <p class="login-title">Giriş Yap</p>
+    <p class="login-sub">Devam etmek için kullanıcınızı seçin.</p>
+
+    <div class="login-error" id="loginError"></div>
+
+    <form id="loginForm">
+
+      <div class="form-group" style="margin-bottom:13px">
+        <label>Kullanıcı</label>
+        <select name="user" id="loginUser" required>
+          <option value="cambaz">Dr. Ali A. Cambaz</option>
+          <option value="omer">Dr. Omer</option>
+          <option value="frontdesk">Ön Büro (Salt Okuma)</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom:20px">
+        <label>Şifre</label>
+        <input type="password" name="password" id="loginPassword" required>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;padding:11px" type="submit">
+        Giriş Yap
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
+<div class="app" id="appRoot" style="display:none">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="logo">
+    <div class="logo-icon">✚</div>
+    <div>
+      <div class="logo-text">VetClinic</div>
+      <span class="logo-sub">KLİNİK YÖNETİMİ</span>
+    </div>
+  </div>
+
+  <nav class="nav">
+
+    <div class="nav-label">Genel</div>
+
+    <button class="nav-btn active" data-page="dashboard">
+      <span class="nav-icon">⌂</span> Ana Menü
+    </button>
+
+    <button class="nav-btn" data-page="patients">
+      <span class="nav-icon">♙</span> Hastalar
+    </button>
+
+    <button class="nav-btn" data-page="calendar">
+      <span class="nav-icon">□</span> Takvim
+    </button>
+
+    <button class="nav-btn" data-page="timers">
+      <span class="nav-icon">◷</span> Tedavi Zamanlayıcıları
+    </button>
+
+    <div class="nav-label">Finans & Stok</div>
+
+    <button class="nav-btn" data-page="inventory">
+      <span class="nav-icon">▣</span> Stok
+    </button>
+
+    <button class="nav-btn" data-page="sales">
+      <span class="nav-icon">₺</span> Satışlar
+    </button>
+
+    <button class="nav-btn" data-page="reports">
+      <span class="nav-icon">▥</span> Raporlar
+    </button>
+
+    <div class="nav-label">Sistem</div>
+
+    <button onclick="exportData()">
+      <span class="nav-icon">↓</span> Veri Dışa Aktar
+    </button>
+
+    <button onclick="importFile.click()">
+      <span class="nav-icon">↑</span> Veri İçe Aktar
+    </button>
+
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="storage-status">
+      <strong>● Çevrimdışı Mod</strong>
+      Veriler bu cihazda saklanıyor.
+    </div>
+
+    <!-- SERVER SYNC (added) -->
+    <div class="storage-status" id="serverSyncBox" style="margin-top:8px">
+      <strong id="serverSyncStatus" style="color:var(--muted)">Sunucuya bağlı değil</strong>
+
+      <input id="serverUrlInput" placeholder="http://192.168.1.50:8765"
+             style="margin-top:8px;font-size:11px;padding:7px 8px">
+
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-small" style="flex:1" onclick="connectToServer()">Bağlan</button>
+        <button class="btn btn-small" style="flex:1" onclick="pushLocalToServer()">Yükle</button>
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">Ana Menü</div>
+    </div>
+
+    <div class="topbar-right">
+      <span class="clock" id="clock"></span>
+      <div class="user-chip">
+        <div class="user" id="userAvatar">DR</div>
+        <div class="user-chip-text">
+          <strong id="userNameLabel">—</strong>
+          <span id="userRoleLabel">—</span>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Çıkış</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <section class="page active" id="page-dashboard">
+
+      <div class="page-heading">
+        <div>
+          <h1 id="dashboardGreeting">Günaydın, Doktor</h1>
+          <p id="dashboardDate"></p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('patientModal')">
+          + Yeni Hasta
+        </button>
+      </div>
+
+      <div class="grid grid-4">
+
+        <div class="card stat">
+          <div class="stat-label">Toplam Hasta</div>
+          <div class="stat-value" id="statPatients">0</div>
+          <div class="stat-bottom">Kayıtlı hasta</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Bugünkü Randevu</div>
+          <div class="stat-value" id="statAppointments">0</div>
+          <div class="stat-bottom">Bugün</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Aktif Tedavi</div>
+          <div class="stat-value" id="statTimers">0</div>
+          <div class="stat-bottom">Devam ediyor</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Aylık Satış</div>
+          <div class="stat-value" id="statSales">₺0</div>
+          <div class="stat-bottom">Bu ay</div>
+        </div>
+
+      </div>
+
+      <div class="dashboard-grid">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Bugünkü Randevular</h3>
+            <button class="btn btn-small" onclick="showPage('calendar')">Takvim</button>
+          </div>
+
+          <div class="card-body" id="appointmentsList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Aktif Tedaviler</h3>
+            <button class="btn btn-small" onclick="showPage('timers')">Tümü</button>
+          </div>
+
+          <div class="card-body" id="dashboardTimers"></div>
+        </div>
+
+      </div>
+
+      <div class="grid grid-2" style="margin-top:16px">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Kritik Stok</h3>
+            <button class="btn btn-small" onclick="showPage('inventory')">Stok</button>
+          </div>
+          <div class="card-body" id="criticalStock"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Son Satışlar</h3>
+            <button class="btn btn-small" onclick="showPage('sales')">Tümü</button>
+          </div>
+          <div class="card-body" id="recentSales"></div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- PATIENTS -->
+    <section class="page" id="page-patients">
+
+      <div class="page-heading">
+        <div>
+          <h1>Hasta Yönetimi</h1>
+          <p>Hasta kayıtları ve tıbbi geçmiş</p>
+        </div>
+
+        <button class="btn btn-primary" onclick="openModal('patientModal')">
+          + Yeni Hasta
+        </button>
+      </div>
+
+      <div class="patient-layout">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Hasta Listesi</h3>
+          </div>
+
+          <div class="card-body" style="padding-bottom:8px">
+            <input id="patientSearch"
+                   placeholder="Hasta, sahip veya çip ara..."
+                   oninput="renderPatients()">
+          </div>
+
+          <div class="patient-list" id="patientList"></div>
+        </div>
+
+        <div class="card" id="patientProfile">
+          <div class="card-body">
+            <div class="muted" style="text-align:center;padding:80px 20px">
+              Hasta seçin.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- CALENDAR -->
+    <section class="page" id="page-calendar">
+
+      <div class="page-heading">
+        <div>
+          <h1>Takvim</h1>
+          <p>Randevu ve klinik planlaması</p>
+        </div>
+
+        <button class="btn btn-primary" onclick="openModal('appointmentModal')">
+          + Randevu
+        </button>
+      </div>
+
+      <div class="card calendar">
+
+        <div class="card-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn" onclick="changeMonth(-1)">‹</button>
+            <strong id="calendarTitle"></strong>
+            <button class="btn" onclick="changeMonth(1)">›</button>
+          </div>
+
+          <button class="btn btn-small" onclick="goToday()">Bugün</button>
+        </div>
+
+        <div class="calendar-head">
+          <div>Pzt</div>
+          <div>Sal</div>
+          <div>Çar</div>
+          <div>Per</div>
+          <div>Cum</div>
+          <div>Cmt</div>
+          <div>Paz</div>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- TIMERS -->
+    <section class="page" id="page-timers">
+
+      <div class="page-heading">
+        <div>
+          <h1>Tedavi Zamanlayıcıları</h1>
+          <p>Aktif tedavi sürelerini takip edin</p>
+        </div>
+
+        <button class="btn btn-primary" onclick="openModal('timerModal')">
+          + Tedavi Başlat
+        </button>
+      </div>
+
+      <div class="timer-grid" id="timerGrid"></div>
+
+    </section>
+
+
+    <!-- INVENTORY -->
+    <section class="page" id="page-inventory">
+
+      <div class="page-heading">
+        <div>
+          <h1>Stok Yönetimi</h1>
+          <p>Alış, satış ve mevcut stok</p>
+        </div>
+
+        <button class="btn btn-primary" onclick="openModal('inventoryModal')">
+          + Ürün Ekle
+        </button>
+      </div>
+
+      <div class="grid grid-4">
+
+        <div class="card stat">
+          <div class="stat-label">Ürün Çeşidi</div>
+          <div class="stat-value" id="stockProducts">0</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Toplam Stok</div>
+          <div class="stat-value" id="stockUnits">0</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Kritik Ürün</div>
+          <div class="stat-value red" id="stockCritical">0</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Stok Değeri</div>
+          <div class="stat-value" id="stockValue">₺0</div>
+        </div>
+
+      </div>
+
+      <div class="card" style="margin-top:16px">
+
+        <div class="card-header">
+          <h3>Ürünler</h3>
+          <input style="max-width:250px" id="inventorySearch"
+                 placeholder="Ürün ara..."
+                 oninput="renderInventory()">
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ürün</th>
+                <th>Kategori</th>
+                <th>Alış</th>
+                <th>Satış</th>
+                <th>Stok</th>
+                <th>Min.</th>
+                <th>Durum</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTable"></tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- STOK HAREKET GEÇMİŞİ (added) -->
+      <div class="card" style="margin-top:16px">
+
+        <div class="card-header">
+          <h3>Stok Hareket Geçmişi</h3>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tarih</th>
+                <th>Ürün</th>
+                <th>İşlem</th>
+                <th>Değişim</th>
+                <th>Sonuç Stok</th>
+                <th>Yapan</th>
+              </tr>
+            </thead>
+            <tbody id="stockHistoryTable"></tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SALES -->
+    <section class="page" id="page-sales">
+
+      <div class="page-heading">
+        <div>
+          <h1>Satışlar</h1>
+          <p>Ürün ve hizmet satışları</p>
+        </div>
+
+        <button class="btn btn-primary" onclick="openModal('saleModal')">
+          + Yeni Satış
+        </button>
+      </div>
+
+      <div class="grid grid-3">
+
+        <div class="card stat">
+          <div class="stat-label">Bugünkü Satış</div>
+          <div class="stat-value" id="todaySales">₺0</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Bu Ay</div>
+          <div class="stat-value" id="monthSales">₺0</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Toplam Satış</div>
+          <div class="stat-value" id="allSales">₺0</div>
+        </div>
+
+      </div>
+
+      <div class="card" style="margin-top:16px">
+
+        <div class="card-header">
+          <h3>Satış Geçmişi</h3>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Tarih</th>
+                <th>Ürün / Hizmet</th>
+                <th>Hasta</th>
+                <th>Adet</th>
+                <th>Birim Fiyat</th>
+                <th>Toplam</th>
+                <th>Ödeme</th>
+              </tr>
+            </thead>
+            <tbody id="salesTable"></tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- REPORTS -->
+    <section class="page" id="page-reports">
+
+      <div class="page-heading">
+        <div>
+          <h1>Aylık Raporlar</h1>
+          <p>Klinik performans özeti</p>
+        </div>
+
+        <input type="month" id="reportMonth" onchange="renderReports()">
+      </div>
+
+      <div class="grid grid-4">
+
+        <div class="card stat">
+          <div class="stat-label">Ciro</div>
+          <div class="stat-value" id="reportRevenue">₺0</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Satış Sayısı</div>
+          <div class="stat-value" id="reportSaleCount">0</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Hasta Ziyareti</div>
+          <div class="stat-value" id="reportVisits">0</div>
+        </div>
+
+        <div class="card stat">
+          <div class="stat-label">Yeni Hasta</div>
+          <div class="stat-value" id="reportNewPatients">0</div>
+        </div>
+
+      </div>
+
+      <div class="grid grid-2" style="margin-top:16px">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Aylık Satış Grafiği</h3>
+          </div>
+          <div class="card-body">
+            <div class="report-bars" id="reportBars"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Özet</h3>
+          </div>
+          <div class="card-body" id="reportSummary"></div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+</main>
+</div>
+
+
+<!-- PATIENT MODAL -->
+
+<div class="modal-overlay" id="patientModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Yeni Hasta</h2>
+      <button class="modal-close" onclick="closeModal('patientModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="patientForm">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Hasta Adı *</label>
+            <input name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label>Tür</label>
+            <select name="species">
+              <option>Köpek</option>
+              <option>Kedi</option>
+              <option>Kuş</option>
+              <option>Tavşan</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Irk</label>
+            <input name="breed">
+          </div>
+
+          <div class="form-group">
+            <label>Cinsiyet</label>
+            <select name="gender">
+              <option>Dişi</option>
+              <option>Erkek</option>
+              <option>Bilinmiyor</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Doğum Tarihi</label>
+            <input type="date" name="birth">
+          </div>
+
+          <div class="form-group">
+            <label>Mikroçip No</label>
+            <input name="chip">
+          </div>
+
+          <div class="form-group">
+            <label>Sahip Adı *</label>
+            <input name="owner" required>
+          </div>
+
+          <div class="form-group">
+            <label>Telefon</label>
+            <input name="phone">
+          </div>
+
+          <div class="form-group">
+            <label>E-posta</label>
+            <input name="email" type="email">
+          </div>
+
+          <div class="form-group">
+            <label>Ağırlık (kg)</label>
+            <input name="weight" type="number" step="0.01">
+          </div>
+
+          <div class="form-group full">
+            <label>Alerjiler</label>
+            <input name="allergies">
+          </div>
+
+          <div class="form-group full">
+            <label>Notlar</label>
+            <textarea name="notes"></textarea>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('patientModal')">İptal</button>
+          <button class="btn btn-primary">Kaydet</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- APPOINTMENT MODAL -->
+
+<div class="modal-overlay" id="appointmentModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Yeni Randevu</h2>
+      <button class="modal-close" onclick="closeModal('appointmentModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="appointmentForm">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Tarih *</label>
+            <input type="date" name="date" required>
+          </div>
+
+          <div class="form-group">
+            <label>Saat *</label>
+            <input type="time" name="time" required>
+          </div>
+
+          <div class="form-group">
+            <label>Hasta *</label>
+            <select name="patient" id="appointmentPatient" required></select>
+          </div>
+
+          <div class="form-group">
+            <label>İşlem</label>
+            <input name="type" placeholder="Muayene, aşı, kontrol...">
+          </div>
+
+          <div class="form-group full">
+            <label>Not</label>
+            <textarea name="notes"></textarea>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('appointmentModal')">İptal</button>
+          <button class="btn btn-primary">Randevuyu Kaydet</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- TIMER MODAL -->
+
+<div class="modal-overlay" id="timerModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Tedavi Zamanlayıcı</h2>
+      <button class="modal-close" onclick="closeModal('timerModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="timerForm">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Hasta *</label>
+            <select name="patient" id="timerPatient" required></select>
+          </div>
+
+          <div class="form-group">
+            <label>Tedavi Adı *</label>
+            <input name="name" placeholder="Serum, infüzyon..." required>
+          </div>
+
+          <div class="form-group">
+            <label>Süre (dakika) *</label>
+            <input type="number" name="minutes" value="30" min="1" required>
+          </div>
+
+          <div class="form-group">
+            <label>Not</label>
+            <input name="notes">
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('timerModal')">İptal</button>
+          <button class="btn btn-primary">Başlat</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- INVENTORY MODAL -->
+
+<div class="modal-overlay" id="inventoryModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Yeni Ürün</h2>
+      <button class="modal-close" onclick="closeModal('inventoryModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="inventoryForm">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Ürün Adı *</label>
+            <input name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label>Kategori</label>
+            <input name="category" placeholder="İlaç, sarf, mama...">
+          </div>
+
+          <div class="form-group">
+            <label>Alış Fiyatı</label>
+            <input type="number" name="buy" step=".01">
+          </div>
+
+          <div class="form-group">
+            <label>Satış Fiyatı</label>
+            <input type="number" name="sell" step=".01">
+          </div>
+
+          <div class="form-group">
+            <label>Mevcut Stok</label>
+            <input type="number" name="stock" value="0">
+          </div>
+
+          <div class="form-group">
+            <label>Minimum Stok</label>
+            <input type="number" name="minimum" value="5">
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('inventoryModal')">İptal</button>
+          <button class="btn btn-primary">Kaydet</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- SALE MODAL -->
+
+<div class="modal-overlay" id="saleModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Yeni Satış</h2>
+      <button class="modal-close" onclick="closeModal('saleModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="saleForm">
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label>Ürün *</label>
+            <select name="product" id="saleProduct" required onchange="updateSalePrice()"></select>
+          </div>
+
+          <div class="form-group">
+            <label>Hasta</label>
+            <select name="patient" id="salePatient">
+              <option value="">— Hasta seçilmedi —</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Adet</label>
+            <input type="number" name="quantity" id="saleQuantity"
+                   value="1" min="1" onchange="updateSalePrice()">
+          </div>
+
+          <div class="form-group">
+            <label>Birim Fiyat</label>
+            <input type="number" name="price" id="salePrice" step=".01">
+          </div>
+
+          <div class="form-group">
+            <label>Ödeme</label>
+            <select name="payment">
+              <option>Nakit</option>
+              <option>Kart</option>
+              <option>Havale</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div style="margin-top:16px;padding:14px;background:#0c151c;border:1px solid var(--border);border-radius:8px">
+          Toplam:
+          <strong id="saleTotal" style="float:right;color:var(--primary);font-size:18px">₺0</strong>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('saleModal')">İptal</button>
+          <button class="btn btn-primary">Satışı Kaydet</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- IMPORT -->
+
+<input type="file" id="importFile" accept=".json" style="display:none">
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* =========================================================
+   OFFLINE DATA LAYER
+   ========================================================= */
+
+const DB_KEY = "vetclinic_offline_db_v1";
+
+const defaultDB = {
+  patients: [
+    {
+      id:"p1",
+      name:"Luna",
+      species:"Köpek",
+      breed:"Golden Retriever",
+      gender:"Dişi",
+      birth:"2021-04-12",
+      chip:"982000411234567",
+      owner:"Ayşe Demir",
+      phone:"0532 555 1122",
+      email:"ayse@example.com",
+      weight:28.4,
+      allergies:"Yok",
+      notes:"Düzenli kontrol.",
+      created:"2026-08-01",
+      visits:[
+        {
+          date:"2026-08-22",
+          reason:"Genel Kontrol",
+          note:"Genel durumu iyi. Ağırlık stabil.",
+          vet:"Dr. Klinik"
+        }
+      ]
+    },
+    {
+      id:"p2",
+      name:"Mavi",
+      species:"Kedi",
+      breed:"British Shorthair",
+      gender:"Erkek",
+      birth:"2022-09-03",
+      chip:"982000411234568",
+      owner:"Mehmet Kaya",
+      phone:"0544 222 3344",
+      email:"",
+      weight:5.7,
+      allergies:"Penisilin",
+      notes:"",
+      created:"2026-08-03",
+      visits:[
+        {
+          date:"2026-08-18",
+          reason:"Aşı",
+          note:"Yıllık karma aşı uygulandı.",
+          vet:"Dr. Klinik"
+        }
+      ]
+    },
+    {
+      id:"p3",
+      name:"Leo",
+      species:"Köpek",
+      breed:"Labrador",
+      gender:"Erkek",
+      birth:"2020-02-11",
+      chip:"",
+      owner:"Can Yılmaz",
+      phone:"0555 111 2233",
+      email:"",
+      weight:31,
+      allergies:"Yok",
+      notes:"Eklem takibi.",
+      created:"2026-08-08",
+      visits:[]
+    }
+  ],
+
+  appointments: [
+    {
+      id:"a1",
+      date:"2026-08-29",
+      time:"10:00",
+      patient:"p1",
+      type:"Genel Kontrol",
+      notes:""
+    },
+    {
+      id:"a2",
+      date:"2026-08-29",
+      time:"11:30",
+      patient:"p2",
+      type:"Aşı",
+      notes:"Yıllık karma aşı"
+    },
+    {
+      id:"a3",
+      date:"2026-08-29",
+      time:"14:00",
+      patient:"p3",
+      type:"Kontrol",
+      notes:"Eklem kontrolü"
+    }
+  ],
+
+  timers: [],
+
+  inventory: [
+    {
+      id:"i1",
+      name:"Amoksisilin 100 mg",
+      category:"İlaç",
+      buy:120,
+      sell:185,
+      stock:24,
+      minimum:10
+    },
+    {
+      id:"i2",
+      name:"Serum Fizyolojik 500 ml",
+      category:"Sarf",
+      buy:35,
+      sell:60,
+      stock:8,
+      minimum:10
+    },
+    {
+      id:"i3",
+      name:"Kedi Karma Aşı",
+      category:"Aşı",
+      buy:180,
+      sell:350,
+      stock:15,
+      minimum:5
+    },
+    {
+      id:"i4",
+      name:"Köpek Karma Aşı",
+      category:"Aşı",
+      buy:190,
+      sell:380,
+      stock:3,
+      minimum:5
+    }
+  ],
+
+  sales: []
+};
+
+let db = loadDB();
+
+function loadDB(){
+  try{
+    const saved = localStorage.getItem(DB_KEY);
+
+    if(saved){
+      return JSON.parse(saved);
+    }
+  }catch(e){}
+
+  return structuredClone(defaultDB);
+}
+
+function saveDB(){
+  localStorage.setItem(DB_KEY, JSON.stringify(db));
+  updateStorageStatus();
+}
+
+function uid(prefix){
+  return prefix + Date.now() + Math.random().toString(16).slice(2);
+}
+
+function money(value){
+  return new Intl.NumberFormat("tr-TR",{
+    style:"currency",
+    currency:"TRY",
+    maximumFractionDigits:2
+  }).format(Number(value)||0);
+}
+
+function esc(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
+
+function todayISO(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function currentMonth(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+
+
+/* =========================================================
+   AUTH / LOGIN (added layer)
+   This block only gates access and marks read-only mode.
+   It does not modify any existing function above or below it.
+
+   Passwords are NOT stored in this file for normal use. Login
+   is verified by server.py's /api/login endpoint (over the same
+   address the page was loaded from). A small local fallback
+   list is kept ONLY for offline demo use when no server can be
+   reached — clearly separated below.
+   ========================================================= */
+
+const USERS = [
+  { id:"cambaz",    name:"Dr. Ali A. Cambaz", greet:"Ali",               role:"vet" },
+  { id:"omer",      name:"Dr. Omer",          greet:"Ömer",              role:"vet" },
+  { id:"frontdesk", name:"Ön Büro",           greet:"Ön Büro Görevlisi", role:"readonly" }
+];
+
+/* DEMO-ONLY fallback passwords — used only if no server answers
+   at all (e.g. opening this file directly with no server.py
+   running). Real day-to-day logins go through server.py instead,
+   so passwords aren't shipped in this file for normal use. */
+const DEMO_FALLBACK_PASSWORDS = {
+  cambaz:"1234",
+  omer:"1234",
+  frontdesk:"1234"
+};
+
+const SESSION_KEY = "vetclinic_session_v1";
+let currentUser = null;
+
+function loadSession(){
+  try{
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return null;
+}
+
+function initialsOf(name){
+  return name.replace(/^Dr\.?\s*/i,"")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0,2)
+    .map(w=>w[0])
+    .join("")
+    .toUpperCase();
+}
+
+function applyUserToUI(){
+  if(!currentUser) return;
+
+  document.getElementById("appRoot").style.display = "";
+  document.getElementById("loginOverlay").style.display = "none";
+
+  document.getElementById("userAvatar").textContent = initialsOf(currentUser.name);
+  document.getElementById("userNameLabel").textContent = currentUser.name;
+  document.getElementById("userRoleLabel").textContent =
+    currentUser.role === "readonly" ? "Salt Okuma" : "Veteriner Hekim";
+
+  document.body.classList.toggle("role-readonly", currentUser.role === "readonly");
+
+  const greetEl = document.getElementById("dashboardGreeting");
+  if(greetEl){
+    greetEl.textContent = "Merhaba " + (currentUser.greet || currentUser.name);
+  }
+}
+
+function signInAs(user){
+  currentUser = { name:user.name, role:user.role, greet:user.greet };
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+  applyUserToUI();
+}
+
+/* If the page itself was served over http(s) — i.e. opened via
+   the server's own address like http://192.168.1.109:8000/... —
+   that same address is used to verify the login. Otherwise falls
+   back to whatever server address was previously configured in
+   the sidebar (if any). */
+function getAuthServerUrl(){
+  if(location.protocol === "http:" || location.protocol === "https:"){
+    return location.origin;
+  }
+  return (typeof normalizeServerUrl === "function" && typeof serverUrl !== "undefined")
+    ? (normalizeServerUrl(serverUrl) || null)
+    : null;
+}
+
+async function doLogin(userId,password){
+
+  const err = document.getElementById("loginError");
+  err.style.display = "none";
+
+  const localUser = USERS.find(u=>u.id===userId);
+
+  if(!localUser){
+    err.textContent = "Kullanıcı adı veya şifre hatalı.";
+    err.style.display = "block";
+    return;
+  }
+
+  const authUrl = getAuthServerUrl();
+
+  if(authUrl){
+    try{
+      const res = await fetch(authUrl + "/api/login",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({user:userId,password:password})
+      });
+
+      if(res.ok){
+        signInAs(localUser);
+
+        /* A successful server login also configures data sync,
+           so there's no separate "Bağlan" step needed. */
+        if(typeof serverUrl !== "undefined"){
+          serverUrl = authUrl;
+          localStorage.setItem("vetclinic_server_url",authUrl);
+          const input = document.getElementById("serverUrlInput");
+          if(input) input.value = authUrl;
+          if(typeof startServerPolling === "function"){
+            serverConnected = true;
+            startServerPolling();
+          }
+        }
+
+        return;
+      }
+
+      if(res.status === 401){
+        err.textContent = "Kullanıcı adı veya şifre hatalı.";
+        err.style.display = "block";
+        return;
+      }
+
+      throw new Error("HTTP " + res.status);
+
+    }catch(networkErr){
+      /* Server unreachable — fall through to local demo mode below. */
+    }
+  }
+
+  const demoPass = DEMO_FALLBACK_PASSWORDS[userId];
+
+  if(demoPass === undefined || demoPass !== password){
+    err.textContent = "Kullanıcı adı veya şifre hatalı.";
+    err.style.display = "block";
+    return;
+  }
+
+  toast("Sunucuya ulaşılamadı — yerel demo modunda giriş yapıldı.");
+  signInAs(localUser);
+}
+
+function doLogout(){
+
+  currentUser = null;
+  sessionStorage.removeItem(SESSION_KEY);
+
+  document.getElementById("appRoot").style.display = "none";
+  document.getElementById("loginOverlay").style.display = "flex";
+  document.getElementById("loginPassword").value = "";
+  document.getElementById("loginError").style.display = "none";
+  document.body.classList.remove("role-readonly");
+}
+
+function requireEdit(){
+  if(currentUser && currentUser.role === "readonly"){
+    toast("Salt okuma modu: değişiklik yapamazsınız.");
+    return false;
+  }
+  return true;
+}
+
+const WRITE_FORM_IDS = new Set([
+  "patientForm","appointmentForm","timerForm","inventoryForm","saleForm"
+]);
+
+const READONLY_BLOCKED_PATTERNS = [
+  "openModal(", "adjustStock(", "toggleTimer(", "deleteTimer(",
+  "deletePatient(", "openVisitModal(", "importFile.click("
+];
+
+/* Capture-phase guards: intercept before the original handlers
+   run, so nothing about the original handlers is changed. */
+
+document.addEventListener("submit", function(e){
+  if(WRITE_FORM_IDS.has(e.target.id) && !requireEdit()){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+}, true);
+
+document.addEventListener("click", function(e){
+  if(!currentUser || currentUser.role !== "readonly") return;
+
+  const btn = e.target.closest("button");
+  if(!btn) return;
+
+  const handler = btn.getAttribute("onclick") || "";
+
+  if(READONLY_BLOCKED_PATTERNS.some(p=>handler.includes(p))){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    toast("Salt okuma modu: değişiklik yapamazsınız.");
+  }
+}, true);
+
+document.getElementById("loginForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const f = new FormData(e.target);
+  doLogin(f.get("user"), f.get("password"));
+});
+
+(function initAuth(){
+  const session = loadSession();
+  if(session){
+    currentUser = session;
+    applyUserToUI();
+  }
+})();
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+const titles = {
+  dashboard:"Ana Menü",
+  patients:"Hastalar",
+  calendar:"Takvim",
+  timers:"Tedavi Zamanlayıcıları",
+  inventory:"Stok",
+  sales:"Satışlar",
+  reports:"Raporlar"
+};
+
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    showPage(btn.dataset.page);
+    document.getElementById("sidebar").classList.remove("open");
+  });
+});
+
+function showPage(page){
+
+  document.querySelectorAll(".page").forEach(el=>{
+    el.classList.remove("active");
+  });
+
+  const target = document.getElementById("page-"+page);
+
+  if(target){
+    target.classList.add("active");
+  }
+
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.page===page);
+  });
+
+  document.getElementById("pageTitle").textContent =
+    titles[page] || page;
+
+  if(page==="dashboard") renderDashboard();
+  if(page==="patients") renderPatients();
+  if(page==="calendar") renderCalendar();
+  if(page==="timers") renderTimers();
+  if(page==="inventory") renderInventory();
+  if(page==="sales") renderSales();
+  if(page==="reports") renderReports();
+}
+
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("open");
+}
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+function renderDashboard(){
+
+  document.getElementById("dashboardDate").textContent =
+    new Intl.DateTimeFormat("tr-TR",{
+      weekday:"long",
+      year:"numeric",
+      month:"long",
+      day:"numeric"
+    }).format(new Date());
+
+  document.getElementById("statPatients").textContent =
+    db.patients.length;
+
+  const today = todayISO();
+
+  const todayAppointments =
+    db.appointments.filter(a=>a.date===today);
+
+  document.getElementById("statAppointments").textContent =
+    todayAppointments.length;
+
+  document.getElementById("statTimers").textContent =
+    db.timers.filter(t=>!t.completed && t.remaining>0).length;
+
+  const month = currentMonth();
+
+  const monthlySales =
+    db.sales
+      .filter(s=>s.date.startsWith(month))
+      .reduce((sum,s)=>sum+s.total,0);
+
+  document.getElementById("statSales").textContent =
+    money(monthlySales);
+
+  renderAppointments(todayAppointments);
+  renderDashboardTimers();
+  renderCriticalStock();
+  renderRecentSales();
+}
+
+function renderAppointments(list){
+
+  const el = document.getElementById("appointmentsList");
+
+  if(!list.length){
+    el.innerHTML = `<div class="muted">Bugün randevu yok.</div>`;
+    return;
+  }
+
+  el.innerHTML = list
+    .sort((a,b)=>a.time.localeCompare(b.time))
+    .map(a=>{
+
+      const p = db.patients.find(x=>x.id===a.patient);
+
+      return `
+        <div class="appointment">
+          <div class="app-time">${esc(a.time)}</div>
+          <div class="avatar">${p?.species==="Kedi"?"🐈":"🐕"}</div>
+          <div class="app-info">
+            <strong>${esc(p?.name || "Bilinmeyen")}</strong>
+            <span>${esc(a.type || "Muayene")} · ${esc(p?.owner || "")}</span>
+          </div>
+          <span class="badge badge-green">Planlı</span>
+        </div>
+      `;
+    }).join("");
+}
+
+function renderDashboardTimers(){
+
+  const el = document.getElementById("dashboardTimers");
+
+  const timers =
+    db.timers.filter(t=>!t.completed && t.remaining>0);
+
+  if(!timers.length){
+    el.innerHTML = `<div class="muted">Aktif tedavi bulunmuyor.</div>`;
+    return;
+  }
+
+  el.innerHTML = timers.map(t=>{
+
+    const p = db.patients.find(x=>x.id===t.patient);
+
+    return `
+      <div class="timer-item">
+        <div>
+          <strong style="font-size:12px">${esc(t.name)}</strong>
+          <div class="muted" style="font-size:10px">${esc(p?.name || "")}</div>
+        </div>
+        <div class="timer-time">${formatSeconds(t.remaining)}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderCriticalStock(){
+
+  const el = document.getElementById("criticalStock");
+
+  const items =
+    db.inventory.filter(i=>Number(i.stock)<=Number(i.minimum));
+
+  if(!items.length){
+    el.innerHTML = `<div class="green">Tüm stok seviyeleri normal.</div>`;
+    return;
+  }
+
+  el.innerHTML = items.map(i=>`
+    <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:12px">${esc(i.name)}</span>
+      <span class="red">${i.stock} adet</span>
+    </div>
+  `).join("");
+}
+
+function renderRecentSales(){
+
+  const el = document.getElementById("recentSales");
+
+  const sales = [...db.sales]
+    .sort((a,b)=>b.timestamp-a.timestamp)
+    .slice(0,5);
+
+  if(!sales.length){
+    el.innerHTML = `<div class="muted">Henüz satış yok.</div>`;
+    return;
+  }
+
+  el.innerHTML = sales.map(s=>`
+    <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:11px">${esc(s.productName)}</span>
+      <strong class="green">${money(s.total)}</strong>
+    </div>
+  `).join("");
+}
+
+
+/* =========================================================
+   PATIENTS
+   ========================================================= */
+
+let selectedPatient = null;
+
+function renderPatients(){
+
+  const query =
+    (document.getElementById("patientSearch")?.value || "")
+      .toLocaleLowerCase("tr-TR");
+
+  const list = db.patients.filter(p=>{
+    return [
+      p.name,
+      p.owner,
+      p.chip,
+      p.phone,
+      p.breed
+    ].join(" ").toLocaleLowerCase("tr-TR").includes(query);
+  });
+
+  document.getElementById("patientList").innerHTML =
+    list.map(p=>`
+      <div class="patient-row ${selectedPatient===p.id?"selected":""}"
+           onclick="selectPatient('${p.id}')">
+
+        <strong>${esc(p.name)}</strong>
+
+        <small>
+          ${esc(p.species)} · ${esc(p.breed || "Irk belirtilmedi")}
+        </small>
+
+        <small>
+          Sahip: ${esc(p.owner)}
+        </small>
+
+      </div>
+    `).join("") ||
+    `<div class="muted" style="padding:20px">Hasta bulunamadı.</div>`;
+
+  if(selectedPatient){
+    renderPatientProfile();
+  }
+}
+
+function selectPatient(id){
+  selectedPatient=id;
+  renderPatients();
+}
+
+function renderPatientProfile(){
+
+  const p = db.patients.find(x=>x.id===selectedPatient);
+
+  if(!p) return;
+
+  const profile = document.getElementById("patientProfile");
+
+  profile.innerHTML = `
+    <div class="card-body">
+
+      <div style="display:flex;justify-content:space-between;gap:15px">
+
+        <div class="profile-head">
+
+          <div class="profile-avatar">
+            ${p.species==="Kedi"?"🐈":"🐕"}
+          </div>
+
+          <div>
+            <div class="profile-name">${esc(p.name)}</div>
+            <div class="profile-meta">
+              ${esc(p.species)} · ${esc(p.breed || "Irk belirtilmedi")}
+              · ${esc(p.gender || "")}
+            </div>
+          </div>
+
+        </div>
+
+        <button class="btn btn-primary"
+                onclick="openVisitModal('${p.id}')">
+          + Muayene Notu
+        </button>
+
+      </div>
+
+      <div class="info-grid">
+
+        <div class="info-box">
+          <label>SAHİP</label>
+          <strong>${esc(p.owner)}</strong>
+        </div>
+
+        <div class="info-box">
+          <label>TELEFON</label>
+          <strong>${esc(p.phone || "-")}</strong>
+        </div>
+
+        <div class="info-box">
+          <label>MİKROÇİP</label>
+          <strong>${esc(p.chip || "-")}</strong>
+        </div>
+
+        <div class="info-box">
+          <label>DOĞUM TARİHİ</label>
+          <strong>${esc(p.birth || "-")}</strong>
+        </div>
+
+        <div class="info-box">
+          <label>AĞIRLIK</label>
+          <strong>${p.weight ? esc(p.weight)+" kg" : "-"}</strong>
+        </div>
+
+        <div class="info-box">
+          <label>ALERJİ</label>
+          <strong class="${p.allergies && p.allergies!=="Yok"?"red":""}">
+            ${esc(p.allergies || "Yok")}
+          </strong>
+        </div>
+
+      </div>
+
+      ${p.notes ? `
+        <div style="margin-top:20px">
+          <div class="muted" style="font-size:10px;margin-bottom:7px">KLİNİK NOTU</div>
+          <div class="info-box">${esc(p.notes)}</div>
+        </div>
+      `:""}
+
+      <div style="margin-top:25px">
+
+        <div class="card-header" style="padding:0 0 12px;border:0">
+          <h3>Muayene / Ziyaret Geçmişi</h3>
+        </div>
+
+        ${
+          (p.visits || []).length
+          ?
+          [...p.visits].reverse().map(v=>`
+            <div style="padding:14px 0;border-bottom:1px solid var(--border)">
+
+              <div style="display:flex;justify-content:space-between">
+                <strong style="font-size:12px">${esc(v.reason)}</strong>
+                <span class="muted" style="font-size:10px">${esc(v.date)}</span>
+              </div>
+
+              <div class="muted" style="font-size:11px;margin-top:6px">
+                ${esc(v.note)}
+              </div>
+
+              <div style="font-size:9px;color:#657581;margin-top:6px">
+                ${esc(v.vet || "")}
+              </div>
+
+            </div>
+          `).join("")
+          :
+          `<div class="muted">Henüz ziyaret kaydı yok.</div>`
+        }
+
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-danger" onclick="deletePatient('${p.id}')">
+          Hastayı Sil
+        </button>
+      </div>
+
+    </div>
+  `;
+}
+
+function deletePatient(id){
+
+  const p = db.patients.find(x=>x.id===id);
+
+  if(!p) return;
+
+  if(!confirm(`${p.name} adlı hasta silinsin mi?`)) return;
+
+  db.patients = db.patients.filter(x=>x.id!==id);
+  db.appointments = db.appointments.filter(x=>x.patient!==id);
+  db.timers = db.timers.filter(x=>x.patient!==id);
+
+  selectedPatient=null;
+
+  saveDB();
+  renderPatients();
+  renderDashboard();
+
+  toast("Hasta silindi.");
+}
+
+
+/* =========================================================
+   PATIENT FORM
+   ========================================================= */
+
+document.getElementById("patientForm").addEventListener("submit",e=>{
+
+  e.preventDefault();
+
+  const f = new FormData(e.target);
+
+  const patient = {
+    id:uid("p"),
+    name:f.get("name"),
+    species:f.get("species"),
+    breed:f.get("breed"),
+    gender:f.get("gender"),
+    birth:f.get("birth"),
+    chip:f.get("chip"),
+    owner:f.get("owner"),
+    phone:f.get("phone"),
+    email:f.get("email"),
+    weight:Number(f.get("weight")) || null,
+    allergies:f.get("allergies"),
+    notes:f.get("notes"),
+    created:todayISO(),
+    visits:[]
+  };
+
+  db.patients.push(patient);
+
+  saveDB();
+  closeModal("patientModal");
+  e.target.reset();
+
+  selectedPatient=patient.id;
+
+  renderPatients();
+  renderDashboard();
+
+  toast("Hasta kaydedildi.");
+});
+
+
+/* =========================================================
+   VISIT MODAL
+   ========================================================= */
+
+function openVisitModal(patientId){
+
+  const reason = prompt("Muayene başlığı:", "Genel Muayene");
+
+  if(reason===null) return;
+
+  const note = prompt("Tıbbi not:");
+
+  if(note===null) return;
+
+  const p = db.patients.find(x=>x.id===patientId);
+
+  if(!p) return;
+
+  if(!p.visits) p.visits=[];
+
+  p.visits.push({
+    date:todayISO(),
+    reason,
+    note,
+    vet:"Dr. Klinik"
+  });
+
+  saveDB();
+  renderPatientProfile();
+
+  toast("Muayene kaydedildi.");
+}
+
+
+/* =========================================================
+   APPOINTMENTS
+   ========================================================= */
+
+function populatePatientSelects(){
+
+  const options = db.patients.map(p=>
+    `<option value="${p.id}">${esc(p.name)} — ${esc(p.owner)}</option>`
+  ).join("");
+
+  document.getElementById("appointmentPatient").innerHTML=options;
+  document.getElementById("timerPatient").innerHTML=options;
+
+  document.getElementById("salePatient").innerHTML =
+    `<option value="">— Hasta seçilmedi —</option>`+options;
+}
+
+document.getElementById("appointmentForm")
+.addEventListener("submit",e=>{
+
+  e.preventDefault();
+
+  const f=new FormData(e.target);
+
+  db.appointments.push({
+    id:uid("a"),
+    date:f.get("date"),
+    time:f.get("time"),
+    patient:f.get("patient"),
+    type:f.get("type"),
+    notes:f.get("notes")
+  });
+
+  saveDB();
+  closeModal("appointmentModal");
+  e.target.reset();
+
+  renderCalendar();
+  renderDashboard();
+
+  toast("Randevu kaydedildi.");
+});
+
+
+/* =========================================================
+   CALENDAR
+   ========================================================= */
+
+let calendarDate = new Date();
+
+const months = [
+  "Ocak","Şubat","Mart","Nisan","Mayıs","Haziran",
+  "Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"
+];
+
+function renderCalendar(){
+
+  const year=calendarDate.getFullYear();
+  const month=calendarDate.getMonth();
+
+  document.getElementById("calendarTitle").textContent =
+    `${months[month]} ${year}`;
+
+  const grid=document.getElementById("calendarGrid");
+
+  const first = new Date(year,month,1);
+  let start = first.getDay();
+
+  start = start===0 ? 6 : start-1;
+
+  const days = new Date(year,month+1,0).getDate();
+  const prevDays = new Date(year,month,0).getDate();
+
+  let html="";
+
+  for(let i=0;i<42;i++){
+
+    const dayIndex=i-start+1;
+
+    let dateObj;
+    let day;
+    let other=false;
+
+    if(dayIndex<1){
+      day=prevDays+dayIndex;
+      dateObj=new Date(year,month-1,day);
+      other=true;
+    }else if(dayIndex>days){
+      day=dayIndex-days;
+      dateObj=new Date(year,month+1,day);
+      other=true;
+    }else{
+      day=dayIndex;
+      dateObj=new Date(year,month,day);
+    }
+
+    const iso =
+      `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,"0")}-${String(dateObj.getDate()).padStart(2,"0")}`;
+
+    const isToday=iso===todayISO();
+
+    const events=db.appointments.filter(a=>a.date===iso);
+
+    html+=`
+      <div class="day ${other?"other":""} ${isToday?"today":""}"
+           onclick="calendarDayClick('${iso}')">
+
+        <div class="day-number">${day}</div>
+
+        ${events.slice(0,3).map(e=>{
+
+          const p=db.patients.find(x=>x.id===e.patient);
+
+          return `
+            <div class="event">
+              ${esc(e.time)} ${esc(p?.name||"")}
+            </div>
+          `;
+        }).join("")}
+
+        ${events.length>3?
+          `<div style="font-size:8px;color:#697985;margin-top:4px">+${events.length-3} daha</div>`
+          :""
+        }
+
+      </div>
+    `;
+  }
+
+  grid.innerHTML=html;
+}
+
+function changeMonth(amount){
+  calendarDate.setMonth(calendarDate.getMonth()+amount);
+  renderCalendar();
+}
+
+function goToday(){
+  calendarDate=new Date();
+  renderCalendar();
+}
+
+function calendarDayClick(date){
+
+  const events=db.appointments.filter(a=>a.date===date);
+
+  if(events.length){
+    const text=events.map(e=>{
+      const p=db.patients.find(x=>x.id===e.patient);
+      return `${e.time} — ${p?.name||""} — ${e.type||"Muayene"}`;
+    }).join("\n");
+
+    alert(`${date}\n\n${text}`);
+  }
+}
+
+
+/* =========================================================
+   TIMERS
+   ========================================================= */
+
+document.getElementById("timerForm")
+.addEventListener("submit",e=>{
+
+  e.preventDefault();
+
+  const f=new FormData(e.target);
+
+  const seconds=Number(f.get("minutes"))*60;
+
+  db.timers.push({
+    id:uid("t"),
+    patient:f.get("patient"),
+    name:f.get("name"),
+    notes:f.get("notes"),
+    remaining:seconds,
+    original:seconds,
+    completed:false,
+    running:true,
+    created:Date.now()
+  });
+
+  saveDB();
+  closeModal("timerModal");
+  e.target.reset();
+
+  renderTimers();
+  renderDashboard();
+
+  toast("Tedavi zamanlayıcısı başlatıldı.");
+});
+
+function formatSeconds(seconds){
+
+  seconds=Math.max(0,Math.floor(seconds));
+
+  const h=Math.floor(seconds/3600);
+  const m=Math.floor((seconds%3600)/60);
+  const s=seconds%60;
+
+  if(h){
+    return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  }
+
+  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+function renderTimers(){
+
+  const el=document.getElementById("timerGrid");
+
+  const timers=db.timers;
+
+  if(!timers.length){
+    el.innerHTML=`
+      <div class="card" style="grid-column:1/-1">
+        <div class="card-body muted" style="text-align:center;padding:70px">
+          Aktif tedavi yok.
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML=timers.map(t=>{
+
+    const p=db.patients.find(x=>x.id===t.patient);
+
+    const percentage =
+      t.original
+      ? Math.round((t.remaining/t.original)*100)
+      : 0;
+
+    return `
+      <div class="card timer-card">
+
+        <div class="timer-circle"
+             style="transform:rotate(${(100-percentage)*1.5}deg)">
+          <div class="timer-large"
+               style="transform:rotate(${-(100-percentage)*1.5}deg)">
+            ${formatSeconds(t.remaining)}
+          </div>
+        </div>
+
+        <div class="timer-name">${esc(t.name)}</div>
+
+        <div class="timer-patient">
+          ${esc(p?.name || "Bilinmeyen hasta")}
+        </div>
+
+        <div style="margin-top:12px;text-align:center">
+          ${
+            t.completed
+            ? `<span class="badge badge-green">Tamamlandı</span>`
+            : t.remaining<=0
+            ? `<span class="badge badge-green">Süre Doldu</span>`
+            : t.running
+            ? `<span class="badge badge-green">Çalışıyor</span>`
+            : `<span class="badge">Duraklatıldı</span>`
+          }
+        </div>
+
+        <div class="timer-actions">
+
+          ${
+            !t.completed && t.remaining>0
+            ?
+            `<button class="btn btn-small"
+                     onclick="toggleTimer('${t.id}')">
+              ${t.running?"Duraklat":"Devam Et"}
+            </button>`
+            :
+            ""
+          }
+
+          <button class="btn btn-small btn-danger"
+                  onclick="deleteTimer('${t.id}')">
+            Sil
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  }).join("");
+}
+
+function toggleTimer(id){
+
+  const t=db.timers.find(x=>x.id===id);
+
+  if(!t) return;
+
+  t.running=!t.running;
+
+  saveDB();
+  renderTimers();
+}
+
+function deleteTimer(id){
+
+  db.timers=db.timers.filter(x=>x.id!==id);
+
+  saveDB();
+  renderTimers();
+  renderDashboard();
+}
+
+setInterval(()=>{
+
+  let changed=false;
+
+  db.timers.forEach(t=>{
+
+    if(t.running && !t.completed && t.remaining>0){
+
+      t.remaining--;
+      changed=true;
+
+      if(t.remaining<=0){
+        t.remaining=0;
+        t.running=false;
+        t.completed=true;
+
+        toast(`${t.name} tedavisi tamamlandı.`);
+      }
+    }
+  });
+
+  if(changed){
+    saveDB();
+
+    if(document.getElementById("page-timers").classList.contains("active")){
+      renderTimers();
+    }
+
+    renderDashboard();
+  }
+
+},1000);
+
+
+/* =========================================================
+   INVENTORY
+   ========================================================= */
+
+document.getElementById("inventoryForm")
+.addEventListener("submit",e=>{
+
+  e.preventDefault();
+
+  const f=new FormData(e.target);
+
+  db.inventory.push({
+    id:uid("i"),
+    name:f.get("name"),
+    category:f.get("category"),
+    buy:Number(f.get("buy"))||0,
+    sell:Number(f.get("sell"))||0,
+    stock:Number(f.get("stock"))||0,
+    minimum:Number(f.get("minimum"))||0
+  });
+
+  saveDB();
+  closeModal("inventoryModal");
+  e.target.reset();
+
+  renderInventory();
+  renderDashboard();
+
+  toast("Ürün kaydedildi.");
+});
+
+function renderInventory(){
+
+  const query=
+    (document.getElementById("inventorySearch")?.value||"")
+      .toLocaleLowerCase("tr-TR");
+
+  const items=db.inventory.filter(i=>
+    `${i.name} ${i.category}`
+      .toLocaleLowerCase("tr-TR")
+      .includes(query)
+  );
+
+  document.getElementById("stockProducts").textContent =
+    db.inventory.length;
+
+  document.getElementById("stockUnits").textContent =
+    db.inventory.reduce((a,i)=>a+Number(i.stock),0);
+
+  document.getElementById("stockCritical").textContent =
+    db.inventory.filter(i=>i.stock<=i.minimum).length;
+
+  document.getElementById("stockValue").textContent =
+    money(db.inventory.reduce((a,i)=>a+(i.stock*i.buy),0));
+
+  document.getElementById("inventoryTable").innerHTML =
+    items.map(i=>{
+
+      const low=i.stock<=i.minimum;
+
+      return `
+        <tr>
+
+          <td><strong>${esc(i.name)}</strong></td>
+
+          <td>
+            <span class="badge">${esc(i.category||"-")}</span>
+          </td>
+
+          <td>${money(i.buy)}</td>
+
+          <td>${money(i.sell)}</td>
+
+          <td class="${low?"low-stock":""}">
+            ${i.stock}
+          </td>
+
+          <td>${i.minimum}</td>
+
+          <td>
+            ${
+              low
+              ? `<span class="badge badge-red">Kritik</span>`
+              : `<span class="badge badge-green">Normal</span>`
+            }
+          </td>
+
+          <td>
+            <button class="btn btn-small"
+                    onclick="adjustStock('${i.id}',1)">
+              + Alış
+            </button>
+
+            <button class="btn btn-small"
+                    onclick="adjustStock('${i.id}',-1)">
+              −
+            </button>
+          </td>
+
+        </tr>
+      `;
+    }).join("");
+}
+
+function adjustStock(id,amount){
+
+  const item=db.inventory.find(i=>i.id===id);
+
+  if(!item) return;
+
+  if(amount<0 && item.stock<=0){
+    toast("Stok zaten 0.");
+    return;
+  }
+
+  item.stock=Math.max(0,item.stock+amount);
+
+  saveDB();
+  renderInventory();
+  renderDashboard();
+}
+
+
+/* =========================================================
+   SALES
+   ========================================================= */
+
+function populateProducts(){
+
+  document.getElementById("saleProduct").innerHTML =
+    db.inventory.map(i=>
+      `<option value="${i.id}">
+        ${esc(i.name)} — ${money(i.sell)} · Stok: ${i.stock}
+      </option>`
+    ).join("");
+
+  updateSalePrice();
+}
+
+function updateSalePrice(){
+
+  const id=document.getElementById("saleProduct").value;
+
+  const item=db.inventory.find(i=>i.id===id);
+
+  if(!item) return;
+
+  document.getElementById("salePrice").value=item.sell;
+
+  const quantity=
+    Number(document.getElementById("saleQuantity").value)||1;
+
+  document.getElementById("saleTotal").textContent =
+    money(item.sell*quantity);
+}
+
+document.getElementById("saleQuantity")
+.addEventListener("input",updateSalePrice);
+
+document.getElementById("salePrice")
+.addEventListener("input",()=>{
+
+  const price=
+    Number(document.getElementById("salePrice").value)||0;
+
+  const quantity=
+    Number(document.getElementById("saleQuantity").value)||1;
+
+  document.getElementById("saleTotal").textContent =
+    money(price*quantity);
+});
+
+document.getElementById("saleForm")
+.addEventListener("submit",e=>{
+
+  e.preventDefault();
+
+  const f=new FormData(e.target);
+
+  const productId=f.get("product");
+  const item=db.inventory.find(i=>i.id===productId);
+
+  if(!item) return;
+
+  const quantity=Number(f.get("quantity"))||1;
+
+  if(quantity>item.stock){
+
+    toast("Yetersiz stok.");
+
+    return;
+  }
+
+  const price=Number(f.get("price"))||0;
+
+  const patientId=f.get("patient");
+
+  const sale={
+    id:uid("s"),
+    timestamp:Date.now(),
+    date:todayISO(),
+    productId,
+    productName:item.name,
+    patient:patientId,
+    quantity,
+    price,
+    total:price*quantity,
+    payment:f.get("payment")
+  };
+
+  db.sales.push(sale);
+
+  item.stock-=quantity;
+
+  saveDB();
+  closeModal("saleModal");
+  e.target.reset();
+
+  renderSales();
+  renderInventory();
+  renderDashboard();
+
+  toast("Satış kaydedildi.");
+});
+
+function renderSales(){
+
+  const today=todayISO();
+  const month=currentMonth();
+
+  const todayTotal=db.sales
+    .filter(s=>s.date===today)
+    .reduce((a,s)=>a+s.total,0);
+
+  const monthTotal=db.sales
+    .filter(s=>s.date.startsWith(month))
+    .reduce((a,s)=>a+s.total,0);
+
+  const allTotal=db.sales
+    .reduce((a,s)=>a+s.total,0);
+
+  document.getElementById("todaySales").textContent=money(todayTotal);
+  document.getElementById("monthSales").textContent=money(monthTotal);
+  document.getElementById("allSales").textContent=money(allTotal);
+
+  const rows=[...db.sales]
+    .sort((a,b)=>b.timestamp-a.timestamp);
+
+  document.getElementById("salesTable").innerHTML =
+    rows.map(s=>{
+
+      const p=db.patients.find(x=>x.id===s.patient);
+
+      return `
+        <tr>
+          <td>${esc(s.date)}</td>
+          <td><strong>${esc(s.productName)}</strong></td>
+          <td>${esc(p?.name||"—")}</td>
+          <td>${s.quantity}</td>
+          <td>${money(s.price)}</td>
+          <td class="green"><strong>${money(s.total)}</strong></td>
+          <td><span class="badge">${esc(s.payment)}</span></td>
+        </tr>
+      `;
+    }).join("") ||
+    `<tr><td colspan="7" class="muted">Henüz satış yok.</td></tr>`;
+}
+
+
+/* =========================================================
+   REPORTS
+   ========================================================= */
+
+function renderReports(){
+
+  const month=
+    document.getElementById("reportMonth").value ||
+    currentMonth();
+
+  document.getElementById("reportMonth").value=month;
+
+  const sales=db.sales.filter(s=>s.date.startsWith(month));
+
+  const revenue=sales.reduce((a,s)=>a+s.total,0);
+
+  const visits=db.patients.reduce((count,p)=>
+    count+(p.visits||[]).filter(v=>v.date.startsWith(month)).length
+  ,0);
+
+  const newPatients=db.patients.filter(p=>
+    p.created?.startsWith(month)
+  ).length;
+
+  document.getElementById("reportRevenue").textContent=money(revenue);
+  document.getElementById("reportSaleCount").textContent=sales.length;
+  document.getElementById("reportVisits").textContent=visits;
+  document.getElementById("reportNewPatients").textContent=newPatients;
+
+  const days=new Date(
+    Number(month.slice(0,4)),
+    Number(month.slice(5,7)),
+    0
+  ).getDate();
+
+  const daily=[];
+
+  for(let d=1;d<=days;d++){
+
+    const day=`${month}-${String(d).padStart(2,"0")}`;
+
+    daily.push(
+      sales
+        .filter(s=>s.date===day)
+        .reduce((a,s)=>a+s.total,0)
+    );
+  }
+
+  const max=Math.max(...daily,1);
+
+  document.getElementById("reportBars").innerHTML =
+    daily.map((value,index)=>{
+
+      const height=(value/max)*170;
+
+      return `
+        <div class="bar-wrap">
+          <div class="bar-value">${value?Math.round(value):""}</div>
+          <div class="bar"
+               style="height:${Math.max(3,height)}px"
+               title="${money(value)}"></div>
+          <div class="bar-label">${index+1}</div>
+        </div>
+      `;
+    }).join("");
+
+  const productTotals={};
+
+  sales.forEach(s=>{
+    productTotals[s.productName] =
+      (productTotals[s.productName]||0)+s.total;
+  });
+
+  const topProducts=Object.entries(productTotals)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,5);
+
+  document.getElementById("reportSummary").innerHTML=`
+
+    <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)">
+      <span class="muted">Toplam ciro</span>
+      <strong class="green">${money(revenue)}</strong>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)">
+      <span class="muted">İşlem sayısı</span>
+      <strong>${sales.length}</strong>
+    </div>
+
+    <div style="margin-top:20px">
+      <div class="muted" style="font-size:10px;margin-bottom:10px">
+        EN ÇOK SATILANLAR
+      </div>
+
+      ${
+        topProducts.length
+        ?
+        topProducts.map(([name,total])=>`
+          <div style="display:flex;justify-content:space-between;padding:8px 0">
+            <span style="font-size:11px">${esc(name)}</span>
+            <span class="green">${money(total)}</span>
+          </div>
+        `).join("")
+        :
+        `<div class="muted">Veri yok.</div>`
+      }
+
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+function openModal(id){
+
+  populatePatientSelects();
+  populateProducts();
+
+  if(id==="appointmentModal"){
+    document.querySelector("#appointmentForm [name=date]").value=todayISO();
+  }
+
+  document.getElementById(id).classList.add("open");
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("open");
+}
+
+document.querySelectorAll(".modal-overlay")
+.forEach(overlay=>{
+
+  overlay.addEventListener("click",e=>{
+    if(e.target===overlay){
+      overlay.classList.remove("open");
+    }
+  });
+
+});
+
+
+/* =========================================================
+   IMPORT / EXPORT
+   ========================================================= */
+
+function exportData(){
+
+  const data=JSON.stringify(db,null,2);
+
+  const blob=new Blob([data],{
+    type:"application/json"
+  });
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download=`vetclinic-backup-${todayISO()}.json`;
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  toast("Veriler dışa aktarıldı.");
+}
+
+const importFile=document.getElementById("importFile");
+
+importFile.addEventListener("change",async e=>{
+
+  const file=e.target.files[0];
+
+  if(!file) return;
+
+  try{
+
+    const text=await file.text();
+    const imported=JSON.parse(text);
+
+    if(
+      !imported.patients ||
+      !imported.inventory ||
+      !imported.sales
+    ){
+      throw new Error("Geçersiz veri");
+    }
+
+    if(confirm("Mevcut verilerin üzerine içe aktarılsın mı?")){
+
+      db=imported;
+
+      saveDB();
+
+      refreshAll();
+
+      toast("Veriler içe aktarıldı.");
+    }
+
+  }catch(err){
+
+    alert("Dosya okunamadı veya geçersiz.");
+  }
+
+  e.target.value="";
+});
+
+
+/* =========================================================
+   UI
+   ========================================================= */
+
+function toast(message){
+
+  const el=document.getElementById("toast");
+
+  el.textContent=message;
+  el.classList.add("show");
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer=setTimeout(()=>{
+    el.classList.remove("show");
+  },2500);
+}
+
+function updateClock(){
+
+  document.getElementById("clock").textContent =
+    new Intl.DateTimeFormat("tr-TR",{
+      dateStyle:"short",
+      timeStyle:"short"
+    }).format(new Date());
+}
+
+function updateStorageStatus(){
+
+  try{
+
+    const bytes=
+      new Blob([localStorage.getItem(DB_KEY)||""]).size;
+
+    const kb=(bytes/1024).toFixed(1);
+
+    document.querySelector(".storage-status").innerHTML=`
+      <strong>● Çevrimdışı Mod</strong>
+      ${kb} KB yerel veri kullanılıyor.
+    `;
+
+  }catch(e){}
+}
+
+function refreshAll(){
+
+  populatePatientSelects();
+  populateProducts();
+
+  renderDashboard();
+  renderPatients();
+  renderCalendar();
+  renderTimers();
+  renderInventory();
+  renderSales();
+  renderReports();
+
+  updateStorageStatus();
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+document.getElementById("reportMonth").value=currentMonth();
+
+refreshAll();
+updateClock();
+
+setInterval(updateClock,1000);
+
+
+/* =========================================================
+   ACTION SIGNATURES (added)
+   Tags new records with the logged-in doctor's name and shows
+   a small "Dr. X" note next to them. This section only wraps
+   the existing named functions (calls the original, then adds
+   a signature) and adds extra listeners that run AFTER the
+   original ones — nothing above this point is edited.
+   ========================================================= */
+
+function stampLast(arr,field){
+  if(!arr || !arr.length) return;
+  arr[arr.length-1][field] = currentUser ? currentUser.name : arr[arr.length-1][field];
+}
+
+document.getElementById("patientForm").addEventListener("submit", function(){
+  stampLast(db.patients,"createdBy");
+  saveDB();
+  renderPatientProfile();
+});
+
+document.getElementById("appointmentForm").addEventListener("submit", function(){
+  stampLast(db.appointments,"createdBy");
+  saveDB();
+});
+
+document.getElementById("timerForm").addEventListener("submit", function(){
+  stampLast(db.timers,"startedBy");
+  saveDB();
+});
+
+document.getElementById("inventoryForm").addEventListener("submit", function(){
+  stampLast(db.inventory,"addedBy");
+
+  const item = db.inventory[db.inventory.length-1];
+  if(item) logStockHistory(item.name,"Yeni ürün",item.stock,item.stock);
+
+  saveDB();
+});
+
+document.getElementById("saleForm").addEventListener("submit", function(){
+  stampLast(db.sales,"soldBy");
+  saveDB();
+});
+
+/* Muayene / visit notes: overwrite the original hardcoded
+   "Dr. Klinik" with the real logged-in doctor once the note
+   has been added. */
+const _openVisitModal = openVisitModal;
+openVisitModal = function(patientId){
+  const p = db.patients.find(x=>x.id===patientId);
+  const before = p ? p.visits.length : 0;
+
+  _openVisitModal(patientId);
+
+  if(p && p.visits.length > before){
+    p.visits[p.visits.length-1].vet = currentUser ? currentUser.name : p.visits[p.visits.length-1].vet;
+    saveDB();
+    if(selectedPatient===patientId) renderPatientProfile();
+  }
+};
+
+/* Stok Hareket Geçmişi (added): keeps a running log of every
+   stock-affecting action so it can be reviewed later. */
+function ensureStockHistory(){
+  if(!Array.isArray(db.stockHistory)) db.stockHistory = [];
+}
+
+function logStockHistory(productName,action,change,resultingStock){
+  ensureStockHistory();
+
+  db.stockHistory.push({
+    date: new Intl.DateTimeFormat("tr-TR",{dateStyle:"short",timeStyle:"short"}).format(new Date()),
+    product: productName,
+    action: action,
+    change: change,
+    resultingStock: resultingStock,
+    by: currentUser ? currentUser.name : ""
+  });
+
+  if(db.stockHistory.length > 200){
+    db.stockHistory = db.stockHistory.slice(-200);
+  }
+}
+
+function renderStockHistory(){
+  ensureStockHistory();
+
+  const el = document.getElementById("stockHistoryTable");
+  if(!el) return;
+
+  const rows = [...db.stockHistory].reverse().slice(0,50);
+
+  el.innerHTML = rows.map(h=>`
+    <tr>
+      <td>${esc(h.date)}</td>
+      <td><strong>${esc(h.product)}</strong></td>
+      <td><span class="badge">${esc(h.action)}</span></td>
+      <td class="${h.change<0?"red":"green"}">${h.change>0?"+":""}${h.change}</td>
+      <td>${h.resultingStock}</td>
+      <td>${esc(h.by||"—")}</td>
+    </tr>
+  `).join("") ||
+  `<tr><td colspan="6" class="muted">Henüz stok hareketi yok.</td></tr>`;
+}
+
+/* Stock adjustments: note who last adjusted an item, and log it. */
+const _adjustStock = adjustStock;
+adjustStock = function(id,amount){
+
+  const before = db.inventory.find(i=>i.id===id);
+  const beforeStock = before ? before.stock : null;
+
+  _adjustStock(id,amount);
+
+  const item = db.inventory.find(i=>i.id===id);
+
+  if(item){
+    if(currentUser) item.lastAdjustedBy = currentUser.name;
+
+    if(beforeStock !== null && item.stock !== beforeStock){
+      logStockHistory(item.name, amount>0 ? "Alış" : "Düşüm", item.stock-beforeStock, item.stock);
+    }
+
+    saveDB();
+    renderInventory();
+  }
+};
+
+/* Display: append a small signature line after each original
+   render call, matching the same order the original function
+   already renders in. */
+
+const _renderAppointments = renderAppointments;
+renderAppointments = function(list){
+  _renderAppointments(list);
+
+  const rows = document.querySelectorAll("#appointmentsList .appointment");
+
+  rows.forEach((row,i)=>{
+    const a = list[i];
+    if(!a || !a.createdBy) return;
+
+    const info = row.querySelector(".app-info");
+    if(!info) return;
+
+    const tag = document.createElement("div");
+    tag.style.cssText = "font-size:9px;color:#5f9ea8;margin-top:3px";
+    tag.textContent = "Randevuyu alan: " + a.createdBy;
+    info.appendChild(tag);
+  });
+};
+
+const _renderDashboardTimers = renderDashboardTimers;
+renderDashboardTimers = function(){
+  _renderDashboardTimers();
+
+  const timers = db.timers.filter(t=>!t.completed && t.remaining>0);
+  const items = document.querySelectorAll("#dashboardTimers .timer-item");
+
+  items.forEach((el,i)=>{
+    const t = timers[i];
+    if(!t || !t.startedBy) return;
+
+    const label = el.querySelector(".muted");
+    if(label) label.textContent = label.textContent + " · " + t.startedBy;
+  });
+};
+
+const _renderTimers = renderTimers;
+renderTimers = function(){
+  _renderTimers();
+
+  const timers = db.timers;
+  const cards = document.querySelectorAll("#timerGrid .timer-card");
+
+  cards.forEach((card,i)=>{
+    const t = timers[i];
+    if(!t || !t.startedBy) return;
+
+    const patientEl = card.querySelector(".timer-patient");
+    if(!patientEl) return;
+
+    const tag = document.createElement("div");
+    tag.style.cssText = "text-align:center;font-size:9px;color:#5f9ea8;margin-top:4px";
+    tag.textContent = "İşlemi başlatan: " + t.startedBy;
+    patientEl.insertAdjacentElement("afterend",tag);
+  });
+};
+
+const _renderSales = renderSales;
+renderSales = function(){
+  _renderSales();
+
+  const rows = [...db.sales].sort((a,b)=>b.timestamp-a.timestamp);
+  const trs = document.querySelectorAll("#salesTable tr");
+
+  trs.forEach((tr,i)=>{
+    const s = rows[i];
+    if(!s || !s.soldBy) return;
+
+    const cells = tr.querySelectorAll("td");
+    const last = cells[cells.length-1];
+    if(!last) return;
+
+    const tag = document.createElement("div");
+    tag.style.cssText = "font-size:9px;color:#5f9ea8;margin-top:3px";
+    tag.textContent = s.soldBy;
+    last.appendChild(tag);
+  });
+};
+
+const _renderInventory = renderInventory;
+renderInventory = function(){
+  _renderInventory();
+
+  const query = (document.getElementById("inventorySearch")?.value || "").toLocaleLowerCase("tr-TR");
+  const items = db.inventory.filter(i=>`${i.name} ${i.category}`.toLocaleLowerCase("tr-TR").includes(query));
+  const trs = document.querySelectorAll("#inventoryTable tr");
+
+  trs.forEach((tr,i)=>{
+    const item = items[i];
+    if(!item) return;
+
+    const note = item.lastAdjustedBy || item.addedBy;
+    if(!note) return;
+
+    const firstCell = tr.querySelector("td");
+    if(!firstCell) return;
+
+    const tag = document.createElement("div");
+    tag.style.cssText = "font-size:9px;color:#5f9ea8;margin-top:3px";
+    tag.textContent = (item.lastAdjustedBy ? "Son işlem: " : "Ekleyen: ") + note;
+    firstCell.appendChild(tag);
+  });
+
+  renderStockHistory();
+};
+
+const _renderPatientProfile = renderPatientProfile;
+renderPatientProfile = function(){
+  _renderPatientProfile();
+
+  const p = db.patients.find(x=>x.id===selectedPatient);
+  if(!p || !p.createdBy) return;
+
+  const grid = document.querySelector("#patientProfile .info-grid");
+  if(!grid) return;
+
+  const box = document.createElement("div");
+  box.className = "info-box";
+  box.innerHTML = "<label>KAYDEDEN</label><strong>"+esc(p.createdBy)+"</strong>";
+  grid.appendChild(box);
+};
+
+
+/* =========================================================
+   PYTHON SERVER SYNC (added)
+   Talks to server.py (running on the network, e.g. the XP VM)
+   over plain HTTP so multiple computers share one data.sqlite
+   file. This only wraps saveDB — nothing above this point is
+   edited.
+   ========================================================= */
+
+const SERVER_URL_KEY = "vetclinic_server_url";
+
+let serverUrl = localStorage.getItem(SERVER_URL_KEY) || "";
+let serverConnected = false;
+let serverSyncing = false;
+let lastServerJSON = null;
+
+function setServerStatus(text,ok){
+  const el = document.getElementById("serverSyncStatus");
+  if(el){
+    el.textContent = text;
+    el.style.color = ok ? "var(--primary)" : "var(--muted)";
+  }
+}
+
+function normalizeServerUrl(url){
+  return (url || "").trim().replace(/\/+$/,"");
+}
+
+async function connectToServer(){
+
+  const input = document.getElementById("serverUrlInput");
+  const url = normalizeServerUrl(input.value || serverUrl);
+
+  if(!url){
+    toast("Sunucu adresini girin (örn: http://192.168.1.50:8765).");
+    return;
+  }
+
+  try{
+    const res = await fetch(url + "/api/db");
+    if(!res.ok) throw new Error("HTTP " + res.status);
+
+    const serverDB = await res.json();
+
+    serverUrl = url;
+    localStorage.setItem(SERVER_URL_KEY,url);
+    input.value = url;
+
+    const hasServerData =
+      (serverDB.patients && serverDB.patients.length) ||
+      (serverDB.appointments && serverDB.appointments.length) ||
+      (serverDB.inventory && serverDB.inventory.length) ||
+      (serverDB.sales && serverDB.sales.length);
+
+    if(hasServerData){
+      db = serverDB;
+      lastServerJSON = JSON.stringify(serverDB);
+      _saveDB();
+      refreshAll();
+      toast("Sunucudaki veriler yüklendi.");
+    }else{
+      toast("Sunucu boş — mevcut verinizi göndermek için 'Yükle' butonuna basın.");
+    }
+
+    serverConnected = true;
+    setServerStatus("Bağlı: " + url,true);
+    startServerPolling();
+
+  }catch(err){
+    serverConnected = false;
+    setServerStatus("Bağlantı başarısız",false);
+    toast("Sunucuya bağlanılamadı. IP adresini ve sunucunun çalıştığını kontrol edin.");
+  }
+}
+
+async function pushLocalToServer(){
+
+  const input = document.getElementById("serverUrlInput");
+  const url = normalizeServerUrl(input.value || serverUrl);
+
+  if(!url){
+    toast("Önce sunucu adresini girin.");
+    return;
+  }
+
+  try{
+    const json = JSON.stringify(db);
+
+    const res = await fetch(url + "/api/db",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:json
+    });
+
+    if(!res.ok) throw new Error("HTTP " + res.status);
+
+    serverUrl = url;
+    localStorage.setItem(SERVER_URL_KEY,url);
+    lastServerJSON = json;
+    serverConnected = true;
+
+    setServerStatus("Bağlı: " + url,true);
+    startServerPolling();
+
+    toast("Mevcut veriler sunucuya yüklendi.");
+
+  }catch(err){
+    toast("Sunucuya yükleme başarısız. Adresi ve sunucuyu kontrol edin.");
+  }
+}
+
+async function pushToServerIfChanged(){
+
+  if(!serverConnected || !serverUrl) return;
+
+  const json = JSON.stringify(db);
+  if(json === lastServerJSON) return;
+
+  try{
+    const res = await fetch(serverUrl + "/api/db",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:json
+    });
+
+    if(res.ok){
+      lastServerJSON = json;
+      setServerStatus("Bağlı: " + serverUrl,true);
+    }
+
+  }catch(err){
+    setServerStatus("Bağlantı koptu — yeniden deneniyor",false);
+  }
+}
+
+async function pullFromServer(){
+
+  if(!serverConnected || !serverUrl || serverSyncing) return;
+
+  try{
+    serverSyncing = true;
+
+    const res = await fetch(serverUrl + "/api/db");
+    if(!res.ok) throw new Error("HTTP " + res.status);
+
+    const text = await res.text();
+
+    if(text && text !== lastServerJSON){
+      lastServerJSON = text;
+      db = JSON.parse(text);
+      _saveDB();
+      refreshAll();
+    }
+
+    setServerStatus("Bağlı: " + serverUrl,true);
+
+  }catch(err){
+    setServerStatus("Bağlantı koptu — yeniden deneniyor",false);
+  }finally{
+    serverSyncing = false;
+  }
+}
+
+function startServerPolling(){
+  clearInterval(window.__serverPoll);
+  window.__serverPoll = setInterval(pullFromServer,3000);
+}
+
+/* Every normal save now also pushes to the server, if connected. */
+const _saveDB = saveDB;
+saveDB = function(){
+  _saveDB();
+  pushToServerIfChanged();
+};
+
+(function initServerSync(){
+  const input = document.getElementById("serverUrlInput");
+  if(input) input.value = serverUrl;
+
+  if(serverUrl) connectToServer();
+})();
+
+</script>
+
+</body>
+</html>
