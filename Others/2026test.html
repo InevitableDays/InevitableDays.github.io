@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quick Hub</title>
+
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #111827;
+    --text: #e5e7eb;
+    --accent: #38bdf8;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+
+    background: url('https://pic1.zhimg.com/v2-fbcd3c12d698f3082e417816c86bfc5e_r.jpg?q=80&w=1600')
+      center/cover no-repeat fixed;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+    transition: background-image 0.4s ease;
+  }
+body.left-bg {
+  background-image: url("left.jpg");
+}
+
+body.middle-bg {
+  background-image: url("middle.jpg");
+}
+
+body.right-bg {
+  background-image: url("right.jpg");
+}
+  /* THREE HUBS */
+  .hubs {
+    width: 100%;
+    max-width: 1400px;
+
+    display: grid;
+    grid-template-columns: 1fr 420px 1fr;
+    gap: 24px;
+
+    align-items: start;
+  }
+
+  .container {
+    width: 100%;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+    opacity: 0.9;
+  }
+
+  .grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--card);
+    padding: 16px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--text);
+
+    border: 1px solid rgba(255,255,255,0.05);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    transition: 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+
+  .title {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .desc {
+    font-size: 0.8rem;
+    opacity: 0.6;
+  }
+
+  .card-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+    opacity: 1;
+    flex-shrink: 0;
+  }
+
+  footer {
+    margin-top: 18px;
+    font-size: 0.7rem;
+    opacity: 0.4;
+    text-align: center;
+  }
+
+
+  /* SIDE HUBS */
+
+  .side-hub {
+    opacity: 0.75;
+    padding-top: 42px;
+  }
+
+  .side-hub .card {
+    padding: 14px;
+  }
+
+  .side-hub .title {
+    font-size: 0.9rem;
+  }
+
+  .side-hub .desc {
+    font-size: 0.7rem;
+  }
+
+  .side-hub .card img {
+    width: 36px;
+    height: 36px;
+  }
+
+
+  /* MOBILE */
+
+  @media (max-width: 1100px) {
+    .hubs {
+      grid-template-columns: 1fr 420px;
+    }
+
+    .left-hub {
+      display: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    body {
+      align-items: flex-start;
+      padding: 40px 16px;
+    }
+
+    .hubs {
+      grid-template-columns: 1fr;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .side-hub {
+      display: none;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+
+    .card {
+      padding: 14px;
+      border-radius: 12px;
+    }
+
+    .title {
+      font-size: 0.95rem;
+    }
+
+    .desc {
+      font-size: 0.75rem;
+    }
+  }
+</style>
+</head>
+
+
+<body>
+
+<div class="hubs">
+
+
+  <!-- ========================= -->
+  <!-- LEFT COPY -->
+  <!-- ========================= -->
+
+  <div class="container side-hub left-hub">
+
+    
+
+    <div class="grid">
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">N/A</div>
+          <div class="desc">   </div>
+        </div>
+        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.icegif.com%2Fwp-content%2Fuploads%2F2025%2F04%2Fcat-icegif-5.gif&f=1&nofb=1&ipt=0eca12320d0bc866c1146bd03311664fc5fa69cf5134715baa96be64942a97b3" alt="">
+      </a>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ========================= -->
+  <!-- CENTER / ORIGINAL -->
+  <!-- ========================= -->
+
+  <div class="container">
+
+    <h1>My Quick Hub</h1>
+
+    <div class="grid">
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">Countdown Timer</div>
+          <div class="desc">Timer tool</div>
+        </div>
+        <img src="./SS/CT1.jpg" alt="">
+      </a>
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">Dev Tools</div>
+          <div class="desc">HTML, Binary, Json tools</div>
+        </div>
+        <img src="./SS/dt2.jpg" alt="">
+      </a>
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">Unit Converter</div>
+          <div class="desc">Fast conversions; temp, lenght, weight</div>
+        </div>
+        <img src="SS/uc3.jpg" alt="">
+      </a>
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">Currency Converter</div>
+          <div class="desc">Currency Exchange tool</div>
+        </div>
+        <img src="SS/cc4.jpg" alt="">
+      </a>
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">Demos</div>
+          <div class="desc">Live Demos</div>
+        </div>
+        <img src="./SS/d5.jpg" alt="">
+      </a>
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">Retro Friendly Browsing</div>
+          <div class="desc">Light Surf</div>
+        </div>
+        <img src="./SS/light_surf.jpg" alt="">
+      </a>
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">Random</div>
+          <div class="desc">Random</div>
+        </div>
+        <img src="./Demos/WebDesktop/321.gif" alt="">
+      </a>
+
+      <a class="card" href="https://inevitabledays.github.io/">
+        <div class="card-text">
+          <div class="title">Main Site</div>
+          <div class="desc">Crash Landing Site</div>
+        </div>
+        <img src="./SS/landing.jpg" alt="">
+      </a>
+
+    </div>
+
+    <footer></footer>
+
+  </div>
+
+
+
+  <!-- ========================= -->
+  <!-- RIGHT COPY -->
+  <!-- ========================= -->
+
+  <div class="container side-hub">
+
+    
+
+    <div class="grid">
+
+      <a class="card" href="">
+        <div class="card-text">
+          <div class="title">N/A</div>
+          <div class="desc">   </div>
+        </div>
+        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.icegif.com%2Fwp-content%2Fuploads%2F2025%2F04%2Fcat-icegif-5.gif&f=1&nofb=1&ipt=0eca12320d0bc866c1146bd03311664fc5fa69cf5134715baa96be64942a97b3" alt="">
+      </a>
+    </div>
+
+  </div>
+
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const hubs = document.querySelector(".hubs");
+  const panels = [
+    document.querySelector(".left-hub"),
+    document.querySelector(".hubs > .container:not(.side-hub)"),
+    document.querySelector(".right-hub")
+  ];
+
+  let current = 1; // Start on middle
+  let startX = 0;
+  let startY = 0;
+
+  function isMobile() {
+    return window.innerWidth <= 900;
+  }
+
+  function showPanel(index) {
+    if (!isMobile()) return;
+
+    index = Math.max(0, Math.min(index, panels.length - 1));
+    current = index;
+
+    panels.forEach((panel, i) => {
+      if (panel) {
+        panel.style.display = i === current ? "block" : "none";
+      }
+    });
+  }
+
+  // Initial mobile state
+function showPanel(index) {
+  if (!isMobile()) return;
+
+  index = Math.max(0, Math.min(index, panels.length - 1));
+  current = index;
+
+  panels.forEach((panel, i) => {
+    if (panel) {
+      panel.style.display = i === current ? "block" : "none";
+    }
+  });
+
+  document.body.classList.remove(
+    "left-bg",
+    "middle-bg",
+    "right-bg"
+  );
+
+  if (current === 0) {
+    document.body.classList.add("left-bg");
+  } else if (current === 1) {
+    document.body.classList.add("middle-bg");
+  } else {
+    document.body.classList.add("right-bg");
+  }
+}
+
+  // Detect swipe
+  hubs.addEventListener("touchstart", (e) => {
+    if (!isMobile()) return;
+
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  hubs.addEventListener("touchend", (e) => {
+    if (!isMobile()) return;
+
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+
+    const diffX = endX - startX;
+    const diffY = endY - startY;
+
+    // Ignore mostly-vertical swipes
+    if (Math.abs(diffX) < 50 || Math.abs(diffX) < Math.abs(diffY)) {
+      return;
+    }
+
+    if (diffX < 0) {
+      // Swipe LEFT → next panel
+      showPanel(current + 1);
+    } else {
+      // Swipe RIGHT → previous panel
+      showPanel(current - 1);
+    }
+  });
+
+  // Restore desktop layout when screen gets wider
+  window.addEventListener("resize", () => {
+    if (!isMobile()) {
+      panels.forEach(panel => {
+        if (panel) panel.style.display = "";
+      });
+    } else {
+      showPanel(current);
+    }
+  });
+});
+</script>
+</body>
+</html>
