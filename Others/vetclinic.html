@@ -1998,12 +1998,93 @@ body.role-readonly button[onclick*="deleteTimer"],
 body.role-readonly button[onclick*="toggleTimer"],
 body.role-readonly button[onclick*="deletePatient"],
 body.role-readonly button[onclick*="openVisitModal"],
+body.role-readonly button[onclick*="openEditPatientModal"],
+body.role-readonly button[onclick*="openClinicNoteModal"],
 body.role-readonly button[onclick="importFile.click()"]{
+  display:none !important;
+}
+
+body.role-readonly button[data-page="reports"]{
   display:none !important;
 }
 
 body.role-readonly .storage-status strong::after{
   content:" · Salt Okuma Modu";
+}
+
+/* ============ Patient profile additions (edit / notes / procedures) ============ */
+
+.profile-actions{
+  display:flex;
+  gap:8px;
+}
+
+.note-box-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:7px;
+}
+
+.note-box-header .muted{
+  margin-bottom:0 !important;
+}
+
+.icon-btn-small{
+  padding:3px 8px;
+  font-size:10px;
+  border-radius:6px;
+  background:#17232d;
+  color:#9eacb7;
+  border:1px solid var(--border);
+}
+
+.icon-btn-small:hover{
+  background:#1c2a35;
+  color:var(--text);
+}
+
+.procedure-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+
+.procedure-row:last-child{
+  border-bottom:0;
+}
+
+.procedure-total{
+  display:flex;
+  justify-content:space-between;
+  padding:13px 0 0;
+  margin-top:6px;
+  border-top:1px solid var(--border);
+  font-size:13px;
+  font-weight:700;
+}
+
+.month-history-chip{
+  padding:5px 10px;
+  border-radius:7px;
+  font-size:11px;
+  background:#17232d;
+  color:#9eacb7;
+  border:1px solid var(--border);
+}
+
+.month-history-chip:hover{
+  background:#1c2a35;
+  color:var(--text);
+}
+
+.month-history-chip.active{
+  background:rgba(54,197,160,.12);
+  color:var(--primary);
+  border-color:rgba(54,197,160,.3);
 }
 
 /* =========================
@@ -2164,7 +2245,7 @@ body.role-readonly .storage-status strong::after{
       </div>
     </div>
 
-    <p class="login-title">Giriş Yap (DEMO Şifre: 1234)</p>
+    <p class="login-title">Giriş Yap(Demo Şifresi: 1234)</p>
     <p class="login-sub">Devam etmek için kullanıcınızı seçin.</p>
 
     <div class="login-error" id="loginError"></div>
@@ -2657,6 +2738,9 @@ body.role-readonly .storage-status strong::after{
         <input type="month" id="reportMonth" onchange="renderReports()">
       </div>
 
+      <!-- GEÇMİŞ AYLAR (added) -->
+      <div id="reportHistoryRow" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px"></div>
+
       <div class="grid grid-4">
 
         <div class="card stat">
@@ -2808,7 +2892,185 @@ body.role-readonly .storage-status strong::after{
 </div>
 
 
-<!-- APPOINTMENT MODAL -->
+<!-- EDIT PATIENT MODAL (added) -->
+
+<div class="modal-overlay" id="editPatientModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Hasta Bilgilerini Düzenle</h2>
+      <button class="modal-close" onclick="closeModal('editPatientModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="editPatientForm">
+
+        <input type="hidden" name="id">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Hasta Adı *</label>
+            <input name="name" required>
+          </div>
+
+          <div class="form-group">
+            <label>Tür</label>
+            <select name="species">
+              <option>Köpek</option>
+              <option>Kedi</option>
+              <option>Kuş</option>
+              <option>Tavşan</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Irk</label>
+            <input name="breed">
+          </div>
+
+          <div class="form-group">
+            <label>Cinsiyet</label>
+            <select name="gender">
+              <option>Dişi</option>
+              <option>Erkek</option>
+              <option>Bilinmiyor</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Doğum Tarihi</label>
+            <input type="date" name="birth">
+          </div>
+
+          <div class="form-group">
+            <label>Mikroçip No</label>
+            <input name="chip">
+          </div>
+
+          <div class="form-group">
+            <label>Sahip Adı *</label>
+            <input name="owner" required>
+          </div>
+
+          <div class="form-group">
+            <label>Telefon</label>
+            <input name="phone">
+          </div>
+
+          <div class="form-group">
+            <label>E-posta</label>
+            <input name="email" type="email">
+          </div>
+
+          <div class="form-group">
+            <label>Ağırlık (kg)</label>
+            <input name="weight" type="number" step="0.01">
+          </div>
+
+          <div class="form-group full">
+            <label>Alerjiler</label>
+            <input name="allergies">
+          </div>
+
+          <div class="form-group full">
+            <label>Klinik Notu</label>
+            <textarea name="notes"></textarea>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('editPatientModal')">İptal</button>
+          <button class="btn btn-primary">Değişiklikleri Kaydet</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- QUICK CLINIC NOTE MODAL (added) -->
+
+<div class="modal-overlay" id="clinicNoteModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Klinik Notu</h2>
+      <button class="modal-close" onclick="closeModal('clinicNoteModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="clinicNoteForm">
+
+        <input type="hidden" name="id">
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label>Klinik Notu</label>
+            <textarea name="notes" style="min-height:140px" placeholder="Bu hasta için genel klinik notu..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('clinicNoteModal')">İptal</button>
+          <button class="btn btn-primary">Kaydet</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- VISIT / MUAYENE NOTU MODAL (added — replaces the browser prompt()) -->
+
+<div class="modal-overlay" id="visitNoteModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Muayene Notu Ekle</h2>
+      <button class="modal-close" onclick="closeModal('visitNoteModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="visitNoteForm">
+
+        <input type="hidden" name="patientId">
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label>Muayene Başlığı *</label>
+            <input name="reason" placeholder="Genel Muayene, Aşı, Kontrol..." required>
+          </div>
+
+          <div class="form-group full">
+            <label>Not *</label>
+            <textarea name="note" style="min-height:120px" placeholder="Muayene bulguları, uygulanan tedavi..." required></textarea>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('visitNoteModal')">İptal</button>
+          <button class="btn btn-primary">Muayene Notunu Kaydet</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="appointmentModal">
   <div class="modal">
@@ -3426,12 +3688,14 @@ function requireEdit(){
 }
 
 const WRITE_FORM_IDS = new Set([
-  "patientForm","appointmentForm","timerForm","inventoryForm","saleForm"
+  "patientForm","appointmentForm","timerForm","inventoryForm","saleForm",
+  "editPatientForm","clinicNoteForm","visitNoteForm"
 ]);
 
 const READONLY_BLOCKED_PATTERNS = [
   "openModal(", "adjustStock(", "toggleTimer(", "deleteTimer(",
-  "deletePatient(", "openVisitModal(", "importFile.click("
+  "deletePatient(", "openVisitModal(", "importFile.click(",
+  "openEditPatientModal(", "openClinicNoteModal("
 ];
 
 /* Capture-phase guards: intercept before the original handlers
@@ -4882,22 +5146,145 @@ document.getElementById("saleForm").addEventListener("submit", function(){
   saveDB();
 });
 
-/* Muayene / visit notes: overwrite the original hardcoded
-   "Dr. Klinik" with the real logged-in doctor once the note
-   has been added. */
-const _openVisitModal = openVisitModal;
+/* Muayene / visit notes: the original implementation used
+   browser prompt() dialogs. This replaces that flow with a
+   proper modal matching the rest of the app's UI, while keeping
+   the same function name so the existing "+ Muayene Notu"
+   button (which calls openVisitModal(id)) keeps working as-is.
+   The vet name is taken from the logged-in user automatically. */
+const _openVisitModalOriginal = openVisitModal;
+
 openVisitModal = function(patientId){
-  const p = db.patients.find(x=>x.id===patientId);
-  const before = p ? p.visits.length : 0;
+  if(!requireEdit()) return;
 
-  _openVisitModal(patientId);
+  const form = document.getElementById("visitNoteForm");
+  form.reset();
+  form.querySelector("[name=patientId]").value = patientId;
 
-  if(p && p.visits.length > before){
-    p.visits[p.visits.length-1].vet = currentUser ? currentUser.name : p.visits[p.visits.length-1].vet;
-    saveDB();
-    if(selectedPatient===patientId) renderPatientProfile();
-  }
+  openModal("visitNoteModal");
 };
+
+document.getElementById("visitNoteForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const f = new FormData(e.target);
+  const patientId = f.get("patientId");
+  const p = db.patients.find(x=>x.id===patientId);
+
+  if(!p) return;
+
+  if(!p.visits) p.visits = [];
+
+  p.visits.push({
+    date: todayISO(),
+    reason: f.get("reason"),
+    note: f.get("note"),
+    vet: currentUser ? currentUser.name : "Dr. Klinik"
+  });
+
+  saveDB();
+  closeModal("visitNoteModal");
+  e.target.reset();
+
+  if(selectedPatient === patientId) renderPatientProfile();
+
+  toast("Muayene notu kaydedildi.");
+});
+
+/* Full patient info editor (added) — pre-fills the same field
+   set as "Yeni Hasta" but updates the existing record instead
+   of creating a new one. */
+function openEditPatientModal(patientId){
+  if(!requireEdit()) return;
+
+  const p = db.patients.find(x=>x.id===patientId);
+  if(!p) return;
+
+  const form = document.getElementById("editPatientForm");
+  form.reset();
+
+  form.querySelector("[name=id]").value = p.id;
+  form.querySelector("[name=name]").value = p.name || "";
+  form.querySelector("[name=species]").value = p.species || "Köpek";
+  form.querySelector("[name=breed]").value = p.breed || "";
+  form.querySelector("[name=gender]").value = p.gender || "Dişi";
+  form.querySelector("[name=birth]").value = p.birth || "";
+  form.querySelector("[name=chip]").value = p.chip || "";
+  form.querySelector("[name=owner]").value = p.owner || "";
+  form.querySelector("[name=phone]").value = p.phone || "";
+  form.querySelector("[name=email]").value = p.email || "";
+  form.querySelector("[name=weight]").value = p.weight || "";
+  form.querySelector("[name=allergies]").value = p.allergies || "";
+  form.querySelector("[name=notes]").value = p.notes || "";
+
+  openModal("editPatientModal");
+}
+
+document.getElementById("editPatientForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const f = new FormData(e.target);
+  const p = db.patients.find(x=>x.id===f.get("id"));
+
+  if(!p) return;
+
+  p.name = f.get("name");
+  p.species = f.get("species");
+  p.breed = f.get("breed");
+  p.gender = f.get("gender");
+  p.birth = f.get("birth");
+  p.chip = f.get("chip");
+  p.owner = f.get("owner");
+  p.phone = f.get("phone");
+  p.email = f.get("email");
+  p.weight = Number(f.get("weight")) || null;
+  p.allergies = f.get("allergies");
+  p.notes = f.get("notes");
+  p.editedBy = currentUser ? currentUser.name : p.editedBy;
+
+  saveDB();
+  closeModal("editPatientModal");
+
+  renderPatients();
+  if(selectedPatient === p.id) renderPatientProfile();
+
+  toast("Hasta bilgileri güncellendi.");
+});
+
+/* Quick Klinik Notu editor (added) — a small shortcut so the
+   note can be added/updated without opening the full edit form. */
+function openClinicNoteModal(patientId){
+  if(!requireEdit()) return;
+
+  const p = db.patients.find(x=>x.id===patientId);
+  if(!p) return;
+
+  const form = document.getElementById("clinicNoteForm");
+  form.reset();
+  form.querySelector("[name=id]").value = p.id;
+  form.querySelector("[name=notes]").value = p.notes || "";
+
+  openModal("clinicNoteModal");
+}
+
+document.getElementById("clinicNoteForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const f = new FormData(e.target);
+  const p = db.patients.find(x=>x.id===f.get("id"));
+
+  if(!p) return;
+
+  p.notes = f.get("notes");
+  p.editedBy = currentUser ? currentUser.name : p.editedBy;
+
+  saveDB();
+  closeModal("clinicNoteModal");
+
+  if(selectedPatient === p.id) renderPatientProfile();
+
+  toast("Klinik notu kaydedildi.");
+});
 
 /* Stok Hareket Geçmişi (added): keeps a running log of every
    stock-affecting action so it can be reviewed later. */
@@ -5076,20 +5463,268 @@ renderInventory = function(){
   renderStockHistory();
 };
 
+/* Builds the always-visible Klinik Notu block with its
+   quick "+ Ekle / Düzenle" button (replaces the original
+   conditional, button-less block). */
+function buildClinicNoteBlock(p){
+  const box = document.createElement("div");
+  box.style.marginTop = "20px";
+
+  const headerRow = document.createElement("div");
+  headerRow.className = "note-box-header";
+
+  const label = document.createElement("div");
+  label.className = "muted";
+  label.style.fontSize = "10px";
+  label.textContent = "KLİNİK NOTU";
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "icon-btn-small";
+  btn.textContent = p.notes ? "Düzenle" : "+ Ekle";
+  btn.setAttribute("onclick", "openClinicNoteModal('"+p.id+"')");
+
+  headerRow.appendChild(label);
+  headerRow.appendChild(btn);
+
+  const content = document.createElement("div");
+  content.className = "info-box" + (p.notes ? "" : " muted");
+  content.textContent = p.notes || "Henüz not eklenmemiş.";
+
+  box.appendChild(headerRow);
+  box.appendChild(content);
+
+  return box;
+}
+
+/* Builds the "İşlemler / Satın Alınan Ürünler" section listing
+   every sale tied to this patient, with a running total and a
+   Fatura (PDF invoice) button. */
+function buildProceduresSection(p){
+  const sales = db.sales.filter(s=>s.patient===p.id).sort((a,b)=>a.timestamp-b.timestamp);
+  const total = sales.reduce((sum,s)=>sum+s.total,0);
+
+  const box = document.createElement("div");
+  box.style.marginTop = "25px";
+
+  const header = document.createElement("div");
+  header.className = "card-header";
+  header.style.cssText = "padding:0 0 12px;border:0";
+
+  const h3 = document.createElement("h3");
+  h3.textContent = "İşlemler / Satın Alınan Ürünler";
+  header.appendChild(h3);
+
+  const invoiceBtn = document.createElement("button");
+  invoiceBtn.type = "button";
+  invoiceBtn.className = "btn btn-small";
+  invoiceBtn.textContent = "Fatura (PDF)";
+  invoiceBtn.onclick = function(){ generateInvoice(p.id); };
+  header.appendChild(invoiceBtn);
+
+  box.appendChild(header);
+
+  if(!sales.length){
+    const empty = document.createElement("div");
+    empty.className = "muted";
+    empty.textContent = "Bu hastaya ait işlem/satış kaydı yok.";
+    box.appendChild(empty);
+  }else{
+    sales.forEach(s=>{
+      const row = document.createElement("div");
+      row.className = "procedure-row";
+      row.innerHTML =
+        "<span>"+esc(s.productName)+
+        ' <span class="muted" style="font-size:10px">('+esc(s.date)+", x"+s.quantity+")</span></span>"+
+        "<strong>"+money(s.total)+"</strong>";
+      box.appendChild(row);
+    });
+
+    const totalRow = document.createElement("div");
+    totalRow.className = "procedure-total";
+    totalRow.innerHTML = "<span>Toplam</span><span class=\"green\">"+money(total)+"</span>";
+    box.appendChild(totalRow);
+  }
+
+  return box;
+}
+
+/* Opens a printable invoice in a new tab. The user can then use
+   the browser's native "Save as PDF" print destination — no
+   external libraries or internet connection required. */
+function generateInvoice(patientId){
+  const p = db.patients.find(x=>x.id===patientId);
+  if(!p) return;
+
+  const sales = db.sales.filter(s=>s.patient===patientId).sort((a,b)=>a.timestamp-b.timestamp);
+  const total = sales.reduce((sum,s)=>sum+s.total,0);
+
+  const rowsHtml = sales.length
+    ? sales.map(s=>
+        "<tr>"+
+          "<td>"+esc(s.date)+"</td>"+
+          "<td>"+esc(s.productName)+"</td>"+
+          "<td style=\"text-align:center\">"+s.quantity+"</td>"+
+          "<td style=\"text-align:right\">"+money(s.price)+"</td>"+
+          "<td style=\"text-align:right\">"+money(s.total)+"</td>"+
+        "</tr>"
+      ).join("")
+    : "<tr><td colspan=\"5\" style=\"text-align:center;color:#888\">Kayıtlı işlem/satış yok.</td></tr>";
+
+  const invoiceHtml =
+    "<!DOCTYPE html><html lang=\"tr\"><head><meta charset=\"UTF-8\">"+
+    "<title>Fatura — "+esc(p.name)+"</title><style>"+
+    "*{box-sizing:border-box}"+
+    "body{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;padding:40px;max-width:760px;margin:auto}"+
+    ".head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #111;padding-bottom:18px;margin-bottom:24px}"+
+    ".clinic-name{font-size:22px;font-weight:800;letter-spacing:.5px}"+
+    ".clinic-sub{color:#666;font-size:11px;margin-top:3px}"+
+    ".invoice-title{text-align:right}"+
+    ".invoice-title div:first-child{font-size:20px;font-weight:700}"+
+    ".invoice-title div:last-child{color:#666;font-size:11px;margin-top:3px}"+
+    ".info-grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:26px}"+
+    ".info-block label{display:block;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}"+
+    ".info-block strong{font-size:13px}"+
+    "table{width:100%;border-collapse:collapse;margin-top:10px}"+
+    "th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#666;border-bottom:2px solid #111;padding:8px 6px}"+
+    "td{padding:9px 6px;font-size:12px;border-bottom:1px solid #ddd}"+
+    ".total-row{display:flex;justify-content:flex-end;align-items:center;margin-top:18px;font-size:16px;font-weight:800}"+
+    ".total-row span:first-child{margin-right:18px;color:#555;font-weight:600;font-size:12px}"+
+    ".footer{margin-top:60px;display:flex;justify-content:space-between;font-size:11px;color:#666}"+
+    ".print-bar{text-align:center;margin-bottom:24px}"+
+    ".print-bar button{padding:9px 18px;border-radius:8px;border:1px solid #111;background:#111;color:#fff;font-size:12px;cursor:pointer}"+
+    "@media print{.print-bar{display:none}body{padding:0}}"+
+    "</style></head><body>"+
+    "<div class=\"print-bar\"><button onclick=\"window.print()\">Yazdır / PDF Olarak Kaydet</button></div>"+
+    "<div class=\"head\"><div><div class=\"clinic-name\">VetClinic</div>"+
+    "<div class=\"clinic-sub\">Veteriner Klinik Yönetimi</div></div>"+
+    "<div class=\"invoice-title\"><div>FATURA</div><div>"+
+    new Intl.DateTimeFormat("tr-TR",{dateStyle:"long"}).format(new Date())+
+    "</div></div></div>"+
+    "<div class=\"info-grid2\"><div class=\"info-block\"><label>Hasta</label><strong>"+
+    esc(p.name)+" — "+esc(p.species)+(p.breed?" · "+esc(p.breed):"")+
+    "</strong></div><div class=\"info-block\"><label>Sahip</label><strong>"+
+    esc(p.owner)+(p.phone?" · "+esc(p.phone):"")+
+    "</strong></div></div>"+
+    "<table><thead><tr><th>Tarih</th><th>Ürün / Hizmet</th>"+
+    "<th style=\"text-align:center\">Adet</th><th style=\"text-align:right\">Birim Fiyat</th>"+
+    "<th style=\"text-align:right\">Toplam</th></tr></thead><tbody>"+
+    rowsHtml+"</tbody></table>"+
+    "<div class=\"total-row\"><span>GENEL TOPLAM</span><span>"+money(total)+"</span></div>"+
+    "<div class=\"footer\"><span>Bu belge VetClinic klinik yönetim sistemi tarafından oluşturulmuştur.</span>"+
+    "<span>"+esc(currentUser ? currentUser.name : "")+"</span></div>"+
+    "</body></html>";
+
+  const win = window.open("","_blank");
+
+  if(!win){
+    toast("Fatura penceresi açılamadı — pop-up engelleyiciyi kontrol edin.");
+    return;
+  }
+
+  win.document.open();
+  win.document.write(invoiceHtml);
+  win.document.close();
+}
+
 const _renderPatientProfile = renderPatientProfile;
 renderPatientProfile = function(){
   _renderPatientProfile();
 
   const p = db.patients.find(x=>x.id===selectedPatient);
-  if(!p || !p.createdBy) return;
+  if(!p) return;
 
-  const grid = document.querySelector("#patientProfile .info-grid");
-  if(!grid) return;
+  const profileEl = document.getElementById("patientProfile");
+  if(!profileEl) return;
 
-  const box = document.createElement("div");
-  box.className = "info-box";
-  box.innerHTML = "<label>KAYDEDEN</label><strong>"+esc(p.createdBy)+"</strong>";
-  grid.appendChild(box);
+  const grid = profileEl.querySelector(".info-grid");
+
+  if(grid && p.createdBy){
+    const box = document.createElement("div");
+    box.className = "info-box";
+    box.innerHTML = "<label>KAYDEDEN</label><strong>"+esc(p.createdBy)+"</strong>";
+    grid.appendChild(box);
+  }
+
+  /* Remove the original conditional KLİNİK NOTU block — a
+     richer, always-visible version (with an edit button) is
+     inserted below instead. */
+  profileEl.querySelectorAll(".muted").forEach(function(el){
+    if(el.textContent.trim()==="KLİNİK NOTU" && el.parentElement) el.parentElement.remove();
+  });
+
+  if(grid){
+    grid.insertAdjacentElement("afterend", buildProceduresSection(p));
+    grid.insertAdjacentElement("afterend", buildClinicNoteBlock(p));
+  }
+
+  /* "Düzenle" button next to the existing "+ Muayene Notu" button. */
+  const visitBtn = profileEl.querySelector('button[onclick*="openVisitModal("]');
+
+  if(visitBtn && visitBtn.parentElement){
+    const wrap = document.createElement("div");
+    wrap.className = "profile-actions";
+    visitBtn.parentElement.insertBefore(wrap, visitBtn);
+
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "btn";
+    editBtn.textContent = "Düzenle";
+    editBtn.setAttribute("onclick", "openEditPatientModal('"+p.id+"')");
+
+    wrap.appendChild(editBtn);
+    wrap.appendChild(visitBtn);
+  }
+};
+
+/* Raporlar: only doctors can view this page — Ön Büro is
+   blocked even if the (already hidden) nav button is reached
+   some other way. */
+const _showPage = showPage;
+showPage = function(page){
+  if(page === "reports" && currentUser && currentUser.role === "readonly"){
+    toast("Raporlar sadece veteriner hekimler için görüntülenebilir.");
+    page = "dashboard";
+  }
+  _showPage(page);
+};
+
+/* Raporlar: "Geçmiş Aylar" quick-select so past months are one
+   click away instead of typing a date manually. */
+function formatMonthLabel(m){
+  const parts = m.split("-").map(Number);
+  const d = new Date(parts[0],parts[1]-1,1);
+  return new Intl.DateTimeFormat("tr-TR",{month:"long",year:"numeric"}).format(d);
+}
+
+function jumpToReportMonth(m){
+  document.getElementById("reportMonth").value = m;
+  renderReports();
+}
+
+const _renderReports = renderReports;
+renderReports = function(){
+  _renderReports();
+
+  const container = document.getElementById("reportHistoryRow");
+  if(!container) return;
+
+  const months = new Set();
+
+  db.sales.forEach(s=>{ if(s.date) months.add(s.date.slice(0,7)); });
+  db.patients.forEach(p=>{
+    (p.visits||[]).forEach(v=>{ if(v.date) months.add(v.date.slice(0,7)); });
+    if(p.created) months.add(p.created.slice(0,7));
+  });
+  months.add(currentMonth());
+
+  const sortedMonths = [...months].sort().reverse();
+  const activeMonth = document.getElementById("reportMonth").value;
+
+  container.innerHTML = sortedMonths.map(m=>{
+    const active = m===activeMonth ? " active" : "";
+    return '<button type="button" class="month-history-chip'+active+'" onclick="jumpToReportMonth(\''+m+'\')">'+formatMonthLabel(m)+"</button>";
+  }).join("");
 };
 
 
