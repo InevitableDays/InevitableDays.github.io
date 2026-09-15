@@ -3854,7 +3854,15 @@ function renderAppointments(list){
       return `
         <div class="appointment">
           <div class="app-time">${esc(a.time)}</div>
-          <div class="avatar">${p?.species==="Kedi"?"🐈":"🐕"}</div>
+        <div class="profile-avatar">
+          ${
+            p.species === "Kedi" ? "🐈" :
+            p.species === "Köpek" ? "🐕" :
+            p.species === "Kuş" ? "🐦" :
+            p.species === "Tavşan" ? "🐇" :
+            "🐾"
+          }
+        </div>
           <div class="app-info">
             <strong>${esc(p?.name || "Bilinmeyen")}</strong>
             <span>${esc(a.type || "Muayene")} · ${esc(p?.owner || "")}</span>
