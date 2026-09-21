@@ -144,9 +144,18 @@ body {
       <div class="p-5"><div class="text-xl">Hotel-Booking</div></div>
     </div>
   </div>
-
+  
   <div class="relative glow card cursor-pointer"
     onclick="openPreview(1)">
+    <div class="glass rounded-2xl overflow-hidden">
+      <iframe src="https://inevitabledays.github.io/Others/folio"
+        class="w-full h-60 pointer-events-none"></iframe>
+      <div class="p-5"><div class="text-xl">Book-Store</div></div>
+    </div>
+  </div>
+
+  <div class="relative glow card cursor-pointer"
+    onclick="openPreview(2)">
     <div class="glass rounded-2xl overflow-hidden">
       <iframe src="https://inevitabledays.github.io/Others/Demos/streaming"
         class="w-full h-60 pointer-events-none"></iframe>
@@ -155,7 +164,7 @@ body {
   </div>
 
   <div class="relative glow card cursor-pointer"
-    onclick="openPreview(2)">
+    onclick="openPreview(3)">
     <div class="glass rounded-2xl overflow-hidden">
       <iframe src="https://inevitabledays.github.io/Others/Demos/shop"
         class="w-full h-60 pointer-events-none"></iframe>
@@ -164,7 +173,7 @@ body {
   </div>
 
   <div class="relative glow card cursor-pointer"
-    onclick="openPreview(3)">
+    onclick="openPreview(4)">
     <div class="glass rounded-2xl overflow-hidden">
       <iframe src="https://inevitabledays.github.io/Others/Demos/socialmedia"
         class="w-full h-60 pointer-events-none"></iframe>
@@ -214,6 +223,14 @@ body {
        Hotel Booking
     </a>
 
+      <a href="https://inevitabledays.github.io/Others/folio"
+       target="_blank"
+       style="opacity:0.7; text-decoration:none; transition:0.2s;"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.7'">
+       Book-Store
+    </a>
+
     <a href="https://inevitabledays.github.io/Others/Demos/streaming"
        target="_blank"
        style="opacity:0.7; text-decoration:none; transition:0.2s;"
@@ -244,6 +261,7 @@ body {
 <script>
 const projects = [
   "https://inevitabledays.github.io/Others/wayfare(5)",
+  "https://inevitabledays.github.io/Others/folio",
   "https://inevitabledays.github.io/Others/Demos/streaming",
   "https://inevitabledays.github.io/Others/Demos/shop",
   "https://inevitabledays.github.io/Others/Demos/socialmedia"
