@@ -922,13 +922,19 @@ const DEST_PHOTOS = {
 const HOTEL_PHOTOS = {
   "Bosphorus Terrace Hotel": "photo-1623621534850-d325a1980c7e",
   "Galata Boutique Rooms": "photo-1623613229313-5e59f698526f",
+  "Maiden's View Hotel": "photo-1636537511494-c3e558e0702b",
+  "Süleymaniye Loft": "photo-1623439844752-524658b16ce6",
   "Ubud Jungle Villas": "photo-1634671651144-adbeca8623cb",
   "Seminyak Beach Resort": "photo-1692736933760-8a8a9b8c1b6f",
+  "Canggu Rice Field Retreat": "photo-1611441085268-7674a97a0905",
   "Le Marais Garden Hotel": "photo-1541628951107-a9af5346a3e4",
   "Montmartre Studio Suites": "photo-1644589104114-41ea93fc02e7",
+  "Rive Gauche Residence": "photo-1471623432079-b009d30b6729",
   "Trastevere Charm Hotel": "photo-1509024644558-2f56ce76c490",
+  "Fontana di Trevi Suites": "photo-1576242917012-8b8ae06996c4",
   "Oia Cliffside Suites": "photo-1580502304784-8985b7eb7260",
-  "Fira Skyline Hotel": "photo-1678266561093-324802646fb2"
+  "Fira Skyline Hotel": "photo-1678266561093-324802646fb2",
+  "Imerovigli Caldera View": "photo-1530841377377-3ff06c0ca713"
 };
 
 function sceneImg(themeKey,photoId,w,extraAttrs){
@@ -961,6 +967,18 @@ const HOTELS = [
     offers:[{p:"BookNow",price:89},{p:"StayHub",price:94},{p:"GlobalTrip",price:85}]
   },
   {
+    name:"Maiden's View Hotel", dest:"istanbul", area:"Üsküdar, Istanbul",
+    stars:4, rating:8.9, ratingLabel:"Very good", reviews:1075,
+    amenities:["Free WiFi","Breakfast","Spa"],
+    offers:[{p:"BookNow",price:118},{p:"StayHub",price:124},{p:"GlobalTrip",price:112}]
+  },
+  {
+    name:"Süleymaniye Loft", dest:"istanbul", area:"Fatih, Istanbul",
+    stars:3, rating:8.3, ratingLabel:"Good", reviews:540,
+    amenities:["Free WiFi"],
+    offers:[{p:"BookNow",price:71},{p:"StayHub",price:68},{p:"GlobalTrip",price:75}]
+  },
+  {
     name:"Ubud Jungle Villas", dest:"bali", area:"Ubud, Bali",
     stars:5, rating:9.4, ratingLabel:"Exceptional", reviews:1560,
     amenities:["Pool","Spa","Free WiFi","Breakfast"],
@@ -971,6 +989,12 @@ const HOTELS = [
     stars:4, rating:8.9, ratingLabel:"Very good", reviews:1120,
     amenities:["Pool","Beachfront","Free WiFi"],
     offers:[{p:"BookNow",price:165},{p:"StayHub",price:159},{p:"GlobalTrip",price:172}]
+  },
+  {
+    name:"Canggu Rice Field Retreat", dest:"bali", area:"Canggu, Bali",
+    stars:4, rating:9.0, ratingLabel:"Superb", reviews:812,
+    amenities:["Pool","Free WiFi","Breakfast"],
+    offers:[{p:"BookNow",price:132},{p:"StayHub",price:126},{p:"GlobalTrip",price:141}]
   },
   {
     name:"Le Marais Garden Hotel", dest:"paris", area:"Le Marais, Paris",
@@ -985,10 +1009,22 @@ const HOTELS = [
     offers:[{p:"BookNow",price:98},{p:"StayHub",price:102},{p:"GlobalTrip",price:95}]
   },
   {
+    name:"Rive Gauche Residence", dest:"paris", area:"Saint-Germain, Paris",
+    stars:5, rating:9.2, ratingLabel:"Superb", reviews:1430,
+    amenities:["Free WiFi","Breakfast","Spa"],
+    offers:[{p:"BookNow",price:245},{p:"StayHub",price:238},{p:"GlobalTrip",price:256}]
+  },
+  {
     name:"Trastevere Charm Hotel", dest:"rome", area:"Trastevere, Rome",
     stars:4, rating:9.0, ratingLabel:"Superb", reviews:1340,
     amenities:["Free WiFi","Breakfast"],
     offers:[{p:"BookNow",price:132},{p:"StayHub",price:127},{p:"GlobalTrip",price:140}]
+  },
+  {
+    name:"Fontana di Trevi Suites", dest:"rome", area:"Trevi, Rome",
+    stars:5, rating:9.3, ratingLabel:"Exceptional", reviews:1680,
+    amenities:["Free WiFi","Breakfast","Spa"],
+    offers:[{p:"BookNow",price:228},{p:"StayHub",price:219},{p:"GlobalTrip",price:241}]
   },
   {
     name:"Oia Cliffside Suites", dest:"santorini", area:"Oia, Santorini",
@@ -1001,6 +1037,12 @@ const HOTELS = [
     stars:4, rating:8.7, ratingLabel:"Very good", reviews:1450,
     amenities:["Pool","Free WiFi","Breakfast"],
     offers:[{p:"BookNow",price:145},{p:"StayHub",price:150},{p:"GlobalTrip",price:139}]
+  },
+  {
+    name:"Imerovigli Caldera View", dest:"santorini", area:"Imerovigli, Santorini",
+    stars:5, rating:9.5, ratingLabel:"Exceptional", reviews:704,
+    amenities:["Pool","Spa","Free WiFi","Breakfast"],
+    offers:[{p:"BookNow",price:275},{p:"StayHub",price:289},{p:"GlobalTrip",price:268}]
   }
 ];
 
