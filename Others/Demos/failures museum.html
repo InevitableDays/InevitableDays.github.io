@@ -1,0 +1,3537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Museum of Human Mistakes</title>
+<meta name="description" content="An interactive museum about engineering, scientific, design, software, and everyday mistakes.">
+<style>
+:root{
+  --paper:#f4f0e7;
+  --paper2:#fffdf8;
+  --ink:#171614;
+  --muted:#716b61;
+  --line:#d8d0c2;
+  --red:#b9342d;
+  --red-dark:#7e211d;
+  --gold:#b68b3c;
+  --blue:#345d75;
+  --green:#507052;
+  --dark:#1c1b19;
+  --dark2:#252320;
+  --white:#f8f4eb;
+  --shadow:0 20px 55px rgba(30,25,18,.13);
+}
+
+*{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  color:var(--ink);
+  background:var(--paper);
+  font-family:Georgia,"Times New Roman",serif;
+  line-height:1.65;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+a{
+  color:inherit;
+}
+
+.container{
+  width:min(1450px,92vw);
+  margin:auto;
+}
+
+.top-strip{
+  background:#111;
+  color:#d9d1c4;
+  padding:9px 0;
+  font:700 11px Arial,sans-serif;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.top-strip .container{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.hero{
+  min-height:760px;
+  color:var(--white);
+  background:
+    radial-gradient(circle at 82% 22%,rgba(182,139,60,.2),transparent 24%),
+    radial-gradient(circle at 10% 90%,rgba(185,52,45,.12),transparent 28%),
+    linear-gradient(135deg,#25231f,#11100f 70%,#201b18);
+  position:relative;
+  overflow:hidden;
+  border-bottom:9px solid var(--red);
+}
+
+.hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:.35;
+  background:
+    linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+
+.hero-inner{
+  min-height:760px;
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:70px;
+  align-items:center;
+  position:relative;
+}
+
+.eyebrow{
+  color:#d4ae61;
+  font:700 12px Arial,sans-serif;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  margin-bottom:25px;
+}
+
+.hero h1{
+  font-size:clamp(65px,9vw,145px);
+  line-height:.79;
+  letter-spacing:-.065em;
+  margin:0 0 35px;
+  max-width:1000px;
+}
+
+.hero-lead{
+  max-width:820px;
+  font-size:clamp(20px,2vw,29px);
+  color:#d5cec2;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:35px;
+}
+
+.btn{
+  display:inline-block;
+  padding:13px 19px;
+  border:1px solid #625d55;
+  background:#272522;
+  color:#f7f0e4;
+  text-decoration:none;
+  font:700 12px Arial,sans-serif;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  transition:.2s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+}
+
+.btn.primary{
+  background:var(--red);
+  border-color:var(--red);
+}
+
+.btn.paper{
+  background:var(--paper);
+  border-color:var(--paper);
+  color:var(--ink);
+}
+
+.seal{
+  width:min(390px,75vw);
+  aspect-ratio:1;
+  border:3px solid #c6a257;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  position:relative;
+  justify-self:end;
+  transform:rotate(7deg);
+  color:#c6a257;
+}
+
+.seal:before{
+  content:"";
+  position:absolute;
+  inset:22px;
+  border:1px solid #c6a257;
+  border-radius:50%;
+}
+
+.seal-text{
+  text-align:center;
+  font-weight:700;
+  font-size:51px;
+  line-height:.9;
+  text-transform:uppercase;
+  max-width:250px;
+}
+
+.seal-small{
+  position:absolute;
+  bottom:72px;
+  font:700 10px Arial,sans-serif;
+  letter-spacing:.14em;
+}
+
+.navigation{
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:rgba(244,240,231,.94);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+
+.navigation .container{
+  display:flex;
+  overflow:auto;
+}
+
+.navigation a{
+  padding:15px 14px;
+  text-decoration:none;
+  white-space:nowrap;
+  font:700 11px Arial,sans-serif;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+
+.navigation a:hover{
+  background:#e7e0d4;
+}
+
+.introduction{
+  padding:100px 0 60px;
+}
+
+.intro-grid{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:75px;
+}
+
+.section-label{
+  color:var(--red);
+  font:700 12px Arial,sans-serif;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  margin-bottom:17px;
+}
+
+h2.section-title{
+  font-size:clamp(43px,6vw,82px);
+  line-height:.91;
+  letter-spacing:-.055em;
+  margin:0 0 25px;
+}
+
+.introduction p{
+  font-size:20px;
+}
+
+.museum-note{
+  border-left:5px solid var(--red);
+  padding:24px 27px;
+  background:#e9e2d6;
+}
+
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1px;
+  background:var(--line);
+  margin-top:20px;
+}
+
+.stat{
+  background:var(--paper2);
+  padding:24px;
+}
+
+.stat strong{
+  display:block;
+  font-size:42px;
+  line-height:1;
+  margin-bottom:8px;
+}
+
+.stat span{
+  color:var(--muted);
+  font:700 10px Arial,sans-serif;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.section{
+  padding:90px 0;
+}
+
+.section.dark{
+  background:var(--dark);
+  color:var(--white);
+}
+
+.section-head{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:50px;
+  margin-bottom:42px;
+}
+
+.section-head > p{
+  max-width:610px;
+  color:var(--muted);
+}
+
+.dark .section-head > p{
+  color:#aaa398;
+}
+
+.search-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:20px;
+}
+
+.search-row input{
+  flex:1;
+  min-width:0;
+  border:1px solid var(--line);
+  background:var(--paper2);
+  padding:15px 17px;
+  outline:none;
+}
+
+.search-row input:focus{
+  border-color:var(--red);
+}
+
+.search-row button{
+  border:0;
+  background:var(--ink);
+  color:white;
+  padding:0 25px;
+}
+
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-bottom:35px;
+}
+
+.filter{
+  border:1px solid var(--line);
+  background:transparent;
+  padding:9px 13px;
+  font:700 11px Arial,sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.filter.active,
+.filter:hover{
+  background:var(--ink);
+  color:white;
+}
+
+.exhibit-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:21px;
+}
+
+.exhibit-card{
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+  background:var(--paper2);
+  border:1px solid var(--line);
+  box-shadow:0 5px 20px rgba(40,30,20,.05);
+}
+
+.exhibit-card.hide{
+  display:none;
+}
+
+.exhibit-image{
+  height:225px;
+  background:
+    radial-gradient(circle at 70% 20%,rgba(255,255,255,.1),transparent 18%),
+    linear-gradient(135deg,#302e2a,#171614);
+  color:#eee5d7;
+  padding:24px;
+  position:relative;
+  overflow:hidden;
+}
+
+.exhibit-image:before,
+.exhibit-image:after{
+  content:"";
+  position:absolute;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:50%;
+}
+
+.exhibit-image:before{
+  width:260px;
+  height:260px;
+  right:-100px;
+  top:-120px;
+}
+
+.exhibit-image:after{
+  width:110px;
+  height:110px;
+  left:-35px;
+  bottom:-50px;
+}
+
+.exhibit-number{
+  position:relative;
+  z-index:2;
+  color:#d2a953;
+  font:700 10px Arial,sans-serif;
+  letter-spacing:.13em;
+}
+
+.exhibit-image h3{
+  position:absolute;
+  z-index:2;
+  left:24px;
+  bottom:23px;
+  max-width:82%;
+  margin:0;
+  font-size:31px;
+  line-height:.95;
+}
+
+.exhibit-body{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  padding:25px;
+}
+
+.category{
+  align-self:flex-start;
+  border:1px solid #bcb3a5;
+  padding:5px 7px;
+  font:700 9px Arial,sans-serif;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+
+.exhibit-body h4{
+  font-size:25px;
+  line-height:1;
+  margin:14px 0 10px;
+}
+
+.exhibit-body p{
+  color:#5c574f;
+}
+
+.card-meta{
+  border-top:1px solid var(--line);
+  margin-top:auto;
+  padding-top:17px;
+  color:#777066;
+  font:11px/1.5 Arial,sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.exhibit-open{
+  margin-top:18px;
+  width:100%;
+  padding:12px;
+  background:var(--red);
+  color:white;
+  border:0;
+  font-weight:700;
+}
+
+.timeline{
+  position:relative;
+  max-width:1050px;
+  margin:auto;
+}
+
+.timeline:before{
+  content:"";
+  position:absolute;
+  left:18px;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:#625e57;
+}
+
+.timeline-event{
+  position:relative;
+  padding:0 0 55px 70px;
+}
+
+.timeline-event:before{
+  content:"";
+  position:absolute;
+  left:9px;
+  top:5px;
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  background:var(--red);
+  box-shadow:0 0 0 4px var(--dark);
+  border:1px solid var(--red);
+}
+
+.timeline-year{
+  color:#d1aa5b;
+  font:700 11px Arial,sans-serif;
+  letter-spacing:.14em;
+}
+
+.timeline-event h3{
+  font-size:33px;
+  margin:5px 0 10px;
+}
+
+.timeline-event p{
+  color:#b7afa3;
+  max-width:850px;
+}
+
+.lab-grid{
+  display:grid;
+  grid-template-columns:.8fr 1.2fr;
+  gap:25px;
+}
+
+.lab-panel{
+  background:#252320;
+  border:1px solid #47433d;
+  padding:30px;
+}
+
+.lab-panel h3{
+  font-size:30px;
+  margin-top:0;
+}
+
+.control{
+  margin:24px 0;
+}
+
+.control label{
+  display:flex;
+  justify-content:space-between;
+  font:700 11px Arial,sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+
+.control input[type=range]{
+  width:100%;
+  margin-top:12px;
+}
+
+.lab-readout{
+  margin-top:25px;
+  background:#151412;
+  border-left:4px solid var(--red);
+  padding:20px;
+}
+
+.risk-number{
+  font-size:35px;
+  font-weight:700;
+}
+
+.progress{
+  height:9px;
+  background:#3a3834;
+  margin:14px 0;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  width:0;
+  background:var(--red);
+  transition:.25s;
+}
+
+.bridge-canvas{
+  min-height:500px;
+  background:#e8e1d4;
+  color:#222;
+  position:relative;
+  padding:25px;
+}
+
+.bridge-canvas svg{
+  width:100%;
+  height:430px;
+}
+
+.model-warning{
+  color:#665f56;
+  text-align:center;
+  font:11px Arial,sans-serif;
+}
+
+.failure-anatomy{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.anatomy-card{
+  background:var(--paper2);
+  color:var(--ink);
+  border-top:5px solid var(--red);
+  padding:25px;
+}
+
+.anatomy-card .num{
+  color:var(--red);
+  font:700 12px Arial,sans-serif;
+}
+
+.anatomy-card h3{
+  font-size:27px;
+  line-height:1;
+}
+
+.case-method{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:20px;
+}
+
+.method-card{
+  border:1px solid #48443d;
+  padding:28px;
+  background:#252320;
+}
+
+.method-card h3{
+  font-size:30px;
+  margin-top:0;
+  color:#eee7da;
+}
+
+.method-card p{
+  color:#bbb3a6;
+}
+
+.quiz{
+  max-width:1000px;
+  margin:auto;
+}
+
+.quiz-question{
+  background:#252320;
+  border:1px solid #48443d;
+  margin:18px 0;
+  padding:28px;
+}
+
+.quiz-question h3{
+  margin-top:0;
+  font-size:24px;
+}
+
+.quiz-option{
+  display:block;
+  width:100%;
+  text-align:left;
+  border:1px solid #504c45;
+  background:#302e2a;
+  color:#eee8dc;
+  padding:13px 15px;
+  margin:8px 0;
+}
+
+.quiz-option:hover{
+  background:#3b3833;
+}
+
+.quiz-option.correct{
+  background:#304432;
+  border-color:#769875;
+}
+
+.quiz-option.incorrect{
+  background:#482c29;
+  border-color:#a95d55;
+}
+
+.quiz-explanation{
+  display:none;
+  margin-top:15px;
+  padding:15px;
+  background:#151412;
+  color:#c7bfb2;
+}
+
+.quiz-explanation.show{
+  display:block;
+}
+
+.glossary{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.glossary-item{
+  background:var(--paper2);
+  border:1px solid var(--line);
+  padding:20px;
+}
+
+.glossary-item strong{
+  font-size:21px;
+}
+
+.glossary-item p{
+  color:#625c53;
+  font-size:14px;
+}
+
+.case-study-list{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.case-study{
+  background:#252320;
+  border:1px solid #48443d;
+  padding:30px;
+}
+
+.case-study h3{
+  font-size:31px;
+  line-height:1;
+  margin-top:0;
+}
+
+.case-study p{
+  color:#bdb5a9;
+}
+
+.footer{
+  background:#10100f;
+  color:#bcb5aa;
+  padding:80px 0;
+}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+}
+
+.footer h2{
+  color:#f0e9dc;
+  font-size:58px;
+  line-height:.9;
+  margin:0 0 25px;
+}
+
+.footer small{
+  font:11px Arial,sans-serif;
+  color:#77736c;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.76);
+  padding:20px;
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modal-box{
+  position:relative;
+  width:min(1050px,95vw);
+  max-height:90vh;
+  overflow:auto;
+  background:var(--paper2);
+  padding:45px;
+  box-shadow:var(--shadow);
+}
+
+.modal-close{
+  position:absolute;
+  right:17px;
+  top:10px;
+  border:0;
+  background:transparent;
+  font-size:32px;
+}
+
+.modal-box h2{
+  max-width:850px;
+  font-size:58px;
+  line-height:.9;
+  margin:0 50px 30px 0;
+  letter-spacing:-.04em;
+}
+
+.modal-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.modal-section{
+  background:#eee7da;
+  padding:22px;
+}
+
+.modal-section h3{
+  margin-top:0;
+  font-size:24px;
+}
+
+.reconstruction{
+  border-left:5px solid var(--red);
+  background:#e8dfd1;
+  padding:25px;
+  margin-top:25px;
+}
+
+.counterfactual{
+  margin-top:25px;
+  padding:25px;
+  background:#1f1d1a;
+  color:#e9e1d4;
+}
+
+.counterfactual h3{
+  color:#d2aa5a;
+}
+
+.back-to-top{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:25;
+  width:45px;
+  height:45px;
+  border:0;
+  background:var(--red);
+  color:#fff;
+  font-weight:700;
+  display:none;
+}
+
+.back-to-top.visible{
+  display:block;
+}
+
+.no-results{
+  display:none;
+  padding:35px;
+  border:1px dashed var(--line);
+  text-align:center;
+  color:var(--muted);
+}
+
+@media(max-width:1100px){
+  .hero-inner,
+  .intro-grid,
+  .lab-grid{
+    grid-template-columns:1fr;
+  }
+
+  .seal{
+    justify-self:start;
+    width:260px;
+  }
+
+  .exhibit-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .failure-anatomy{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .glossary{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:700px){
+  .hero,
+  .hero-inner{
+    min-height:680px;
+  }
+
+  .top-strip .container{
+    display:block;
+  }
+
+  .top-strip span:last-child{
+    display:none;
+  }
+
+  .exhibit-grid,
+  .case-study-list,
+  .case-method,
+  .modal-grid,
+  .footer-grid{
+    grid-template-columns:1fr;
+  }
+
+  .failure-anatomy,
+  .glossary{
+    grid-template-columns:1fr;
+  }
+
+  .section{
+    padding:60px 0;
+  }
+
+  .section-head{
+    display:block;
+  }
+
+  .modal-box{
+    padding:28px;
+  }
+
+  .modal-box h2{
+    font-size:43px;
+  }
+
+  .hero h1{
+    font-size:61px;
+  }
+
+  .hero-lead{
+    font-size:19px;
+  }
+
+  .search-row{
+    flex-direction:column;
+  }
+
+  .search-row button{
+    padding:13px;
+  }
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="top-strip">
+  <div class="container">
+    <span>Museum of Human Mistakes · Educational Collection</span>
+    <span>Archive 0001 · Failure Analysis Department</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="container hero-inner">
+
+    <div>
+      <div class="eyebrow">The Museum of Human Mistakes</div>
+
+      <h1>
+        FAILURE<br>
+        IS DATA.
+      </h1>
+
+      <p class="hero-lead">
+        A large educational collection of engineering, scientific, design,
+        software, organizational, and everyday mistakes.
+        Begin with the failed result. Reconstruct what happened.
+        Find the hidden assumption.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn primary" href="#exhibits">Enter the museum</a>
+        <a class="btn" href="#laboratory">Open failure laboratory</a>
+      </div>
+    </div>
+
+    <div class="seal">
+      <div class="seal-text">
+        Study<br>
+        the<br>
+        mistake
+      </div>
+      <div class="seal-small">
+        ESTABLISHED WHEN HUMANS BEGAN EXPERIMENTING
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<nav class="navigation">
+  <div class="container">
+    <a href="#about">About</a>
+    <a href="#exhibits">Exhibits</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#laboratory">Failure Lab</a>
+    <a href="#anatomy">Anatomy</a>
+    <a href="#case-studies">Case Studies</a>
+    <a href="#quiz">Examination</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<main>
+
+<section class="introduction" id="about">
+  <div class="container intro-grid">
+
+    <div>
+      <div class="section-label">01 · The premise</div>
+
+      <h2 class="section-title">
+        Do not hide the broken thing.
+      </h2>
+
+      <p>
+        The most dangerous thing about a mistake is often not the mistake
+        itself. It is what happens afterward: the story becomes simplified,
+        the evidence disappears, the unusual warning becomes ordinary,
+        and everyone remembers the final error while forgetting the chain
+        that made the error possible.
+      </p>
+
+      <p>
+        This museum reverses that process.
+      </p>
+
+      <p>
+        Every exhibit begins at the end: the collapsed structure, the lost
+        spacecraft, the failed experiment, the confusing interface, the
+        unsafe machine, the wrong calculation, or the decision that looked
+        reasonable until the consequences arrived.
+      </p>
+
+      <p>
+        Visitors then work backward.
+        What was expected?
+        What actually happened?
+        Which assumption changed?
+        Which barrier should have caught the problem?
+        Why did it not?
+        What would have made the mistake visible sooner?
+      </p>
+    </div>
+
+    <div>
+      <div class="museum-note">
+        <strong>How to use the museum</strong>
+
+        <p>
+          Read the failed result before opening the reconstruction.
+          Make your own hypothesis.
+          Then reveal the mechanism.
+        </p>
+
+        <p>
+          The objective is not to identify someone to blame.
+          The objective is to understand causality well enough that the
+          same class of failure becomes harder to repeat.
+        </p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <strong>30+</strong>
+          <span>Potential exhibit files</span>
+        </div>
+
+        <div class="stat">
+          <strong>6</strong>
+          <span>Failure families</span>
+        </div>
+
+        <div class="stat">
+          <strong>∞</strong>
+          <span>Possible lessons</span>
+        </div>
+
+        <div class="stat">
+          <strong>1</strong>
+          <span>Recurring subject: humans</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="section" id="exhibits">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <div class="section-label">02 · Permanent collection</div>
+        <h2 class="section-title">The failed results</h2>
+      </div>
+
+      <p>
+        Each case is structured as:
+        failed result → conditions → assumptions → mechanism →
+        missed signals → lesson → counterfactual.
+      </p>
+    </div>
+
+    <div class="search-row">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search: bridge, spacecraft, software, chemistry..."
+      >
+      <button onclick="filterExhibits()">SEARCH</button>
+    </div>
+
+    <div class="filters">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="engineering">Engineering</button>
+      <button class="filter" data-filter="science">Science</button>
+      <button class="filter" data-filter="design">Design</button>
+      <button class="filter" data-filter="software">Software</button>
+      <button class="filter" data-filter="systems">Systems</button>
+      <button class="filter" data-filter="everyday">Everyday</button>
+    </div>
+
+    <div class="exhibit-grid" id="exhibitGrid">
+
+      <article class="exhibit-card"
+        data-category="engineering"
+        data-search="Tacoma Narrows bridge wind oscillation aeroelasticity structural dynamics">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 001 · ENGINEERING</div>
+          <h3>The Bridge That Began to Dance</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Structural dynamics</span>
+
+          <h4>Tacoma Narrows Bridge</h4>
+
+          <p>
+            A bridge exposed to wind developed spectacular torsional
+            oscillations and collapsed. The important lesson is that
+            static strength and dynamic stability are different questions.
+          </p>
+
+          <div class="card-meta">
+            Key concept · aeroelastic feedback
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('tacoma')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="engineering systems"
+        data-search="Challenger O-ring cold temperature launch decision risk management">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 002 · ENGINEERING / SYSTEMS</div>
+          <h3>The Seal That Lost Its Margin</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Risk communication</span>
+
+          <h4>Challenger launch decision</h4>
+
+          <p>
+            The Challenger disaster became a landmark case in engineering
+            risk, evidence interpretation, organizational communication,
+            and the danger of treating recurring anomalies as acceptable.
+          </p>
+
+          <div class="card-meta">
+            Key concept · normalized risk
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('challenger')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="software systems"
+        data-search="Mars Climate Orbiter metric imperial units software spacecraft navigation">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 003 · SOFTWARE / SPACE</div>
+          <h3>The Unit Nobody Translated</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Interface failure</span>
+
+          <h4>Mars Climate Orbiter</h4>
+
+          <p>
+            A mismatch in units between software components contributed to
+            the loss of a spacecraft. The arithmetic was simple.
+            The interface contract was not.
+          </p>
+
+          <div class="card-meta">
+            Key concept · semantic interfaces
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('mco')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="design"
+        data-search="New Coke taste test branding product design experiment customer expectations">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 004 · DESIGN</div>
+          <h3>The Test That Asked Too Small a Question</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Experiment design</span>
+
+          <h4>New Coke</h4>
+
+          <p>
+            Blind taste tests supported a sweeter formulation, but a major
+            product change produced a very different real-world response.
+            The experiment had isolated taste while the market contained
+            identity, habit, history, and expectation.
+          </p>
+
+          <div class="card-meta">
+            Key concept · experimental scope
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('newcoke')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="science"
+        data-search="phlogiston chemistry combustion scientific theory oxygen">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 005 · SCIENCE</div>
+          <h3>The Invisible Substance That Explained Too Much</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Scientific models</span>
+
+          <h4>Phlogiston theory</h4>
+
+          <p>
+            An influential theory attempted to explain combustion.
+            Quantitative chemistry eventually exposed increasingly serious
+            problems with its assumptions.
+          </p>
+
+          <div class="card-meta">
+            Key concept · model revision
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('phlogiston')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="science systems"
+        data-search="ulcers H pylori Marshall Warren medicine scientific consensus">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 006 · SCIENCE / MEDICINE</div>
+          <h3>The Cause That Wasn't Supposed to Exist</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Evidence & consensus</span>
+
+          <h4>Ulcers and H. pylori</h4>
+
+          <p>
+            Research into Helicobacter pylori challenged a deeply familiar
+            explanation of peptic ulcers and became a classic example of
+            evidence confronting an established causal model.
+          </p>
+
+          <div class="card-meta">
+            Key concept · competing explanations
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('ulcer')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="software"
+        data-search="Ariane 5 Flight 501 overflow software reuse rocket">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 007 · SOFTWARE</div>
+          <h3>The Number Too Large for the Container</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Software reuse</span>
+
+          <h4>Ariane 5 Flight 501</h4>
+
+          <p>
+            Reused software carried assumptions from an earlier system.
+            A numeric conversion exceeded the relevant range and contributed
+            to the launch failure.
+          </p>
+
+          <div class="card-meta">
+            Key concept · inherited assumptions
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('ariane')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="software systems"
+        data-search="Therac 25 radiation software race condition safety machine">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 008 · SOFTWARE / SAFETY</div>
+          <h3>The Machine That Trusted a Race</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Safety-critical software</span>
+
+          <h4>Therac-25</h4>
+
+          <p>
+            Software, interface, testing, and safety architecture contributed
+            to radiation overdoses. The case demonstrates why physical
+            safety cannot depend on a single layer of software logic.
+          </p>
+
+          <div class="card-meta">
+            Key concept · defensive design
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('therac')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="engineering"
+        data-search="Hyatt Regency walkway collapse connection structural engineering design change">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 009 · ENGINEERING</div>
+          <h3>The Connection That Changed on Paper</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Design change</span>
+
+          <h4>Hyatt Regency walkways</h4>
+
+          <p>
+            A change in a suspended walkway connection altered the load path
+            and contributed to a catastrophic collapse. It became a major
+            case in verification and design-change control.
+          </p>
+
+          <div class="card-meta">
+            Key concept · change management
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('hyatt')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="systems engineering"
+        data-search="Bhopal gas disaster process safety industrial maintenance chemical plant">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 010 · SYSTEMS</div>
+          <h3>The Warning System Was Not Enough</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Process safety</span>
+
+          <h4>Bhopal gas disaster</h4>
+
+          <p>
+            The disaster involved interacting equipment conditions,
+            maintenance, operating practices, safety systems, organizational
+            factors, and emergency preparedness.
+          </p>
+
+          <div class="card-meta">
+            Key concept · defense in depth
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('bhopal')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="everyday design"
+        data-search="door push pull affordance interface everyday design">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 011 · EVERYDAY DESIGN</div>
+          <h3>The Door With No Opinion</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Affordances</span>
+
+          <h4>Push / pull ambiguity</h4>
+
+          <p>
+            If users repeatedly perform the wrong action on an interface,
+            the interface itself may be communicating the wrong instruction.
+          </p>
+
+          <div class="card-meta">
+            Key concept · predictable error
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('door')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+
+      <article class="exhibit-card"
+        data-category="everyday systems"
+        data-search="checklist aviation human factors omission memory safety">
+
+        <div class="exhibit-image">
+          <div class="exhibit-number">EXHIBIT 012 · HUMAN FACTORS</div>
+          <h3>The Checklist That Looks Too Simple</h3>
+        </div>
+
+        <div class="exhibit-body">
+          <span class="category">Human factors</span>
+
+          <h4>Checklists</h4>
+
+          <p>
+            High-risk environments use short structured pauses to protect
+            against predictable omissions, interruptions, and assumptions.
+          </p>
+
+          <div class="card-meta">
+            Key concept · designing for humans
+          </div>
+
+          <button class="exhibit-open" onclick="openCase('checklist')">
+            Reconstruct failure →
+          </button>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="no-results" id="noResults">
+      No exhibit matches that search.
+      Try a different assumption.
+    </div>
+
+  </div>
+</section>
+
+
+<section class="section dark" id="timeline">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <div class="section-label">03 · Historical corridor</div>
+        <h2 class="section-title">Mistakes across time</h2>
+      </div>
+
+      <p>
+        The history of progress is also a history of incorrect models,
+        failed experiments, broken mechanisms, mistaken assumptions,
+        and increasingly sophisticated ways of detecting them.
+      </p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="timeline-event">
+        <div class="timeline-year">~300 BCE · ANCIENT WORLD</div>
+        <h3>Measurement begins defeating intuition</h3>
+        <p>
+          Ancient mathematical and physical investigations demonstrated
+          a recurring pattern: quantities that feel obvious can behave
+          differently when measured. The transition from intuition to
+          measurement is one of humanity's oldest error-correction tools.
+        </p>
+      </div>
+
+      <div class="timeline-event">
+        <div class="timeline-year">1600s · SCIENTIFIC REVOLUTION</div>
+        <h3>Observation becomes an argument</h3>
+        <p>
+          Controlled experiments, quantitative measurement, and repeatability
+          increasingly provided methods for distinguishing competing
+          explanations.
+        </p>
+      </div>
+
+      <div class="timeline-event">
+        <div class="timeline-year">1840s · MEDICINE</div>
+        <h3>Handwashing and the invisible cause</h3>
+        <p>
+          Observations associated with Ignaz Semmelweis demonstrated that
+          changing a procedure could dramatically change outcomes, even
+          before the underlying mechanism was understood in modern terms.
+        </p>
+      </div>
+
+      <div class="timeline-event">
+        <div class="timeline-year">1940 · STRUCTURAL ENGINEERING</div>
+        <h3>Tacoma Narrows</h3>
+        <p>
+          A spectacular bridge collapse became an enduring lesson in
+          dynamic loading, aerodynamic behavior, structural modeling,
+          and the difference between static strength and stability.
+        </p>
+      </div>
+
+      <div class="timeline-event">
+        <div class="timeline-year">1960s–1980s · SYSTEMS ERA</div>
+        <h3>Safety becomes a systems discipline</h3>
+        <p>
+          Large technical systems made it increasingly clear that accidents
+          could emerge from interactions among hardware, software, people,
+          procedures, organizations, workload, and environment.
+        </p>
+      </div>
+
+      <div class="timeline-event">
+        <div class="timeline-year">1990s–TODAY · SOFTWARE</div>
+        <h3>Code becomes physical infrastructure</h3>
+        <p>
+          Software now controls vehicles, factories, spacecraft, medicine,
+          finance, communications, and everyday devices. A semantic software
+          error can therefore become a physical-world failure.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="laboratory">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <div class="section-label">04 · Interactive reconstruction</div>
+        <h2 class="section-title">Failure Laboratory</h2>
+      </div>
+
+      <p>
+        Adjust the simplified variables and observe how system behavior
+        changes. This is an educational model, not an engineering calculator.
+      </p>
+    </div>
+
+    <div class="lab-grid">
+
+      <div class="lab-panel">
+
+<h3 style="color:#d4af37 !important;">Bridge oscillation model</h3>
+
+<p style="color:#d4af37 !important; line-height:1.7;">
+  Imagine a flexible bridge deck exposed to periodic wind excitation.
+  Flexibility can increase response. Damping can reduce it.
+  Excitation can push the system toward larger oscillations.
+</p>
+
+<div class="control">
+  <label style="color:#d4af37 !important;">
+    Flexibility
+    <output id="flexValue" style="color:#d4af37 !important;">50</output>
+  </label>
+  <input id="flexibility" type="range" min="0" max="100" value="50">
+</div>
+
+<div class="control">
+  <label style="color:#d4af37 !important;">
+    Wind excitation
+    <output id="windValue" style="color:#d4af37 !important;">45</output>
+  </label>
+  <input id="wind" type="range" min="0" max="100" value="45">
+</div>
+
+<div class="control">
+  <label style="color:#d4af37 !important;">
+    Damping
+    <output id="dampValue" style="color:#d4af37 !important;">35</output>
+  </label>
+  <input id="damping" type="range" min="0" max="100" value="35">
+</div>
+
+<div class="lab-readout">
+  <div style="color:#d4af37 !important;">SIMPLIFIED INSTABILITY INDEX</div>
+
+  <div class="risk-number" id="riskText" style="color:#d4af37 !important;">
+    Moderate
+  </div>
+
+  <div class="progress">
+    <div class="progress-bar" id="riskBar"></div>
+  </div>
+
+  <p id="riskExplanation" style="color:#d4af37 !important;">
+    Some margin remains, but dynamic effects deserve attention.
+  </p>
+</div>
+
+      </div>
+
+
+      <div class="bridge-canvas">
+
+        <div class="section-label">
+          LIVE MODEL
+        </div>
+
+        <svg viewBox="0 0 900 440">
+
+          <line
+            x1="80"
+            y1="350"
+            x2="820"
+            y2="350"
+            stroke="#777"
+            stroke-width="5"
+          />
+
+          <line
+            x1="150"
+            y1="345"
+            x2="210"
+            y2="120"
+            stroke="#555"
+            stroke-width="7"
+          />
+
+          <line
+            x1="750"
+            y1="345"
+            x2="690"
+            y2="120"
+            stroke="#555"
+            stroke-width="7"
+          />
+
+          <line
+            x1="210"
+            y1="120"
+            x2="690"
+            y2="120"
+            stroke="#555"
+            stroke-width="7"
+          />
+
+          <path
+            id="bridgeDeck"
+            d="M210 220 Q330 220 450 220 Q570 220 690 220"
+            fill="none"
+            stroke="#b9342d"
+            stroke-width="19"
+          />
+
+          <g
+            stroke="#888"
+            stroke-width="2"
+            opacity=".9"
+          >
+            <line x1="230" y1="220" x2="230" y2="350"/>
+            <line x1="270" y1="220" x2="270" y2="350"/>
+            <line x1="310" y1="220" x2="310" y2="350"/>
+            <line x1="350" y1="220" x2="350" y2="350"/>
+            <line x1="390" y1="220" x2="390" y2="350"/>
+            <line x1="430" y1="220" x2="430" y2="350"/>
+            <line x1="470" y1="220" x2="470" y2="350"/>
+            <line x1="510" y1="220" x2="510" y2="350"/>
+            <line x1="550" y1="220" x2="550" y2="350"/>
+            <line x1="590" y1="220" x2="590" y2="350"/>
+            <line x1="630" y1="220" x2="630" y2="350"/>
+            <line x1="670" y1="220" x2="670" y2="350"/>
+          </g>
+
+          <text
+            x="450"
+            y="400"
+            text-anchor="middle"
+            font-family="Arial"
+            font-size="14"
+            fill="#555"
+          >
+            EDUCATIONAL DYNAMIC MODEL
+          </text>
+
+        </svg>
+
+        <div class="model-warning">
+          The visualization intentionally simplifies real structural dynamics.
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="anatomy">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <div class="section-label">05 · Failure analysis</div>
+        <h2 class="section-title">Anatomy of a mistake</h2>
+      </div>
+
+      <p>
+        A useful investigation separates what happened from why it happened.
+        It also avoids assuming that every complex failure has one single
+        “root cause.”
+      </p>
+    </div>
+
+    <div class="failure-anatomy">
+
+      <div class="anatomy-card">
+        <div class="num">01</div>
+        <h3>Result</h3>
+        <p>
+          Start with observable facts.
+          What actually happened?
+          What changed from the intended state?
+        </p>
+      </div>
+
+      <div class="anatomy-card">
+        <div class="num">02</div>
+        <h3>Conditions</h3>
+        <p>
+          Identify environment, timing, workload, inputs,
+          equipment condition, software state, and organizational context.
+        </p>
+      </div>
+
+      <div class="anatomy-card">
+        <div class="num">03</div>
+        <h3>Mechanism</h3>
+        <p>
+          Find the physical, logical, biological, or social mechanism
+          connecting conditions to the failed result.
+        </p>
+      </div>
+
+      <div class="anatomy-card">
+        <div class="num">04</div>
+        <h3>Barrier</h3>
+        <p>
+          Ask what should have prevented, detected, contained,
+          or mitigated the failure.
+        </p>
+      </div>
+
+      <div class="anatomy-card">
+        <div class="num">05</div>
+        <h3>Assumption</h3>
+        <p>
+          Locate what someone or something was implicitly assuming:
+          range, unit, behavior, timing, reliability, or human response.
+        </p>
+      </div>
+
+      <div class="anatomy-card">
+        <div class="num">06</div>
+        <h3>Feedback</h3>
+        <p>
+          Determine whether the system provided enough information
+          for people to recognize that reality was diverging from expectation.
+        </p>
+      </div>
+
+      <div class="anatomy-card">
+        <div class="num">07</div>
+        <h3>Counterfactual</h3>
+        <p>
+          Ask which realistic change would have interrupted the chain
+          before the harmful outcome.
+        </p>
+      </div>
+
+      <div class="anatomy-card">
+        <div class="num">08</div>
+        <h3>Lesson</h3>
+        <p>
+          Convert the analysis into a design principle,
+          test, checklist item, interface improvement, or new measurement.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<section class="section dark" id="case-studies">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <div class="section-label">06 · Deep archive</div>
+        <h2 class="section-title">Case-study room</h2>
+      </div>
+
+      <p>
+        These are deliberately simplified educational reconstructions.
+        Real incident investigations contain substantially more evidence,
+        disagreement, technical detail, and historical context.
+      </p>
+    </div>
+
+    <div class="case-study-list">
+
+      <article class="case-study">
+        <div class="section-label">Engineering</div>
+        <h3>Tacoma Narrows: strength was not the whole problem</h3>
+
+        <p>
+          A common simplified story says the bridge “wasn't strong enough.”
+          That misses the central educational point.
+          Structures do not merely experience loads; they respond to them.
+        </p>
+
+        <p>
+          Wind can interact with movement.
+          Movement changes airflow.
+          Changed airflow changes forces.
+          Those forces can increase movement.
+        </p>
+
+        <p>
+          The museum lesson is therefore:
+          whenever a system can move, vibrate, oscillate, rotate, resonate,
+          or otherwise respond dynamically, static calculations may answer
+          only part of the safety question.
+        </p>
+      </article>
+
+
+      <article class="case-study">
+        <div class="section-label">Software</div>
+        <h3>Mars Climate Orbiter: numbers have meanings</h3>
+
+        <p>
+          Software can exchange a perfectly valid numeric value while
+          disagreeing completely about what that value represents.
+        </p>
+
+        <p>
+          Ten meters and ten feet are both legitimate numbers.
+          Ten newton-seconds and ten pound-force-seconds are both legitimate
+          numbers. Their physical meanings are not interchangeable.
+        </p>
+
+        <p>
+          A strong software interface therefore defines semantics,
+          not merely syntax.
+        </p>
+      </article>
+
+
+      <article class="case-study">
+        <div class="section-label">Design</div>
+        <h3>New Coke: experiments have boundaries</h3>
+
+        <p>
+          A blind taste test can be a good experiment while still being
+          inadequate for a product strategy.
+        </p>
+
+        <p>
+          The experimental question might be:
+          “Which formulation is preferred when brand identity is hidden?”
+        </p>
+
+        <p>
+          The business question might instead be:
+          “What happens when millions of people lose the familiar product
+          they associate with a brand?”
+        </p>
+
+        <p>
+          Those are different experiments.
+        </p>
+      </article>
+
+
+      <article class="case-study">
+        <div class="section-label">Human factors</div>
+        <h3>The door: predictable user error is evidence</h3>
+
+        <p>
+          When a person pushes a pull door, the simplest explanation is often
+          “the person made a mistake.”
+        </p>
+
+        <p>
+          But if thousands of people make the same mistake, the repetition
+          is itself evidence about the design.
+        </p>
+
+        <p>
+          A good interface does not require perfect users.
+          It communicates intended action through form, position, resistance,
+          labeling, feedback, and consequence.
+        </p>
+      </article>
+
+    </div>
+
+  </div>
+</section>
+
+
+<section class="section" id="quiz">
+  <div class="container quiz">
+
+    <div class="section-label">07 · Museum examination</div>
+
+    <h2 class="section-title">
+      Can you diagnose the mistake?
+    </h2>
+
+    <div class="quiz-question">
+
+<h3 style="color:#d4af37 !important;">
+  01. A software module expects meters per second.
+  Another supplies kilometers per hour.
+  The values look plausible. What is the primary problem?
+</h3>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        The programmer wrote too many comments.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,true)">
+        The interface contract is ambiguous or violated.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        The processor is too fast.
+      </button>
+
+      <div class="quiz-explanation">
+        Units are part of the meaning of data.
+        The interface contract is ambiguous or violated.✓
+        A syntactically valid number can still be semantically wrong.
+      </div>
+
+    </div>
+
+
+    <div class="quiz-question">
+
+<h3 style="color:#d4af37 !important;">
+        02. A product wins a blind taste test but performs badly
+        after a major rebrand. What did the test most likely exclude?
+      </h3>
+
+      <button class="quiz-option" onclick="quizAnswer(this,true)">
+        Context, identity, expectation, habit, and brand meaning.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        The existence of gravity.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        Whether the testers could read.
+      </button>
+
+      <div class="quiz-explanation">
+        Context, identity, expectation, habit, and brand meaning.✓
+        The test deliberately isolated taste.
+        The real-world experience contained variables the experiment removed.
+      </div>
+
+    </div>
+
+
+    <div class="quiz-question">
+
+<h3 style="color:#d4af37 !important;">
+        03. A recurring safety anomaly has happened many times without
+        producing a catastrophe. What conclusion is justified?
+      </h3>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        The mechanism is proven safe.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,true)">
+        The system survived those exposures; that does not prove the mechanism is safe.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        Further investigation is unnecessary.
+      </button>
+
+      <div class="quiz-explanation">
+        The system survived those exposures; that does not prove the mechanism is safe.✓
+        Previous survival provides evidence about past outcomes,
+        not proof that a hazardous mechanism has become harmless.
+      </div>
+
+    </div>
+
+
+    <div class="quiz-question">
+
+<h3 style="color:#d4af37 !important;">
+        04. A person repeatedly pushes a door that should be pulled.
+        What should a designer investigate first?
+      </h3>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        Why users are careless.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        Why users did not memorize the door.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,true)">
+        What visual or physical cue communicates the intended action.
+      </button>
+
+      <div class="quiz-explanation">
+        What visual or physical cue communicates the intended action.✓
+        Repeated predictable user errors can reveal an interface
+        that communicates the wrong action.
+      </div>
+
+    </div>
+
+
+    <div class="quiz-question">
+
+<h3 style="color:#d4af37 !important;">
+        05. A component works perfectly in its original system and fails
+        after being reused in another. What should be investigated?
+      </h3>
+
+      <button class="quiz-option" onclick="quizAnswer(this,true)">
+        Whether assumptions about inputs, range, timing, environment, and behavior changed.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        Only whether the code has comments.
+      </button>
+
+      <button class="quiz-option" onclick="quizAnswer(this,false)">
+        Whether the new system has a newer logo.
+      </button>
+
+      <div class="quiz-explanation">
+        Whether assumptions about inputs, range, timing, environment, and behavior changed.✓
+        Reusing code transfers assumptions along with implementation.
+        A component is only reusable when its assumptions remain valid.
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<section class="section dark" id="glossary">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <div class="section-label">08 · Field guide</div>
+        <h2 class="section-title">Failure-analysis glossary</h2>
+      </div>
+
+      <p>
+        A small vocabulary for thinking clearly about complex failures.
+      </p>
+    </div>
+
+    <div class="glossary">
+
+      <div class="glossary-item">
+        <strong>Assumption</strong>
+        <p>
+          A belief treated as true for a design, model, plan, or decision.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Barrier</strong>
+        <p>
+          A mechanism intended to prevent, detect, contain, or mitigate
+          an unwanted event.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Drift</strong>
+        <p>
+          Gradual movement away from intended operating conditions.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Failure mode</strong>
+        <p>
+          A specific way a component or process can fail to perform its function.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Feedback</strong>
+        <p>
+          Information about actual performance that can alter future behavior.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Human factors</strong>
+        <p>
+          The study of interactions among people, technology, tasks,
+          environments, and organizations.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Latent condition</strong>
+        <p>
+          A hidden system condition that can exist before an incident
+          and increase failure likelihood or severity.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Near miss</strong>
+        <p>
+          An event that could have caused harm but did not.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Normalization</strong>
+        <p>
+          Gradual acceptance of abnormal conditions because previous
+          exposures did not produce visible consequences.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Redundancy</strong>
+        <p>
+          Additional independent capability intended to preserve function
+          when another element fails.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Safety margin</strong>
+        <p>
+          The distance between normal operation and an unacceptable limit.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Root cause</strong>
+        <p>
+          A phrase often used for deeper causal conditions, though complex
+          failures may have multiple interacting causes.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Interface</strong>
+        <p>
+          A boundary where components, people, teams, or systems exchange
+          information, energy, or responsibility.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Coupling</strong>
+        <p>
+          A relationship where behavior in one part of a system affects
+          behavior in another.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Validation</strong>
+        <p>
+          Evidence that a system meets the intended real-world need or behavior.
+        </p>
+      </div>
+
+      <div class="glossary-item">
+        <strong>Verification</strong>
+        <p>
+          Evidence that an implementation satisfies specified requirements.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container">
+
+    <div class="section-head">
+      <div>
+        <div class="section-label">09 · The museum method</div>
+        <h2 class="section-title">
+          Seven questions for any mistake.
+        </h2>
+      </div>
+    </div>
+
+    <div class="case-method">
+
+      <div class="method-card">
+        <h3>1. What happened?</h3>
+        <p>
+          Describe observations before assigning explanations.
+          Separate the event from the story about the event.
+        </p>
+      </div>
+
+      <div class="method-card">
+        <h3>2. What was expected?</h3>
+        <p>
+          Define the intended behavior.
+          A failure can only be identified relative to some expectation.
+        </p>
+      </div>
+
+      <div class="method-card">
+        <h3>3. What changed?</h3>
+        <p>
+          Identify differences in input, environment, timing, equipment,
+          software, workload, procedure, or organizational context.
+        </p>
+      </div>
+
+      <div class="method-card">
+        <h3>4. What mechanism connects them?</h3>
+        <p>
+          Build the causal chain.
+          Do not stop at “X happened before Y.”
+          Ask how X physically or logically produced Y.
+        </p>
+      </div>
+
+      <div class="method-card">
+        <h3>5. What should have detected it?</h3>
+        <p>
+          Find alarms, tests, inspections, reviews, measurements,
+          human observations, or missing signals.
+        </p>
+      </div>
+
+      <div class="method-card">
+        <h3>6. Why did the barriers fail?</h3>
+        <p>
+          Investigate assumptions, interfaces, workload, incentives,
+          training, environment, maintenance, design, and communication.
+        </p>
+      </div>
+
+      <div class="method-card">
+        <h3>7. What would make recurrence harder?</h3>
+        <p>
+          Prefer changes that improve the system itself instead of depending
+          exclusively on people remembering to behave perfectly.
+        </p>
+      </div>
+
+      <div class="method-card">
+        <h3>The museum rule</h3>
+        <p>
+          Never end an investigation with “someone should have been more careful.”
+          Ask what made the unsafe action understandable, possible,
+          invisible, or difficult to recover from.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+
+<footer class="footer">
+  <div class="container footer-grid">
+
+    <div>
+      <div class="section-label">Museum of Human Mistakes</div>
+
+      <h2>
+        Make failure<br>
+        legible.
+      </h2>
+
+      <p>
+        An educational standalone prototype about learning from failed
+        engineering, scientific, design, software, and everyday systems.
+      </p>
+    </div>
+
+    <div>
+      <p>
+        <strong>Design principle</strong>
+      </p>
+
+      <p>
+        Do not romanticize failure.
+        Do not hide it either.
+        A mistake becomes useful when observations can be separated from
+        assumptions, mechanisms can be reconstructed, and future decisions
+        can use the resulting evidence.
+      </p>
+
+      <p>
+        This page is intentionally self-contained:
+        no external JavaScript libraries, no external fonts,
+        no tracking, no API keys.
+      </p>
+
+      <small>
+        MUSEUM ARCHIVE · EDUCATIONAL USE · STANDALONE HTML
+      </small>
+    </div>
+
+  </div>
+</footer>
+
+
+<button
+  class="back-to-top"
+  id="backTop"
+  onclick="window.scrollTo({top:0,behavior:'smooth'})"
+>
+  ↑
+</button>
+
+
+<div class="modal" id="caseModal">
+
+  <div class="modal-box">
+
+    <button
+      class="modal-close"
+      onclick="closeCase()"
+      aria-label="Close exhibit"
+    >
+      ×
+    </button>
+
+    <div class="section-label" id="modalLabel"></div>
+
+    <h2 id="modalTitle"></h2>
+
+    <div id="modalBody"></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   EXHIBIT DATABASE
+   ========================================================= */
+
+const cases = {
+
+  tacoma:{
+    label:"EXHIBIT 001 · STRUCTURAL DYNAMICS",
+    title:"Tacoma Narrows Bridge",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            On November 7, 1940, the Tacoma Narrows Bridge in Washington
+            developed increasingly dramatic motion under wind and eventually
+            collapsed.
+          </p>
+
+          <p>
+            The event became one of the most famous examples used in teaching
+            structural dynamics and aerodynamic instability.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>First wrong question</h3>
+
+          <p>
+            “Was the bridge strong enough?”
+          </p>
+
+          <p>
+            Strength was important, but that question alone treats the bridge
+            as though wind simply applies a static force.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Reconstruction</h3>
+
+          <p>
+            The deck was relatively flexible. Wind interacted with the
+            structure's movement, and the movement changed the aerodynamic
+            forces acting on the bridge.
+          </p>
+
+          <p>
+            That creates feedback:
+            motion changes forces, and forces change motion.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Hidden variable</h3>
+
+          <p>
+            <strong>Dynamic behavior.</strong>
+          </p>
+
+          <p>
+            A system can satisfy static load requirements and still possess
+            an unstable or poorly understood dynamic response.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="reconstruction">
+        <h3>Reconstruction question</h3>
+
+        <p>
+          If a bridge passes a static load test, what additional evidence
+          would you want before declaring it safe in a dynamic environment?
+        </p>
+      </div>
+
+      <div class="counterfactual">
+        <h3>Counterfactual</h3>
+
+        <p>
+          Better understanding of aerodynamic behavior, dynamic response,
+          modeling, and wind testing could change the design before full-scale
+          failure.
+        </p>
+      </div>
+    `
+  },
+
+
+  challenger:{
+    label:"EXHIBIT 002 · ENGINEERING / SYSTEMS",
+    title:"Challenger launch decision",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            Space Shuttle Challenger was lost shortly after launch on
+            January 28, 1986.
+          </p>
+
+          <p>
+            The investigation identified failure of a seal in the right
+            solid rocket booster as a physical contributor.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Conditions</h3>
+
+          <p>
+            Unusually cold conditions affected the operating environment
+            of the booster seals.
+          </p>
+
+          <p>
+            Earlier evidence had also shown seal erosion and other anomalies.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>System problem</h3>
+
+          <p>
+            A technical problem can become a systems problem when evidence
+            must travel through an organization before it becomes a decision.
+          </p>
+
+          <p>
+            Data does not automatically determine action.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            Repeated survival does not prove that a recurring anomaly is safe.
+          </p>
+
+          <p>
+            An anomaly can instead be evidence that safety margin is being
+            consumed.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="counterfactual">
+        <h3>Counterfactual</h3>
+
+        <p>
+          Stronger decision rules around anomalous performance and operating
+          conditions can prevent “nothing bad happened last time” from
+          becoming a safety argument.
+        </p>
+      </div>
+    `
+  },
+
+
+  mco:{
+    label:"EXHIBIT 003 · SOFTWARE / SPACE",
+    title:"Mars Climate Orbiter",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            Mars Climate Orbiter was lost in 1999 after a mismatch in units
+            between software components affected navigation calculations.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>The strange part</h3>
+
+          <p>
+            The numbers themselves could look completely reasonable.
+          </p>
+
+          <p>
+            The problem was what the numbers meant.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Interface failure</h3>
+
+          <p>
+            One component supplied quantities using one unit convention
+            while another expected a different convention.
+          </p>
+
+          <p>
+            The software boundary therefore lacked a sufficiently enforced
+            semantic contract.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            Units are not decoration.
+            Units are part of data.
+          </p>
+
+          <p>
+            Interfaces should make semantic assumptions explicit whenever
+            practical.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="reconstruction">
+        <h3>Think about it</h3>
+
+        <p>
+          If two programs both accept the number 10, what else must they
+          agree on before that number can safely be exchanged?
+        </p>
+
+        <p>
+          Unit, sign convention, scale, timestamp, coordinate system,
+          precision, valid range, and meaning are all possible answers.
+        </p>
+      </div>
+    `
+  },
+
+
+  newcoke:{
+    label:"EXHIBIT 004 · DESIGN / EXPERIMENTS",
+    title:"New Coke",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            In 1985 Coca-Cola introduced a reformulated product after
+            research indicated that many consumers preferred its taste
+            in blind testing.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>The experiment</h3>
+
+          <p>
+            Blind testing intentionally removed brand identity, packaging,
+            expectations, and much of the context surrounding consumption.
+          </p>
+
+          <p>
+            That made the experiment useful for a narrow question.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>The market</h3>
+
+          <p>
+            Real-world choice contained many variables:
+            habit, identity, memory, availability, expectation,
+            and attachment to the existing product.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            An experiment is not wrong because it excludes variables.
+            It becomes misleading when a narrow result is treated as if it
+            answered a broader question.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="counterfactual">
+        <h3>Better question</h3>
+
+        <p>
+          Instead of asking only “Which taste wins?”, ask:
+          “What happens if the existing product disappears?”
+        </p>
+      </div>
+    `
+  },
+
+
+  phlogiston:{
+    label:"EXHIBIT 005 · SCIENCE",
+    title:"Phlogiston theory",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed model</h3>
+
+          <p>
+            Phlogiston theory attempted to explain combustion and related
+            chemical observations.
+          </p>
+
+          <p>
+            It became an influential explanatory framework before
+            quantitative chemistry increasingly exposed problems with it.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Important distinction</h3>
+
+          <p>
+            A historical scientific theory should not be understood merely
+            as “people being stupid.”
+          </p>
+
+          <p>
+            Models can organize observations effectively for a period and
+            later become increasingly strained by better measurements.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Measurement changes the game</h3>
+
+          <p>
+            Quantitative measurements involving mass and gases made
+            oxygen-based chemical explanations increasingly powerful.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            Science requires mechanisms that allow explanations to be revised
+            when sufficiently strong evidence conflicts with them.
+          </p>
+        </div>
+
+      </div>
+    `
+  },
+
+
+  ulcer:{
+    label:"EXHIBIT 006 · SCIENCE / MEDICINE",
+    title:"Ulcers and H. pylori",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Old explanation</h3>
+
+          <p>
+            For much of the twentieth century, explanations of peptic ulcers
+            emphasized acid, lifestyle, stress, and related factors.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>New evidence</h3>
+
+          <p>
+            Barry Marshall and Robin Warren's work helped establish the role
+            of Helicobacter pylori in many peptic ulcers.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>The deeper lesson</h3>
+
+          <p>
+            A familiar causal model can become embedded in professional
+            practice, making contradictory observations harder to integrate.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Scientific method</h3>
+
+          <p>
+            Stronger explanations accumulate independent evidence:
+            observation, cultivation, characterization, association,
+            intervention, and reproducibility.
+          </p>
+        </div>
+
+      </div>
+    `
+  },
+
+
+  ariane:{
+    label:"EXHIBIT 007 · SOFTWARE",
+    title:"Ariane 5 Flight 501",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            Ariane 5 Flight 501 was lost shortly after launch in 1996.
+            A software exception associated with a numeric conversion
+            contributed to failure of the guidance system.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Why reuse mattered</h3>
+
+          <p>
+            The software had been inherited from an earlier Ariane system.
+          </p>
+
+          <p>
+            A calculation that was acceptable within the earlier system's
+            operating envelope was not necessarily safe under the new one.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Hidden assumption</h3>
+
+          <p>
+            The software assumed something about the range of a variable.
+            That assumption was not valid in the new environment.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            Reusing implementation also reuses assumptions.
+            Those assumptions must be revalidated.
+          </p>
+        </div>
+
+      </div>
+    `
+  },
+
+
+  therac:{
+    label:"EXHIBIT 008 · SOFTWARE / SAFETY",
+    title:"Therac-25",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            Therac-25 radiation therapy machines were involved in multiple
+            radiation overdoses during the 1980s.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Software contribution</h3>
+
+          <p>
+            Investigations identified software issues including race
+            conditions and weaknesses in the safety architecture.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Human-machine boundary</h3>
+
+          <p>
+            Operators encountered unusual machine behavior and error messages.
+            Safety-critical systems should not require operators to perfectly
+            interpret ambiguous states while also relying on them as the
+            final safety barrier.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            Safety-critical physical hazards require independent protections.
+            Software should not be the only thing standing between a bug
+            and a dangerous physical state.
+          </p>
+        </div>
+
+      </div>
+    `
+  },
+
+
+  hyatt:{
+    label:"EXHIBIT 009 · ENGINEERING",
+    title:"Hyatt Regency walkways",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            Suspended walkways at the Hyatt Regency hotel in Kansas City
+            collapsed in 1981 during a crowded event, causing catastrophic
+            loss of life and injuries.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Design change</h3>
+
+          <p>
+            A connection detail was changed during the design process.
+            The revision altered how load was transferred through the
+            connection.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Verification</h3>
+
+          <p>
+            A small drawing revision can represent a major engineering
+            change if it changes a load path.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            Engineering verification must follow the actual configuration,
+            not merely the original design concept.
+          </p>
+        </div>
+
+      </div>
+    `
+  },
+
+
+  bhopal:{
+    label:"EXHIBIT 010 · PROCESS SAFETY",
+    title:"Bhopal gas disaster",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            In December 1984 a catastrophic toxic gas release occurred
+            at a pesticide plant in Bhopal, India.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>System reconstruction</h3>
+
+          <p>
+            The disaster is studied through interacting equipment conditions,
+            maintenance, operating practices, safety systems, organizational
+            decisions, and emergency preparedness.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Why one-cause stories fail</h3>
+
+          <p>
+            High-hazard systems often depend on multiple layers of defense.
+            Weakening several layers can allow an abnormal condition to
+            progress much farther than any individual component failure
+            would suggest.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            Safety must remain meaningful under degraded conditions,
+            not merely under the nominal design case.
+          </p>
+        </div>
+
+      </div>
+    `
+  },
+
+
+  door:{
+    label:"EXHIBIT 011 · EVERYDAY DESIGN",
+    title:"The ambiguous door",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>Failed result</h3>
+
+          <p>
+            You approach a door, see a horizontal handle, pull it,
+            and nothing happens.
+          </p>
+
+          <p>
+            You push instead.
+            The door opens.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Reconstruction</h3>
+
+          <p>
+            Humans infer possible actions from physical and visual cues.
+            If the cue suggests the wrong action, the user's error may be
+            predictable rather than random.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Affordance</h3>
+
+          <p>
+            Shape, position, resistance, labeling, and visual structure can
+            communicate how an object is meant to be used.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            When many people repeatedly make the same mistake,
+            investigate the interface before blaming the users.
+          </p>
+        </div>
+
+      </div>
+    `
+  },
+
+
+  checklist:{
+    label:"EXHIBIT 012 · HUMAN FACTORS",
+    title:"The checklist",
+    body:`
+
+      <div class="modal-grid">
+
+        <div class="modal-section">
+          <h3>The apparent paradox</h3>
+
+          <p>
+            Experts know how to perform routine tasks.
+            So why would experts need checklists?
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>The human limitation</h3>
+
+          <p>
+            Expertise does not eliminate interruption, memory omission,
+            expectation, fatigue, workload, or automatic behavior.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Good checklist design</h3>
+
+          <p>
+            Useful checklists are short, specific, timed to decision points,
+            and focused on items where omission has meaningful consequences.
+          </p>
+        </div>
+
+        <div class="modal-section">
+          <h3>Lesson</h3>
+
+          <p>
+            Design systems around real human capabilities rather than an
+            imaginary perfect operator.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="counterfactual">
+        <h3>Museum question</h3>
+
+        <p>
+          What mistakes in your own daily environment happen so frequently
+          that you have stopped noticing them?
+        </p>
+      </div>
+    `
+  }
+
+};
+
+
+/* =========================================================
+   MODAL SYSTEM
+   ========================================================= */
+
+function openCase(key){
+
+  const data = cases[key];
+
+  if(!data) return;
+
+  document.getElementById("modalLabel").textContent = data.label;
+  document.getElementById("modalTitle").textContent = data.title;
+  document.getElementById("modalBody").innerHTML = data.body;
+
+  document.getElementById("caseModal").classList.add("open");
+
+  document.body.style.overflow = "hidden";
+}
+
+function closeCase(){
+
+  document.getElementById("caseModal").classList.remove("open");
+
+  document.body.style.overflow = "";
+}
+
+document.getElementById("caseModal").addEventListener("click",function(e){
+
+  if(e.target === this){
+    closeCase();
+  }
+
+});
+
+document.addEventListener("keydown",function(e){
+
+  if(e.key === "Escape"){
+    closeCase();
+  }
+
+});
+
+
+/* =========================================================
+   FILTERING
+   ========================================================= */
+
+let activeFilter = "all";
+
+document.querySelectorAll(".filter").forEach(button => {
+
+  button.addEventListener("click",function(){
+
+    document.querySelectorAll(".filter").forEach(b=>{
+      b.classList.remove("active");
+    });
+
+    this.classList.add("active");
+
+    activeFilter = this.dataset.filter;
+
+    filterExhibits();
+
+  });
+
+});
+
+
+function filterExhibits(){
+
+  const query =
+    document.getElementById("searchInput")
+    .value
+    .trim()
+    .toLowerCase();
+
+  const cards =
+    document.querySelectorAll(".exhibit-card");
+
+  let visible = 0;
+
+  cards.forEach(card => {
+
+    const categories =
+      card.dataset.category.toLowerCase();
+
+    const search =
+      card.dataset.search.toLowerCase();
+
+    const text =
+      card.innerText.toLowerCase();
+
+    const filterMatch =
+      activeFilter === "all" ||
+      categories.includes(activeFilter);
+
+    const searchMatch =
+      !query ||
+      search.includes(query) ||
+      text.includes(query);
+
+    const shouldShow =
+      filterMatch && searchMatch;
+
+    card.classList.toggle("hide",!shouldShow);
+
+    if(shouldShow){
+      visible++;
+    }
+
+  });
+
+  document.getElementById("noResults").style.display =
+    visible === 0 ? "block" : "none";
+}
+
+
+document
+  .getElementById("searchInput")
+  .addEventListener("input",filterExhibits);
+
+
+/* =========================================================
+   FAILURE LAB
+   ========================================================= */
+
+const flexibility =
+  document.getElementById("flexibility");
+
+const wind =
+  document.getElementById("wind");
+
+const damping =
+  document.getElementById("damping");
+
+const flexValue =
+  document.getElementById("flexValue");
+
+const windValue =
+  document.getElementById("windValue");
+
+const dampValue =
+  document.getElementById("dampValue");
+
+const riskText =
+  document.getElementById("riskText");
+
+const riskBar =
+  document.getElementById("riskBar");
+
+const riskExplanation =
+  document.getElementById("riskExplanation");
+
+const bridgeDeck =
+  document.getElementById("bridgeDeck");
+
+
+function updateLab(){
+
+  const f = Number(flexibility.value);
+  const w = Number(wind.value);
+  const d = Number(damping.value);
+
+  flexValue.textContent = f;
+  windValue.textContent = w;
+  dampValue.textContent = d;
+
+  let risk =
+    (f * .58) +
+    (w * .86) -
+    (d * .67);
+
+  risk = Math.max(0,Math.min(100,risk));
+
+  riskBar.style.width = risk + "%";
+
+  if(risk < 25){
+
+    riskText.textContent = "Low";
+
+    riskExplanation.textContent =
+      "The simplified model shows relatively low response under these assumptions.";
+
+  }else if(risk < 55){
+
+    riskText.textContent = "Moderate";
+
+    riskExplanation.textContent =
+      "Some margin remains, but dynamic behavior deserves investigation.";
+
+  }else if(risk < 78){
+
+    riskText.textContent = "High";
+
+    riskExplanation.textContent =
+      "The simplified response is becoming large. Flexibility and excitation are consuming margin.";
+
+  }else{
+
+    riskText.textContent = "Critical";
+
+    riskExplanation.textContent =
+      "The simplified model predicts severe response. Real engineering would require validated dynamic analysis.";
+
+  }
+
+  animateBridge(risk);
+
+}
+
+
+function animateBridge(risk){
+
+  const amplitude =
+    Math.min(110,5 + risk * 1.05);
+
+  const time =
+    Date.now() / 270;
+
+  const center =
+    220 +
+    Math.sin(time) * amplitude * .18;
+
+  const left =
+    220 +
+    Math.sin(time + 1.3) * amplitude;
+
+  const right =
+    220 +
+    Math.sin(time + 2.1) * amplitude;
+
+  const middle =
+    220 +
+    Math.sin(time + .7) * amplitude * 1.35;
+
+  bridgeDeck.setAttribute(
+    "d",
+    `M210 ${left}
+     Q330 ${middle} 450 ${center}
+     Q570 ${middle} 690 ${right}`
+  );
+
+}
+
+
+[flexibility,wind,damping].forEach(input=>{
+
+  input.addEventListener("input",updateLab);
+
+});
+
+
+function labAnimation(){
+
+  const f = Number(flexibility.value);
+  const w = Number(wind.value);
+  const d = Number(damping.value);
+
+  const risk =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        f*.58+w*.86-d*.67
+      )
+    );
+
+  animateBridge(risk);
+
+  requestAnimationFrame(labAnimation);
+
+}
+
+updateLab();
+labAnimation();
+
+
+/* =========================================================
+   QUIZ
+   ========================================================= */
+
+function quizAnswer(button,correct){
+
+  const question =
+    button.closest(".quiz-question");
+
+  const buttons =
+    question.querySelectorAll(".quiz-option");
+
+  buttons.forEach(b=>{
+    b.disabled = true;
+  });
+
+  if(correct){
+    button.classList.add("correct");
+  }else{
+    button.classList.add("incorrect");
+  }
+
+  const explanation =
+    question.querySelector(".quiz-explanation");
+
+  explanation.classList.add("show");
+
+}
+
+
+/* =========================================================
+   BACK TO TOP
+   ========================================================= */
+
+const backTop =
+  document.getElementById("backTop");
+
+window.addEventListener("scroll",()=>{
+
+  if(window.scrollY > 700){
+    backTop.classList.add("visible");
+  }else{
+    backTop.classList.remove("visible");
+  }
+
+});
+
+
+/* =========================================================
+   KEYBOARD ACCESSIBILITY
+   ========================================================= */
+
+document.addEventListener("keydown",function(e){
+
+  if(
+    e.key === "/" &&
+    document.activeElement.tagName !== "INPUT"
+  ){
+
+    e.preventDefault();
+
+    document
+      .getElementById("searchInput")
+      .focus();
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>

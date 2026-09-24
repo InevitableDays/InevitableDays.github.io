@@ -1,0 +1,2990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d1117">
+
+<title>Keep — Personal Web Inbox</title>
+
+<style>
+:root {
+  --bg: #0b0f14;
+  --surface: rgba(17, 23, 31, .88);
+  --surface2: rgba(24, 31, 41, .94);
+  --surface3: #202936;
+  --border: rgba(255,255,255,.09);
+  --border2: rgba(255,255,255,.14);
+  --text: #f3f6fa;
+  --muted: #8b96a5;
+  --muted2: #667281;
+  --accent: #8ee6b0;
+  --accent-dark: #163d2b;
+  --orange: #ffb86b;
+  --red: #ff7e86;
+  --blue: #82b5ff;
+  --purple: #b497ff;
+  --shadow: 0 25px 80px rgba(0,0,0,.38);
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background: var(--bg);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+/* BACKGROUND */
+
+body::before {
+  content: "";
+  position: fixed;
+  z-index: -3;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(7,11,15,.78),
+      rgba(7,11,15,.93)
+    ),
+    url("https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=2400&q=85");
+
+  background-size: cover;
+  background-position: center;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 20% 0%,
+      rgba(142,230,176,.10),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 100% 80%,
+      rgba(130,181,255,.08),
+      transparent 35%
+    );
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  outline: none;
+}
+
+::selection {
+  background: var(--accent);
+  color: #09110c;
+}
+
+/* HEADER */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  height: 72px;
+
+  background: rgba(8,12,17,.78);
+  backdrop-filter: blur(22px);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  width: min(1400px, calc(100% - 40px));
+  height: 100%;
+  margin: auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.brand-icon {
+  width: 35px;
+  height: 35px;
+
+  border-radius: 11px;
+
+  background: var(--accent);
+  color: #102017;
+
+  display: grid;
+  place-items: center;
+
+  font-weight: 900;
+  font-size: 17px;
+
+  box-shadow:
+    0 0 30px rgba(142,230,176,.14);
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -.035em;
+}
+
+.brand-sub {
+  font-size: 9px;
+  color: var(--muted2);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.header-stat {
+  color: var(--muted);
+  font-size: 11px;
+  margin-right: 7px;
+}
+
+.header-button {
+  border: 1px solid var(--border2);
+  background: rgba(255,255,255,.035);
+  color: var(--text);
+
+  padding: 9px 13px;
+  border-radius: 10px;
+
+  font-size: 11px;
+}
+
+.header-button:hover {
+  background: rgba(255,255,255,.07);
+}
+
+/* LAYOUT */
+
+.container {
+  width: min(1400px, calc(100% - 40px));
+  margin: auto;
+}
+
+.hero {
+  padding: 64px 0 42px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+
+  gap: 40px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .19em;
+  margin-bottom: 13px;
+}
+
+h1 {
+  margin: 0;
+
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: .95;
+
+  letter-spacing: -.065em;
+  max-width: 720px;
+}
+
+h1 span {
+  color: var(--muted);
+}
+
+.hero-copy {
+  color: var(--muted);
+  max-width: 590px;
+
+  line-height: 1.7;
+  font-size: 14px;
+
+  margin: 20px 0 0;
+}
+
+.quick-add {
+  width: 360px;
+  flex: 0 0 360px;
+
+  background: rgba(16,22,29,.86);
+  border: 1px solid var(--border2);
+
+  border-radius: var(--radius);
+  padding: 17px;
+
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.quick-add-title {
+  font-size: 12px;
+  font-weight: 750;
+  margin-bottom: 10px;
+}
+
+.url-row {
+  display: flex;
+  gap: 7px;
+}
+
+.url-row input {
+  min-width: 0;
+  flex: 1;
+
+  background: #0b1016;
+  color: var(--text);
+
+  border: 1px solid var(--border);
+  border-radius: 11px;
+
+  padding: 11px 12px;
+  font-size: 12px;
+}
+
+.url-row input:focus {
+  border-color: rgba(142,230,176,.5);
+}
+
+.add-main {
+  border: 0;
+  border-radius: 11px;
+
+  background: var(--accent);
+  color: #0c1710;
+
+  padding: 0 16px;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.quick-hint {
+  color: var(--muted2);
+  font-size: 9px;
+  margin-top: 9px;
+}
+
+/* MAIN GRID */
+
+.main {
+  display: grid;
+  grid-template-columns: 210px 1fr 245px;
+  gap: 18px;
+
+  padding-bottom: 80px;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  position: sticky;
+  top: 92px;
+  height: max-content;
+}
+
+.side-group {
+  margin-bottom: 25px;
+}
+
+.side-heading {
+  color: #586371;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  text-transform: uppercase;
+  letter-spacing: .16em;
+
+  margin-bottom: 8px;
+  padding-left: 9px;
+}
+
+.side-button {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--muted);
+
+  padding: 10px 9px;
+  border-radius: 10px;
+
+  font-size: 12px;
+  text-align: left;
+}
+
+.side-button:hover,
+.side-button.active {
+  background: rgba(255,255,255,.055);
+  color: var(--text);
+}
+
+.side-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.side-count {
+  color: var(--muted2);
+  font-size: 10px;
+}
+
+.category-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.cat-work {
+  background: var(--blue);
+}
+
+.cat-learn {
+  background: var(--purple);
+}
+
+.cat-ideas {
+  background: var(--orange);
+}
+
+.cat-read {
+  background: var(--accent);
+}
+
+.cat-watch {
+  background: var(--red);
+}
+
+.side-note {
+  color: #59626d;
+  font-size: 10px;
+  line-height: 1.6;
+
+  border-top: 1px solid var(--border);
+  padding: 18px 9px 0;
+}
+
+/* CONTENT */
+
+.content {
+  min-width: 0;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.search {
+  flex: 1;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 13px;
+  top: 10px;
+  color: var(--muted2);
+}
+
+.search input {
+  width: 100%;
+
+  background: rgba(13,18,24,.86);
+  border: 1px solid var(--border);
+
+  color: var(--text);
+
+  border-radius: 11px;
+
+  padding: 10px 12px 10px 34px;
+
+  font-size: 12px;
+}
+
+.search input:focus {
+  border-color: var(--border2);
+}
+
+.sort {
+  background: rgba(13,18,24,.86);
+  border: 1px solid var(--border);
+  color: var(--muted);
+
+  border-radius: 11px;
+
+  padding: 0 10px;
+
+  font-size: 10px;
+}
+
+.section-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin: 23px 0 10px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.section-info {
+  color: var(--muted2);
+  font-size: 10px;
+}
+
+/* ITEMS */
+
+.items {
+  display: grid;
+  gap: 9px;
+}
+
+.item {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 13px;
+  align-items: center;
+
+  padding: 13px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+
+  border-radius: 15px;
+
+  backdrop-filter: blur(16px);
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease;
+}
+
+.item:hover {
+  transform: translateY(-2px);
+  border-color: var(--border2);
+  background: var(--surface2);
+}
+
+.item.completed {
+  opacity: .55;
+}
+
+.item.completed .item-title {
+  text-decoration: line-through;
+}
+
+.item-icon {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 12px;
+
+  display: grid;
+  place-items: center;
+
+  background: #18212b;
+  border: 1px solid var(--border);
+
+  font-size: 19px;
+}
+
+.item-info {
+  min-width: 0;
+}
+
+.item-title {
+  font-size: 13px;
+  font-weight: 720;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-url {
+  color: var(--blue);
+
+  font-size: 9px;
+
+  margin-top: 4px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-note {
+  color: var(--muted);
+
+  font-size: 10px;
+  line-height: 1.45;
+
+  margin-top: 5px;
+
+  max-width: 600px;
+}
+
+.item-meta {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-top: 7px;
+}
+
+.tag {
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 99px;
+
+  padding: 3px 6px;
+
+  font-size: 8px;
+}
+
+.priority {
+  font-size: 8px;
+  padding: 3px 6px;
+  border-radius: 99px;
+}
+
+.priority-high {
+  color: #ff9b9f;
+  background: rgba(255,126,134,.08);
+}
+
+.priority-medium {
+  color: #ffc47c;
+  background: rgba(255,184,107,.08);
+}
+
+.priority-low {
+  color: #91dcae;
+  background: rgba(142,230,176,.07);
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.action {
+  width: 30px;
+  height: 30px;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  background: rgba(255,255,255,.025);
+  color: var(--muted);
+
+  font-size: 12px;
+}
+
+.action:hover {
+  color: var(--text);
+  background: rgba(255,255,255,.07);
+}
+
+.action.done:hover {
+  color: var(--accent);
+}
+
+.action.delete:hover {
+  color: var(--red);
+}
+
+/* RIGHT PANEL */
+
+.panel {
+  position: sticky;
+  top: 92px;
+
+  height: max-content;
+
+  background: rgba(14,19,25,.86);
+  border: 1px solid var(--border);
+
+  border-radius: 17px;
+
+  padding: 17px;
+
+  backdrop-filter: blur(18px);
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 750;
+  margin-bottom: 17px;
+}
+
+.stat {
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.stat-number {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+
+.progress {
+  height: 5px;
+
+  background: #202832;
+  border-radius: 99px;
+
+  overflow: hidden;
+  margin-top: 7px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+
+  background: var(--accent);
+  border-radius: inherit;
+
+  transition: width .3s ease;
+}
+
+.panel-label {
+  color: var(--muted2);
+
+  text-transform: uppercase;
+  letter-spacing: .13em;
+
+  font-size: 8px;
+
+  margin: 20px 0 9px;
+}
+
+.tag-cloud {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.cloud-tag {
+  border: 1px solid var(--border);
+  background: transparent;
+
+  color: var(--muted);
+
+  border-radius: 8px;
+
+  padding: 6px 7px;
+
+  font-size: 9px;
+}
+
+.cloud-tag:hover {
+  color: var(--text);
+  border-color: var(--border2);
+}
+
+/* EMPTY */
+
+.empty {
+  text-align: center;
+
+  padding: 50px 20px;
+
+  border: 1px dashed var(--border2);
+  border-radius: 16px;
+
+  background: rgba(13,18,24,.5);
+}
+
+.empty-icon {
+  font-size: 30px;
+  opacity: .6;
+  margin-bottom: 12px;
+}
+
+.empty-title {
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.empty-text {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 7px;
+}
+
+/* MODAL */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+
+  display: none;
+  place-items: center;
+
+  padding: 20px;
+
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(10px);
+}
+
+.overlay.open {
+  display: grid;
+}
+
+.modal {
+  width: min(600px, 100%);
+
+  background: #11171f;
+  border: 1px solid var(--border2);
+
+  border-radius: 20px;
+
+  box-shadow: 0 40px 100px rgba(0,0,0,.6);
+
+  overflow: hidden;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 18px 19px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.close {
+  width: 30px;
+  height: 30px;
+
+  border-radius: 9px;
+
+  background: transparent;
+  border: 1px solid var(--border);
+
+  color: var(--muted);
+}
+
+.modal-body {
+  padding: 19px;
+}
+
+.form {
+  display: grid;
+  gap: 13px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.field label {
+  display: block;
+
+  color: var(--muted2);
+
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+
+  margin-bottom: 6px;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+
+  background: #0b1016;
+  border: 1px solid var(--border);
+
+  color: var(--text);
+
+  border-radius: 10px;
+
+  padding: 11px;
+
+  font-size: 11px;
+}
+
+.field textarea {
+  min-height: 85px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: rgba(142,230,176,.5);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+
+  margin-top: 5px;
+}
+
+.cancel {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+
+  border-radius: 10px;
+  padding: 10px 14px;
+
+  font-size: 11px;
+}
+
+.submit {
+  border: 0;
+  background: var(--accent);
+  color: #0c1710;
+
+  border-radius: 10px;
+  padding: 10px 15px;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* TOAST */
+
+.toast {
+  position: fixed;
+  z-index: 300;
+
+  left: 50%;
+  bottom: 25px;
+
+  transform:
+    translate(-50%, 20px);
+
+  background: #edf8f1;
+  color: #102017;
+
+  padding: 10px 15px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 750;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: .25s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* FOOTER */
+
+footer {
+  border-top: 1px solid var(--border);
+
+  padding: 22px 0;
+
+  color: var(--muted2);
+  font-size: 9px;
+}
+
+.footer-inner {
+  width: min(1400px, calc(100% - 40px));
+  margin: auto;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 1100px) {
+
+  .main {
+    grid-template-columns: 190px 1fr;
+  }
+
+  .panel {
+    display: none;
+  }
+
+  .quick-add {
+    width: 320px;
+    flex-basis: 320px;
+  }
+}
+
+@media(max-width: 780px) {
+
+  .hero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .quick-add {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .main {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+
+    display: flex;
+    gap: 10px;
+
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+
+  .side-group {
+    min-width: 180px;
+    margin: 0;
+  }
+
+  .side-note {
+    display: none;
+  }
+
+  .header-stat {
+    display: none;
+  }
+}
+
+@media(max-width: 520px) {
+
+  .container,
+  .header-inner,
+  .footer-inner {
+    width: calc(100% - 24px);
+  }
+
+  .hero {
+    padding: 45px 0 30px;
+  }
+
+  h1 {
+    font-size: 48px;
+  }
+
+  .url-row {
+    flex-direction: column;
+  }
+
+  .add-main {
+    height: 40px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .sort {
+    height: 38px;
+  }
+
+  .item {
+    grid-template-columns: 40px 1fr;
+  }
+
+  .item-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .item-actions {
+    grid-column: 2;
+  }
+
+  .item-title {
+    white-space: normal;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    gap: 7px;
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+<!-- HEADER -->
+
+<header>
+  <div class="header-inner">
+
+    <div class="brand">
+
+      <div class="brand-icon">
+        K
+      </div>
+
+      <div>
+        <div class="brand-name">
+          Keep
+        </div>
+
+        <div class="brand-sub">
+          Personal web inbox
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="header-actions">
+
+      <div class="header-stat">
+        <span id="headerCount">0</span> things saved
+      </div>
+
+      <button
+        class="header-button"
+        onclick="openModal()"
+      >
+        + Add something
+      </button>
+
+    </div>
+
+  </div>
+</header>
+
+
+<!-- HERO -->
+
+<section class="container hero">
+
+  <div>
+
+    <div class="eyebrow">
+      Your second brain
+    </div>
+
+    <h1>
+      Stop losing<br>
+      <span>the good stuff.</span>
+    </h1>
+
+    <p class="hero-copy">
+      Save links, ideas, articles, tools, videos and things
+      you want to come back to. Search them later instead
+      of opening 47 browser tabs and hoping you remember
+      why they mattered.
+    </p>
+
+  </div>
+
+
+  <div class="quick-add">
+
+    <div class="quick-add-title">
+      Quick save
+    </div>
+
+    <div class="url-row">
+
+      <input
+        id="quickUrl"
+        type="url"
+        placeholder="Paste a URL..."
+        autocomplete="off"
+      >
+
+      <button
+        class="add-main"
+        onclick="quickAdd()"
+      >
+        Save
+      </button>
+
+    </div>
+
+    <div class="quick-hint">
+      Press Enter to save instantly.
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- MAIN -->
+
+<div class="container main">
+
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="side-group">
+
+      <div class="side-heading">
+        Library
+      </div>
+
+
+      <button
+        class="side-button active"
+        onclick="filterCategory('All', this)"
+      >
+
+        <span class="side-left">
+          <span>▦</span>
+          Everything
+        </span>
+
+        <span
+          class="side-count"
+          id="allCount"
+        >
+          0
+        </span>
+
+      </button>
+
+
+      <button
+        class="side-button"
+        onclick="filterCategory('Open', this)"
+      >
+
+        <span class="side-left">
+          <span>↗</span>
+          To explore
+        </span>
+
+        <span
+          class="side-count"
+          id="openCount"
+        >
+          0
+        </span>
+
+      </button>
+
+
+      <button
+        class="side-button"
+        onclick="filterCategory('Done', this)"
+      >
+
+        <span class="side-left">
+          <span>✓</span>
+          Completed
+        </span>
+
+        <span
+          class="side-count"
+          id="doneCount"
+        >
+          0
+        </span>
+
+      </button>
+
+
+      <button
+        class="side-button"
+        onclick="filterCategory('Favorites', this)"
+      >
+
+        <span class="side-left">
+          <span>★</span>
+          Favorites
+        </span>
+
+        <span
+          class="side-count"
+          id="favoriteCount"
+        >
+          0
+        </span>
+
+      </button>
+
+    </div>
+
+
+    <div class="side-group">
+
+      <div class="side-heading">
+        Categories
+      </div>
+
+
+      <button
+        class="side-button"
+        onclick="filterCategory('Work', this)"
+      >
+
+        <span class="side-left">
+          <span class="category-dot cat-work"></span>
+          Work
+        </span>
+
+        <span
+          class="side-count"
+          data-category-count="Work"
+        ></span>
+
+      </button>
+
+
+      <button
+        class="side-button"
+        onclick="filterCategory('Learn', this)"
+      >
+
+        <span class="side-left">
+          <span class="category-dot cat-learn"></span>
+          Learn
+        </span>
+
+        <span
+          class="side-count"
+          data-category-count="Learn"
+        ></span>
+
+      </button>
+
+
+      <button
+        class="side-button"
+        onclick="filterCategory('Ideas', this)"
+      >
+
+        <span class="side-left">
+          <span class="category-dot cat-ideas"></span>
+          Ideas
+        </span>
+
+        <span
+          class="side-count"
+          data-category-count="Ideas"
+        ></span>
+
+      </button>
+
+
+      <button
+        class="side-button"
+        onclick="filterCategory('Read', this)"
+      >
+
+        <span class="side-left">
+          <span class="category-dot cat-read"></span>
+          Read
+        </span>
+
+        <span
+          class="side-count"
+          data-category-count="Read"
+        ></span>
+
+      </button>
+
+
+      <button
+        class="side-button"
+        onclick="filterCategory('Watch', this)"
+      >
+
+        <span class="side-left">
+          <span class="category-dot cat-watch"></span>
+          Watch
+        </span>
+
+        <span
+          class="side-count"
+          data-category-count="Watch"
+        ></span>
+
+      </button>
+
+    </div>
+
+
+    <div class="side-note">
+      Everything is stored locally in your browser.
+      No account. No server. No tracking.
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENT -->
+
+  <main class="content">
+
+
+    <div class="toolbar">
+
+      <div class="search">
+
+        <span class="search-icon">
+          ⌕
+        </span>
+
+        <input
+          id="search"
+          type="search"
+          placeholder="Search titles, notes, URLs..."
+        >
+
+      </div>
+
+
+      <select
+        class="sort"
+        id="sort"
+        onchange="render()"
+      >
+
+        <option value="newest">
+          Newest
+        </option>
+
+        <option value="oldest">
+          Oldest
+        </option>
+
+        <option value="priority">
+          Priority
+        </option>
+
+        <option value="az">
+          A → Z
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="section-bar">
+
+      <div
+        class="section-title"
+        id="sectionTitle"
+      >
+        Everything
+      </div>
+
+      <div
+        class="section-info"
+        id="resultInfo"
+      >
+        0 results
+      </div>
+
+    </div>
+
+
+    <div
+      class="items"
+      id="items"
+    ></div>
+
+  </main>
+
+
+  <!-- RIGHT PANEL -->
+
+  <aside class="panel">
+
+    <div class="panel-title">
+      Your inbox
+    </div>
+
+
+    <div class="stat">
+
+      <div>
+        <div class="stat-label">
+          Saved
+        </div>
+
+        <div
+          class="stat-number"
+          id="statSaved"
+        >
+          0
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div>
+        <div class="stat-label">
+          Completed
+        </div>
+
+        <div
+          class="stat-number"
+          id="statDone"
+        >
+          0
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="stat">
+
+      <div style="width:100%">
+
+        <div class="stat-label">
+          Inbox cleared
+        </div>
+
+        <div class="progress">
+
+          <div
+            class="progress-bar"
+            id="progressBar"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="panel-label">
+      Quick tags
+    </div>
+
+    <div
+      class="tag-cloud"
+      id="tagCloud"
+    ></div>
+
+
+    <div class="panel-label">
+      Keyboard
+    </div>
+
+    <div
+      style="
+        color:#707a86;
+        font-size:9px;
+        line-height:1.7;
+      "
+    >
+      <b>/</b> search<br>
+      <b>N</b> new item<br>
+      <b>Esc</b> close window
+    </div>
+
+  </aside>
+
+</div>
+
+
+<footer>
+
+  <div class="footer-inner">
+
+    <div>
+      Keep · your personal web inbox
+    </div>
+
+    <div>
+      Local-first · no account required
+    </div>
+
+    <div>
+      Background photography via Unsplash
+    </div>
+
+  </div>
+
+</footer>
+
+
+<!-- ADD MODAL -->
+
+<div
+  class="overlay"
+  id="addOverlay"
+  onclick="backdropClose(event)"
+>
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <div class="modal-title">
+        Add to your inbox
+      </div>
+
+      <button
+        class="close"
+        onclick="closeModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="modal-body">
+
+      <form
+        class="form"
+        onsubmit="addItem(event)"
+      >
+
+
+        <div class="field">
+
+          <label>
+            URL
+          </label>
+
+          <input
+            id="newUrl"
+            type="url"
+            placeholder="https://..."
+            required
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Title
+          </label>
+
+          <input
+            id="newTitle"
+            placeholder="What are you saving?"
+            required
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Note
+          </label>
+
+          <textarea
+            id="newNote"
+            placeholder="Why is this worth coming back to?"
+          ></textarea>
+
+        </div>
+
+
+        <div class="form-row">
+
+
+          <div class="field">
+
+            <label>
+              Category
+            </label>
+
+            <select id="newCategory">
+
+              <option value="Work">
+                Work
+              </option>
+
+              <option value="Learn">
+                Learn
+              </option>
+
+              <option value="Ideas">
+                Ideas
+              </option>
+
+              <option value="Read">
+                Read
+              </option>
+
+              <option value="Watch">
+                Watch
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Priority
+            </label>
+
+            <select id="newPriority">
+
+              <option value="high">
+                High
+              </option>
+
+              <option value="medium" selected>
+                Medium
+              </option>
+
+              <option value="low">
+                Low
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Tags
+          </label>
+
+          <input
+            id="newTags"
+            placeholder="design, useful, inspiration"
+          >
+
+        </div>
+
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="cancel"
+            onclick="closeModal()"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="submit"
+          >
+            Save to inbox
+          </button>
+
+        </div>
+
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+<script>
+
+/* =========================================================
+   DATA
+========================================================= */
+
+const DEMO_ITEMS = [
+
+  {
+    id: 1,
+    url: "https://developer.mozilla.org/",
+    title: "MDN Web Docs",
+    note: "Keep this around whenever I forget how a browser API works.",
+    category: "Learn",
+    priority: "high",
+    tags: ["web", "reference"],
+    date: "2026-09-20",
+    done: false,
+    favorite: true
+  },
+
+  {
+    id: 2,
+    url: "https://www.figma.com/",
+    title: "Figma",
+    note: "Useful for quickly turning rough interface ideas into something tangible.",
+    category: "Work",
+    priority: "medium",
+    tags: ["design", "ui"],
+    date: "2026-09-18",
+    done: false,
+    favorite: false
+  },
+
+  {
+    id: 3,
+    url: "https://linear.app/",
+    title: "Linear",
+    note: "Interesting approach to project management and issue tracking.",
+    category: "Work",
+    priority: "low",
+    tags: ["product", "planning"],
+    date: "2026-09-15",
+    done: true,
+    favorite: true
+  },
+
+  {
+    id: 4,
+    url: "https://www.youtube.com/",
+    title: "YouTube — watch later",
+    note: "A place to put videos that I genuinely intend to watch.",
+    category: "Watch",
+    priority: "medium",
+    tags: ["video"],
+    date: "2026-09-13",
+    done: false,
+    favorite: false
+  },
+
+  {
+    id: 5,
+    url: "https://www.nasa.gov/",
+    title: "NASA",
+    note: "Good source of fascinating science stories and imagery.",
+    category: "Read",
+    priority: "low",
+    tags: ["science", "space"],
+    date: "2026-09-10",
+    done: false,
+    favorite: true
+  }
+
+];
+
+
+let items =
+  JSON.parse(
+    localStorage.getItem("keepInbox")
+  ) || DEMO_ITEMS;
+
+
+let activeFilter = "All";
+
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+function save() {
+
+  localStorage.setItem(
+    "keepInbox",
+    JSON.stringify(items)
+  );
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+function hostname(url) {
+
+  try {
+
+    return new URL(url).hostname
+      .replace("www.", "");
+
+  } catch {
+
+    return url;
+
+  }
+
+}
+
+
+function prettyDate(date) {
+
+  return new Date(date).toLocaleDateString(
+    undefined,
+    {
+      month: "short",
+      day: "numeric"
+    }
+  );
+
+}
+
+
+/* =========================================================
+   FILTERING
+========================================================= */
+
+function getFilteredItems() {
+
+  const query =
+    document.getElementById("search")
+      .value
+      .toLowerCase()
+      .trim();
+
+
+  let result = [...items];
+
+
+  if (activeFilter === "Open") {
+
+    result =
+      result.filter(item => !item.done);
+
+  }
+
+
+  else if (activeFilter === "Done") {
+
+    result =
+      result.filter(item => item.done);
+
+  }
+
+
+  else if (activeFilter === "Favorites") {
+
+    result =
+      result.filter(item => item.favorite);
+
+  }
+
+
+  else if (
+    ["Work", "Learn", "Ideas", "Read", "Watch"]
+      .includes(activeFilter)
+  ) {
+
+    result =
+      result.filter(
+        item => item.category === activeFilter
+      );
+
+  }
+
+
+  if (query) {
+
+    result =
+      result.filter(item => {
+
+        const text = [
+
+          item.title,
+          item.url,
+          item.note,
+          item.category,
+          ...(item.tags || [])
+
+        ]
+        .join(" ")
+        .toLowerCase();
+
+        return text.includes(query);
+
+      });
+
+  }
+
+
+  const sort =
+    document.getElementById("sort").value;
+
+
+  if (sort === "newest") {
+
+    result.sort(
+      (a,b) =>
+        new Date(b.date) -
+        new Date(a.date)
+    );
+
+  }
+
+
+  if (sort === "oldest") {
+
+    result.sort(
+      (a,b) =>
+        new Date(a.date) -
+        new Date(b.date)
+    );
+
+  }
+
+
+  if (sort === "az") {
+
+    result.sort(
+      (a,b) =>
+        a.title.localeCompare(b.title)
+    );
+
+  }
+
+
+  if (sort === "priority") {
+
+    const weight = {
+      high: 0,
+      medium: 1,
+      low: 2
+    };
+
+    result.sort(
+      (a,b) =>
+        weight[a.priority] -
+        weight[b.priority]
+    );
+
+  }
+
+
+  return result;
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render() {
+
+  const list =
+    document.getElementById("items");
+
+  const filtered =
+    getFilteredItems();
+
+
+  list.innerHTML = "";
+
+
+  document.getElementById("resultInfo")
+    .textContent =
+      `${filtered.length} ${
+        filtered.length === 1
+          ? "result"
+          : "results"
+      }`;
+
+
+  if (!filtered.length) {
+
+    list.innerHTML = `
+
+      <div class="empty">
+
+        <div class="empty-icon">
+          ◌
+        </div>
+
+        <div class="empty-title">
+          Nothing here yet.
+        </div>
+
+        <div class="empty-text">
+          Save a link above or press N to add something.
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  filtered.forEach(item => {
+
+    list.appendChild(
+      createItem(item)
+    );
+
+  });
+
+
+  updateStats();
+  updateSidebar();
+  updateTags();
+
+}
+
+
+/* =========================================================
+   ITEM
+========================================================= */
+
+function createItem(item) {
+
+  const el =
+    document.createElement("article");
+
+  el.className =
+    "item" +
+    (item.done ? " completed" : "");
+
+
+  const icon =
+    getCategoryIcon(item.category);
+
+
+  const tags =
+    (item.tags || [])
+      .slice(0, 3)
+      .map(
+        tag =>
+          `<span class="tag">
+             #${escapeHTML(tag)}
+           </span>`
+      )
+      .join("");
+
+
+  el.innerHTML = `
+
+    <div class="item-icon">
+      ${icon}
+    </div>
+
+
+    <div class="item-info">
+
+      <div class="item-title">
+        ${escapeHTML(item.title)}
+      </div>
+
+      <div class="item-url">
+        ${escapeHTML(hostname(item.url))}
+      </div>
+
+      ${
+        item.note
+          ? `
+            <div class="item-note">
+              ${escapeHTML(item.note)}
+            </div>
+          `
+          : ""
+      }
+
+
+      <div class="item-meta">
+
+        <span class="tag">
+          ${escapeHTML(item.category)}
+        </span>
+
+        <span
+          class="
+            priority
+            priority-${item.priority}
+          "
+        >
+          ${capitalize(item.priority)}
+        </span>
+
+        ${tags}
+
+        <span class="tag">
+          ${prettyDate(item.date)}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="item-actions">
+
+      <button
+        class="action"
+        title="Open link"
+        onclick="openLink(event, ${item.id})"
+      >
+        ↗
+      </button>
+
+
+      <button
+        class="action done"
+        title="${item.done ? "Mark open" : "Mark done"}"
+        onclick="toggleDone(event, ${item.id})"
+      >
+        ${item.done ? "↩" : "✓"}
+      </button>
+
+
+      <button
+        class="action"
+        title="${item.favorite ? "Remove favorite" : "Favorite"}"
+        onclick="toggleFavorite(event, ${item.id})"
+      >
+        ${item.favorite ? "★" : "☆"}
+      </button>
+
+
+      <button
+        class="action delete"
+        title="Delete"
+        onclick="deleteItem(event, ${item.id})"
+      >
+        ×
+      </button>
+
+    </div>
+
+  `;
+
+
+  return el;
+
+}
+
+
+/* =========================================================
+   CATEGORY ICONS
+========================================================= */
+
+function getCategoryIcon(category) {
+
+  const icons = {
+
+    Work: "⌘",
+    Learn: "◇",
+    Ideas: "✦",
+    Read: "▤",
+    Watch: "▶"
+
+  };
+
+  return icons[category] || "•";
+
+}
+
+
+function capitalize(value) {
+
+  return value
+    .charAt(0)
+    .toUpperCase() +
+    value.slice(1);
+
+}
+
+
+/* =========================================================
+   ADD ITEM
+========================================================= */
+
+function addItem(event) {
+
+  event.preventDefault();
+
+
+  const url =
+    document.getElementById("newUrl")
+      .value.trim();
+
+
+  const title =
+    document.getElementById("newTitle")
+      .value.trim();
+
+
+  const note =
+    document.getElementById("newNote")
+      .value.trim();
+
+
+  const category =
+    document.getElementById("newCategory")
+      .value;
+
+
+  const priority =
+    document.getElementById("newPriority")
+      .value;
+
+
+  const tags =
+    document.getElementById("newTags")
+      .value
+      .split(",")
+      .map(x => x.trim())
+      .filter(Boolean);
+
+
+  items.unshift({
+
+    id: Date.now(),
+
+    url,
+
+    title,
+
+    note,
+
+    category,
+
+    priority,
+
+    tags,
+
+    date:
+      new Date()
+        .toISOString()
+        .slice(0,10),
+
+    done: false,
+
+    favorite: false
+
+  });
+
+
+  save();
+
+  closeModal();
+
+  event.target.reset();
+
+  activeFilter = "All";
+
+  document.querySelectorAll(".side-button")
+    .forEach(x =>
+      x.classList.remove("active")
+    );
+
+  document
+    .querySelector(".side-button")
+    .classList.add("active");
+
+
+  render();
+
+  showToast("Saved to your inbox.");
+
+}
+
+
+/* =========================================================
+   QUICK ADD
+========================================================= */
+
+function quickAdd() {
+
+  const input =
+    document.getElementById("quickUrl");
+
+
+  let url =
+    input.value.trim();
+
+
+  if (!url) {
+
+    showToast("Paste a URL first.");
+
+    input.focus();
+
+    return;
+
+  }
+
+
+  if (
+    !url.startsWith("http://") &&
+    !url.startsWith("https://")
+  ) {
+
+    url = "https://" + url;
+
+  }
+
+
+  let host =
+    hostname(url);
+
+
+  items.unshift({
+
+    id: Date.now(),
+
+    url,
+
+    title: host,
+
+    note: "",
+
+    category: "Read",
+
+    priority: "medium",
+
+    tags: [],
+
+    date:
+      new Date()
+        .toISOString()
+        .slice(0,10),
+
+    done: false,
+
+    favorite: false
+
+  });
+
+
+  input.value = "";
+
+  save();
+
+  render();
+
+  showToast("Link saved.");
+
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+function openLink(event, id) {
+
+  event.stopPropagation();
+
+
+  const item =
+    items.find(x => x.id === id);
+
+
+  if (!item) return;
+
+
+  window.open(
+    item.url,
+    "_blank",
+    "noopener,noreferrer"
+  );
+
+}
+
+
+function toggleDone(event, id) {
+
+  event.stopPropagation();
+
+
+  const item =
+    items.find(x => x.id === id);
+
+
+  if (!item) return;
+
+
+  item.done =
+    !item.done;
+
+
+  save();
+
+  render();
+
+  showToast(
+    item.done
+      ? "Marked complete."
+      : "Moved back to inbox."
+  );
+
+}
+
+
+function toggleFavorite(event, id) {
+
+  event.stopPropagation();
+
+
+  const item =
+    items.find(x => x.id === id);
+
+
+  if (!item) return;
+
+
+  item.favorite =
+    !item.favorite;
+
+
+  save();
+
+  render();
+
+  showToast(
+    item.favorite
+      ? "Added to favorites."
+      : "Removed from favorites."
+  );
+
+}
+
+
+function deleteItem(event, id) {
+
+  event.stopPropagation();
+
+
+  const item =
+    items.find(x => x.id === id);
+
+
+  if (!item) return;
+
+
+  const yes =
+    confirm(
+      `Delete "${item.title}"?`
+    );
+
+
+  if (!yes) return;
+
+
+  items =
+    items.filter(
+      x => x.id !== id
+    );
+
+
+  save();
+
+  render();
+
+  showToast("Deleted.");
+
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+function filterCategory(category, button) {
+
+  activeFilter = category;
+
+
+  document.querySelectorAll(".side-button")
+    .forEach(x =>
+      x.classList.remove("active")
+    );
+
+
+  button.classList.add("active");
+
+
+  const names = {
+
+    All: "Everything",
+    Open: "To explore",
+    Done: "Completed",
+    Favorites: "Favorites"
+
+  };
+
+
+  document.getElementById("sectionTitle")
+    .textContent =
+      names[category] || category;
+
+
+  render();
+
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function updateStats() {
+
+  const total =
+    items.length;
+
+
+  const done =
+    items.filter(x => x.done)
+      .length;
+
+
+  const favorites =
+    items.filter(x => x.favorite)
+      .length;
+
+
+  document.getElementById("headerCount")
+    .textContent = total;
+
+
+  document.getElementById("statSaved")
+    .textContent = total;
+
+
+  document.getElementById("statDone")
+    .textContent = done;
+
+
+  document.getElementById("allCount")
+    .textContent = total;
+
+
+  document.getElementById("openCount")
+    .textContent = total - done;
+
+
+  document.getElementById("doneCount")
+    .textContent = done;
+
+
+  document.getElementById("favoriteCount")
+    .textContent = favorites;
+
+
+  const percent =
+    total
+      ? Math.round(done / total * 100)
+      : 0;
+
+
+  document.getElementById("progressBar")
+    .style.width =
+      percent + "%";
+
+}
+
+
+/* =========================================================
+   CATEGORY COUNTS
+========================================================= */
+
+function updateSidebar() {
+
+  document
+    .querySelectorAll(
+      "[data-category-count]"
+    )
+    .forEach(el => {
+
+      const category =
+        el.dataset.categoryCount;
+
+
+      el.textContent =
+        items.filter(
+          x => x.category === category
+        ).length;
+
+    });
+
+}
+
+
+/* =========================================================
+   TAG CLOUD
+========================================================= */
+
+function updateTags() {
+
+  const cloud =
+    document.getElementById("tagCloud");
+
+
+  const counts = {};
+
+
+  items.forEach(item => {
+
+    (item.tags || [])
+      .forEach(tag => {
+
+        counts[tag] =
+          (counts[tag] || 0) + 1;
+
+      });
+
+  });
+
+
+  const tags =
+    Object.entries(counts)
+      .sort((a,b) => b[1] - a[1])
+      .slice(0, 10);
+
+
+  cloud.innerHTML =
+    tags.length
+
+      ? tags
+          .map(
+            ([tag,count]) => `
+              <button
+                class="cloud-tag"
+                onclick="searchTag('${escapeJS(tag)}')"
+              >
+                #${escapeHTML(tag)}
+                ${count}
+              </button>
+            `
+          )
+          .join("")
+
+      : `
+          <span
+            style="
+              color:#59626d;
+              font-size:9px;
+            "
+          >
+            Tags appear here as you add them.
+          </span>
+        `;
+
+}
+
+
+function searchTag(tag) {
+
+  document.getElementById("search")
+    .value = tag;
+
+  activeFilter = "All";
+
+  document.querySelectorAll(".side-button")
+    .forEach(x =>
+      x.classList.remove("active")
+    );
+
+  document
+    .querySelector(".side-button")
+    .classList.add("active");
+
+
+  document.getElementById("sectionTitle")
+    .textContent = "Everything";
+
+
+  render();
+
+}
+
+
+function escapeJS(value) {
+
+  return String(value)
+    .replaceAll("\\", "\\\\")
+    .replaceAll("'", "\\'");
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function openModal() {
+
+  document.getElementById("addOverlay")
+    .classList.add("open");
+
+
+  setTimeout(() => {
+
+    document.getElementById("newUrl")
+      .focus();
+
+  }, 80);
+
+}
+
+
+function closeModal() {
+
+  document.getElementById("addOverlay")
+    .classList.remove("open");
+
+}
+
+
+function backdropClose(event) {
+
+  if (
+    event.target === event.currentTarget
+  ) {
+
+    closeModal();
+
+  }
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+
+function showToast(message) {
+
+  const toast =
+    document.getElementById("toast");
+
+
+  toast.textContent =
+    message;
+
+
+  toast.classList.add("show");
+
+
+  clearTimeout(toastTimer);
+
+
+  toastTimer =
+    setTimeout(() => {
+
+      toast.classList.remove("show");
+
+    }, 2200);
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document
+  .getElementById("search")
+  .addEventListener(
+    "input",
+    render
+  );
+
+
+/* =========================================================
+   QUICK ENTER
+========================================================= */
+
+document
+  .getElementById("quickUrl")
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if (event.key === "Enter") {
+
+        event.preventDefault();
+
+        quickAdd();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    const tag =
+      document.activeElement.tagName;
+
+
+    const typing =
+      tag === "INPUT" ||
+      tag === "TEXTAREA" ||
+      tag === "SELECT";
+
+
+    if (event.key === "/" && !typing) {
+
+      event.preventDefault();
+
+      document.getElementById("search")
+        .focus();
+
+    }
+
+
+    if (
+      event.key.toLowerCase() === "n" &&
+      !typing
+    ) {
+
+      event.preventDefault();
+
+      openModal();
+
+    }
+
+
+    if (event.key === "Escape") {
+
+      closeModal();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+render();
+
+</script>
+
+</body>
+</html>
