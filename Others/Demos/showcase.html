@@ -226,12 +226,21 @@ body {
     </div>
   </div>
 
-        <div class="relative glow card cursor-pointer"
+    <div class="relative glow card cursor-pointer"
     onclick="openPreview(10)">
     <div class="glass rounded-2xl overflow-hidden">
       <iframe src="https://inevitabledays.github.io/Others/Demos/signal-noise"
         class="w-full h-60 pointer-events-none"></iframe>
       <div class="p-5"><div class="text-xl">Text Signals & Noise Analyzer</div></div>
+    </div>
+  </div>
+  
+    <div class="relative glow card cursor-pointer"
+    onclick="openPreview(11)">
+    <div class="glass rounded-2xl overflow-hidden">
+      <iframe src="https://inevitabledays.github.io/Others/Demos/nightfall"
+        class="w-full h-60 pointer-events-none"></iframe>
+      <div class="p-5"><div class="text-xl">Project Nightfall</div></div>
     </div>
   </div>
 
@@ -345,6 +354,14 @@ body {
        onmouseout="this.style.opacity='0.7'">
        Signal/Noise Detector
     </a>
+              
+        <a href="https://inevitabledays.github.io/Others/Demos/nightfall"
+       target="_blank"
+       style="opacity:0.7; text-decoration:none; transition:0.2s;"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.7'">
+       Project Nightfall
+    </a>
 
   </div>
 
@@ -361,7 +378,8 @@ const projects = [
   "https://inevitabledays.github.io/Others/Demos/failures-museum",
   "https://inevitabledays.github.io/Others/Demos/murmur",
   "https://inevitabledays.github.io/Others/Demos/one-good-question",
-  "https://inevitabledays.github.io/Others/Demos/signal-noise"
+  "https://inevitabledays.github.io/Others/Demos/signal-noise",
+  "https://inevitabledays.github.io/Others/Demos/nightfall"
 ];
 
 let current = 0;
