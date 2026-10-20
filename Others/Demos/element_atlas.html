@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080e18">
+<title>Element Atlas — Interactive Periodic Table</title>
+<style>
+*{box-sizing:border-box}
+:root{color-scheme:dark;--bg:#080e18;--panel:#101b29;--line:#34485f;--muted:#91a4bc;--text:#edf4ff;--red:#ff5965;--mint:#65e6ae}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#172638 0%,#0b1320 48%,#060a11 100%);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{width:min(1600px,100%);margin:auto;padding:clamp(14px,2.5vw,32px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}
+.brand{font-size:13px;letter-spacing:2px;font-weight:800;text-transform:uppercase}
+.badge{font-size:10px;color:var(--mint);border:1px solid #285d50;border-radius:30px;padding:7px 10px;white-space:nowrap}
+h1{font-size:clamp(28px,4vw,48px);letter-spacing:-1.8px;line-height:1.05;margin:8px 0 10px}
+.intro{color:var(--muted);font-size:14px;line-height:1.6;max-width:760px;margin:0 0 22px}
+.toolbar{display:flex;gap:10px;align-items:center;margin:18px 0;flex-wrap:wrap}
+input,select,button{font:inherit;border-radius:11px;padding:11px 13px;background:#172536;border:1px solid #42556d;color:var(--text)}
+input{flex:1;min-width:190px}select{max-width:100%;cursor:pointer}button{cursor:pointer;font-weight:650}button:hover,.element:hover{border-color:#a7bad0;filter:brightness(1.12)}
+#status{font-size:11px;color:var(--muted);margin-left:auto}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 15px}
+.legend span{font-size:10px;color:#c5d2e2;display:flex;align-items:center;gap:5px}
+.dot{width:8px;height:8px;border-radius:3px;display:inline-block}
+.table-shell{border:1px solid #293c51;border-radius:16px;padding:12px;background:#080f19a8;box-shadow:0 18px 50px #0005}
+.table-scroll{overflow-x:auto;padding-bottom:10px;overscroll-behavior-x:contain}
+.periodic{display:grid;grid-template-columns:repeat(18,minmax(46px,1fr));gap:4px;min-width:930px}
+.element{position:relative;min-height:74px;border:1px solid #34485f;border-radius:7px;padding:5px 4px;text-align:left;background:linear-gradient(145deg,#182637,#0d1724);color:var(--text);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;transition:border-color .15s,transform .15s}
+.element:active{transform:scale(.97)}.element .num{font-size:9px;color:#9aacc3;font-variant-numeric:tabular-nums}.element .sym{font-size:clamp(15px,1.5vw,22px);font-weight:800;line-height:1.1;letter-spacing:-.5px}.element .nm{font-size:8px;color:#b5c3d5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.element.selected{border:2px solid #ff5965;box-shadow:0 0 0 2px #ff59651b,0 0 18px #ff59651b;padding:4px 3px}
+.element.hidden{visibility:hidden;pointer-events:none}
+.element.placeholder{border:1px dashed #26364a;background:transparent;opacity:.45}
+.alkali{--c:#ff7d82}.alkaline{--c:#ffb36b}.transition{--c:#f4d27b}.post{--c:#82d6c1}.metalloid{--c:#8bd6a2}.nonmetal{--c:#8dbbff}.halogen{--c:#c3a3ff}.noble{--c:#ff9ed1}.lanth{--c:#72d6e7}.actin{--c:#8ea5ff}.unknown{--c:#9eacbd}
+.element{border-top:2px solid var(--c,#34485f)}.dot{background:var(--c)}
+.series-label{grid-column:1/3;display:flex;align-items:center;font-size:10px;letter-spacing:.5px;color:var(--muted);padding:0 4px}
+.detail{margin-top:16px;border:1px solid #354a62;border-radius:16px;background:linear-gradient(145deg,#142233,#0b1420);padding:clamp(16px,2vw,24px);display:grid;grid-template-columns:minmax(190px,.8fr) 2fr;gap:24px;box-shadow:inset 0 0 0 1px #ffffff04}
+.detail-top{display:flex;gap:15px;align-items:center}
+.big-symbol{width:104px;aspect-ratio:1;border-radius:14px;border:1px solid #536a84;background:radial-gradient(circle at 30% 20%,#283b51,#0b1420 72%);display:grid;place-items:center;position:relative;flex-shrink:0}
+.big-symbol .atomic{position:absolute;top:9px;left:10px;font-size:11px;color:#a9bbd1}
+.big-symbol strong{font-size:48px;letter-spacing:-2px}
+.kicker{font-size:10px;letter-spacing:1.8px;color:var(--red);font-weight:800;text-transform:uppercase}
+h2{margin:4px 0;font-size:clamp(22px,3vw,32px);letter-spacing:-.8px}
+.muted{color:var(--muted);font-size:12px;line-height:1.55}
+.props{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}
+.prop{padding:10px;border:1px solid #2e4258;border-radius:10px;background:#0b1521}
+.prop small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}.prop strong{font-size:14px;overflow-wrap:anywhere}
+.factbox{border-left:2px solid var(--red);padding:3px 0 3px 16px;align-self:center}
+.factbox h3{margin:0 0 8px;font-size:14px}.factbox p{margin:0;color:#c4d1e1;font-size:13px;line-height:1.7}
+footer{color:#71849c;font-size:11px;line-height:1.6;margin:16px 2px}
+@media(max-width:700px){main{padding:16px 12px}header{margin-bottom:17px}.detail{grid-template-columns:1fr;gap:18px}.detail-top{gap:12px}.big-symbol{width:86px}.big-symbol strong{font-size:40px}.props{grid-template-columns:repeat(2,minmax(0,1fr))}.periodic{min-width:850px;grid-template-columns:repeat(18,minmax(42px,1fr));gap:3px}.element{min-height:65px}.table-shell{padding:8px;border-radius:12px}#status{width:100%;margin:0}.toolbar{gap:8px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="brand">◈ ELEMENT ATLAS</div><div class="badge">● 118 ELEMENTS · INTERACTIVE</div></header>
+<h1>The building blocks<br>of everything.</h1>
+<p class="intro">Explore the periodic table. Select any element to inspect its atomic data, classification, and a surprising fact. Search by name, symbol, or atomic number.</p>
+<div class="toolbar">
+<input id="search" type="search" placeholder="Search: gold, Au, or 79…" aria-label="Search elements">
+<select id="filter" aria-label="Filter by category"><option value="all">All categories</option><option value="alkali">Alkali metals</option><option value="alkaline">Alkaline earth metals</option><option value="transition">Transition metals</option><option value="post">Post-transition metals</option><option value="metalloid">Metalloids</option><option value="nonmetal">Other nonmetals</option><option value="halogen">Halogens</option><option value="noble">Noble gases</option><option value="lanth">Lanthanides</option><option value="actin">Actinides</option><option value="unknown">Unknown properties</option></select>
+<button id="reset" type="button">Reset</button><span id="status" aria-live="polite">118 elements shown</span>
+</div>
+<div class="legend" id="legend"></div>
+<div class="table-shell"><div class="table-scroll" tabindex="0" aria-label="Scrollable periodic table"><div class="periodic" id="table"></div></div></div>
+<section class="detail" id="detail" aria-live="polite">
+<div>
+<div class="detail-top"><div class="big-symbol"><span class="atomic" id="d-num">1</span><strong id="d-symbol">H</strong></div><div><div class="kicker" id="d-category">Other nonmetal</div><h2 id="d-name">Hydrogen</h2><div class="muted" id="d-sub">Period 1 · Group 1</div></div></div>
+<div class="props"><div class="prop"><small>Atomic number</small><strong id="d-atomic">1</strong></div><div class="prop"><small>Atomic mass</small><strong id="d-mass">1.008</strong></div><div class="prop"><small>State at room temp.</small><strong id="d-state">Gas</strong></div><div class="prop"><small>Electron configuration</small><strong id="d-config">1s¹</strong></div><div class="prop"><small>Discovered</small><strong id="d-discovery">1766</strong></div><div class="prop"><small>Melting point</small><strong id="d-melt">−259.2 °C</strong></div></div>
+</div>
+<div class="factbox"><h3>Worth knowing</h3><p id="d-fact">Hydrogen is the most abundant element in the universe. Most stars fuse hydrogen nuclei to release energy.</p></div>
+</section>
+<footer>Designed for desktop and mobile. On smaller screens, swipe horizontally across the table. Element properties are rounded where appropriate; values for some superheavy elements are predicted or uncertain.</footer>
+</main>
+<script>
+const raw = `H|Hydrogen
+He|Helium
+Li|Lithium
+Be|Beryllium
+B|Boron
+C|Carbon
+N|Nitrogen
+O|Oxygen
+F|Fluorine
+Ne|Neon
+Na|Sodium
+Mg|Magnesium
+Al|Aluminium
+Si|Silicon
+P|Phosphorus
+S|Sulfur
+Cl|Chlorine
+Ar|Argon
+K|Potassium
+Ca|Calcium
+Sc|Scandium
+Ti|Titanium
+V|Vanadium
+Cr|Chromium
+Mn|Manganese
+Fe|Iron
+Co|Cobalt
+Ni|Nickel
+Cu|Copper
+Zn|Zinc
+Ga|Gallium
+Ge|Germanium
+As|Arsenic
+Se|Selenium
+Br|Bromine
+Kr|Krypton
+Rb|Rubidium
+Sr|Strontium
+Y|Yttrium
+Zr|Zirconium
+Nb|Niobium
+Mo|Molybdenum
+Tc|Technetium
+Ru|Ruthenium
+Rh|Rhodium
+Pd|Palladium
+Ag|Silver
+Cd|Cadmium
+In|Indium
+Sn|Tin
+Sb|Antimony
+Te|Tellurium
+I|Iodine
+Xe|Xenon
+Cs|Caesium
+Ba|Barium
+La|Lanthanum
+Ce|Cerium
+Pr|Praseodymium
+Nd|Neodymium
+Pm|Promethium
+Sm|Samarium
+Eu|Europium
+Gd|Gadolinium
+Tb|Terbium
+Dy|Dysprosium
+Ho|Holmium
+Er|Erbium
+Tm|Thulium
+Yb|Ytterbium
+Lu|Lutetium
+Hf|Hafnium
+Ta|Tantalum
+W|Tungsten
+Re|Rhenium
+Os|Osmium
+Ir|Iridium
+Pt|Platinum
+Au|Gold
+Hg|Mercury
+Tl|Thallium
+Pb|Lead
+Bi|Bismuth
+Po|Polonium
+At|Astatine
+Rn|Radon
+Fr|Francium
+Ra|Radium
+Ac|Actinium
+Th|Thorium
+Pa|Protactinium
+U|Uranium
+Np|Neptunium
+Pu|Plutonium
+Am|Americium
+Cm|Curium
+Bk|Berkelium
+Cf|Californium
+Es|Einsteinium
+Fm|Fermium
+Md|Mendelevium
+No|Nobelium
+Lr|Lawrencium
+Rf|Rutherfordium
+Db|Dubnium
+Sg|Seaborgium
+Bh|Bohrium
+Hs|Hassium
+Mt|Meitnerium
+Ds|Darmstadtium
+Rg|Roentgenium
+Cn|Copernicium
+Nh|Nihonium
+Fl|Flerovium
+Mc|Moscovium
+Lv|Livermorium
+Ts|Tennessine
+Og|Oganesson`.split('\n').map(x=>x.split('|'));
+const names = Object.fromEntries(raw.map(([s,n],i)=>[s,{s,n,z:i+1}]));
+const rows = [
+['H','','','','','','','','','','','','','','','','','He'],
+['Li','Be','','','','','','','','','','','B','C','N','O','F','Ne'],
+['Na','Mg','','','','','','','','','','','Al','Si','P','S','Cl','Ar'],
+['K','Ca','Sc','Ti','V','Cr','Mn','Fe','Co','Ni','Cu','Zn','Ga','Ge','As','Se','Br','Kr'],
+['Rb','Sr','Y','Zr','Nb','Mo','Tc','Ru','Rh','Pd','Ag','Cd','In','Sn','Sb','Te','I','Xe'],
+['Cs','Ba','','Hf','Ta','W','Re','Os','Ir','Pt','Au','Hg','Tl','Pb','Bi','Po','At','Rn'],
+['Fr','Ra','','Rf','Db','Sg','Bh','Hs','Mt','Ds','Rg','Cn','Nh','Fl','Mc','Lv','Ts','Og'],
+['','','La','Ce','Pr','Nd','Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb','Lu',''],
+['','','Ac','Th','Pa','U','Np','Pu','Am','Cm','Bk','Cf','Es','Fm','Md','No','Lr','']
+];
+const lanths = new Set('La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu'.split(' '));
+const actins = new Set('Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr'.split(' '));
+const alkali = new Set('Li Na K Rb Cs Fr'.split(' '));
+const alkaline = new Set('Be Mg Ca Sr Ba Ra'.split(' '));
+const halogens = new Set('F Cl Br I At Ts'.split(' '));
+const noble = new Set('He Ne Ar Kr Xe Rn Og'.split(' '));
+const nonmetals = new Set('H C N O P S Se'.split(' '));
+const metalloids = new Set('B Si Ge As Sb Te Po'.split(' '));
+const post = new Set('Al Ga In Sn Tl Pb Bi Nh Fl Mc Lv'.split(' '));
+const transition = new Set('Sc Ti V Cr Mn Fe Co Ni Cu Zn Y Zr Nb Mo Tc Ru Rh Pd Ag Cd Hf Ta W Re Os Ir Pt Au Hg Rf Db Sg Bh Hs Mt Ds Rg Cn'.split(' '));
+function category(s){return lanths.has(s)?'lanth':actins.has(s)?'actin':alkali.has(s)?'alkali':alkaline.has(s)?'alkaline':halogens.has(s)?'halogen':noble.has(s)?'noble':nonmetals.has(s)?'nonmetal':metalloids.has(s)?'metalloid':post.has(s)?'post':transition.has(s)?'transition':'unknown'}
+const catNames={alkali:'Alkali metal',alkaline:'Alkaline earth metal',transition:'Transition metal',post:'Post-transition metal',metalloid:'Metalloid',nonmetal:'Other nonmetal',halogen:'Halogen',noble:'Noble gas',lanth:'Lanthanide',actin:'Actinide',unknown:'Properties uncertain'};
+const masses=`1.008,4.0026,6.94,9.0122,10.81,12.011,14.007,15.999,18.998,20.180,22.990,24.305,26.982,28.085,30.974,32.06,35.45,39.948,39.098,40.078,44.956,47.867,50.942,51.996,54.938,55.845,58.933,58.693,63.546,65.38,69.723,72.630,74.922,78.971,79.904,83.798,85.468,87.62,88.906,91.224,92.906,95.95,[98],101.07,102.91,106.42,107.87,112.41,114.82,118.71,121.76,127.60,126.90,131.29,132.91,137.33,[138.91],[140.12],[140.91],[144.24],[145],[150.36],[151.96],[157.25],[158.93],[162.50],[164.93],[167.26],[168.93],[173.05],[174.97],178.49,180.95,183.84,186.21,190.23,192.22,195.08,196.97,200.59,204.38,207.2,208.98,[209],[210],[222],[223],[226],[227],232.04,231.04,238.03,[237],[244],[243],[247],[247],[251],[252],[257],[258],[259],[266],[267],[268],[269],[270],[277],[278],[281],[282],[285],[286],[289],[290],[293],[294],[294]`.split(',');
+const mass = z => (masses[z-1]||'—').replace(/[\[\]]/g,'');
+const stateMap={H:'Gas',He:'Gas',N:'Gas',O:'Gas',F:'Gas',Ne:'Gas',Cl:'Gas',Ar:'Gas',Kr:'Gas',Xe:'Gas',Rn:'Gas',Br:'Liquid',Hg:'Liquid'};
+const configs={H:'1s¹',He:'1s²',Li:'[He] 2s¹',C:'[He] 2s² 2p²',N:'[He] 2s² 2p³',O:'[He] 2s² 2p⁴',Na:'[Ne] 3s¹',Mg:'[Ne] 3s²',Al:'[Ne] 3s² 3p¹',Si:'[Ne] 3s² 3p²',Cl:'[Ne] 3s² 3p⁵',Fe:'[Ar] 3d⁶ 4s²',Cu:'[Ar] 3d¹⁰ 4s¹',Ag:'[Kr] 4d¹⁰ 5s¹',Au:'[Xe] 4f¹⁴ 5d¹⁰ 6s¹',U:'[Rn] 5f³ 6d¹ 7s²'};
+const discovery={H:'1766',He:'1868',Li:'1817',C:'Prehistory',O:'1774',Na:'1807',Al:'1825',Si:'1824',P:'1669',Cl:'1774',Fe:'Prehistory',Cu:'Prehistory',Ag:'Prehistory',Au:'Prehistory',Hg:'Prehistory',U:'1789',Tc:'1937',Og:'2002'};
+const facts={
+H:'Hydrogen is the most abundant element in the universe. Stars release energy by fusing hydrogen nuclei into helium.',
+He:'Helium was identified in the Sun’s spectrum before it was found on Earth. It is also the only element that does not solidify at normal pressure, even near absolute zero.',
+Li:'Lithium is the lightest metal. Rechargeable lithium-ion batteries help power phones, laptops, and electric vehicles.',
+Be:'Beryllium is exceptionally stiff for its weight, so it is used in some precision aerospace components. Its dust is toxic.',
+B:'Boron compounds make heat-resistant glass and are used in detergents and semiconductor manufacturing.',
+C:'Carbon forms diamond and graphite—two materials with dramatically different properties. Life on Earth is built around carbon chemistry.',
+N:'About 78% of Earth’s atmosphere is nitrogen gas. Most organisms cannot use atmospheric nitrogen directly without conversion.',
+O:'Oxygen makes up roughly 21% of Earth’s atmosphere and is essential to most animal respiration.',
+F:'Fluorine is the most reactive element. In compounds, fluoride helps protect tooth enamel against decay.',
+Ne:'Neon glows reddish-orange in discharge tubes; many signs called “neon” actually use other gases for different colors.',
+Na:'Sodium reacts vigorously with water. In table salt, however, sodium is safely bound to chlorine as sodium chloride.',
+Mg:'Magnesium burns with an intense white light and is an important component of chlorophyll in plants.',
+Al:'Aluminium forms a thin protective oxide layer, helping it resist corrosion despite being a reactive metal.',
+Si:'Silicon is central to modern electronics. Its semiconducting behavior makes computer chips and solar cells possible.',
+P:'White phosphorus can ignite in air and must be stored under water. Phosphorus is also essential to DNA and ATP.',
+S:'Sulfur has been known since antiquity and is associated with volcanic regions. It is essential in some amino acids.',
+Cl:'Chlorine disinfects drinking water and swimming pools, but chlorine gas is highly toxic.',
+Ar:'Argon makes up just under 1% of Earth’s atmosphere. Its low reactivity makes it useful in welding and light bulbs.',
+K:'Potassium ions are essential for nerve signaling and muscle function. Pure potassium metal reacts strongly with water.',
+Ca:'Calcium is a major component of bones and teeth. It is also important for muscle contraction and cell signaling.',
+Ti:'Titanium combines high strength with low density and corrosion resistance, making it valuable in aircraft and medical implants.',
+Cr:'Chromium helps stainless steel resist corrosion. The red color of rubies comes from small amounts of chromium.',
+Mn:'Manganese is used in steelmaking and is a trace nutrient required by living organisms.',
+Fe:'Iron is the main ingredient in steel and sits at the center of hemoglobin’s oxygen-binding chemistry.',
+Co:'Cobalt contributes to the blue color of some glass and ceramics. It is also part of vitamin B12.',
+Ni:'Nickel is used in stainless steel and many batteries. Some people develop skin allergies from nickel contact.',
+Cu:'Copper conducts electricity very well and develops a green patina on old roofs and statues.',
+Zn:'Zinc protects steel from rust through galvanizing and is a trace nutrient for humans.',
+Ga:'Gallium can melt in your hand on a warm day because its melting point is about 29.8 °C.',
+Br:'Bromine is one of only two elements that are liquids near room temperature; the other is mercury.',
+Ag:'Silver has the highest electrical conductivity of any element. It has also been used for jewelry, coins, and photography.',
+Sn:'Tin can form a distinctive “tin cry” when bent, caused by the movement of its crystals.',
+I:'Iodine is needed to make thyroid hormones. Its vapor can appear violet.',
+Xe:'Xenon is used in some high-intensity lamps and ion propulsion systems for spacecraft.',
+Cs:'Caesium is used in highly precise atomic clocks that underpin modern timekeeping.',
+W:'Tungsten has the highest melting point of any pure metal, about 3,422 °C.',
+Pt:'Platinum is highly resistant to corrosion and is used in catalytic converters and laboratory equipment.',
+Au:'Gold is so malleable that a small amount can be beaten into an extremely thin sheet. It resists tarnishing and conducts electricity well.',
+Hg:'Mercury is a metal that is liquid at room temperature. Its vapor and many compounds are toxic.',
+Pb:'Lead is dense and useful for radiation shielding, but it is toxic, especially to children.',
+Bi:'Bismuth expands as it freezes, unlike most substances. Its crystals can form colorful oxide layers.',
+Po:'Polonium is intensely radioactive; even tiny quantities can be extremely hazardous.',
+Rn:'Radon is a radioactive gas that can accumulate indoors and is a significant cause of lung cancer after smoking.',
+Th:'Thorium is radioactive and has been studied as a potential nuclear fuel.',
+U:'Uranium’s nucleus can split in a fission reaction, releasing energy used in nuclear power.',
+Pu:'Plutonium is used in some nuclear fuels and radioisotope power sources for deep-space missions.',
+Tc:'Technetium was the first element produced artificially. Its isotope technetium-99m is widely used in medical imaging.',
+Og:'Oganesson is a synthetic superheavy element. Only a few atoms have ever been made, so many of its properties remain uncertain.',
+Ts:'Tennessine is a synthetic superheavy element; its chemistry is difficult to study because only a few atoms have been produced.'
+};
+const positions={};
+rows.forEach((row,r)=>row.forEach((s,c)=>{if(s)positions[s]={period:r<7?r+1:(r===7?6:7),group:c+1,row:r+1,col:c+1}}));
+const table=document.getElementById('table'), search=document.getElementById('search'), filter=document.getElementById('filter');
+const legend=document.getElementById('legend');
+Object.entries(catNames).forEach(([key,label])=>{const s=document.createElement('span');s.innerHTML=`<i class="dot ${key}"></i>${label}`;legend.appendChild(s)});
+let selected='H', buttons={};
+rows.forEach((row,r)=>row.forEach((s,c)=>{
+ const b=document.createElement('button');b.type='button';b.className='element';b.style.gridColumn=c+1;b.style.gridRow=r+1;
+ if(!s){b.classList.add('placeholder');b.disabled=true;b.tabIndex=-1;b.setAttribute('aria-hidden','true');table.appendChild(b);return}
+ const e=names[s], cat=category(s);b.classList.add(cat);b.dataset.symbol=s;b.dataset.category=cat;
+ const p=positions[s];const group=(lanths.has(s)||actins.has(s))?'f-block':p.group;
+ b.setAttribute('aria-label',`${e.n}, atomic number ${e.z}`);b.innerHTML=`<span class="num">${e.z}</span><span class="sym">${s}</span><span class="nm">${e.n}</span>`;
+ b.addEventListener('click',()=>select(s));buttons[s]=b;table.appendChild(b);
+}));
+function select(s){selected=s;const e=names[s],cat=category(s),p=positions[s];Object.values(buttons).forEach(b=>b.classList.toggle('selected',b.dataset.symbol===s));
+ document.getElementById('d-num').textContent=e.z;document.getElementById('d-symbol').textContent=s;document.getElementById('d-name').textContent=e.n;document.getElementById('d-category').textContent=catNames[cat];
+ document.getElementById('d-sub').textContent=`Period ${p.period} · ${p.group===undefined?'f-block':`Group ${p.group}`}`;
+ document.getElementById('d-atomic').textContent=e.z;document.getElementById('d-mass').textContent=mass(e.z);
+ document.getElementById('d-state').textContent=stateMap[s]||((e.z>=104)?'Likely solid':'Solid');
+ document.getElementById('d-config').textContent=configs[s]||'See reference data';
+ document.getElementById('d-discovery').textContent=discovery[s]||(e.z>103?'2000s (reported)':'Known since antiquity / varies');
+ document.getElementById('d-melt').textContent=({H:'−259.2 °C',He:'−272.2 °C',C:'3,550 °C (subl.)',Fe:'1,538 °C',Au:'1,064 °C',Hg:'−38.8 °C',W:'3,422 °C',Br:'−7.2 °C',Ga:'29.8 °C',O:'−218.8 °C'})[s]||'Varies / uncertain';
+ document.getElementById('d-fact').textContent=facts[s]||genericFact(e,cat);
+}
+function genericFact(e,cat){const starters={
+alkali:'Like other alkali metals, '+e.n+' has one outer-shell electron and is typically highly reactive; it is not found freely in nature.',
+alkaline:'As an alkaline earth metal, '+e.n+' commonly forms ions with a +2 charge.',
+transition:e.n+' is a transition metal. Members of this broad family are important in alloys, catalysts, electronics, or specialized materials.',
+post:e.n+' is classified as a post-transition metal, a group whose members often have lower melting points or are softer than many transition metals.',
+metalloid:e.n+' has properties between those of metals and nonmetals, a mix that can be useful in electronic materials.',
+nonmetal:e.n+' is a nonmetal, a broad family that includes elements essential to atmospheric chemistry and living systems.',
+halogen:e.n+' belongs to the halogens, a reactive family that often forms salts with metals.',
+noble:e.n+' is a noble gas. Its outer electron shell is generally full, making it comparatively unreactive.',
+lanth:e.n+' is a lanthanide, part of a family used in strong magnets, phosphors, and other advanced technologies.',
+actin:e.n+' is an actinide. Many actinides are radioactive, and several have roles in nuclear science.',
+unknown:' '+e.n+' is synthetic or poorly studied. Only small quantities may be available, so many physical and chemical properties remain uncertain.'
+};return starters[cat]||`${e.n} is a chemical element with atomic number ${e.z}. Scientists classify elements by their atomic structure and recurring chemical properties.`}
+function updateFilter(){const q=search.value.trim().toLowerCase();let count=0;Object.values(buttons).forEach(b=>{const e=names[b.dataset.symbol],matches=(!q||e.n.toLowerCase().includes(q)||e.s.toLowerCase().includes(q)||String(e.z)===q)&& (filter.value==='all'||b.dataset.category===filter.value);b.classList.toggle('hidden',!matches);b.style.opacity=matches?'1':'.16';if(matches)count++});document.getElementById('status').textContent=`${count} of 118 elements shown`}
+search.addEventListener('input',updateFilter);filter.addEventListener('change',updateFilter);
+document.getElementById('reset').addEventListener('click',()=>{search.value='';filter.value='all';updateFilter();select('H')});
+select('H');
+</script>
+</body>
+</html>
