@@ -148,140 +148,174 @@ button{cursor:pointer;font-weight:650}
 </section>
 </main>
 
+
 <script>
 (() => {
-const $ = id => document.getElementById(id);
-const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
- || (navigator.maxTouchPoints > 1 &&
-     Math.min(screen.width,screen.height) < 1100);
+  const $ = id => document.getElementById(id);
 
-if(!mobile){
- $('status').textContent='Unsupported device';
- $('desktop').hidden=false;
- return;
-}
+  const isMobile =
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+    (navigator.maxTouchPoints > 1 &&
+      Math.min(screen.width, screen.height) < 1100);
 
-$('app').hidden=false;
-
-const dial=$('dial');
-const directions=['N','NNE','NE','ENE','E','ESE','SE','SSE',
-                  'S','SSW','SW','WSW','W','WNW','NW','NNW'];
-
-for(let i=0;i<360;i+=5){
- const mark=document.createElement('div');
- mark.className='mark'+(i%30===0?' cardinal':i%10===0?' major':'');
- mark.style.transform=`translateX(-50%) rotate(${i}deg)`;
-
- if(i%30===0){
-  const deg=document.createElement('span');
-  deg.className='deg';
-  deg.textContent=i;
-  mark.appendChild(deg);
- }
- if(i%90===0){
-  const card=document.createElement('span');
-  card.className='card'+(i===0?' north':'');
-  card.textContent=['N','E','S','W'][i/90];
-  mark.appendChild(card);
- }
- dial.appendChild(mark);
-}
-
-let active=false,last=null,displayed=null,frame=null;
-
-function render(){
- if(displayed===null||last===null)return;
- // Smooth shortest-path animation across 0°/360°.
- let diff=((last-displayed+540)%360)-180;
- displayed=(displayed+diff*0.22+360)%360;
- dial.style.transform=`rotate(${-displayed}deg)`;
- $('degrees').textContent=`${Math.round(last)}°`;
- $('direction').textContent=directions[Math.round(last/22.5)%16];
- frame=requestAnimationFrame(render);
-}
-
-function onOrientation(e) {
-  let heading = null;
-
-  if (typeof e.webkitCompassHeading === "number") {
-    heading = e.webkitCompassHeading;
-  } else if (e.absolute === true &&
-             typeof e.alpha === "number") {
-    heading = 360 - e.alpha;
-  }
-
-  if (heading === null || !Number.isFinite(heading)) {
-    $('status').textContent =
-      `Sensor event received. Absolute heading unavailable. ` +
-      `alpha=${e.alpha}, absolute=${e.absolute}`;
+  if (!isMobile) {
+    $('status').textContent = 'Mobile device required';
+    $('desktop').hidden = false;
     return;
   }
 
-  const declination = Number($('declination').value) || 0;
-  last = ((heading + declination) % 360 + 360) % 360;
+  $('app').hidden = false;
 
-  $('badge').textContent = '● ACTIVE';
-  $('status').textContent = 'Compass sensor connected';
-  $('mode').textContent = e.webkitCompassHeading !== undefined
-    ? 'Device compass heading'
-    : 'Absolute orientation heading';
-}
+  const dial = $('dial');
+  const directions = [
+    'N','NNE','NE','ENE','E','ESE','SE','SSE',
+    'S','SSW','SW','WSW','W','WNW','NW','NNW'
+  ];
 
+  for (let i = 0; i < 360; i += 5) {
+    const mark = document.createElement('div');
+    mark.className = 'mark' +
+      (i % 30 === 0 ? ' cardinal' : i % 10 === 0 ? ' major' : '');
+    mark.style.transform = `translateX(-50%) rotate(${i}deg)`;
 
- // East-positive declination: true heading = magnetic heading + declination.
- const declination=Number($('declination').value)||0;
- const corrected=((magnetic+declination)%360+360)%360;
+    if (i % 30 === 0) {
+      const deg = document.createElement('span');
+      deg.className = 'deg';
+      deg.textContent = i;
+      mark.appendChild(deg);
+    }
 
- last=corrected;
- if(displayed===null)displayed=corrected;
+    if (i % 90 === 0) {
+      const card = document.createElement('span');
+      card.className = 'card' + (i === 0 ? ' north' : '');
+      card.textContent = ['N', 'E', 'S', 'W'][i / 90];
+      mark.appendChild(card);
+    }
 
- $('status').textContent='Live orientation data received';
- $('badge').textContent='● ACTIVE';
- $('badge').style.color='#65e6ae';
- $('mode').textContent=declination===0
-  ?'Magnetic heading · No correction applied'
-  :'Declination-corrected heading · Verify declination';
-}
-
-$('declination').addEventListener('input',()=>{
- if(last!==null){
-  // Apply the updated correction to the latest magnetic reading
-  // on the next sensor event.
-  $('mode').textContent='Correction changed · Awaiting next sensor reading';
- }
-});
-
-$('enable').addEventListener('click',async()=>{
- if(active)return;
-
- if(!('DeviceOrientationEvent' in window)){
-  $('status').textContent='Orientation sensors are unsupported.';
-  return;
- }
-
- if(typeof DeviceOrientationEvent.requestPermission==='function'){
-  try{
-   const permission=await DeviceOrientationEvent.requestPermission();
-   if(permission!=='granted'){
-    $('status').textContent='Sensor permission denied.';
-    return;
-   }
-  }catch{
-   $('status').textContent='Could not request sensor permission.';
-   return;
+    dial.appendChild(mark);
   }
- }
 
- window.addEventListener('deviceorientation',onOrientation,true);
- window.addEventListener('deviceorientationabsolute',onOrientation,true);
- active=true;
- $('enable').disabled=true;
- $('enable').textContent='Compass Enabled';
+  let active = false;
+  let last = null;
+  let displayed = null;
+  let magneticHeading = null;
+  let gotEvent = false;
+  let frame = null;
+  let eventCount = 0;
 
- if(frame===null)render();
- $('status').textContent='Waiting for compass data…';
-});
+  function render() {
+    if (last !== null) {
+      if (displayed === null) displayed = last;
+
+      const diff = ((last - displayed + 540) % 360) - 180;
+      displayed = (displayed + diff * 0.22 + 360) % 360;
+
+      dial.style.transform = `rotate(${-displayed}deg)`;
+      $('degrees').textContent = `${Math.round(last)}°`;
+      $('direction').textContent =
+        directions[Math.round(last / 22.5) % 16];
+    }
+
+    frame = requestAnimationFrame(render);
+  }
+
+  function onOrientation(e) {
+    gotEvent = true;
+    eventCount++;
+
+    // iPhone provides a direct compass heading.
+    if (typeof e.webkitCompassHeading === 'number') {
+      magneticHeading = e.webkitCompassHeading;
+    } else if (e.absolute === true &&
+               typeof e.alpha === 'number') {
+      magneticHeading = (360 - e.alpha + 360) % 360;
+    } else {
+      $('status').textContent =
+        `Sensor event received, but absolute heading unavailable. ` +
+        `alpha=${e.alpha}, absolute=${e.absolute}`;
+      $('badge').textContent = '● SENSOR FOUND';
+      return;
+    }
+
+    updateHeading();
+  }
+
+  function updateHeading() {
+    if (magneticHeading === null) return;
+
+    const declination = Number($('declination').value) || 0;
+    last = ((magneticHeading + declination) % 360 + 360) % 360;
+
+    $('status').textContent = 'Live compass data received';
+    $('badge').textContent = '● ACTIVE';
+    $('badge').style.color = '#65e6ae';
+    $('mode').textContent = declination === 0
+      ? 'Magnetic north · No correction'
+      : 'Declination corrected · Verify value';
+  }
+
+  $('declination').addEventListener('input', updateHeading);
+
+  $('enable').addEventListener('click', async () => {
+    if (active) return;
+
+    if (!('DeviceOrientationEvent' in window)) {
+      $('status').textContent =
+        'Unsupported: DeviceOrientationEvent is unavailable.';
+      return;
+    }
+
+    $('enable').disabled = true;
+    $('status').textContent = 'Requesting sensor access…';
+
+    try {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        const permission =
+          await DeviceOrientationEvent.requestPermission();
+
+        if (permission !== 'granted') {
+          $('status').textContent = 'Motion permission denied.';
+          $('enable').disabled = false;
+          return;
+        }
+      }
+
+      window.addEventListener('deviceorientation', onOrientation, true);
+      window.addEventListener(
+        'deviceorientationabsolute', onOrientation, true
+      );
+
+      active = true;
+      $('enable').textContent = 'Compass Enabled';
+      $('status').textContent = 'Listening for sensor events…';
+      $('badge').textContent = '● CONNECTING';
+
+      if (frame === null) render();
+
+      // Diagnose missing events without blocking the compass.
+      setTimeout(() => {
+        if (!gotEvent) {
+          $('status').textContent =
+            'No orientation events received. Check Firefox sensor support.';
+          $('badge').textContent = '● NO SENSOR DATA';
+          $('enable').textContent = 'Retry Compass';
+          $('enable').disabled = false;
+          active = false;
+          cancelAnimationFrame(frame);
+          frame = null;
+        } else if (magneticHeading === null) {
+          $('status').textContent =
+            `Received ${eventCount} sensor events, but no absolute heading.`;
+        }
+      }, 5000);
+
+    } catch (err) {
+      $('status').textContent = 'Sensor error: ' + err.message;
+      $('enable').disabled = false;
+    }
+  });
 })();
 </script>
+
 </body>
 </html>
