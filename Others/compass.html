@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080e18">
+<title>True North Compass</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;background:
+ radial-gradient(ellipse at 50% 35%,#172638 0%,#0b1320 48%,#060a11 100%);
+ color:#edf4ff;font-family:system-ui,-apple-system,sans-serif;
+ display:grid;place-items:center
+}
+main{width:min(100%,440px);padding:26px 22px;text-align:center}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px}
+.brand{font-size:14px;letter-spacing:2px;font-weight:700}
+.badge{font-size:11px;color:#65e6ae;border:1px solid #285d50;
+ border-radius:30px;padding:7px 10px}
+#status{font-size:12px;color:#9bacc2;min-height:20px;margin-bottom:20px}
+.compass{
+ width:min(82vw,340px);aspect-ratio:1;margin:auto;position:relative;
+ border-radius:50%;padding:9px;
+ background:linear-gradient(140deg,#9aaabe,#29384a 24%,#718198 48%,#182332 72%,#61748b);
+ box-shadow:0 20px 55px #0009,inset 0 0 0 2px #c2d2e5
+}
+.face{
+ width:100%;height:100%;position:relative;border-radius:50%;overflow:hidden;
+ border:2px solid #93a6bd;
+ background:radial-gradient(circle at 50% 40%,#192737,#09111c 72%);
+ box-shadow:inset 0 0 30px #000,inset 0 0 2px 2px #50647a
+}
+#dial{position:absolute;inset:0;will-change:transform}
+.mark{
+ position:absolute;left:50%;top:0;width:1px;height:100%;
+ transform:translateX(-50%);pointer-events:none
+}
+.mark:before{
+ content:"";display:block;position:absolute;top:8px;left:0;
+ height:8px;width:1px;background:#61768e
+}
+.mark.major:before{height:14px;width:2px;background:#d5e1f1}
+.mark.cardinal:before{height:20px;width:3px;background:#f2f6ff}
+.deg{
+ position:absolute;left:50%;top:31px;transform:translateX(-50%);
+ font-size:12px;color:#aabbd0;font-variant-numeric:tabular-nums
+}
+.card{
+ position:absolute;left:50%;top:49px;transform:translateX(-50%);
+ font-size:20px;font-weight:750;color:#d8e4f3
+}
+.card.north{color:#ff505b;font-size:24px}
+.pointer{
+ position:absolute;z-index:4;top:-1px;left:50%;transform:translateX(-50%);
+ width:0;height:0;border-left:10px solid transparent;
+ border-right:10px solid transparent;border-top:0;
+ border-bottom:22px solid #ff4855;
+ filter:drop-shadow(0 2px 4px #ff344b77)
+}
+.needle{
+ position:absolute;left:50%;top:50%;width:0;height:0;
+ transform:translate(-50%,-50%);z-index:3;pointer-events:none
+}
+.needle:before{
+ content:"";position:absolute;left:-11px;top:-120px;
+ border-left:11px solid transparent;border-right:11px solid transparent;
+ border-bottom:120px solid #ff4655;
+ filter:drop-shadow(0 0 8px #ff354044)
+}
+.needle:after{
+ content:"";position:absolute;left:-10px;top:0;
+ border-left:10px solid transparent;border-right:10px solid transparent;
+ border-top:110px solid #8499b4
+}
+.hub{
+ position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);
+ width:34px;height:34px;border-radius:50%;
+ background:radial-gradient(circle at 35% 30%,#edf5ff,#70849a 35%,#1b293b 65%);
+ border:2px solid #b6c7dc;box-shadow:0 2px 10px #000
+}
+.readout{margin:24px 0 18px}
+#degrees{font-size:clamp(54px,15vw,76px);font-weight:650;letter-spacing:-3px;
+ font-variant-numeric:tabular-nums;line-height:1.1}
+#direction{font-size:14px;letter-spacing:5px;color:#ff5965;font-weight:750;margin-top:8px}
+#mode{font-size:11px;color:#93a7bf;margin-top:7px}
+button,input{
+ font:inherit;border-radius:12px;padding:13px;background:#172536;
+ border:1px solid #42556d;color:#edf4ff
+}
+button{cursor:pointer;font-weight:650}
+#enable{width:100%;margin:8px 0 16px;background:#e8f0fb;color:#101a28;border:0}
+.settings{margin:10px auto 0;max-width:280px;text-align:left;font-size:12px;color:#9aacc3}
+.settings label{display:block;margin-bottom:7px}
+.settings input{width:100%;padding:10px}
+.note{font-size:11px;line-height:1.6;color:#788ba4;margin-top:18px}
+.warning{padding:24px;border:1px solid #795c37;border-radius:16px;
+ background:#241c14;color:#ffdaa6;line-height:1.6}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<header>
+ <div class="brand">NORTH / INSTRUMENT</div>
+ <div class="badge" id="badge">● STANDBY</div>
+</header>
+
+<div id="status">Checking orientation sensor…</div>
+
+<section id="desktop" class="warning" hidden>
+ <strong>Mobile only</strong><br>
+ Open this page on a compatible phone with a hardware orientation sensor.
+</section>
+
+<section id="app" hidden>
+ <div class="compass">
+  <div class="face">
+   <div id="dial"></div>
+   <div class="pointer"></div>
+   <div class="needle"></div>
+   <div class="hub"></div>
+  </div>
+ </div>
+
+ <div class="readout">
+  <div id="degrees">---°</div>
+  <div id="direction">WAITING FOR SENSOR</div>
+  <div id="mode">Heading not yet available</div>
+ </div>
+
+ <button id="enable">Enable Compass</button>
+
+ <div class="settings">
+  <label for="declination">Magnetic declination (degrees)</label>
+  <input id="declination" type="number" step="0.1" value="0">
+  <div class="note">
+   Enter the local declination from a trusted geomagnetic model.
+   East is positive; west is negative. Zero means no correction.
+  </div>
+ </div>
+
+ <div class="note">
+  Sensor readings stay on this device. Use HTTPS for sensor access.
+  Accuracy depends on your phone and calibration.
+ </div>
+</section>
+</main>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+ || (navigator.maxTouchPoints > 1 &&
+     Math.min(screen.width,screen.height) < 1100);
+
+if(!mobile){
+ $('status').textContent='Unsupported device';
+ $('desktop').hidden=false;
+ return;
+}
+
+$('app').hidden=false;
+
+const dial=$('dial');
+const directions=['N','NNE','NE','ENE','E','ESE','SE','SSE',
+                  'S','SSW','SW','WSW','W','WNW','NW','NNW'];
+
+for(let i=0;i<360;i+=5){
+ const mark=document.createElement('div');
+ mark.className='mark'+(i%30===0?' cardinal':i%10===0?' major':'');
+ mark.style.transform=`translateX(-50%) rotate(${i}deg)`;
+
+ if(i%30===0){
+  const deg=document.createElement('span');
+  deg.className='deg';
+  deg.textContent=i;
+  mark.appendChild(deg);
+ }
+ if(i%90===0){
+  const card=document.createElement('span');
+  card.className='card'+(i===0?' north':'');
+  card.textContent=['N','E','S','W'][i/90];
+  mark.appendChild(card);
+ }
+ dial.appendChild(mark);
+}
+
+let active=false,last=null,displayed=null,frame=null;
+
+function render(){
+ if(displayed===null||last===null)return;
+ // Smooth shortest-path animation across 0°/360°.
+ let diff=((last-displayed+540)%360)-180;
+ displayed=(displayed+diff*0.22+360)%360;
+ dial.style.transform=`rotate(${-displayed}deg)`;
+ $('degrees').textContent=`${Math.round(last)}°`;
+ $('direction').textContent=directions[Math.round(last/22.5)%16];
+ frame=requestAnimationFrame(render);
+}
+
+function onOrientation(e){
+ let magnetic=null;
+
+ if(typeof e.webkitCompassHeading==='number'){
+  magnetic=e.webkitCompassHeading;
+ }else if(e.absolute===true&&typeof e.alpha==='number'){
+  magnetic=(360-e.alpha)%360;
+ }
+
+ if(magnetic===null||!Number.isFinite(magnetic)){
+  $('status').textContent='Waiting for an absolute heading sensor…';
+  return;
+ }
+
+ // East-positive declination: true heading = magnetic heading + declination.
+ const declination=Number($('declination').value)||0;
+ const corrected=((magnetic+declination)%360+360)%360;
+
+ last=corrected;
+ if(displayed===null)displayed=corrected;
+
+ $('status').textContent='Live orientation data received';
+ $('badge').textContent='● ACTIVE';
+ $('badge').style.color='#65e6ae';
+ $('mode').textContent=declination===0
+  ?'Magnetic heading · No correction applied'
+  :'Declination-corrected heading · Verify declination';
+}
+
+$('declination').addEventListener('input',()=>{
+ if(last!==null){
+  // Apply the updated correction to the latest magnetic reading
+  // on the next sensor event.
+  $('mode').textContent='Correction changed · Awaiting next sensor reading';
+ }
+});
+
+$('enable').addEventListener('click',async()=>{
+ if(active)return;
+
+ if(!('DeviceOrientationEvent' in window)){
+  $('status').textContent='Orientation sensors are unsupported.';
+  return;
+ }
+
+ if(typeof DeviceOrientationEvent.requestPermission==='function'){
+  try{
+   const permission=await DeviceOrientationEvent.requestPermission();
+   if(permission!=='granted'){
+    $('status').textContent='Sensor permission denied.';
+    return;
+   }
+  }catch{
+   $('status').textContent='Could not request sensor permission.';
+   return;
+  }
+ }
+
+ window.addEventListener('deviceorientation',onOrientation,true);
+ window.addEventListener('deviceorientationabsolute',onOrientation,true);
+ active=true;
+ $('enable').disabled=true;
+ $('enable').textContent='Compass Enabled';
+
+ if(frame===null)render();
+ $('status').textContent='Waiting for compass data…';
+});
+})();
+</script>
+</body>
+</html>
