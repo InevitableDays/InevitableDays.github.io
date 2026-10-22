@@ -244,6 +244,15 @@ body {
     </div>
   </div>
 
+    <div class="relative glow card cursor-pointer"
+    onclick="openPreview(11)">
+    <div class="glass rounded-2xl overflow-hidden">
+      <iframe src="https://inevitabledays.github.io/Others/Demos/element_atlas"
+        class="w-full h-60 pointer-events-none"></iframe>
+      <div class="p-5"><div class="text-xl">Element Atlas</div></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- FLOATING CONTROLS -->
@@ -363,6 +372,14 @@ body {
        Project Nightfall
     </a>
 
+          <a href="https://inevitabledays.github.io/Others/Demos/element_atlas"
+       target="_blank"
+       style="opacity:0.7; text-decoration:none; transition:0.2s;"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.7'">
+       Element Atlas
+    </a>
+
   </div>
 
 </div>
@@ -379,7 +396,8 @@ const projects = [
   "https://inevitabledays.github.io/Others/Demos/murmur",
   "https://inevitabledays.github.io/Others/Demos/one-good-question",
   "https://inevitabledays.github.io/Others/Demos/signal-noise",
-  "https://inevitabledays.github.io/Others/Demos/nightfall"
+  "https://inevitabledays.github.io/Others/Demos/nightfall",
+  "https://inevitabledays.github.io/Others/Demos/element_atlas"
 ];
 
 let current = 0;
