@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ICO Studio — JPG to ICO Converter</title>
+<style>
+:root{color-scheme:dark;--bg:#10131b;--panel:#191e2a;--panel2:#202738;--line:#30394b;--text:#eef2fa;--muted:#9aa7bb;--accent:#8ab4ff;--accent2:#b7d0ff}
+*{box-sizing:border-box}body {
+    margin: 0;
+    background:
+        linear-gradient(rgba(10, 14, 24, 0.18), rgba(10, 14, 24, 0.14)),
+        url("https://images.unsplash.com/photo-1496854863306-cbb8c4407988?auto=format&fit=crop&w=2000&q=85")
+        center / cover fixed;
+    color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
+}
+main{max-width:1120px;margin:42px auto;padding:0 22px}.top{display:flex;align-items:center;gap:14px;margin-bottom:26px}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#8ab4ff,#586fbd);display:grid;place-items:center;color:#101827;font-size:25px;font-weight:800;box-shadow:0 8px 30px #0006}
+h1{font-size:27px;margin:0;letter-spacing:-.7px}.sub{color:var(--muted);margin:3px 0 0}.privacy{margin-left:auto;border:1px solid #315c4d;color:#a8e2c6;background:#163127;padding:7px 11px;border-radius:30px;font-size:12px}
+.panel {
+    background:
+        linear-gradient(135deg, rgba(214, 171, 91, 0.075), transparent 42%),
+        linear-gradient(180deg, rgba(34, 31, 30, 0.94), rgba(25, 30, 42, 0.91));
+    border: 1px solid rgba(214, 171, 91, 0.34);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow:
+        0 18px 50px #0005,
+        inset 0 1px 0 rgba(255, 220, 150, 0.10),
+        inset 0 0 28px rgba(214, 171, 91, 0.035);
+    margin-bottom: 18px;
+    backdrop-filter: blur(12px);
+}
+.drop {
+    border: 2px dashed #7189b5;
+    border-radius: 20px;
+    min-height: 290px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 35px;
+    background: rgba(21, 28, 41, 0.78);
+    transition: 0.2s;
+    backdrop-filter: blur(8px);
+}
+.drop.over{border-color:var(--accent);background:#1b2b43}
+.drop strong {
+    display: block;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+.drop p {
+    margin: 8px 0 22px;
+    color: var(--muted);
+    font-size: 15px;
+}
+.drop:hover {
+    border-color: #8ab4ff;
+    background: rgba(35, 49, 73, 0.85);
+}.drop strong{display:block;font-size:18px}.drop p{margin:5px 0 14px;color:var(--muted)}
+button,.filebtn{border:1px solid #536987;background:#2c3c56;color:#f5f8ff;padding:9px 14px;border-radius:10px;font:inherit;cursor:pointer}button:hover,.filebtn:hover{background:#3a5073}button.primary{background:#8ab4ff;color:#101827;border-color:#8ab4ff;font-weight:750}button:disabled{opacity:.4;cursor:not-allowed}input[type=file]{display:none}
+.layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:18px}.previewbox{background:#111722;border:1px solid var(--line);border-radius:14px;min-height:310px;display:grid;place-items:center;overflow:hidden;padding:15px;background-image:linear-gradient(45deg,#202838 25%,transparent 25%),linear-gradient(-45deg,#202838 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#202838 75%),linear-gradient(-45deg,transparent 75%,#202838 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+canvas{max-width:100%;max-height:360px;object-fit:contain}.empty{color:var(--muted);text-align:center}.filelist{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.filetag{font-size:12px;color:#cbd6e8;background:#273247;border:1px solid #3a4961;border-radius:8px;padding:5px 8px}
+h2{font-size:16px;margin:0 0 13px}.controls{display:grid;gap:15px}.group{border-bottom:1px solid #2c3545;padding-bottom:14px}.group:last-child{border:0;padding:0}.row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.row label{color:#c5cfdf}.muted{color:var(--muted);font-size:13px}.sizes{display:flex;gap:7px;flex-wrap:wrap}.sizes label{display:flex;gap:5px;align-items:center;border:1px solid #3a465a;border-radius:8px;padding:6px 9px;background:#151c28;font-size:13px}input[type=range]{accent-color:#8ab4ff;width:145px}input[type=number]{width:70px;background:#111722;border:1px solid #3a465a;color:white;border-radius:7px;padding:6px}
+select{background:#111722;color:white;border:1px solid #3a465a;border-radius:8px;padding:7px}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.status{color:var(--muted);font-size:13px;min-height:20px}.foot{color:#62d69a;font-size:16px;font-weight:600;text-align:center;margin:20px 0 30px;text-shadow:0 1px 10px rgba(45,190,120,0.22)}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.privacy{display:none}main{margin:22px auto;padding:0 13px}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<main>
+<header class="top"><div class="logo">ICO</div><div><h1>ICO Studio</h1><p class="sub">Convert photos into Windows icons. Works entirely offline.</p></div><div class="privacy">● Files stay on this device</div></header>
+
+<section class="panel">
+ <div class="drop" id="drop"><div><strong>Drop JPG, JPEG, PNG or JFIF files here</strong><p>Choose files, drag them in, or paste an image with Ctrl+V. Up to 30 files.</p><label class="filebtn" for="files">Choose images</label><input id="files" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.jfif,.png" multiple></div></div>
+ <div class="filelist" id="filelist"></div>
+</section>
+
+<div class="layout">
+<section class="panel">
+ <h2>Preview & crop</h2>
+ <div class="previewbox" id="previewbox"><div class="empty" id="empty">Your image preview will appear here</div><canvas id="preview" hidden width="320" height="320"></canvas></div>
+ <div class="row" style="margin-top:14px"><button id="crop" disabled>Crop to square</button><button id="fit" disabled>Fit whole photo</button><button id="reset" disabled>Reset</button></div>
+ <div class="row" style="margin-top:12px"><label for="zoom">Zoom</label><input id="zoom" type="range" min="100" max="250" value="100" disabled><span id="zoomval" class="muted">100%</span></div>
+ <div class="row" style="margin-top:10px"><label for="shape">Shape</label><select id="shape"><option value="square">Square</option><option value="rounded">Rounded</option><option value="circle">Circle</option></select><label for="padding">Padding</label><input id="padding" type="range" min="0" max="25" value="0"><span id="padval" class="muted">0%</span></div>
+</section>
+
+<section class="panel controls">
+ <div class="group"><h2>Icon sizes</h2><div class="row" style="margin-bottom:10px"><button data-preset="recommended">Recommended</button><button data-preset="favicon">Favicon</button><button data-preset="windows">Windows app</button><button data-preset="all">All sizes</button></div>
+ <div class="sizes" id="sizes"></div><p class="muted">All selected sizes are packed into each ICO file. Maximum: 256 px.</p></div>
+ <div class="group"><h2>Background</h2><div class="row"><label><input type="checkbox" id="removebg"> Remove corner-coloured background</label></div><div class="row"><label for="tolerance">Tolerance</label><input id="tolerance" type="range" min="0" max="100" value="18"><span id="tolval" class="muted">18</span></div><p class="muted">Best for plain, evenly coloured backgrounds. JPG has no transparency to begin with.</p></div>
+ <div class="group"><h2>Output</h2><div class="row"><label for="name">Filename</label><input id="name" value="icon" style="width:150px;background:#111722;border:1px solid #3a465a;color:white;border-radius:7px;padding:7px"><span class="muted">.ico</span></div></div>
+ <div class="actions"><button class="primary" id="convert" disabled>Convert & download ICO</button><button id="clear" disabled>Clear files</button></div><div class="status" id="status" aria-live="polite"></div>
+</section>
+</div>
+<p class="foot">Standalone local tool - Inevitabledays.github.io - Ümit Özkul - 2026 </p>
+</main>
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const sizeValues=[16,20,24,32,40,48,64,96,128,256];
+const sizesEl=$('sizes');
+sizeValues.forEach(n=>{const l=document.createElement('label');l.innerHTML=`<input type="checkbox" value="${n}" ${[16,32,48,64,128,256].includes(n)?'checked':''}>${n}`;sizesEl.append(l)});
+let items=[],active=0,source=null,fitMode='crop';
+let zoom=100;
+const canvas=$('preview'),ctx=canvas.getContext('2d');
+function say(s){$('status').textContent=s}
+function setEnabled(v){['convert','clear','crop','fit','reset','zoom'].forEach(id=>$(id).disabled=!v)}
+function addFiles(files){
+ const valid=[...files].filter(f=>/^image\/(jpeg|png)$/.test(f.type)||/\.(jpe?g|jfif|png)$/i.test(f.name));
+ for(const f of valid){if(items.length>=30)break;items.push({file:f,url:URL.createObjectURL(f),img:null})}
+ renderList();if(items.length){active=items.length-1;loadActive()}else say('No supported images found.');
+}
+function renderList(){const el=$('filelist');el.innerHTML='';items.forEach((it,i)=>{const b=document.createElement('button');b.className='filetag';b.textContent=(i===active?'✓ ':'')+it.file.name;b.onclick=()=>{active=i;loadActive();renderList()};el.append(b)});setEnabled(items.length>0);$('empty').hidden=items.length>0;canvas.hidden=!items.length}
+function loadActive(){if(!items[active])return;const it=items[active];const img=new Image();img.onload=()=>{it.img=img;source=img;zoom=100;$('zoom').value=100;$('zoomval').textContent='100%';drawPreview()};img.onerror=()=>say('Could not read '+it.file.name);img.src=it.url;renderList();say(it.file.name+' ready.')}
+function cropRect(img,mode,z){const w=img.naturalWidth,h=img.naturalHeight;if(mode==='fit')return {sx:0,sy:0,sw:w,sh:h};let side=Math.min(w,h)/ (z/100);return {sx:(w-side)/2,sy:(h-side)/2,sw:side,sh:side}}
+function drawPreview(){if(!source)return;const c=320;canvas.width=c;canvas.height=c;ctx.clearRect(0,0,c,c);const r=cropRect(source,fitMode,zoom),pad=+$('padding').value/100*c;let x=pad,y=pad,w=c-2*pad,h=c-2*pad;if(fitMode==='fit'){const scale=Math.min(w/source.width,h/source.height);w=source.width*scale;h=source.height*scale;x=(c-w)/2;y=(c-h)/2}
+ctx.save();const sh=$('shape').value;if(sh==='circle'){ctx.beginPath();ctx.arc(c/2,c/2,c/2-pad,0,Math.PI*2);ctx.clip()}else if(sh==='rounded'){const rad=c*.13;ctx.beginPath();ctx.roundRect(pad,pad,c-2*pad,c-2*pad,rad);ctx.clip()}
+ctx.drawImage(source,r.sx,r.sy,r.sw,r.sh,x,y,w,h);ctx.restore()}
+$('crop').onclick=()=>{fitMode='crop';drawPreview()};$('fit').onclick=()=>{fitMode='fit';drawPreview()};$('reset').onclick=()=>{fitMode='crop';zoom=100;$('zoom').value=100;$('zoomval').textContent='100%';$('padding').value=0;$('padval').textContent='0%';drawPreview()};
+$('zoom').oninput=e=>{zoom=+e.target.value;$('zoomval').textContent=zoom+'%';drawPreview()};$('padding').oninput=e=>{$('padval').textContent=e.target.value+'%';drawPreview()};$('shape').onchange=drawPreview;
+$('tolerance').oninput=e=>$('tolval').textContent=e.target.value;
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{const p=b.dataset.preset,vals=p==='favicon'?[16,32,48]:p==='windows'?[16,20,24,32,40,48,64,256]:p==='all'?sizeValues:[16,32,48,64,128,256];sizesEl.querySelectorAll('input').forEach(x=>x.checked=vals.includes(+x.value))});
+$('files').onchange=e=>addFiles(e.target.files);
+const drop=$('drop');['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+window.addEventListener('paste',e=>{const fs=[...(e.clipboardData?.items||[])].filter(x=>x.type.startsWith('image/')).map(x=>x.getAsFile()).filter(Boolean);if(fs.length)addFiles(fs)});
+function rgbaForSize(img,n){
+ const out=document.createElement('canvas');out.width=n;out.height=n;const c=out.getContext('2d',{willReadFrequently:true});const r=cropRect(img,fitMode,zoom);let pad=+$('padding').value/100*n,x=pad,y=pad,w=n-2*pad,h=n-2*pad;
+ if(fitMode==='fit'){const sc=Math.min(w/img.width,h/img.height);w=img.width*sc;h=img.height*sc;x=(n-w)/2;y=(n-h)/2}
+ const shape=$('shape').value;c.save();if(shape==='circle'){c.beginPath();c.arc(n/2,n/2,n/2-pad,0,Math.PI*2);c.clip()}else if(shape==='rounded'){c.beginPath();c.roundRect(pad,pad,n-2*pad,n-2*pad,n*.13);c.clip()}
+ c.drawImage(img,r.sx,r.sy,r.sw,r.sh,x,y,w,h);c.restore();
+ const im=c.getImageData(0,0,n,n),d=im.data;
+ if($('removebg').checked){const samples=[];for(let xx=0;xx<n;xx++){for(const yy of [0,n-1]){let i=(yy*n+xx)*4;samples.push([d[i],d[i+1],d[i+2]])}}for(let yy=1;yy<n-1;yy++){for(const xx of [0,n-1]){let i=(yy*n+xx)*4;samples.push([d[i],d[i+1],d[i+2]])}}
+ const avg=[0,1,2].map(k=>samples.reduce((s,v)=>s+v[k],0)/samples.length),tol=+$('tolerance').value*2.55;
+ for(let i=0;i<d.length;i+=4){const dist=Math.hypot(d[i]-avg[0],d[i+1]-avg[1],d[i+2]-avg[2]);if(dist<tol){d[i+3]=Math.round(d[i+3]*(dist/tol))}}
+ c.putImageData(im,0,0)}
+ return out;
+}
+function canvasBlob(c){return new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(Error('PNG encoding failed')),'image/png'))}
+async function makeIco(img,selected){
+ const blobs=[];for(const n of selected)blobs.push(await canvasBlob(rgbaForSize(img,n)));
+ const header=6+16*blobs.length;let offset=header;const entries=[];
+ for(let i=0;i<blobs.length;i++){const b=blobs[i],n=selected[i],e=new Uint8Array(16),v=new DataView(e.buffer);e[0]=n===256?0:n;e[1]=n===256?0:n;e[2]=0;e[3]=0;v.setUint16(4,1,true);v.setUint16(6,32,true);v.setUint32(8,b.size,true);v.setUint32(12,offset,true);entries.push(e);offset+=b.size}
+ const head=new ArrayBuffer(6),dv=new DataView(head);dv.setUint16(0,0,true);dv.setUint16(2,1,true);dv.setUint16(4,blobs.length,true);
+ return new Blob([head,...entries,...blobs],{type:'image/x-icon'});
+}
+$('convert').onclick=async()=>{const selected=[...sizesEl.querySelectorAll('input:checked')].map(x=>+x.value).sort((a,b)=>a-b);if(!selected.length){say('Select at least one icon size.');return}if(!items.length)return;
+ $('convert').disabled=true;try{for(let i=0;i<items.length;i++){const it=items[i];if(!it.img){const im=new Image();im.src=it.url;await new Promise((r,j)=>{im.onload=r;im.onerror=j});it.img=im}
+ const blob=await makeIco(it.img,selected);const a=document.createElement('a'),url=URL.createObjectURL(blob);const base=($('name').value.trim()||'icon').replace(/[\\/:*?"<>|]/g,'_');const stem=items.length===1?base:(it.file.name.replace(/\.[^.]+$/,'')||base);a.href=url;a.download=stem+'.ico';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
+ say('Finished. '+items.length+' ICO file(s) generated.');}catch(e){say('Conversion error: '+e.message)}finally{$('convert').disabled=false}};
+$('clear').onclick=()=>{items.forEach(x=>URL.revokeObjectURL(x.url));items=[];active=0;source=null;canvas.hidden=true;$('empty').hidden=false;$('filelist').innerHTML='';setEnabled(false);say('Files cleared.')};
+})();
+</script>
+</body>
+</html>
