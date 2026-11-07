@@ -367,17 +367,17 @@ const REDUCE=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: r
 
 const UD={
   worker:{name:'Worker',cost:50,time:8,supply:1,hp:40,speed:3.1,range:.85,dmg:5,cd:1,info:'Builds, mines, can fight in melee',vis:6},
-  marine:{name:'Marine',cost:50,time:7,supply:1,hp:55,speed:2.9,range:5,dmg:7,cd:.75,info:'Rifle, 7 damage, range 5',vis:8},
-  rocket:{name:'Rocket Soldier',cost:100,time:11,supply:2,hp:60,speed:2.6,range:5.5,dmg:22,cd:2.2,splash:2.1,info:'Rocket launcher, 22 damage in an area (range 5.5). Can hit air units',vis:8},
-  heli:{name:'Helicopter',cost:175,time:16,supply:2,hp:150,speed:4,range:4.5,dmg:9,cd:.5,info:'Armoured gunship, 9 damage per shot, ignores terrain. Hits ground and air units but cannot attack buildings. Tanks and workers cannot hit it',vis:9,air:true},
-  tank:{name:'Tank',cost:150,time:14,supply:3,hp:300,speed:2.1,range:6.5,dmg:36,cd:1.5,info:'Heavy siege cannon, 36 damage, range 6.5',vis:9}
+  marine:{name:'Marine',cost:50,time:7,supply:1,hp:55,speed:2.2,range:6,dmg:7,cd:.94,info:'Rifle, 7 damage, range 6',vis:8},
+  rocket:{name:'Rocket Soldier',cost:100,time:11,supply:2,hp:60,speed:1.95,range:6.5,dmg:22,cd:2.75,splash:2.1,info:'Rocket launcher, 22 damage in an area (range 6.5). Can hit air units',vis:8},
+  heli:{name:'Helicopter',cost:175,time:16,supply:2,hp:150,speed:3,range:4.5,dmg:9,cd:.63,info:'Armoured gunship, 9 damage per shot, ignores terrain. Hits ground and air units but cannot attack buildings. Tanks and workers cannot hit it',vis:9,air:true},
+  tank:{name:'Tank',cost:150,time:14,supply:3,hp:300,speed:1.6,range:7.5,dmg:36,cd:1.9,info:'Heavy siege cannon, 36 damage, range 7.5',vis:9}
 };
 const BD={
-  nexus:{name:'Nexus',size:4,cost:400,time:40,hp:2200,supply:15,vis:11},
-  barracks:{name:'Barracks',size:3,cost:150,time:20,hp:1100,supply:0,vis:8},
-  pylon:{name:'Pylon',size:2,cost:100,time:12,hp:550,supply:8,vis:7},
-  factory:{name:'Factory',size:3,cost:200,time:28,hp:1400,supply:0,vis:8},
-  turret:{name:'Turret',size:2,cost:150,time:16,hp:700,supply:0,vis:10,range:8.5,dmg:40,cd:.9,info:'Anti-air auto turret. Fires automatically at flying units in range, 40 damage per shot: a copter dies in 4 hits. Range 8.5 (copters have 4.5 and cannot attack buildings)'}
+  nexus:{name:'Nexus',size:4,cost:400,time:40,hp:2200,supply:15,vis:14.3},
+  barracks:{name:'Barracks',size:3,cost:150,time:20,hp:1100,supply:0,vis:10.4},
+  pylon:{name:'Pylon',size:2,cost:100,time:12,hp:550,supply:8,vis:9.1},
+  factory:{name:'Factory',size:3,cost:200,time:28,hp:1400,supply:0,vis:10.4},
+  turret:{name:'Turret',size:2,cost:150,time:16,hp:700,supply:0,vis:13,range:8.5,dmg:40,cd:.9,info:'Anti-air auto turret. Fires automatically at flying units in range, 40 damage per shot: a copter dies in 4 hits. Range 8.5 (copters have 4.5 and cannot attack buildings)'}
 };
 
 function hash(x,y,s){let h=(x*374761393+y*668265263+(s||0)*982451653)|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;}
@@ -890,18 +890,26 @@ function kill(e,by){
     if(e.team===0&&e.type==='worker')note('Worker lost','warn',cx,cy);
   }
 }
+function boom(x,y,z,s,d,smoke){
+  effects.push({k:'x',x,y,z,s,t:.55,T:.55,d:d||0});
+  for(let i=0;i<smoke;i++)effects.push({k:'sm',x:x+(Math.random()-.5)*.5,y:y+(Math.random()-.5)*.4,z:z+Math.random()*8,vx:(Math.random()-.5)*.6,vy:(Math.random()-.5)*.3,vz:10+Math.random()*14,t:.9+Math.random()*.6,T:1.5,r:s*.26+Math.random()*4,d:(d||0)+.08});
+}
 function fire(u,tg,d){
   const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y;
   u.face=Math.atan2(ty-u.y,tx-u.x);
   if(u.type==='tank'){
     effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.16,w:3.4,c:'#ffb347',z:30,z1:tg.kind==='u'&&UD[tg.type].air?36:12});
     effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ffb347'});
+    boom(tx,ty,tg.kind==='b'?26:UD[tg.type].air?36:10,tg.kind==='b'?44:26,0,tg.kind==='b'?5:2);
     for(let i=0;i<7;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.3,c:i%2?'#ffd27a':'#ff8a3d'});}
   }
   else if(u.type==='rocket'){
-    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.12,w:2.4,c:'#ffd9a0',z:24,z1:tg.kind==='u'&&UD[tg.type].air?36:10});
-    effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ff8a3d'});effects.push({k:'r',x:tx,y:ty,t:.35,c:'#ffd27a'});
-    for(let i=0;i<9;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.6;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.35,c:i%2?'#ffd27a':'#ff6a2d'});}
+    const zi=tg.kind==='u'&&UD[tg.type].air?36:tg.kind==='b'?24:10;
+    /* a visible rocket flies to the target leaving a trail of smoke; the blast lands when it arrives */
+    effects.push({k:'m',sx:u.x,sy:u.y,ex:tx,ey:ty,x:u.x,y:u.y,z0:24,z1:zi,z:24,t:.3,T:.3});
+    effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ff8a3d',d:.3});effects.push({k:'r',x:tx,y:ty,t:.35,c:'#ffd27a',d:.3});
+    boom(tx,ty,zi,tg.kind==='b'?30:22,.3,3);
+    for(let i=0;i<9;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.6;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.35,c:i%2?'#ffd27a':'#ff6a2d',d:.3});}
     if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
     const R=d.splash,hit=[];
     for(const e of units){
@@ -1035,7 +1043,7 @@ function updateUnit(u,dt){
   switch(o.type){
     case 'idle':
       if(d.range>1.5&&u.acq<=0){
-        u.acq=.3;const t=findTarget(u,7);
+        u.acq=.3;const t=findTarget(u,Math.max(7,d.range+1));
         if(t)u.order={type:'attack',target:t,home:{x:u.x,y:u.y},leash:10,then:null};
       }
       break;
@@ -1045,7 +1053,7 @@ function updateUnit(u,dt){
       break;
     case 'amove':
       if(d.range>1.5&&u.acq<=0){
-        u.acq=.3;const t=findTarget(u,7);
+        u.acq=.3;const t=findTarget(u,Math.max(7,d.range+1));
         if(t){u.order={type:'attack',target:t,home:null,leash:0,then:o};u.path=null;break;}
       }
       if(!u.path&&!setPath(u,o.x,o.y)){u.order={type:'idle'};break;}
@@ -1243,7 +1251,19 @@ function sim(dt){
   supply();
   fogT-=dt;if(fogT<=0){fogT=.1;updateFog();detectEnemies();}
   aiT-=dt;if(aiT<=0){aiT=.6;aiTick();}
-  for(const e of effects){e.t-=dt;if(e.k==='p'){e.x+=e.vx*dt;e.y+=e.vy*dt;}}
+  const born=[];
+  for(const e of effects){
+    if(e.d>0){e.d-=dt;continue;}
+    e.t-=dt;
+    if(e.k==='p'){e.x+=e.vx*dt;e.y+=e.vy*dt;}
+    else if(e.k==='sm'){e.x+=e.vx*dt;e.y+=e.vy*dt;e.z+=e.vz*dt;}
+    else if(e.k==='m'){
+      const f=clamp(1-e.t/e.T,0,1);
+      e.x=e.sx+(e.ex-e.sx)*f;e.y=e.sy+(e.ey-e.sy)*f;e.z=e.z0+(e.z1-e.z0)*f;
+      for(let i=0;i<2;i++)born.push({k:'sm',x:e.x+(Math.random()-.5)*.1,y:e.y+(Math.random()-.5)*.1,z:e.z,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,vz:4+Math.random()*8,t:.7+Math.random()*.5,T:1.2,r:2.2+Math.random()*2});
+    }
+  }
+  for(const n of born)effects.push(n);
   effects=effects.filter(e=>e.t>0);
   for(const f of floats){f.t-=dt;f.y-=dt*.8;}
   floats=floats.filter(f=>f.t>0);
@@ -1310,6 +1330,7 @@ function newGame(){
   note('Base established. Build a Pylon before supply runs out.','good');
   mHurt=mBldg=mEnemy=-999;seenAt.clear();lastAlert=-99;alertPos=null;$('alert').classList.remove('show');
   $('over').hidden=true;
+  cam.z=1.3;
   centerOn(SLOTS[opts.slot][0]+2,SLOTS[opts.slot][1]+2);
   $('intro').style.display='';
 }
@@ -1349,7 +1370,10 @@ function rightClick(wx,wy){
   if(ent&&ent.kind!=='r'&&side(ent.team)===1){
     const ex=ent.kind==='b'?ent.tx+ent.size/2:ent.x,ey=ent.kind==='b'?ent.ty+ent.size/2:ent.y;
     /* when the target dies, everyone (including units still walking up from behind) keeps attack-moving to where it was */
-    mine.forEach(u=>setOrder(u,{type:'attack',target:ent,home:null,leash:0,follow:true,then:{type:'amove',x:clamp(ex,.5,W-.5),y:clamp(ey,.5,H-.5)}}));
+    /* units that cannot hit a flying target keep their current orders instead of running up to it */
+    const airT=ent.kind==='u'&&UD[ent.type].air,shooters=mine.filter(u=>!(airT&&noAir(u)));
+    if(!shooters.length){flash('Cannot hit air units');return;}
+    shooters.forEach(u=>setOrder(u,{type:'attack',target:ent,home:null,leash:0,follow:true,then:{type:'amove',x:clamp(ex,.5,W-.5),y:clamp(ey,.5,H-.5)}}));
     ring(wx,wy,C.foe);return;
   }
   if(ent&&ent.kind==='b'&&ent.team===0&&!ent.done){
@@ -1573,7 +1597,6 @@ function drawBuilding(b,t){
     const ga=ctx.globalAlpha;ctx.globalAlpha=ga*pulse;ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(cx,my-23);ctx.lineTo(cx+hw*.5,my);ctx.lineTo(cx,my+15);ctx.lineTo(cx-hw*.5,my);ctx.closePath();ctx.fill();ctx.globalAlpha=ga;
     ctx.fillStyle=col;ctx.globalAlpha=ga*(.4+.4*pulse);ctx.fillRect(cx-w*.2,cy+w*.17*K-17,w*.4,2);ctx.globalAlpha=ga;
   }
-  if(b.hit>0){ctx.globalAlpha=.3;ctx.fillStyle='#fff';ctx.fillRect(cx-h2,cy-bHeight(b)-h2*K,w,w*K+bHeight(b));}
   ctx.restore();
   if(!b.done){
     const x=b.tx*T,y=b.ty*T*K;
@@ -1853,9 +1876,26 @@ function render(t){
   }
   // effects
   for(const e of effects){
+    if(e.d>0)continue;
     if(e.k!=='r'&&!(visAt(e.x,e.y)||(e.k==='l'&&visAt(e.x1,e.y1))))continue;
     if(e.k==='l'){ctx.strokeStyle=e.c;ctx.globalAlpha=clamp(e.t/.1,0,1);ctx.lineWidth=e.w||1.6;ctx.beginPath();ctx.moveTo(e.x*T,e.y*T*K-(e.z||16));ctx.lineTo(e.x1*T,e.y1*T*K-(e.z1||12));ctx.stroke();ctx.globalAlpha=1;}
-    else if(e.k==='p'){ctx.globalAlpha=clamp(e.t*2,0,1);ctx.fillStyle=e.c;ctx.fillRect(e.x*T-2,e.y*T*K-2-8,4,4);ctx.globalAlpha=1;}
+    else if(e.k==='p'){ctx.globalAlpha=clamp(e.t*2,0,1);ctx.fillStyle=e.c;ctx.beginPath();ctx.arc(e.x*T,e.y*T*K-8,2.4,0,7);ctx.fill();ctx.globalAlpha=1;}
+    else if(e.k==='sm'){
+      const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f*2.4),sx=e.x*T,sy=e.y*T*K-e.z,a=clamp(e.t/e.T,0,1)*.55;
+      ctx.globalAlpha=a;ctx.fillStyle='#5d6166';ctx.beginPath();ctx.arc(sx,sy,r,0,7);ctx.fill();
+      ctx.globalAlpha=a*.7;ctx.fillStyle='#b9bdc1';ctx.beginPath();ctx.arc(sx-r*.25,sy-r*.25,r*.55,0,7);ctx.fill();ctx.globalAlpha=1;
+    }
+    else if(e.k==='m'){
+      const sx=e.x*T,sy=e.y*T*K-e.z;
+      ctx.drawImage(glowSprite('mflame',[[0,'rgba(255,245,200,1)'],[.35,'rgba(255,160,50,.8)'],[1,'rgba(255,100,20,0)']]),sx-9,sy-9,18,18);
+      ctx.fillStyle='#fff6d0';ctx.beginPath();ctx.arc(sx,sy,2.2,0,7);ctx.fill();
+    }
+    else if(e.k==='x'){
+      const f=clamp(1-e.t/e.T,0,1),r=e.s*(.35+.85*Math.sqrt(f)),sx=e.x*T,sy=e.y*T*K-e.z;
+      ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=clamp(1.3-f*1.3,0,1);
+      ctx.drawImage(glowSprite('boom',[[0,'rgba(255,252,225,1)'],[.22,'rgba(255,205,90,.95)'],[.5,'rgba(255,115,30,.6)'],[1,'rgba(255,60,10,0)']]),sx-r,sy-r,r*2,r*2);
+      ctx.restore();
+    }
     else if(e.k==='r'){const f=1-e.t/.5,r=6+f*14;ctx.globalAlpha=1-f;ctx.strokeStyle=e.c;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(e.x*T,e.y*T*K,r,r*K,0,0,7);ctx.stroke();ctx.globalAlpha=1;}
   }
   for(const p of pings){const f=1-p.t/2,r=10+f*60;ctx.globalAlpha=clamp(1-f,0,1);ctx.strokeStyle=C.bad;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(p.x*T,p.y*T*K,r,r*K,0,0,7);ctx.stroke();ctx.globalAlpha=1;}
@@ -2770,23 +2810,21 @@ function sparkle(g,x,y,r){
 }
 function arcs(g,a,b){
   g.textContent='';
-  const ys=[-24,-4,18];
+  const ys=[-8,8];
   ys.forEach((o,i)=>{
-    if(Math.random()<.25)return;
-    const p=zigzag(a.r+1,a.cy+o*1.6,b.l-1,b.cy+o*1.6+(Math.random()-.5)*16,22);
-    el('polyline',{points:str(p),fill:'none',stroke:'#4fd9ff','stroke-width':12,'stroke-opacity':.3,'stroke-linejoin':'round','stroke-linecap':'round'},g);
-    el('polyline',{points:str(p),fill:'none',stroke:'#7fe6ff','stroke-width':5,'stroke-opacity':.7,'stroke-linejoin':'round','stroke-linecap':'round'},g);
-    el('polyline',{points:str(p),fill:'none',stroke:'#ffffff','stroke-width':2.4,'stroke-linejoin':'round','stroke-linecap':'round'},g);
-    for(let j=0;j<4;j++){const q=p[1+Math.floor(Math.random()*(p.length-2))];sparkle(g,q[0]+(Math.random()-.5)*14,q[1]+(Math.random()-.5)*14,3+Math.random()*5);}
-    const k=2+Math.floor(Math.random()*5),f=p[k],dir=Math.random()<.5?-1:1;
-    el('polyline',{points:str(zigzag(f[0],f[1],f[0]+(b.l-a.r)*.18,f[1]+dir*(14+Math.random()*16),5)),fill:'none',stroke:'#bff4ff','stroke-width':1.3,'stroke-linecap':'round'},g);
+    if(Math.random()<.3)return;
+    const p=zigzag(a.r+1,a.cy+o,b.l-1,b.cy+o+(Math.random()-.5)*8,7);
+    el('polyline',{points:str(p),fill:'none',stroke:'#4fd9ff','stroke-width':6,'stroke-opacity':.3,'stroke-linejoin':'round','stroke-linecap':'round'},g);
+    el('polyline',{points:str(p),fill:'none',stroke:'#7fe6ff','stroke-width':2.6,'stroke-opacity':.7,'stroke-linejoin':'round','stroke-linecap':'round'},g);
+    el('polyline',{points:str(p),fill:'none',stroke:'#ffffff','stroke-width':1.3,'stroke-linejoin':'round','stroke-linecap':'round'},g);
+    for(let j=0;j<2;j++){const q=p[1+Math.floor(Math.random()*(p.length-2))];sparkle(g,q[0]+(Math.random()-.5)*8,q[1]+(Math.random()-.5)*8,2+Math.random()*3);}
   });
-  [[a.r,a.cy],[b.l,b.cy]].forEach(p=>{el('circle',{cx:p[0],cy:p[1],r:8+Math.random()*7,fill:'#9defff','fill-opacity':.55},g);
-    for(let j=0;j<5;j++){const ang=Math.random()*6.283,d=6+Math.random()*22;el('line',{x1:p[0],y1:p[1],x2:p[0]+Math.cos(ang)*d,y2:p[1]+Math.sin(ang)*d,stroke:'#e8fbff','stroke-width':1.3,'stroke-linecap':'round'},g);}
-    sparkle(g,p[0],p[1],6+Math.random()*4);});
+  [[a.r,a.cy],[b.l,b.cy]].forEach(p=>{el('circle',{cx:p[0],cy:p[1],r:4+Math.random()*4,fill:'#9defff','fill-opacity':.5},g);
+    for(let j=0;j<3;j++){const ang=Math.random()*6.283,d=4+Math.random()*10;el('line',{x1:p[0],y1:p[1],x2:p[0]+Math.cos(ang)*d,y2:p[1]+Math.sin(ang)*d,stroke:'#e8fbff','stroke-width':1,'stroke-linecap':'round'},g);}
+    sparkle(g,p[0],p[1],3+Math.random()*2);});
 }
 function jump(a,b,done){
-  if(REDUCE||Math.abs(a.cy-b.cy)>40||b.l-a.r<10){flash(a.e);setTimeout(()=>{flash(b.e);done&&done();},150);return;}
+  if(Math.abs(a.cy-b.cy)>40||b.l-a.r<10){flash(a.e);setTimeout(()=>{flash(b.e);done&&done();},150);return;}
   const g=el('g',{});flash(a.e);
   let n=0;
   const tick=()=>{
@@ -2797,6 +2835,7 @@ function jump(a,b,done){
   tick();
 }
 function zap(){
+  build();
   const mm=box(q('mm')),sel=box(q('sel')),cmd=box(q('cmd'));
   jump(mm,sel,()=>setTimeout(()=>jump(sel,cmd),120));
 }
@@ -2806,7 +2845,9 @@ if(window.ResizeObserver)new ResizeObserver(schedule).observe(app);
 window.addEventListener('resize',schedule);
 window.addEventListener('load',schedule);
 build();
-(function loop(){setTimeout(()=>{zap();loop();},6000+Math.random()*6000);})();
+[300,1000,2500].forEach(ms=>setTimeout(build,ms));
+setTimeout(zap,8000);
+(function loop(){setTimeout(()=>{zap();loop();},20000+Math.random()*25000);})();
 window.__zap=zap;
 /* little twinkling sparks on the unit avatars */
 window.__avSparks=function(){
