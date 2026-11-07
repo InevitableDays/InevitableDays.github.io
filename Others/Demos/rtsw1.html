@@ -388,10 +388,10 @@ const REDUCE=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: r
 
 const UD={
   worker:{name:'Worker',cost:50,time:8,supply:1,hp:40,speed:3.1,range:.85,dmg:5,cd:1,info:'Builds, mines, can fight in melee',vis:9},
-  marine:{name:'Marine',cost:50,time:7,supply:1,hp:55,speed:2.2,range:9,dmg:7,cd:.94,info:'Rifle, 7 damage, range 9',vis:12},
-  rocket:{name:'Rocket Soldier',cost:100,time:11,supply:2,hp:60,speed:1.95,range:10,dmg:22,cd:2.75,splash:2.1,info:'Rocket launcher, 22 damage in an area (range 10). Can hit air units',vis:12},
-  heli:{name:'Helicopter',cost:175,time:16,supply:2,hp:150,speed:3,range:9,dmg:9,cd:.63,info:'Armoured gunship, 9 damage per shot, ignores terrain. Hits ground and air units but cannot attack buildings. Tanks and workers cannot hit it',vis:13,air:true},
-  tank:{name:'Tank',cost:150,time:14,supply:3,hp:300,speed:1.6,range:11,dmg:36,cd:1.9,info:'Heavy siege cannon, 36 damage, range 11',vis:14}
+  marine:{name:'Marine',cost:50,time:7,supply:1,hp:55,speed:2.2,range:9,dmg:7,cd:.94,info:'Rifle, 7 damage, range 9. Cheap all-rounder',vis:12},
+  rocket:{name:'Rocket Soldier',cost:100,time:11,supply:2,hp:90,speed:1.95,range:10,dmg:22,bonus:18,cd:2.2,splash:2.1,armored:true,info:'Armoured anti-tank trooper (Marauder-style). 22 area damage, +18 vs armoured units (tanks, rocket soldiers), range 10. Can hit air units',vis:12},
+  heli:{name:'Helicopter',cost:175,time:16,supply:2,hp:150,speed:3,range:9,dmg:10,cd:.6,info:'Banshee-style gunship, 10 damage per shot, ignores terrain. Hits ground and air units but cannot attack buildings. Tanks and workers cannot hit it',vis:13,air:true},
+  tank:{name:'Tank',cost:150,time:14,supply:3,hp:220,speed:1.6,range:11,dmg:30,bonus:15,cd:2.1,armored:true,info:'Heavy siege cannon, 30 damage, +15 vs armoured units, range 11. Cannot hit air',vis:14}
 };
 const BD={
   nexus:{name:'Nexus',size:4,cost:400,time:40,hp:2200,supply:15,vis:14.3},
@@ -964,6 +964,8 @@ function findTarget(u,r){
   }
   return best;
 }
+/* bonus damage vs armoured units (tanks, rocket soldiers); never applies to buildings */
+const dmgVs=(d,tg,base)=>(base===undefined?d.dmg:base)+(d.bonus&&tg.kind==='u'&&UD[tg.type].armored?d.bonus*((base===undefined?d.dmg:base)/d.dmg):0);
 function damage(e,amt,by){
   if(e.dead)return;
   if(e.team===0&&side(by)===1)mHurt=time;
@@ -1023,13 +1025,13 @@ function fire(u,tg,d){
       if(b.dead||side(b.team)===side(u.team))continue;
       if(distRect(tx,ty,b.tx,b.ty,b.size)<=R*.6)hit.push([b,0]);
     }
-    for(const [e,dd] of hit)if(!e.dead)damage(e,e===tg?d.dmg:Math.max(6,Math.round(d.dmg*(1-dd/R*.55))),u.team);
+    for(const [e,dd] of hit)if(!e.dead)damage(e,Math.round(e===tg?dmgVs(d,e):Math.max(6,dmgVs(d,e,d.dmg*(1-dd/R*.55)))),u.team);
     return;
   }
   else if(d.range>1.5)effects.push({k:'l',x:u.x,y:u.y,x1:tx+(Math.random()-.5)*.4,y1:ty+(Math.random()-.5)*.4,t:.1,c:d.air?'#ffe08a':u.team===0?'#bfeaff':tcol(u.team),z:d.air?36:undefined,z1:tg.kind==='u'&&UD[tg.type].air?36:undefined});
   else effects.push({k:'p',x:tx,y:ty,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,t:.2,c:'#fff'});
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
-  damage(tg,d.dmg,u.team);
+  damage(tg,dmgVs(d,tg),u.team);
 }
 
 /* ---------- unit behaviour ---------- */
@@ -2201,6 +2203,7 @@ const RDEFS=
 +'<linearGradient id="glsG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9fe0ff"/><stop offset=".5" stop-color="#3b7ea6"/><stop offset="1" stop-color="#0f2638"/></linearGradient>'
 +'<linearGradient id="gunM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a848c"/><stop offset=".4" stop-color="#2c333a"/><stop offset="1" stop-color="#0d1013"/></linearGradient>'
 +'<linearGradient id="hullG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#78845e"/><stop offset=".6" stop-color="#46523a"/><stop offset="1" stop-color="#1f261a"/></linearGradient>'
++'<linearGradient id="visG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0a65a"/><stop offset=".3" stop-color="#8a3d14"/><stop offset=".7" stop-color="#2a1208"/><stop offset="1" stop-color="#0c0603"/></linearGradient>'
 +'<linearGradient id="shdR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>'
 +'<linearGradient id="woodG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b98a52"/><stop offset=".5" stop-color="#8a6034"/><stop offset="1" stop-color="#4f3419"/></linearGradient>'
 +'<pattern id="camo" width="34" height="30" patternUnits="userSpaceOnUse"><rect width="34" height="30" fill="#5b6740"/><ellipse cx="8" cy="8" rx="9" ry="5.5" fill="#3a4929"/><ellipse cx="25" cy="19" rx="10" ry="5" fill="#2b3521"/><ellipse cx="23" cy="5" rx="6" ry="3.5" fill="#80804c"/><ellipse cx="5" cy="24" rx="6" ry="4" fill="#80804c"/></pattern>';
@@ -2234,15 +2237,79 @@ function rHelmet(rk){
   else o+='<rect x="81" y="9" width="11" height="9" rx="2" fill="#1a1e18" stroke="#0a0c08"/><circle cx="86.5" cy="13.5" r="2" fill="#323a30"/>';
   return o;
 }
+/* ---------- rough StarCraft-style heads: sealed helmets, tinted visors, no human faces ---------- */
+function rGrime(seed,x0,y0,x1,y1){
+  let sd=seed*7919+13;const r=()=>{sd=(Math.imul(sd,1664525)+1013904223)>>>0;return sd/4294967296;};
+  let o='';
+  for(let i=0;i<3;i++){const x=x0+r()*(x1-x0);o+='<rect x="'+x.toFixed(1)+'" y="'+y0+'" width="'+(2+r()*4).toFixed(1)+'" height="'+(10+r()*(y1-y0)).toFixed(1)+'" fill="rgba(110,60,20,.2)"/>';}
+  for(let i=0;i<14;i++){const x=x0+r()*(x1-x0),y=y0+r()*(y1-y0),l=5+r()*16,a=(r()-.5)*2.4;
+    o+='<path d="M'+x.toFixed(1)+' '+y.toFixed(1)+'l'+(Math.cos(a)*l).toFixed(1)+' '+(Math.sin(a)*l).toFixed(1)+'" stroke="'+(r()<.55?'rgba(235,235,215,.22)':'rgba(0,0,0,.38)')+'" stroke-width="'+(.6+r()*.9).toFixed(2)+'" fill="none" stroke-linecap="round"/>';}
+  for(let i=0;i<4;i++){const x=x0+r()*(x1-x0),y=y0+r()*(y1-y0),q=2+r()*4;o+='<ellipse cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" rx="'+q.toFixed(1)+'" ry="'+(q*.7).toFixed(1)+'" fill="rgba(0,0,0,.28)"/><ellipse cx="'+(x-.8).toFixed(1)+'" cy="'+(y-.8).toFixed(1)+'" rx="'+(q*.55).toFixed(1)+'" ry="'+(q*.35).toFixed(1)+'" fill="rgba(255,255,255,.14)"/>';}
+  return o;
+}
+const rGorget='<path d="M62 94 L102 94 L106 114 L58 114Z" fill="#1d2218" stroke="#080a06" stroke-width="1.4"/>'
+  +[98,103,108].map(y=>'<path d="M60 '+y+' Q82 '+(y+7)+' 104 '+y+'" stroke="#3a4232" stroke-width="2.4" fill="none"/><path d="M60 '+(y+1.5)+' Q82 '+(y+8.5)+' 104 '+(y+1.5)+'" stroke="#06080a" stroke-width="1" fill="none"/>').join('')
+  +'<path d="M72 96 L72 114M96 96 L96 114" stroke="#0a0c08" stroke-width="2.4"/>';
+function rRivets(pts){return pts.map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.9" fill="#8d958a" stroke="#0a0c08" stroke-width=".8"/><circle cx="'+(p[0]-.5)+'" cy="'+(p[1]-.5)+'" r=".7" fill="#fff" opacity=".6"/>').join('');}
+function rGrit(kind,t){
+  if(kind==='m'){        // marine: heavy powered-armour helmet, amber visor, mouth grille, comm pod
+    const shell='M44 66 C38 26 62 6 86 6 C112 6 130 26 124 66 C124 88 114 104 100 108 L70 108 C54 104 44 88 44 66Z';
+    return '<path d="M126 36 L132 8" stroke="#0a0c08" stroke-width="3" stroke-linecap="round"/><circle cx="132" cy="7" r="2.4" fill="#c0362c" stroke="#0a0c08"/>'
+     +'<rect x="35" y="58" width="13" height="30" rx="4" fill="#20241a" stroke="#07090a" stroke-width="1.5"/><circle cx="41.5" cy="66" r="2.2" fill="#d6503a"/><path d="M38 74h7M38 79h7M38 84h7" stroke="#0a0c08" stroke-width="1.2"/>'
+     +'<path d="'+shell+'" fill="url(#hel)" stroke="#07090a" stroke-width="2.2" stroke-linejoin="round"/><path d="'+shell+'" fill="url(#camo)" opacity=".55"/>'
+     +'<path d="M104 14 C122 26 126 48 120 70 C124 86 114 100 100 106 C110 96 112 84 110 70 C116 52 112 30 104 14Z" fill="rgba(0,0,0,.38)"/>'
+     +'<path d="M58 22 C70 12 100 12 112 22" stroke="rgba(255,255,255,.28)" stroke-width="5" fill="none" stroke-linecap="round"/>'
+     +'<path d="M56 24 C68 36 70 70 66 100" stroke="#0e1109" stroke-width="1.4" fill="none"/><path d="M114 26 C102 38 100 70 104 98" stroke="#0e1109" stroke-width="1.2" fill="none"/>'
+     +'<path d="M46 46 C62 34 108 34 124 46 L122 58 C106 48 64 48 48 58Z" fill="#2b3122" stroke="#07090a" stroke-width="1.8" stroke-linejoin="round"/><path d="M52 41 C68 35 104 35 118 41" stroke="rgba(255,255,255,.18)" stroke-width="1.4" fill="none"/>'
+     +'<path d="M52 56 C68 48 104 48 120 56 L118 80 C106 91 66 91 54 80Z" fill="#05070a" stroke="#05070a" stroke-width="3.4" stroke-linejoin="round"/>'
+     +'<path d="M56 58 C70 51 102 51 116 58 L114 78 C104 87 68 87 58 78Z" fill="url(#visG)"/>'
+     +'<path d="M62 60 C74 55 90 54 100 56 L96 62 C84 60 72 62 64 68Z" fill="rgba(255,255,255,.5)"/><path d="M108 64 L112 74" stroke="rgba(255,255,255,.35)" stroke-width="2" stroke-linecap="round"/>'
+     +'<circle cx="108" cy="72" r="2.4" fill="#ffd27a" opacity=".85"/><path d="M60 70h16M60 74h10" stroke="rgba(255,190,110,.35)" stroke-width="1"/>'
+     +'<path d="M62 90 L106 90 L104 108 L66 108Z" fill="#161a11" stroke="#07090a" stroke-width="1.6"/>'+[70,76,82,88,94,100].map(x=>'<path d="M'+x+' 93v12" stroke="#4a5240" stroke-width="2"/><path d="M'+(x+1.6)+' 93v12" stroke="#05070a" stroke-width="1"/>').join('')
+     +'<g transform="rotate(-10 72 28)"><rect x="62" y="20" width="20" height="11" rx="2.5" fill="url(#fa'+t+')" stroke="#07090a" stroke-width="1.4"/><path d="M65 24h14M65 28h8" stroke="rgba(255,255,255,.55)" stroke-width="1.3"/></g>'
+     +rRivets([[54,26],[116,26],[50,52],[122,52],[54,82],[118,82]])+rGrime(5,48,16,122,104);
+  }
+  if(kind==='r'){        // rocket trooper: squat blast helmet, glowing slit visor, respirator canister and hoses
+    const shell='M40 72 C34 28 60 8 86 8 C114 8 134 28 128 72 C128 94 118 108 104 112 L68 112 C52 108 40 94 40 72Z';
+    return '<path d="M52 98 C34 112 40 128 62 122" stroke="#10130c" stroke-width="6.5" fill="none" stroke-linecap="round"/><path d="M52 98 C34 112 40 128 62 122" stroke="#4a5240" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="3 3"/>'
+     +'<path d="M118 98 C136 112 130 128 108 122" stroke="#10130c" stroke-width="6.5" fill="none" stroke-linecap="round"/><path d="M118 98 C136 112 130 128 108 122" stroke="#4a5240" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="3 3"/>'
+     +'<circle cx="38" cy="66" r="9" fill="#262b1f" stroke="#07090a" stroke-width="1.6"/><circle cx="38" cy="66" r="4" fill="#10130c"/><circle cx="132" cy="66" r="9" fill="#262b1f" stroke="#07090a" stroke-width="1.6"/><circle cx="132" cy="66" r="4" fill="#10130c"/>'
+     +'<path d="'+shell+'" fill="url(#hel)" stroke="#07090a" stroke-width="2.4" stroke-linejoin="round"/><path d="'+shell+'" fill="url(#camo)" opacity=".6"/><path d="'+shell+'" fill="rgba(0,0,0,.22)"/>'
+     +'<path d="M108 14 C128 28 132 50 126 72 C128 92 118 106 104 110 C114 98 116 86 114 72 C120 54 116 32 108 14Z" fill="rgba(0,0,0,.4)"/>'
+     +'<path d="M56 20 C70 11 102 11 116 20" stroke="rgba(255,255,255,.22)" stroke-width="5" fill="none" stroke-linecap="round"/>'
+     +'<path d="M44 40 C64 26 108 26 126 40 L124 54 C106 42 64 42 46 54Z" fill="#242a1c" stroke="#07090a" stroke-width="2" stroke-linejoin="round"/><path d="M50 36 L120 36" stroke="rgba(255,255,255,.14)" stroke-width="1.4"/>'
+     +'<path d="M50 56 L122 54 L122 70 C104 78 68 78 50 72Z" fill="#05070a" stroke="#05070a" stroke-width="3" stroke-linejoin="round"/>'
+     +'<path d="M56 60 L116 58 L116 66 C102 71 70 71 56 68Z" fill="url(#orG)"/><path d="M60 61 L100 60" stroke="rgba(255,255,255,.7)" stroke-width="1.6" stroke-linecap="round"/>'
+     +'<rect x="64" y="80" width="42" height="30" rx="9" fill="#1b1f15" stroke="#07090a" stroke-width="2"/>'+[0,1,2,3].map(i=>'<path d="M70 '+(87+i*5.5)+'h30" stroke="#4a5240" stroke-width="2"/><path d="M70 '+(88.5+i*5.5)+'h30" stroke="#05070a" stroke-width="1"/>').join('')
+     +'<circle cx="85" cy="95" r="5" fill="#0b0d08" stroke="#4a5240" stroke-width="1.4"/><circle cx="85" cy="95" r="1.8" fill="#c0362c"/>'
+     +'<g transform="rotate(-10 72 24)"><rect x="60" y="18" width="20" height="11" rx="2.5" fill="url(#fa'+t+')" stroke="#07090a" stroke-width="1.4"/><path d="M63 22h14M63 26h8" stroke="rgba(255,255,255,.55)" stroke-width="1.3"/></g>'
+     +rRivets([[52,32],[120,32],[48,60],[124,60],[60,108],[110,108]])+rGrime(9,44,14,126,110);
+  }
+  /* worker: rugged hazard hard-hat and a welding mask with a round lens, no face showing */
+  const shell='M46 66 C40 26 64 8 86 8 C110 8 128 26 122 66 C122 88 112 104 98 108 L72 108 C56 104 46 88 46 66Z';
+  return '<path d="'+shell+'" fill="url(#fa'+t+')" stroke="#07090a" stroke-width="2.2" stroke-linejoin="round"/>'
+   +'<path d="M104 14 C124 26 126 48 120 66 C122 88 112 104 98 108 C108 96 110 84 108 68 C112 50 110 30 104 14Z" fill="rgba(0,0,0,.35)"/>'
+   +'<path d="M62 18 C74 10 100 10 112 18" stroke="rgba(255,255,255,.4)" stroke-width="5" fill="none" stroke-linecap="round"/>'
+   +'<path d="M84 8 C86 22 86 36 84 46" stroke="rgba(0,0,0,.3)" stroke-width="4" fill="none"/>'
+   +'<path d="M44 44 C62 36 110 36 128 44 L126 56 C108 48 64 48 46 56Z" fill="#14181b" stroke="#07090a" stroke-width="1.6"/>'
+   +[0,1,2,3,4,5,6].map(i=>'<path d="M'+(48+i*11.5)+' 51 L'+(56+i*11.5)+' 41 L'+(62+i*11.5)+' 41 L'+(54+i*11.5)+' 51Z" fill="'+(i%2?'#14181b':'#e8c43a')+'" opacity=".92"/>').join('')
+   +'<ellipse cx="86" cy="76" rx="31" ry="25" fill="#0c1014" stroke="#05070a" stroke-width="3.4"/>'
+   +'<circle cx="86" cy="76" r="19" fill="#05070a"/><circle cx="86" cy="76" r="17" fill="url(#glsG)"/><path d="M74 68 C80 62 90 60 98 63 L92 68 C86 66 80 68 76 74Z" fill="rgba(255,255,255,.55)"/><circle cx="96" cy="86" r="2.6" fill="rgba(160,230,255,.5)"/>'
+   +[0,1,2,3,4,5,6,7].map(i=>{const a=i/8*6.283;return '<circle cx="'+(86+Math.cos(a)*26).toFixed(1)+'" cy="'+(76+Math.sin(a)*21).toFixed(1)+'" r="1.7" fill="#8d958a" stroke="#05070a" stroke-width=".7"/>';}).join('')
+   +'<rect x="74" y="96" width="24" height="12" rx="4" fill="#14181b" stroke="#05070a" stroke-width="1.4"/>'+[0,1,2,3].map(i=>'<path d="M'+(79+i*5)+' 98v8" stroke="#6a727a" stroke-width="1.6"/>').join('')
+   +'<rect x="92" y="14" width="15" height="11" rx="3" fill="#1c2024" stroke="#05070a"/><circle cx="103" cy="19.5" r="3.4" fill="#fff7c0"/>'
+   +rRivets([[52,30],[120,30],[50,70],[122,70]])+rGrime(2,48,14,122,108);
+}
+
 function rTorso(t,rk){
   const gl='#2a2d31';
   return '<path d="M2 162 C4 130 26 113 54 108 L106 108 C134 113 156 130 158 162Z" fill="url(#fab)" stroke="#12160e" stroke-width="1.6"/><path d="M2 162 C4 130 26 113 54 108 L106 108 C134 113 156 130 158 162Z" fill="url(#camo)" opacity=".45"/><path d="M110 112 C140 120 156 138 158 162 L120 162Z" fill="rgba(0,0,0,.3)"/>'
-   +'<path d="M66 92 L98 92 L102 112 L62 112Z" fill="url(#'+(rk?'sknB':'skn')+')"/><path d="M62 98 Q82 110 102 98 L102 112 L62 112Z" fill="rgba(60,30,12,.38)"/><ellipse cx="84" cy="98" rx="20" ry="7" fill="rgba(0,0,0,.3)"/>'
+   +rGorget
    +'<path d="M58 107 Q82 123 106 107 L109 115 Q82 132 55 115Z" fill="#262c20" stroke="#0e110a"/>'
    +'<path d="M40 112 L120 112 L132 162 L28 162Z" fill="#3c4336" stroke="#151911" stroke-width="1.6"/><path d="M40 112 L58 112 L48 162 L28 162Z" fill="rgba(255,255,255,.07)"/><path d="M82 118 V162" stroke="#161a12" stroke-width="1.4"/>'
    +[46,71,96].map(x=>'<rect x="'+x+'" y="136" width="22" height="20" rx="3" fill="#2d3328" stroke="#12160d" stroke-width="1.2"/><path d="M'+x+' 142h22" stroke="#12160d"/><rect x="'+(x+9)+'" y="140" width="4" height="5" fill="#8a929a"/>').join('')
    +'<ellipse cx="25" cy="124" rx="17" ry="9" transform="rotate(-22 25 124)" fill="url(#fa'+t+')" stroke="#12160e" stroke-width="1.5"/><ellipse cx="137" cy="124" rx="17" ry="9" transform="rotate(22 137 124)" fill="url(#fa'+t+')" stroke="#12160e" stroke-width="1.5"/>'
-   +'<path d="M44 114 L58 112 L56 127 L42 127Z" fill="url(#fa'+t+')" opacity=".85" stroke="#12160e"/>';
+   +'<path d="M44 114 L58 112 L56 127 L42 127Z" fill="url(#fa'+t+')" opacity=".85" stroke="#12160e"/>'+rGrime(3,8,112,152,162)+rRivets([[46,120],[118,120],[34,150],[130,150]]);
 }
 function rGlove(cx,cy,rx,ry,rot){
   return '<g transform="rotate('+(rot||0)+' '+cx+' '+cy+')"><ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="#2b2e33" stroke="#0a0c0e" stroke-width="1.4"/><path d="M'+(cx-rx*.5)+' '+(cy-ry*.9)+'v'+ry*.6+'M'+cx+' '+(cy-ry)+'v'+ry*.7+'M'+(cx+rx*.5)+' '+(cy-ry*.9)+'v'+ry*.6+'" stroke="#5a6068" stroke-width="1.2"/><ellipse cx="'+(cx-rx*.2)+'" cy="'+(cy-ry*.45)+'" rx="'+rx*.5+'" ry="'+ry*.22+'" fill="rgba(255,255,255,.18)"/></g>';
@@ -2261,7 +2328,7 @@ function rfig(kind,c,cd,t){
      +'<rect x="126" y="135" width="24" height="6" fill="#15181b"/><rect x="148" y="132.5" width="11" height="11" rx="1.5" fill="#0e1012" stroke="#05070a"/><path d="M151 134v8M155 134v8" stroke="#3a4046"/>'
      +rGlove(50,152,10,8.5,10)+rGlove(106,143,12,8,0)
      +'<g transform="translate(166 138)">'+R_FLASH+'</g></g></g>';
-    return breathe(0,rTorso(t,false)+rHead('skn','#3b5a73',false)+rHelmet({t:t,rk:false})+rifle);
+    return breathe(0,rTorso(t,false)+rGrit('m',t)+rifle);
   }
   if(kind==='rocket'){
     const tube='<g transform="translate(60 152) rotate(-38)">'
@@ -2271,11 +2338,11 @@ function rfig(kind,c,cd,t){
      +'<g class="a-recoil"><path d="M92 -11 L116 -6 Q128 0 116 6 L92 11Z" fill="url(#orG)" stroke="#4a2406" stroke-width="1.4"/><path d="M96 -9 L102 -9 L102 9 L96 9Z" fill="url(#fa'+t+')"/><ellipse cx="112" cy="-3" rx="4" ry="1.6" fill="rgba(255,255,255,.5)"/></g>'
      +rGlove(44,26,10,8,-10)+rGlove(78,2,9,15,0)
      +'<g transform="translate(130 0)">'+R_FLASH+'</g></g>';
-    return breathe(-1.3,rTorso(t,true)+tube+rHead('sknB','#4a3828',true)+rHelmet({t:t,rk:true}));
+    return breathe(-1.3,rTorso(t,true)+tube+rGrit('r',t));
   }
   if(kind==='worker'){
     const torso='<path d="M2 162 C4 132 26 114 54 109 L106 109 C134 114 156 132 158 162Z" fill="#454c52" stroke="#14181b" stroke-width="1.6"/>'
-     +'<path d="M66 92 L98 92 L102 112 L62 112Z" fill="url(#skn)"/><ellipse cx="84" cy="98" rx="20" ry="7" fill="rgba(0,0,0,.3)"/>'
+     +rGorget
      +'<path d="M30 112 L58 109 L66 162 L22 162Z" fill="url(#fa'+t+')" stroke="#14181b" stroke-width="1.6"/><path d="M134 112 L106 109 L98 162 L142 162Z" fill="url(#fa'+t+')" stroke="#14181b" stroke-width="1.6"/>'
      +'<path d="M26 134 L62 132 L63 140 L25 142Z M26 150 L64 148 L64 156 L26 158Z M138 134 L102 132 L101 140 L139 142Z M136 150 L100 148 L100 156 L138 158Z" fill="#e9eef0" opacity=".85"/><path d="M58 109 Q82 124 106 109" fill="none" stroke="#2a3036" stroke-width="5"/>'
      +'<path d="M66 108 Q82 118 98 108 L98 116 Q82 128 66 116Z" fill="#e8c43a" stroke="#6a560c"/>';
@@ -2287,7 +2354,7 @@ function rfig(kind,c,cd,t){
     const glasses='<path d="M66 59 H108" stroke="#161a1d" stroke-width="2.4"/><rect x="68" y="56.5" width="16" height="10" rx="4" fill="rgba(150,220,255,.28)" stroke="#161a1d" stroke-width="1.6"/><rect x="89" y="56.5" width="16" height="10" rx="4" fill="rgba(150,220,255,.28)" stroke="#161a1d" stroke-width="1.6"/><path d="M71 59 L76 57M92 59 L97 57" stroke="rgba(255,255,255,.8)" stroke-width="1.4"/>';
     const pick='<g class="a-swing" style="transform-origin:116px 140px"><path d="M112 156 L138 62" stroke="#0e0a06" stroke-width="9" stroke-linecap="round"/><path d="M112 156 L138 62" stroke="url(#woodG)" stroke-width="6" stroke-linecap="round"/><path d="M120 62 Q140 48 160 62 L154 68 Q140 58 126 68Z" fill="url(#stl)" stroke="#05070a" stroke-width="1.6" stroke-linejoin="round"/><path d="M124 63 Q140 53 154 63" stroke="rgba(255,255,255,.5)" stroke-width="1.2" fill="none"/>'
      +'<ellipse cx="120" cy="128" rx="10" ry="9" fill="#b8905a" stroke="#4a3216" stroke-width="1.4"/><path d="M113 124h14M113 129h14" stroke="#6a4c26"/></g>';
-    return breathe(.4,torso+rHead('skn','#5a4630',false)+hat+glasses+pick);
+    return breathe(.4,torso+rGrit('w',t)+pick);
   }
   if(kind==='tank'){
     const wheels=[24,44,64,84,104,124].map(x=>'<circle cx="'+x+'" cy="131" r="9" fill="url(#stl)" stroke="#05070a" stroke-width="1.4"/><circle cx="'+x+'" cy="131" r="3.2" fill="#14171a"/>').join('');
@@ -2320,42 +2387,44 @@ function rfig(kind,c,cd,t){
   return null;
 }
 /* ---------- static sepia pencil-and-ink portraits (rendered once per unit type and team, shown as plain images) ---------- */
-const SEP=new Set(['worker','marine','rocket','tank','heli','squad']);
+const SEP={has:k=>k!=='none'};   // every avatar (units, buildings, crystals, squads) is a static golden-sepia picture
 const sepCache=new Map();
 function sepiaSVG(kind,team){
   const c=tcol(team),cd=tcolD(team),t=team,art=fig(kind,c,cd,t),T='translate(10 12) scale(.88)';
   const gray='.33 .5 .17 0 0 .33 .5 .17 0 0 .33 .5 .17 0 0 0 0 0 1 0',
-        dark='-.33 -.5 -.17 0 1 -.33 -.5 -.17 0 1 -.33 -.5 -.17 0 1 0 0 0 1 0',
         reg='filterUnits="userSpaceOnUse" x="0" y="0" width="160" height="160" color-interpolation-filters="sRGB"',
-        thr=(s,i)=>'<feComponentTransfer><feFuncR type="linear" slope="'+s+'" intercept="'+i+'"/><feFuncG type="linear" slope="'+s+'" intercept="'+i+'"/><feFuncB type="linear" slope="'+s+'" intercept="'+i+'"/></feComponentTransfer>',
         tab=(r,g,b)=>'<feFuncR type="table" tableValues="'+r+'"/><feFuncG type="table" tableValues="'+g+'"/><feFuncB type="table" tableValues="'+b+'"/>';
+  /* a few specks and hairline scratches, seeded by the unit name so every portrait is stable */
+  let sd=0;for(const ch of kind)sd=(sd*31+ch.charCodeAt(0))>>>0;
+  const rnd=()=>{sd=(Math.imul(sd,1664525)+1013904223)>>>0;return sd/4294967296;};
+  let dust='';
+  for(let i=0;i<16;i++)dust+='<circle cx="'+(8+rnd()*144).toFixed(1)+'" cy="'+(8+rnd()*144).toFixed(1)+'" r="'+(.3+rnd()*.7).toFixed(2)+'" fill="'+(rnd()<.6?'#2a1d05':'#fff6c8')+'" opacity="'+(.25+rnd()*.35).toFixed(2)+'"/>';
+  for(let i=0;i<3;i++){const x=10+rnd()*140,y=8+rnd()*60,l=20+rnd()*60;dust+='<path d="M'+x.toFixed(1)+' '+y.toFixed(1)+'l'+((rnd()-.5)*6).toFixed(1)+' '+l.toFixed(1)+'" stroke="'+(i?'#fff3bd':'#2a1d05')+'" stroke-width=".35" opacity=".28" fill="none"/>';}
+  const tone=tab('.19 .46 .74 .92 .995','.14 .34 .6 .8 .945','.03 .08 .19 .34 .58');
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160"><style>.a-flash,.a-tflash,.a-hand{display:none}</style>'
    +avDefs(c,cd,t)+'<defs>'
-   /* toned ink: grey, contrast curve, sepia colour map, paper grain */
-   +'<filter id="sepF" '+reg+'><feGaussianBlur stdDeviation=".3"/><feColorMatrix type="matrix" values="'+gray+'"/>'
-   +'<feComponentTransfer>'+tab('0 .1 .26 .48 .7 .87 .96 1','0 .1 .26 .48 .7 .87 .96 1','0 .1 .26 .48 .7 .87 .96 1')+'</feComponentTransfer>'
-   +'<feComponentTransfer result="s">'+tab('.09 .26 .5 .74 .9','.055 .17 .35 .58 .76','.03 .09 .2 .37 .52')+'</feComponentTransfer>'
-   +'<feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="5" result="n"/>'
-   +'<feColorMatrix in="n" type="matrix" values=".45 0 0 0 .72 .45 0 0 0 .72 .45 0 0 0 .72 0 0 0 0 1" result="gn"/>'
+   /* the subject: soften, grey, S-curve, golden sepia colour map, film grain */
+   +'<filter id="sepF" '+reg+'><feGaussianBlur stdDeviation=".35"/><feColorMatrix type="matrix" values="'+gray+'"/>'
+   +'<feComponentTransfer>'+tab('0 .07 .22 .45 .68 .86 .96 1','0 .07 .22 .45 .68 .86 .96 1','0 .07 .22 .45 .68 .86 .96 1')+'</feComponentTransfer>'
+   +'<feComponentTransfer result="s">'+tone+'</feComponentTransfer>'
+   +'<feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="5" result="n"/>'
+   +'<feColorMatrix in="n" type="matrix" values=".4 0 0 0 .76 .4 0 0 0 .76 .4 0 0 0 .76 0 0 0 0 1" result="gn"/>'
    +'<feComposite in="s" in2="gn" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/></filter>'
-   /* shadow masks: where the picture is dark, hatch lines show */
-   +'<filter id="th1" '+reg+'><feGaussianBlur stdDeviation=".5"/><feColorMatrix type="matrix" values="'+dark+'"/>'+thr(7,-3.9)+'</filter>'
-   +'<filter id="th2" '+reg+'><feGaussianBlur stdDeviation=".5"/><feColorMatrix type="matrix" values="'+dark+'"/>'+thr(9,-7.3)+'</filter>'
-   +'<mask id="hm1" maskUnits="userSpaceOnUse" x="0" y="0" width="160" height="160"><g filter="url(#th1)"><g transform="'+T+'">'+art+'</g></g></mask>'
-   +'<mask id="hm2" maskUnits="userSpaceOnUse" x="0" y="0" width="160" height="160"><g filter="url(#th2)"><g transform="'+T+'">'+art+'</g></g></mask>'
-   +'<pattern id="hA" width="3.3" height="3.3" patternUnits="userSpaceOnUse" patternTransform="rotate(42)"><path d="M0 .6H3.3" stroke="#22130a" stroke-width=".95" opacity=".8"/></pattern>'
-   +'<pattern id="hB" width="3.3" height="3.3" patternUnits="userSpaceOnUse" patternTransform="rotate(-48)"><path d="M0 .6H3.3" stroke="#1c0f07" stroke-width=".9" opacity=".85"/></pattern>'
-   +'<radialGradient id="pap" cx=".5" cy=".45" r=".78"><stop offset="0" stop-color="#efe0ba"/><stop offset=".7" stop-color="#d9c08c"/><stop offset="1" stop-color="#b8975d"/></radialGradient>'
-   +'<radialGradient id="vig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#3a2410" stop-opacity="0"/><stop offset="1" stop-color="#3a2410" stop-opacity=".55"/></radialGradient>'
-   +'<filter id="stain" '+reg+'><feTurbulence type="fractalNoise" baseFrequency=".03 .045" numOctaves="3" seed="11"/><feColorMatrix type="matrix" values="0 0 0 0 .42 0 0 0 0 .27 0 0 0 0 .1 0 0 0 1.1 -.32"/></filter>'
-   +'<filter id="fine" '+reg+'><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="2"/><feColorMatrix type="matrix" values="0 0 0 0 .3 0 0 0 0 .2 0 0 0 0 .1 0 0 0 .6 -.12"/></filter>'
+   /* soft bloom, like a lens glowing around bright parts */
+   +'<filter id="bloom" '+reg+'><feGaussianBlur stdDeviation="3.2"/><feColorMatrix type="matrix" values="'+gray+'"/>'
+   +'<feComponentTransfer result="b">'+tone+'</feComponentTransfer></filter>'
+   +'<radialGradient id="pap" cx=".5" cy=".42" r=".8"><stop offset="0" stop-color="#fdf0b0"/><stop offset=".55" stop-color="#ebcf6c"/><stop offset="1" stop-color="#b08f2e"/></radialGradient>'
+   +'<linearGradient id="flr" x1="0" y1="0" x2="0" y2="1"><stop offset=".58" stop-color="#4a3406" stop-opacity="0"/><stop offset="1" stop-color="#4a3406" stop-opacity=".42"/></linearGradient>'
+   +'<radialGradient id="vig" cx=".5" cy=".48" r=".74"><stop offset=".5" stop-color="#3b2a06" stop-opacity="0"/><stop offset="1" stop-color="#3b2a06" stop-opacity=".62"/></radialGradient>'
+   +'<filter id="stain" '+reg+'><feTurbulence type="fractalNoise" baseFrequency=".028 .04" numOctaves="3" seed="11"/><feColorMatrix type="matrix" values="0 0 0 0 .62 0 0 0 0 .46 0 0 0 0 .1 0 0 0 1.1 -.36"/></filter>'
+   +'<filter id="fine" '+reg+'><feTurbulence type="fractalNoise" baseFrequency="1.05" numOctaves="2" seed="2"/><feColorMatrix type="matrix" values="0 0 0 0 .3 0 0 0 0 .22 0 0 0 0 .06 0 0 0 .55 -.1"/></filter>'
    +'<clipPath id="cp"><rect x="6" y="6" width="148" height="148" rx="9"/></clipPath></defs>'
-   +'<g clip-path="url(#cp)"><rect width="160" height="160" fill="url(#pap)"/><rect width="160" height="160" filter="url(#stain)" opacity=".5"/>'
+   +'<g clip-path="url(#cp)"><rect width="160" height="160" fill="url(#pap)"/><rect width="160" height="160" filter="url(#stain)" opacity=".55"/><rect width="160" height="160" fill="url(#flr)"/>'
    +'<g filter="url(#sepF)"><g transform="'+T+'">'+art+'</g></g>'
-   +'<g mask="url(#hm1)"><rect width="160" height="160" fill="url(#hA)"/></g><g mask="url(#hm2)"><rect width="160" height="160" fill="url(#hB)"/></g>'
-   +'<rect width="160" height="160" filter="url(#fine)"/><rect width="160" height="160" fill="url(#vig)"/></g>'
-   +'<rect x="5.5" y="5.5" width="149" height="149" rx="9" fill="none" stroke="#2e1b0c" stroke-width="1.7" opacity=".85"/><rect x="9" y="9" width="142" height="142" rx="6" fill="none" stroke="#2e1b0c" stroke-width=".7" opacity=".65"/>'
-   +'<rect x="2" y="2" width="156" height="156" rx="12" fill="none" stroke="#2a190b" stroke-width="2.2" opacity=".9"/></svg>';
+   +'<g filter="url(#bloom)" opacity=".3"><g transform="'+T+'">'+art+'</g></g>'
+   +'<rect width="160" height="160" filter="url(#fine)"/><rect width="160" height="160" fill="url(#vig)"/>'+dust+'</g>'
+   +'<rect x="5.5" y="5.5" width="149" height="149" rx="9" fill="none" stroke="#3a2a08" stroke-width="1.7" opacity=".85"/><rect x="9" y="9" width="142" height="142" rx="6" fill="none" stroke="#3a2a08" stroke-width=".7" opacity=".6"/>'
+   +'<rect x="2" y="2" width="156" height="156" rx="12" fill="none" stroke="#2f2206" stroke-width="2.2" opacity=".9"/></svg>';
 }
 function sepiaURL(kind,team){
   const k=kind+team;let u=sepCache.get(k);
@@ -2452,7 +2521,7 @@ function infoHTML(e){
   const R=[],t0=teams[0],mine=e.team===0,k=(a,v,hl)=>R.push([a,v,hl]);
   if(e.kind==='u'){
     const d=UD[e.type];
-    k('Damage',d.dmg+(d.range>1.5?' ranged':' melee'));k('Range',d.range);k('Attack rate',d.cd+'s');k('DPS',(d.dmg/d.cd).toFixed(1));
+    k('Damage',d.dmg+(d.bonus?' (+'+d.bonus+' vs armoured)':'')+(d.range>1.5?' ranged':' melee'));k('Range',d.range);k('Attack rate',d.cd+'s');k('DPS',(d.dmg/d.cd).toFixed(1));
     k('Speed',d.speed);k('Vision',d.vis);k('Supply',d.supply,1);k('Cost',d.cost);
     if(e.type==='worker'&&mine)k('Carrying',e.carry);
   }else{
@@ -2679,8 +2748,8 @@ $('cmd').addEventListener('click',e=>{const b=e.target.closest('.cmd');if(b&&!b.
 const TDESC={
   worker:'Builds structures and mines minerals. Can fight in melee.',
   marine:'Cheap, fast rifle infantry. Hits ground and air units.',
-  rocket:'Rocket launcher with area damage. Can hit air units.',
-  tank:'Heavy siege cannon with long range. Cannot hit air units.',
+  rocket:'Armoured anti-tank trooper with area damage. Bonus damage vs tanks. Can hit air units.',
+  tank:'Heavy siege cannon with long range, bonus damage vs armoured. Cannot hit air units.',
   heli:'Fast armored gunship that flies over terrain. Attacks units, not buildings.',
   nexus:'Command center. Drop-off point for minerals; trains workers.',
   pylon:'Raises your command points (supply cap) by 8 so you can train more units.',
