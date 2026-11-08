@@ -432,6 +432,78 @@ body.protoss .q.empty{background:transparent;border:2px dashed rgba(90,62,8,.55)
 body.protoss .info{border-top-color:rgba(90,62,8,.4)}
 body.protoss .ir b{text-shadow:none}
 body.protoss table.vs td{border-top-color:rgba(90,62,8,.3)}
+/* ---- Zerg HUD: swamp. Mud, moss and slime panels, a mutant crystal arm by the minimap, a tiny fire pit, orange bugs ---- */
+body.zerg #hud{position:relative;border-radius:8px;
+  background:radial-gradient(60px 50px at 18% 78%,rgba(88,70,30,.55),transparent),radial-gradient(90px 60px at 60% 20%,rgba(70,110,30,.35),transparent),radial-gradient(70px 60px at 88% 70%,rgba(80,64,28,.5),transparent),linear-gradient(180deg,#1b2a12,#0c140a 70%,#18120a);
+  box-shadow:0 0 0 4px #4b3a1c,0 0 0 6px #1d1608,0 0 14px 6px rgba(100,150,40,.25)}
+body.zerg #hud::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:8px;
+  background-image:radial-gradient(circle,rgba(170,210,90,.55) 0 1.5px,transparent 2.5px),radial-gradient(circle,rgba(170,210,90,.4) 0 1px,transparent 2px);
+  background-size:31px 47px,23px 37px;background-position:0 0,9px 14px;animation:zBub 7s linear infinite}
+@keyframes zBub{to{background-position:0 -47px,9px -23px}}
+body.zerg #hud::after{content:"";position:absolute;left:0;right:0;bottom:0;height:16px;z-index:0;pointer-events:none;border-radius:0 0 8px 8px;
+  background:linear-gradient(0deg,rgba(60,90,25,.7),transparent)}
+body.zerg #sel,body.zerg #cmd,body.zerg #mm{position:relative;z-index:1;border:3px solid #4a3a1e;border-radius:10px 6px 12px 6px;
+  --fg:#e4ebc4;--muted:#a6b07c;--line:#566330;--panel:#18220f;--panel2:rgba(80,100,30,.35);
+  color:var(--fg);
+  background:radial-gradient(40px 30px at 12% 15%,rgba(120,90,40,.25),transparent),radial-gradient(60px 40px at 85% 85%,rgba(90,130,40,.22),transparent),linear-gradient(160deg,#233318,#141d0c 60%,#1c1509);
+  box-shadow:inset 0 3px 0 #6d9a30,inset 0 0 20px rgba(90,130,30,.35),0 2px 6px rgba(0,0,0,.55)}
+body.zerg #mm{background:#0b140a;border-color:#4a3a1e}
+body.zerg .cmd,body.zerg .q,body.zerg .pu{
+  background:linear-gradient(180deg,#4d5f26,#36441a 50%,#2a3414);
+  border:2px solid #6b5a2a;border-radius:8px 5px 9px 5px;
+  box-shadow:inset 0 1px 0 rgba(190,230,110,.35),inset 0 -6px 10px rgba(20,30,8,.5),0 2px 4px rgba(0,0,0,.5)}
+body.zerg .cmd:hover:not(:disabled){color:#fff;border-color:#a6e03a;box-shadow:inset 0 1px 0 rgba(200,240,120,.45),0 0 12px rgba(150,220,50,.6);filter:brightness(1.1)}
+body.zerg .cmd[data-c^="train"]{border-color:#c9772a;box-shadow:inset 0 1px 0 rgba(190,230,110,.35),inset 0 -6px 10px rgba(20,30,8,.5),0 0 8px rgba(230,130,40,.35)}
+body.zerg .cmd[data-c="rally"]{border-color:#a6e03a}
+body.zerg .cmd .nm{text-shadow:0 1px 0 rgba(0,0,0,.6)}
+body.zerg .q.empty{background:transparent;border:2px dashed rgba(120,140,60,.5);box-shadow:none}
+body.zerg .info{border-top-color:rgba(120,140,60,.4)}
+body.zerg table.vs td{border-top-color:rgba(120,140,60,.3)}
+body.zerg #wires{display:none}
+#zdeco{display:none}
+.mPanel[aria-label="Teams"]{overflow:auto}
+.mCards.cmp .mCard{flex-direction:row;align-items:center;justify-content:center;gap:6px;padding:6px 8px}
+.mCards.cmp .mCard small{display:none}
+.mCards.cmp .mCard svg{width:22px;height:22px}
+.mCards.cmp .mCard b{font-size:13px}
+#cardsMy,#cardsAlly,#cardsFoe,#cardsFoe2{display:grid;grid-template-columns:repeat(4,1fr)}
+#cardsMy .mCard,#cardsAlly .mCard,#cardsFoe .mCard,#cardsFoe2 .mCard{min-width:0;height:40px;box-sizing:border-box;white-space:nowrap}
+#cardsAlly .mCard.on{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 0 18px rgba(111,227,160,.28);background:rgba(111,227,160,.08)}
+#cardsFoe2 .mCard.on{border-color:#f2a93b;box-shadow:0 0 0 1px #f2a93b,0 0 18px rgba(242,169,59,.3);background:rgba(242,169,59,.08)}
+body.zerg #zdeco{display:block;position:absolute;inset:0;z-index:3;pointer-events:none}
+#zdeco svg{position:absolute;overflow:visible}
+#zdeco .zsym{width:0;height:0}
+#zdeco .zarm{left:calc(var(--hud) - 2px);top:14px;width:76px;height:104px}
+#zdeco .zpit{left:var(--hud);bottom:3px;width:76px;height:92px;filter:drop-shadow(0 0 6px rgba(255,90,0,.95)) drop-shadow(0 0 16px rgba(255,30,0,.65));animation:zFlick .18s ease-in-out infinite alternate}
+@keyframes zFlick{from{filter:drop-shadow(0 0 5px rgba(255,90,0,.85)) drop-shadow(0 0 12px rgba(255,30,0,.5)) brightness(.95)}to{filter:drop-shadow(0 0 9px rgba(255,140,0,1)) drop-shadow(0 0 22px rgba(255,30,0,.8)) brightness(1.3)}}
+#zdeco .zeye{animation:zEye 3.2s steps(1) infinite}
+@keyframes zEye{0%,90%,100%{opacity:1}93%{opacity:.15}96%{opacity:.9}}
+#zdeco .zb{width:20px;height:14px}
+#zdeco .zb1{left:70px;top:-6px;animation:zBug 3.1s ease-in-out infinite}
+#zdeco .zb2{left:calc(var(--hud) + 76px + 90px);top:-6px;scale:-1 1;animation:zBug 2.7s ease-in-out -1s infinite}
+#zdeco .zb3{right:262px;top:-6px;rotate:8deg;animation:zBug 3.4s ease-in-out -2s infinite}
+#zdeco .zb4{left:calc(var(--hud) + 34px);top:4px;rotate:-20deg;animation:zBug 2.4s ease-in-out -.5s infinite}
+#zdeco .zb5{right:14px;bottom:-6px;scale:-1 1;animation:zBug 3.8s ease-in-out -1.5s infinite}
+#zdeco .zb6{left:calc(var(--hud) + 76px + 210px);bottom:-6px;animation:zBug 3s ease-in-out -2.2s infinite}
+@keyframes zBug{0%,100%{transform:translate(0,0)}30%{transform:translate(2px,-1px)}60%{transform:translate(-1px,0)}80%{transform:translate(1px,.5px)}}
+#zdeco .zf{transform-box:fill-box;transform-origin:50% 100%;animation:zFlame .42s ease-in-out infinite alternate}
+#zdeco .zf2{animation-duration:.33s;animation-delay:-.1s}
+#zdeco .zf3{animation-duration:.5s;animation-delay:-.2s}
+#zdeco .zf4{animation-duration:.28s;animation-delay:-.05s}
+@keyframes zFlame{0%{transform:scale(.82,.78) skewX(-6deg)}50%{transform:scale(1.08,1.18) skewX(5deg)}100%{transform:scale(.94,1.34) skewX(-4deg)}}
+#zdeco .zg{animation:zGlow 1.1s ease-in-out infinite alternate}
+@keyframes zGlow{from{opacity:.55}to{opacity:1}}
+#zdeco .ze{animation:zEmber 1.8s linear infinite;opacity:0}
+#zdeco .ze2{animation-delay:-.6s;animation-duration:2.2s}
+#zdeco .ze3{animation-delay:-1.2s;animation-duration:1.6s}
+@keyframes zEmber{0%{transform:translate(0,0);opacity:0}12%{opacity:1}100%{transform:translate(6px,-58px);opacity:0}}
+#zdeco .ze4{animation-delay:-.3s;animation-duration:2s}
+#zdeco .ze5{animation-delay:-.9s;animation-duration:2.5s}
+#zdeco .ze6{animation-delay:-1.5s;animation-duration:1.9s}
+#zdeco .zcr{animation:zCry 2.6s ease-in-out infinite alternate}
+@keyframes zCry{from{opacity:.75}to{opacity:1}}
+@media (max-width:900px){body.zerg #zdeco{display:none}}
+@media (prefers-reduced-motion:reduce){body.zerg #hud::before,#zdeco *{animation:none!important}#zdeco .ze{opacity:0}}
 </style>
 
 <div id="app">
@@ -478,20 +550,24 @@ body.protoss table.vs td{border-top-color:rgba(90,62,8,.3)}
             <h3>1 &middot; Teams</h3>
             <div class="mLbl">Match</div>
             <div class="mSeg" id="segMode"><button type="button" data-v="1">1 v 1</button><button type="button" data-v="2" class="on">2 v 2 &middot; Teammate AI</button></div>
-            <div class="mLbl">Your race</div><div class="mCards" id="cardsMy"></div>
-            <div class="mLbl">Enemy race</div><div class="mCards" id="cardsFoe"></div>
+            <div class="mLbl">Your race (blue)</div><div class="mCards cmp" id="cardsMy"></div>
+            <div class="mLbl" id="lblAlly">Ally race (green)</div><div class="mCards cmp" id="cardsAlly"></div>
+            <div class="mLbl">Enemy 1 race (red)</div><div class="mCards cmp" id="cardsFoe"></div>
+            <div class="mLbl" id="lblFoe2">Enemy 2 race (orange)</div><div class="mCards cmp" id="cardsFoe2"></div>
             <div class="mVs" id="vsBox"><div class="vsSide me" id="vsMe"></div><span class="vsTxt">VS</span><div class="vsSide foe" id="vsFoe"></div></div>
             <input type="checkbox" id="optAlly" checked hidden>
             <select id="optMy" hidden><option value="terran">Terran</option><option value="protoss">Protoss</option><option value="zerg">Zerg</option></select>
             <select id="optFoe" hidden><option value="terran">Terran</option><option value="protoss" selected>Protoss</option><option value="zerg">Zerg</option></select>
+            <select id="optAllyR" hidden><option value="me" selected>Same as you</option><option value="terran">Terran</option><option value="protoss">Protoss</option><option value="zerg">Zerg</option></select>
+            <select id="optFoe2" hidden><option value="foe" selected>Same as Enemy 1</option><option value="terran">Terran</option><option value="protoss">Protoss</option><option value="zerg">Zerg</option></select>
           </section>
           <section class="mPanel" aria-label="Map and spawn">
             <h3>2 &middot; Map &amp; spawn location</h3>
             <div class="mMaps" id="mapList"></div>
-            <div class="mLbl">Click a numbered point to choose where you start</div>
+            <div class="mLbl">Click a coloured point to choose where you start</div>
             <div id="pickWrap"><canvas id="pickMap"></canvas></div>
             <p id="pickInfo"></p>
-            <p class="mDesc" style="margin:0;color:var(--muted);font-size:15px;line-height:1.5;text-align:center"><b style="color:var(--fg)">Terran</b> fields cheap, flexible troops: Marines, armoured Rocket Soldiers, siege Tanks and Helicopter gunships built from Barracks and Factories. <b style="color:var(--fg)">Protoss</b> units cost more but are tougher, with regenerating shields: Zealots, Stalkers, Immortals and giant Colossi built from Gateways and Robotics Facilities. <b style="color:var(--fg)">Zerg</b> swarm with cheap, fast Hounds, acid-spitting Ravagers, Deadwood trees that club with long logs and dark Pterodactyls that rain red beams. Floaters, balloon monsters you can fly around, provide supply. Build an economy, scout through the smoke and destroy the enemy Nexus.</p>
+            <p class="mDesc" style="margin:0;color:var(--muted);font-size:15px;line-height:1.5;text-align:center"><b style="color:var(--fg)">Terran</b> fields cheap, flexible troops: Marines, armoured Rocket Soldiers, siege Tanks and Helicopter gunships built from Barracks and Factories. <b style="color:var(--fg)">Protoss</b> units cost more but are tougher, with regenerating shields: Zealots, Stalkers, Immortals and giant Colossi built from Gateways and Robotics Facilities. <b style="color:var(--fg)">Zerg</b> swarm with cheap, fast Hounds, acid-spitting Ravagers and dark Pterodactyls that rain red beams. Floaters, balloon monsters you can fly around, provide supply. Build an economy, scout through the smoke and destroy the enemy Nexus.</p>
           </section>
           <section class="mPanel" aria-label="Difficulty">
             <h3>3 &middot; Difficulty</h3>
@@ -509,6 +585,50 @@ body.protoss table.vs td{border-top-color:rgba(90,62,8,.3)}
     <div id="mm"><canvas id="mini"></canvas></div>
     <div id="sel"></div>
     <div id="cmd"></div>
+    <div id="zdeco" aria-hidden="true">
+      <svg class="zsym" aria-hidden="true"><defs>
+        <symbol id="zbug" viewBox="0 0 20 14">
+          <path d="M6 3 L2 0M8 3 L9 0" stroke="#7a3a08" stroke-width=".9" fill="none" stroke-linecap="round"/>
+          <path d="M5 6 L1 5M5 8 L1 9M6 10 L3 13M14 6 L19 5M14 8 L19 9M13 10 L16 13" stroke="#5a2a05" stroke-width=".9" fill="none" stroke-linecap="round"/>
+          <ellipse cx="12" cy="7.5" rx="6.5" ry="4.6" fill="#ff8a1f" stroke="#8a3d05" stroke-width=".8"/>
+          <path d="M12 3 V12" stroke="#b8520b" stroke-width=".7"/>
+          <ellipse cx="10" cy="5.6" rx="2.4" ry="1.2" fill="#ffc072" opacity=".7"/>
+          <circle cx="6" cy="6.5" r="2.6" fill="#e06d10" stroke="#8a3d05" stroke-width=".7"/>
+          <circle cx="5" cy="5.8" r=".7" fill="#1a0c02"/><circle cx="5" cy="7.6" r=".7" fill="#1a0c02"/>
+        </symbol></defs></svg>
+      <svg class="zarm" viewBox="0 0 76 104">
+        <path d="M0 62 C12 66 24 56 33 46 L42 36 L52 42 L44 56 C34 74 18 88 0 90 Z" fill="#6b4423" stroke="#2e1a0b" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M2 66 C14 68 24 60 32 50" fill="none" stroke="#8a5a30" stroke-width="2" stroke-linecap="round"/>
+        <path d="M4 82 C18 80 30 70 40 58" fill="none" stroke="#3d2410" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 74 C16 70 18 66 22 64M20 78 C25 74 28 70 30 66" fill="none" stroke="#9a3b2a" stroke-width="1" opacity=".8"/>
+        <path d="M42 36 L36 36 C32 30 36 24 42 26 L48 30 L56 28 C62 28 64 34 58 38 L52 42 Z" fill="#7a4e2a" stroke="#2e1a0b" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M40 27 L35 10 L45 24Z M48 29 L48 8 L54 28Z M57 30 L66 14 L62 34Z" fill="#d9c9a0" stroke="#2e1a0b" stroke-width="1.2" stroke-linejoin="round"/>
+        <g class="zcr"><path d="M12 64 L5 44 L19 58Z" fill="#4ff0c0" stroke="#0f6a55" stroke-width="1"/><path d="M26 54 L22 32 L34 48Z" fill="#b36bff" stroke="#5a2a96" stroke-width="1"/><path d="M34 66 L42 50 L43 70Z" fill="#4ff0c0" stroke="#0f6a55" stroke-width="1"/><path d="M20 80 L16 94 L28 80Z" fill="#b36bff" stroke="#5a2a96" stroke-width="1"/><path d="M12 64 L12 56 L19 58Z M26 54 L27 44 L34 48Z" fill="#d8fff2" opacity=".5"/></g>
+      </svg>
+      <svg class="zpit" viewBox="0 0 76 92">
+        <defs><radialGradient id="zgl" cx="50%" cy="62%" r="55%"><stop offset="0" stop-color="#ff5a14" stop-opacity=".95"/><stop offset=".55" stop-color="#d81b0a" stop-opacity=".45"/><stop offset="1" stop-color="#d81b0a" stop-opacity="0"/></radialGradient></defs>
+        <ellipse class="zg" cx="38" cy="58" rx="38" ry="40" fill="url(#zgl)"/>
+        <ellipse cx="38" cy="79" rx="34" ry="10" fill="#1c0f08" stroke="#0a0402" stroke-width="1"/>
+        <ellipse class="zg" cx="38" cy="78" rx="26" ry="6" fill="#ff3a0a" opacity=".8"/>
+        <g stroke="#d9cfae" stroke-width="3.6" stroke-linecap="round"><path d="M14 80 L62 73"/><path d="M16 73 L60 81"/></g>
+        <g fill="#efe6c4"><circle cx="13" cy="80" r="2.6"/><circle cx="15" cy="78" r="2"/><circle cx="63" cy="73" r="2.6"/><circle cx="61" cy="71" r="2"/><circle cx="15" cy="73" r="2.4"/><circle cx="17" cy="71" r="1.8"/><circle cx="61" cy="81" r="2.4"/><circle cx="63" cy="79" r="1.8"/></g>
+        <path class="zf zf2" d="M14 76 L10 62 L17 56 L16 44 L23 54 L26 66 L24 76Z" fill="#c4140a"/>
+        <path class="zf zf3" d="M62 76 L66 60 L59 54 L61 42 L53 53 L50 66 L52 76Z" fill="#c4140a"/>
+        <path class="zf zf4" d="M26 76 L20 62 L26 52 L24 36 L32 48 L36 30 L38 52 L40 70 L36 76Z" fill="#e6200c"/>
+        <path class="zf" d="M38 77 L21 71 L23 56 L30 48 L27 35 L35 30 L33 7 L43 26 L47 36 L52 30 L55 47 L58 62 L53 72Z" fill="#d81b0a"/>
+        <path class="zf zf2" d="M38 77 L26 71 L28 58 L34 50 L32 38 L38 33 L38 14 L45 34 L49 44 L52 58 L50 71Z" fill="#ff5a10"/>
+        <path class="zf zf3" d="M38 76 L30 70 L32 58 L37 50 L36 40 L41 30 L43 46 L47 56 L46 68Z" fill="#ffb02a"/>
+        <path class="zf zf4" d="M38 74 L33 68 L35 59 L39 50 L41 60 L43 68Z" fill="#fff0a8"/>
+        <g class="zeye"><path d="M28 55 L37 51 L35 58Z" fill="#fff8c0" stroke="#4a0000" stroke-width="1"/><path d="M48 55 L39 51 L41 58Z" fill="#fff8c0" stroke="#4a0000" stroke-width="1"/><circle cx="35.2" cy="55.3" r="1" fill="#b00000"/><circle cx="40.8" cy="55.3" r="1" fill="#b00000"/><path d="M29 66 L32 61 L34 66 L36 61 L38 67 L40 61 L42 66 L44 61 L47 66 L43 70 L38 68 L33 70Z" fill="#2a0000" opacity=".85"/></g>
+        <circle class="ze" cx="34" cy="30" r="1.2" fill="#ffb347"/><circle class="ze ze2" cx="42" cy="34" r="1.2" fill="#ffd34a"/><circle class="ze ze3" cx="28" cy="40" r="1" fill="#ff8a1f"/><circle class="ze ze4" cx="48" cy="42" r="1.1" fill="#ff5a14"/><circle class="ze ze5" cx="38" cy="26" r="1" fill="#ffe08a"/><circle class="ze ze6" cx="22" cy="46" r="1" fill="#ff6a1a"/>
+      </svg>
+      <svg class="zb zb1" viewBox="0 0 20 14"><use href="#zbug"/></svg>
+      <svg class="zb zb2" viewBox="0 0 20 14"><use href="#zbug"/></svg>
+      <svg class="zb zb3" viewBox="0 0 20 14"><use href="#zbug"/></svg>
+      <svg class="zb zb4" viewBox="0 0 20 14"><use href="#zbug"/></svg>
+      <svg class="zb zb5" viewBox="0 0 20 14"><use href="#zbug"/></svg>
+      <svg class="zb zb6" viewBox="0 0 20 14"><use href="#zbug"/></svg>
+    </div>
   </footer>
 </div>
 
@@ -556,7 +676,7 @@ Object.assign(UD,{
 const RACES={
   terran:{name:'Terran',bar:['marine','rocket'],fac:['tank','heli'],worker:'Worker',bn:{barracks:'Barracks',factory:'Factory',turret:'Turret',armory:'Armory'}},
   protoss:{name:'Protoss',bar:['zealot','stalker'],fac:['immortal','colossus'],worker:'Probe',bn:{barracks:'Gateway',factory:'Robotics Facility',turret:'Air Cannon',armory:'Robotics Bay'}},
-  zerg:{name:'Zerg',bar:['dog'],fac:['ravager','tree'],worker:'Drone',bn:{nexus:'Hive',barracks:'Spawning Pool',factory:'Mutation Pit',turret:'Spore Tower',armory:'Evolution Chamber'}}
+  zerg:{name:'Zerg',bar:['dog'],fac:['ravager'],worker:'Drone',bn:{nexus:'Hive',barracks:'Spawning Pool',factory:'Mutation Pit',turret:'Spore Tower',armory:'Evolution Chamber'}}
 };
 const PLURAL={marine:'Marines',rocket:'Rockets',tank:'Tanks',heli:'Copters',zealot:'Zealots',stalker:'Stalkers',immortal:'Immortals',colossus:'Colossi',dog:'Hounds',ravager:'Ravagers',tree:'Deadwoods',ptero:'Pterodactyls',overlord:'Floaters'};
 const raceOf=t=>(typeof teams!=='undefined'&&teams&&teams[t]&&teams[t].race)||'terran';
@@ -1156,7 +1276,7 @@ function drawSmoke(t){
 }
 /* ---------- state ---------- */
 let units,buildings,resources,teams,effects,floats,pings,log,sel,groups,nid,time,over,acc,aiT,ai;
-let opts={map:'twobanks',slot:0,ally:true,myRace:'terran',foeRace:'protoss',diff:'normal'},started=false,aiTeams=[],seenAt=new Map(),lastAlert=-99,alertPos=null,alertT=0,mHurt=-999,mBldg=-999,mEnemy=-999;
+let opts={map:'twobanks',slot:0,ally:true,myRace:'terran',foeRace:'protoss',allyRace:'me',foe2Race:'foe',diff:'normal'},started=false,aiTeams=[],seenAt=new Map(),lastAlert=-99,alertPos=null,alertT=0,mHurt=-999,mBldg=-999,mEnemy=-999;
 let speed=1,paused=false,place=null,aMode=false,rallyMode=false,idleIdx=0,lastClick={id:0,t:0};
 const cam={x:0,y:0,z:1};const K=0.58; // camera pitch: ground is squashed vertically, units stand upright
 let dprCap=1,emaDt=16,lastAdj=0,prevTs=0;let vw=800,vh=600,dpr=1,mouse={sx:0,sy:0,inside:false,type:'mouse'},drag=null,rpan=null;
@@ -1330,7 +1450,8 @@ function setPath(u,gx,gy){
   u.path=pts;u.pi=0;u.stk=0;
   return true;
 }
-function moveBy(u,dx,dy){
+function moveBy(u,dx,dy){const ox=u.x,oy=u.y;moveBy0(u,dx,dy);if(u.x!==ox||u.y!==oy)u.mv=time;}   // u.mv = last tick the unit actually moved (moving units pass through others, see separate)
+function moveBy0(u,dx,dy){
   const nx=u.x+dx,ny=u.y+dy;
   if(UD[u.type].air){u.x=clamp(nx,.5,W-.5);u.y=clamp(ny,.5,H-.5);return;}
   if(passable(nx,ny)){u.x=nx;u.y=ny;}
@@ -1742,8 +1863,8 @@ function updateUnit(u,dt){
     case 'build':updateBuild(u,dt);break;
   }
 }
-/* unit collision: every unit has a body radius and two units of the same layer (ground / air) can never overlap.
-   Overlaps are resolved firmly (2 passes per tick), so groups stay packed close together but never stack inside each other.
+/* unit collision: every unit has a body radius. A unit that is moving may pass through other units, but no two units of the same layer
+   (ground / air) can stay overlapped while at rest: as soon as both are standing still, the overlap is pushed apart (2 passes per tick).
    Miners/builders at work stay put; idle units yield more than moving ones. */
 const RAD={worker:.2,marine:.22,rocket:.24,zealot:.25,stalker:.28,immortal:.36,tank:.42,colossus:.5,heli:.34,dog:.24,ravager:.4,tree:.34,ptero:.36,overlord:.5};
 function separate(){
@@ -1762,6 +1883,7 @@ function separate(){
           const dx=b.x-a.x,dy=b.y-a.y;
           if(dx>1.05||dx<-1.05||dy>1.05||dy<-1.05)continue;
           if(aAir!==!!UD[b.type].air)continue;
+          if(a.mv===time||b.mv===time)continue;   // either one is moving: let them pass through each other
           const min=ra+(RAD[b.type]||.24),d2=dx*dx+dy*dy;
           if(d2>=min*min)continue;
           const d=Math.sqrt(d2)||.01,nx=d2>1e-6?dx/d:1,ny=d2>1e-6?dy/d:0;
@@ -1937,9 +2059,7 @@ function aiRun(t){
     if(!f.rally)f.rally=rally;
     if(zrg){
       if(f.done&&f.queue.length<1){
-        /* ravagers first, then a deadwood for every two ravagers */
-        if(zrv.length>=2&&ztr.length<Math.min(6,Math.ceil(zrv.length/2))&&time>200)queueTrain(f,'tree');
-        else if(zrv.length<cp(12))queueTrain(f,'ravager');
+        if(zrv.length<cp(12))queueTrain(f,'ravager');
       }
     }
     else if(pro&&f.done&&f.queue.length<1){
@@ -2037,12 +2157,14 @@ function assign(sl,ally){
   if(ally){a[pt(sl)]=2;a[m(pt(sl))]=3;}
   return a;
 }
+/* race of each team: 0 you, 1 enemy 1, 2 your ally, 3 enemy 2. 'me' / 'foe' mean follow your race / enemy 1's race */
+function teamRaces(){const f1=opts.foeRace;return [opts.myRace,f1,opts.allyRace==='me'?opts.myRace:opts.allyRace,opts.foe2Race==='foe'?f1:opts.foe2Race];}
 function newGame(){
   nid=1;units=[];buildings=[];resources=[];effects=[];floats=[];pings=[];log=[];groups={};sel=[];
   over=null;time=0;acc=0;aiT=1;place=null;aMode=false;rallyMode=false;idleIdx=0;
   ai={};
   teams=[0,1,2,3].map(()=>({minerals:400,used:0,cap:0,mined:0,kills:0,losses:0,dep:[],hist:[],histT:5,warn:-99}));
-  teams.forEach((tm,i)=>{tm.race=side(i)===0?opts.myRace:opts.foeRace;});
+  teams.forEach((tm,i)=>{tm.race=teamRaces()[i];});
   setMap(opts.map);
   for(let i=0;i<W*H;i++)occ[i]=blk(ter[i])?1:0;
   const asg=assign(opts.slot,opts.ally);
@@ -3145,6 +3267,7 @@ function spriteBuilding(b,t){
 }
 /* ===== ZERG MODELS: mud, chitin, teeth, legs and tails ===== */
 const ZCOL={mud:'#4a3a24',mud2:'#5e4a2e',mud3:'#3a2c1a',chit:'#6d5a34',chit2:'#85713f',dark:'#241a0e',bone:'#efe6c8',acid:'#a6e83c'};
+const ZBRN=Object.assign({},ZCOL),ZBLK={mud:'#1a1820',mud2:'#26232d',mud3:'#121016',chit:'#201d28',chit2:'#322e3d',dark:'#08070a',bone:'#efe6c8',acid:'#a6e83c'};   // Zerg units are drawn black; buildings keep the swamp palette
 function zE(x,y,rx,ry,col,rot){ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),rot||0,0,7);ctx.fill();ctx.strokeStyle='rgba(10,6,2,.65)';ctx.lineWidth=1;ctx.stroke();}
 function zPoly(pts,col){ctx.fillStyle=col;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(10,6,2,.65)';ctx.lineWidth=1;ctx.stroke();}
 function zLine(pts,w,col){ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.lineCap='butt';ctx.lineJoin='miter';}
@@ -3158,7 +3281,9 @@ function drawZerg(u,t){
   Z.ph=t*(Z.mv?11:2.2)+u.id*1.7;
   const sh=d.cd-u.cd;Z.rec=(!d.noatk&&sh>=0&&sh<.4)?sh:-1;Z.atk=u.order.type==='attack';
   const ty=u.type;
+  Object.assign(ZCOL,ZBLK);
   if(ty==='dog')zHound(Z);else if(ty==='ravager')zRavager(Z);else if(ty==='tree')zTree(Z);else if(ty==='ptero')zPtero(Z);else if(ty==='overlord')zFloater(Z);else zDrone(Z);
+  Object.assign(ZCOL,ZBRN);
   if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.ellipse(x,y-(d.air?38:11),d.air?16:13,d.air?12:10,0,0,7);ctx.fill();}
 }
 function zDrone(Z){
@@ -3190,6 +3315,15 @@ function zHound(Z){
     c=P(2,0,9);zE(c[0],c[1],9,6,ZCOL.chit,ang);
     c=P(-6,0,12.5);zGlow(c[0],c[1],2,col,.9);
   }]);
+  const claw=s=>()=>{   // one big sickle claw on a muscled forearm; the pair swings forward when the hound moves or bites
+    const sw=mv?Math.sin(ph+(s>0?0:3.14))*2.5:0,lift=open*4;
+    const arm=[P(4,s*5,10),P(12+sw*.4,s*9,8+lift),P(19+sw,s*8.5,6+lift)];
+    zLine(arm,5,ZCOL.dark);zLine(arm,3.4,ZCOL.mud2);
+    const a0=P(17+sw,s*8.5,10+lift),a1=P(26+sw,s*10,10+lift),a2=P(31+sw,s*7,1+lift),a3=P(24+sw,s*8,6+lift),a4=P(18+sw,s*8.5,5+lift);
+    zPoly([a0,a1,a2,a3,a4],ZCOL.bone);
+    zLine([a0,a1,a2],1,'rgba(60,40,15,.55)');
+  };
+  Q.push([-49,claw(-near)]);Q.push([.6,claw(near)]);
   Q.push([-14*fs,()=>{   // scorpion tail curling over the back
     const pts=[P(-14,0,9),P(-22,0,13),P(-26,0,23),P(-19,0,31),P(-11,0,29)];
     zLine(pts,5,ZCOL.dark);zLine(pts,3.2,ZCOL.mud2);
@@ -3222,6 +3356,14 @@ function zRavager(Z){
     c=P(8,0,23);zE(c[0],c[1],11.5,9,ZCOL.chit2,ang);   // shoulder hump
     for(let i=0;i<5;i++){const lx=-14+i*5,b=P(lx,0,27-i*.3),tp=P(lx-2.5,0,36+(i===2?4:0));zPoly([[b[0]-3.2,b[1]],[tp[0],tp[1]],[b[0]+3.2,b[1]]],ZCOL.bone);}
     c=P(-2,0,22);zGlow(c[0],c[1],2.4,col,.85);
+    for(let i=0;i<6;i++){   // fire burning along the spine: flickering red / orange / yellow tongues
+      const lx=-16+i*5,fl=Math.sin(t*13+i*2.3+u.id)*.5+.5,fl2=Math.sin(t*9+i*1.7+u.id*2)*.5+.5,h=11+fl*7+(i===2||i===3?4:0),lean=-3-fl2*2.5;
+      const b0=P(lx,0,26),tp=P(lx+lean,0,26+h),m=P(lx-1,0,26+h*.5);
+      zGlow(b0[0],b0[1]-4,9+fl*2,'#ff6a1a',.28);
+      zPoly([[b0[0]-4.4,b0[1]],[m[0]-3.2+fl2,m[1]],[tp[0],tp[1]],[m[0]+3.2+fl2,m[1]],[b0[0]+4.4,b0[1]]],'#d9340c');
+      zPoly([[b0[0]-3,b0[1]],[m[0]-2+fl2,m[1]+1],[tp[0],tp[1]+h*.18],[m[0]+2+fl2,m[1]+1],[b0[0]+3,b0[1]]],'#ff9a1f');
+      zPoly([[b0[0]-1.6,b0[1]],[m[0]+fl2*.5,m[1]+h*.12],[tp[0],tp[1]+h*.42],[m[0]+1.6,m[1]+h*.12],[b0[0]+1.6,b0[1]]],'#ffe27a');
+    }
   }]);
   Q.push([-24*fs,()=>{   // short tail with a bony club
     const a=P(-18,0,17),b=P(-27,0,13),k=P(-31,0,9),pp=[a,b,k];
@@ -3275,39 +3417,55 @@ function zTree(Z){
   Q.push([10,roots(near)]);Q.push([20,arm(near)]);
   zRun(Q);
 }
-function zPtero(Z){
+function zTube(pts,rad,fill,edge){   // one continuous tapered body: outline pass, then fill pass, so there are no seams
+  const pass=(col,add)=>{ctx.fillStyle=col;for(let i=0;i<pts.length-1;i++){const p=pts[i],q=pts[i+1],n=Math.max(2,Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/1.1));
+    for(let k=0;k<=n;k++){const f=k/n,r=rad[i]+(rad[i+1]-rad[i])*f+add;ctx.beginPath();ctx.arc(p[0]+(q[0]-p[0])*f,p[1]+(q[1]-p[1])*f,Math.max(.35,r),0,7);ctx.fill();}}};
+  pass(edge,1.1);pass(fill,0);
+}
+function zPtero(Z){   // dragon-phoenix: scaled lizard body, long tail ending in a flame plume, feathered fiery wings
   const {u,t,x,y,fs,P,ang,mv,rec,col,near}=Z;
-  ctx.fillStyle='rgba(0,0,0,.26)';ctx.beginPath();ctx.ellipse(x+6,y+5,14,5,0,0,7);ctx.fill();
-  const flap=Math.sin(t*(mv?10:6.5)+u.id*1.3),z=36+Math.sin(t*2.3+u.id)*1.6;
-  const WN='#3a2850',WB='#6a4a8c',RD='#c0303c',BD2='#2d1f3d',open=rec>=0&&rec<.3?1:0;
+  const S=1.4;
+  ctx.fillStyle='rgba(0,0,0,.26)';ctx.beginPath();ctx.ellipse(x+8,y+6,24,7.5,0,0,7);ctx.fill();
+  const flap=Math.sin(t*(mv?9:5.5)+u.id*1.3),z=40+Math.sin(t*2.3+u.id)*1.8;
+  const BODY='#140708',DKB='#0a0405',EDGE='#000000',open=rec>=0&&rec<.3?1:0;
+  const Q2=(lx,ly,zz)=>P(lx*S,ly*S,z+zz*S);
   const wing=s=>()=>{
-    const wz=flap*17;
-    const r=P(3,s*4,z+2),f1=P(13,s*30,z+4+wz),tp=P(-3,s*38,z+5+wz*1.15),f2=P(-15,s*30,z+2+wz*.85),bk=P(-12,s*7,z-1);
-    zPoly([r,f1,tp,f2,bk],WN);
-    zLine([r,f1],1.6,WB);zLine([r,tp],1.9,WB);zLine([r,f2],1.6,WB);
-    zLine([P(-4,s*14,z+1+wz*.4),P(-10,s*26,z+1+wz*.7)],1.1,RD);
-    zLine([P(4,s*14,z+2+wz*.45),P(6,s*26,z+3+wz*.8)],1.1,RD);
+    const wz=flap*20,W=(lx,ly,zz,k)=>P(lx*S,ly*S,z+zz*S+wz*k);
+    const r=W(3,s*4,2,0),el=W(5,s*17,7,.45),f1=W(15,s*34,8,.8),tp=W(-5,s*46,8,1.05);
+    const outline=[r,f1,tp,W(-12,s*42,2,.95),W(-9,s*36,4,.85),W(-19,s*33,0,.8),W(-14,s*26,3,.65),W(-24,s*22,-2,.6),W(-16,s*14,2,.4),W(-14,s*6,-1,.1)];
+    zPoly(outline,'#0b0304');
+    const lp=(q,k)=>[r[0]+(q[0]-r[0])*k,r[1]+(q[1]-r[1])*k];
+    zPoly(outline.map(q=>lp(q,.74)),'#190607');zPoly(outline.map(q=>lp(q,.48)),'#a30d12');zPoly(outline.map(q=>lp(q,.24)),'#e82020');
+    zLine([r,el,f1],1.8,'#7a1010');zLine([el,tp],1.5,'#7a1010');zLine([el,outline[5]],1.3,'#7a1010');zLine([el,outline[7]],1.3,'#7a1010');
   };
   const Q=[];
   Q.push([-40,wing(-near)]);Q.push([40,wing(near)]);
   Q.push([0,()=>{
-    for(const s of [-1,1])zLine([P(0,s*2.5,z-4),P(1,s*2.5,z-12)],1.6,BD2);   // dangling claws
-    let c=P(0,0,z);zE(c[0],c[1],10.5,5.6,BD2,ang);
-    c=P(2,0,z+1);zGlow(c[0],c[1],2.2,col,.95);
-  }]);
-  Q.push([-15*fs,()=>{   // long tail with a diamond tip
-    const pp=[P(-10,0,z),P(-20,0,z-2),P(-27,0,z-5)];zLine(pp,2.4,BD2);
-    const k=pp[2];zPoly([[k[0]-1,k[1]-3],[k[0]-5,k[1]],[k[0]-1,k[1]+3],[k[0]+2,k[1]]],RD);
-  }]);
-  Q.push([15*fs,()=>{   // crested head with a toothed beak
-    const nk=P(10,0,z+3);zE(nk[0],nk[1],4.5,3.6,BD2,ang);
-    const hd=P(15,0,z+4);zE(hd[0],hd[1],6,4.2,'#3a2a4c',ang);
-    const c0=P(12,0,z+7),c1=P(2,0,z+14),c2=P(11,0,z+4);zPoly([c0,c1,c2],RD);
-    zLine([P(18,0,z+4),P(29,0,z+2.5)],3.4,'#241830');
-    zLine([P(18,0,z+2.5),P(28,0,z+1-open*5)],2.6,'#241830');
-    for(let k=0;k<4;k++){const a=P(21+k*2,0,z+3),b=P(21+k*2,0,z+1.6-open*4);zTooth(a[0],a[1],2.2,Math.PI/2);zTooth(b[0],b[1],2.2,-Math.PI/2);}
-    for(const s of [-1,1]){const e=P(16.5,s*2.6,z+6);zGlow(e[0],e[1],1.8,'#ff3030',1);}
-    if(open){const m=P(30,0,z+2);zGlow(m[0],m[1],6,'#ff3030',.6);zGlow(m[0],m[1],3,'#ffd0d0',.95);}
+    const sw=k=>Math.sin(t*3.2+u.id-k*.8)*k*.9;
+    for(const s of [-1,1]){   // lizard legs tucked under the body
+      zLine([Q2(-5,s*3,-2),Q2(-8,s*7,-7),Q2(-4,s*8,-11)],2.4,DKB);zLine([Q2(5,s*3,-2),Q2(8,s*6,-7),Q2(12,s*6,-10)],2.1,DKB);
+      for(const f of [Q2(-4,s*8,-11),Q2(12,s*6,-10)])zGlow(f[0],f[1],1.1,'#efe6c8',1);
+    }
+    const T=[[-54,sw(5.4),-5],[-44,sw(4.4),-5],[-34,sw(3.4),-4],[-24,sw(2.4),-3],[-14,sw(1.2),-1],[-6,0,0],[3,0,.5],[9,0,2.5],[13,0,6.5],[17,0,9.5],[22,0,10],[28,0,8.5]];
+    const R=[.7,1.2,1.9,2.7,3.8,4.8,5.4,4.2,3.2,3.4,2.6,1.6].map(r=>r*S);
+    const pts=T.map(q=>Q2(q[0],q[1],q[2]));
+    for(let i=2;i<9;i++){const q=pts[i];zPoly([[q[0]-1.5,q[1]-R[i]*.7],[q[0]+.5,q[1]-R[i]-3.6],[q[0]+1.7,q[1]-R[i]*.7]],'#c81212');}   // dorsal spines
+    zTube(pts,R,BODY,EDGE);
+    zLine([Q2(-14,0,-1.6),Q2(-4,0,-2),Q2(8,0,.6)],2.6,'rgba(190,25,25,.5)');
+    zLine([Q2(-24,0,-1),Q2(-10,0,2.4),Q2(2,0,3.2),Q2(11,0,8.6)],1.5,'rgba(255,50,40,.35)');
+    let c=Q2(-1,0,5.8);zGlow(c[0],c[1],2.5,col,.95);
+    {const b0=pts[0],b1=pts[1],base=Math.atan2(b0[1]-b1[1],b0[0]-b1[0]),fc3=['#7a0808','#d81212','#ff4a3a'];   // flame plume at the tail tip
+      for(let j=-1;j<=1;j++){const a=base+j*.55+Math.sin(t*9+j*2+u.id)*.2,len=S*(j===0?12:8.5),px=-Math.sin(a),py=Math.cos(a);
+        zPoly([[b0[0]+px*2.6,b0[1]+py*2.6],[b0[0]+Math.cos(a)*len,b0[1]+Math.sin(a)*len],[b0[0]-px*2.6,b0[1]-py*2.6]],fc3[j+1]);}
+      zGlow(b0[0],b0[1],3,'#ff3030',.7);}
+    {const base=Q2(16,0,12);   // phoenix crest plumes swept back from the head
+      const cc=['#7a0808','#d81212','#ff4a3a'];
+      for(let j=-1;j<=1;j++){const tip=Q2(5+Math.sin(t*8+j+u.id)*1.2,j*4,16+(j===0?5:0)),pw=2.2;
+        zPoly([[base[0]-pw,base[1]+1],tip,[base[0]+pw,base[1]+1]],cc[j+1]);}}
+    zLine([Q2(18,0,7.5),Q2(27,0,6.2-open*5)],2.5,'#2a0a0a');   // lower jaw
+    for(let k=0;k<4;k++){const a=Q2(22+k*1.8,0,8.2),b2=Q2(22+k*1.8,0,6.8-open*4);zTooth(a[0],a[1],2,Math.PI/2);zTooth(b2[0],b2[1],2,-Math.PI/2);}
+    for(const s of [-1,1]){const e=Q2(21,s*2.6,11.4);zGlow(e[0],e[1],2,'#ff3030',1);zGlow(e[0],e[1],.8,'#fff0b0',1);}
+    if(open){const m=Q2(31,0,7);zGlow(m[0],m[1],7,'#ff3030',.6);zGlow(m[0],m[1],3.4,'#ffd0d0',.95);}
   }]);
   zRun(Q);
 }
@@ -3321,9 +3479,9 @@ function zFloater(Z){
   }
   const tb=Math.sin(t*2.4+u.id)*3;   // small barbed tail at the back
   zLine([[x-fc*14,cy+10],[x-fc*24,cy+14+tb],[x-fc*30,cy+8+tb]],2.6,ZCOL.dark);zLine([[x-fc*14,cy+10],[x-fc*24,cy+14+tb],[x-fc*30,cy+8+tb]],1.5,ZCOL.mud2);
-  zE(x,cy,22*pulse,18*pulse,'#7f9250',0);
-  const g=ctx.globalAlpha;ctx.globalAlpha=g*.7;zE(x-5,cy-6,12*pulse,8.5*pulse,'#b4c47c',-.3);ctx.globalAlpha=g;
-  ctx.strokeStyle='rgba(60,76,30,.8)';ctx.lineWidth=1.3;
+  zE(x,cy,22*pulse,18*pulse,'#22202a',0);
+  const g=ctx.globalAlpha;ctx.globalAlpha=g*.7;zE(x-5,cy-6,12*pulse,8.5*pulse,'#4a4658',-.3);ctx.globalAlpha=g;
+  ctx.strokeStyle='rgba(5,5,10,.8)';ctx.lineWidth=1.3;
   ctx.beginPath();ctx.moveTo(x-17,cy+3);ctx.quadraticCurveTo(x-6,cy-2,x-2,cy+9);ctx.moveTo(x+16,cy-3);ctx.quadraticCurveTo(x+7,cy+2,x+9,cy+11);ctx.moveTo(x-8,cy-12);ctx.quadraticCurveTo(x+2,cy-6,x+6,cy-13);ctx.stroke();
   zGlow(x+10,cy-4,3.2,col,.85);zGlow(x-11,cy+4,2.6,col,.8);zGlow(x+2,cy-11,2.2,col,.8);
   const mx=x+fc*4,my=cy+11;zE(mx,my,8,4.6,ZCOL.dark,0);
@@ -3335,21 +3493,35 @@ function zBld(b,t,cx,cy,w,col,colD){
   const k=K,pulse=.5+.5*Math.sin(t*2.2+b.id),ty=b.type;
   const mud=r=>{zE(cx,cy,r,r*k,ZCOL.mud3,0);zE(cx+r*.12,cy+2,r*.72,r*.72*k,'#45331f',0);for(let i=0;i<6;i++){const a=i*1.05+b.id,rr=r*.8;zGlow(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr*k,2.2+i%3,'#2c2012',.8);}};
   const sp=(bx,by,tx,ty2,wd,c2)=>zPoly([[bx-wd,by],[tx,ty2],[bx+wd,by]],c2||ZCOL.bone);
-  if(ty==='nexus'){   // HIVE: a towering mud-and-chitin mound with a toothed maw and curved horns
-    mud(w*.6);
-    for(let i=0;i<7;i++){const a=i/7*6.283+.3,r0=w*.34,r1=w*.56,sw=Math.sin(t*1.6+i*1.7)*3;
-      zLine([[cx+Math.cos(a)*r0,cy+Math.sin(a)*r0*k-4],[cx+Math.cos(a+.25)*(r0+r1)/2,cy+Math.sin(a+.25)*(r0+r1)/2*k-6+sw],[cx+Math.cos(a+.1)*r1,cy+Math.sin(a+.1)*r1*k+1]],6,ZCOL.mud3);}
-    zE(cx,cy-8,w*.43,w*.43*k+4,ZCOL.mud,0);
-    zE(cx,cy-24,w*.35,w*.35*k+8,ZCOL.mud2,0);
-    zE(cx,cy-42,w*.25,w*.25*k+9,ZCOL.chit,0);
-    ctx.strokeStyle='rgba(20,12,4,.55)';ctx.lineWidth=1.6;
-    for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(cx+i*w*.1,cy-12);ctx.quadraticCurveTo(cx+i*w*.14,cy-30,cx+i*w*.07,cy-50);ctx.stroke();}
-    for(let i=0;i<6;i++){const a=i/6*6.283+.5,px=cx+Math.cos(a)*w*.2,py=cy-44+Math.sin(a)*w*.2*k,h=(i%2?24:30);sp(px,py,px+Math.cos(a)*5,py-h,5,ZCOL.bone);}
-    zE(cx,cy-20,w*.17,11,ZCOL.dark,0);
-    zGlow(cx,cy-19,w*.1,ZCOL.acid,.45+.3*pulse);
-    for(let i=0;i<9;i++){const a=i/9*6.283;zTooth(cx+Math.cos(a)*w*.16,cy-20+Math.sin(a)*10,4,a+Math.PI);}
-    for(const [dx,dz] of [[-.28,12],[.28,12],[-.16,34],[.16,34]]){zGlow(cx+dx*w,cy-dz-4,5.5,col,.55+.4*pulse);zGlow(cx+dx*w-1.5,cy-dz-5.5,1.8,'#fff',.7);}
-    zGlow(cx,cy-58,9+pulse*2,col,.35);zGlow(cx,cy-58,5,col,.95);zGlow(cx-1.5,cy-59.5,1.6,'#fff',.8);
+  if(ty==='nexus'){   // HIVE: a colossal dark gnarled tree: root claws, bark trunk with a toothed hollow, thorned branches, black canopy
+    const BK='#2a1f14',BK2='#1b130b',BK3='#3a2a19',LF='#1d2716',LF2='#2a381d';
+    zE(cx,cy,w*.62,w*.62*k,'#140e08',0);zE(cx+w*.06,cy+2,w*.45,w*.45*k,'#1d140b',0);
+    for(let i=0;i<8;i++){const a=i/8*6.283+.35,sw=Math.sin(t*1.4+i*1.9)*2,r0=w*.14,r1=w*.58;
+      const rp=[[cx+Math.cos(a)*r0,cy+Math.sin(a)*r0*k-6],[cx+Math.cos(a+.18)*(r0+r1)*.5,cy+Math.sin(a+.18)*(r0+r1)*.5*k-4+sw],[cx+Math.cos(a+.06)*r1,cy+Math.sin(a+.06)*r1*k+1]];
+      zLine(rp,8,BK2);zLine(rp,5.4,BK);}
+    const branches=front=>{for(let i=0;i<7;i++){const a=i/7*6.283+.4,sn=Math.sin(a);if((sn>0)!==front)continue;const sw=Math.sin(t*1.2+i*1.7)*2.5,
+        ex=cx+Math.cos(a)*w*.37,ey=cy-52+sn*w*.37*k*.5-10-(i%2)*8+sw,mx=cx+Math.cos(a)*w*.17,my=cy-58+sn*w*.1+sw*.4,
+        bp=[[cx+Math.cos(a)*3,cy-46],[mx,my],[ex,ey]];
+      zLine(bp,6.5,BK2);zLine(bp,4,BK3);
+      sp(mx,my-1,mx+Math.cos(a)*3,my-11,2.6,ZCOL.bone);
+      zE(ex,ey-3,10,6.5,LF,0);zE(ex-2,ey-5,5.5,3.4,LF2,0);}};
+    const spines=front=>{for(let i=0;i<20;i++){const a=i/20*6.283+.15,sn=Math.sin(a);if((sn>0)!==front)continue;
+        const px=cx+Math.cos(a)*w*.55,py=cy+sn*w*.55*k-2,h=15+(i%3)*5;
+        sp(px,py,px+Math.cos(a)*6,py-h,3.6,ZCOL.bone);}};
+    spines(false);
+    branches(false);
+    zPoly([[cx-w*.2,cy],[cx+w*.2,cy],[cx+w*.11,cy-26],[cx+w*.075,cy-52],[cx-w*.075,cy-52],[cx-w*.11,cy-26]],BK);
+    zPoly([[cx+w*.02,cy],[cx+w*.2,cy],[cx+w*.11,cy-26],[cx+w*.075,cy-52],[cx+w*.03,cy-52]],BK2);
+    ctx.strokeStyle='rgba(8,5,2,.7)';ctx.lineWidth=1.5;
+    for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(cx+i*w*.07,cy-2);ctx.quadraticCurveTo(cx+i*w*.09+(i%2?3:-3),cy-28,cx+i*w*.04,cy-50);ctx.stroke();}
+    zE(cx,cy-19,w*.115,13,'#070503',0);
+    zGlow(cx,cy-18,w*.08,ZCOL.acid,.4+.3*pulse);
+    for(let i=0;i<9;i++){const a=i/9*6.283;zTooth(cx+Math.cos(a)*w*.105,cy-19+Math.sin(a)*11,4,a+Math.PI);}
+    spines(true);
+    branches(true);
+    zE(cx,cy-66,w*.2,11,LF,0);zE(cx-w*.04,cy-69,w*.12,6.5,LF2,0);
+    for(const [dx,dz] of [[-.2,8],[.2,8],[-.1,34],[.1,34]]){zGlow(cx+dx*w,cy-dz-4,5,col,.55+.4*pulse);zGlow(cx+dx*w-1.5,cy-dz-5.5,1.6,'#fff',.7);}
+    zGlow(cx,cy-74,9+pulse*2,col,.35);zGlow(cx,cy-74,5,col,.95);zGlow(cx-1.5,cy-75.5,1.6,'#fff',.8);
   }else if(ty==='barracks'){   // SPAWNING POOL: a bubbling slime pit ringed with teeth
     mud(w*.58);
     const R=w*.46;
@@ -3362,20 +3534,31 @@ function zBld(b,t,cx,cy,w,col,colD){
     if(b.done&&b.queue.length)zGlow(cx,cy-5,R*.4,col,.25+.25*pulse);
     teeth(true);
     for(const [dx,dy] of [[-.36,.1],[.4,.2],[.05,.5]]){const ex=cx+dx*w,ey=cy+dy*w*k-3;zE(ex,ey-6,5.5,8,'#b9bf86',0);zGlow(ex-1,ey-8,1.6,col,.9);}
-  }else if(ty==='factory'){   // MUTATION PIT: a ribbed carapace dome with a toothed gate
-    mud(w*.58);
-    zE(cx,cy-3,w*.46,w*.46*k+2,ZCOL.mud,0);
-    zE(cx,cy-20,w*.38,w*.3,ZCOL.mud2,0);
-    zE(cx,cy-34,w*.27,w*.2,ZCOL.chit,0);
-    ctx.strokeStyle='rgba(20,12,4,.5)';ctx.lineWidth=1.5;
-    for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(cx+i*w*.09,cy-8);ctx.quadraticCurveTo(cx+i*w*.12,cy-26,cx+i*w*.06,cy-42);ctx.stroke();}
-    for(let i=0;i<5;i++){const o=i-2,ax=Math.abs(o);sp(cx+o*w*.11,cy-38+ax*3,cx+o*w*.13,cy-56+ax*5,4);}
-    zE(cx,cy-10,w*.2,12,ZCOL.dark,0);
-    if(b.done&&b.queue.length)zGlow(cx,cy-9,w*.14,'#d6a23a',.45+.4*pulse);
-    for(let i=0;i<7;i++){const px=cx-w*.17+i*w*.057;zTooth(px,cy-20,5,Math.PI/2);zTooth(px,cy-1,4,-Math.PI/2);}
-    const vx=cx+w*.24;zPoly([[vx,cy-24],[vx+6,cy-24],[vx+4,cy-44],[vx+1,cy-44]],ZCOL.mud3);
-    for(let i=0;i<3;i++){const ph=(t*.5+i*.33)%1;zGlow(vx+3+ph*3,cy-46-ph*14,3+ph*3,'#9a9a8a',(1-ph)*.5);}
-    zGlow(cx-w*.2,cy-30,3.5,col,.55+.4*pulse);zGlow(cx+w*.12,cy-34,3,col,.55+.4*pulse);
+  }else if(ty==='factory'){   // MUTATION PIT: a dark twisted stump-tree with a toothed hollow gate and splintered fork branches
+    const BK='#2a1f14',BK2='#1b130b',BK3='#3a2a19',LF='#1d2716';
+    zE(cx,cy,w*.58,w*.58*k,'#140e08',0);zE(cx+w*.05,cy+2,w*.42,w*.42*k,'#1d140b',0);
+    for(let i=0;i<6;i++){const a=i/6*6.283+.6,sw=Math.sin(t*1.3+i*2.1)*1.6,r0=w*.12,r1=w*.5;
+      const rp=[[cx+Math.cos(a)*r0,cy+Math.sin(a)*r0*k-5],[cx+Math.cos(a+.2)*(r0+r1)*.5,cy+Math.sin(a+.2)*(r0+r1)*.5*k-3+sw],[cx+Math.cos(a+.07)*r1,cy+Math.sin(a+.07)*r1*k+1]];
+      zLine(rp,7,BK2);zLine(rp,4.6,BK);}
+    const fork=front=>{for(const s2 of [-1,1]){if((s2>0)!==front)continue;const sw=Math.sin(t*1.5+s2)*1.5,
+        fp=[[cx+s2*w*.04,cy-34],[cx+s2*w*.15,cy-46+sw],[cx+s2*w*.2,cy-60+sw]];
+      zLine(fp,6,BK2);zLine(fp,3.6,BK3);
+      sp(cx+s2*w*.2,cy-59+sw,cx+s2*w*.23,cy-72+sw,2.6,ZCOL.bone);
+      zE(cx+s2*w*.2,cy-56+sw,7,5,LF,0);}};
+    fork(false);
+    zPoly([[cx-w*.18,cy],[cx+w*.18,cy],[cx+w*.1,cy-22],[cx+w*.07,cy-40],[cx-w*.07,cy-40],[cx-w*.1,cy-22]],BK);
+    zPoly([[cx+w*.02,cy],[cx+w*.18,cy],[cx+w*.1,cy-22],[cx+w*.07,cy-40],[cx+w*.03,cy-40]],BK2);
+    ctx.strokeStyle='rgba(8,5,2,.7)';ctx.lineWidth=1.4;
+    for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(cx+i*w*.065,cy-2);ctx.quadraticCurveTo(cx+i*w*.08+(i%2?2:-2),cy-20,cx+i*w*.04,cy-38);ctx.stroke();}
+    zE(cx,cy-40,w*.075,3.2,BK3,0);
+    zE(cx,cy-11,w*.12,12,'#070503',0);
+    if(b.done&&b.queue.length)zGlow(cx,cy-10,w*.09,'#d6a23a',.45+.4*pulse);
+    for(let i=0;i<7;i++){const px=cx-w*.095+i*w*.032;zTooth(px,cy-21,5,Math.PI/2);zTooth(px,cy-1,4,-Math.PI/2);}
+    fork(true);
+    zE(cx,cy-52,w*.1,6,LF,0);
+    const vx=cx+w*.2;zPoly([[vx,cy-14],[vx+5,cy-14],[vx+4,cy-30],[vx+1,cy-30]],BK2);
+    for(let i=0;i<3;i++){const ph=(t*.5+i*.33)%1;zGlow(vx+2.5+ph*3,cy-32-ph*14,3+ph*3,'#6a6a5a',(1-ph)*.5);}
+    zGlow(cx-w*.07,cy-30,3.2,col,.55+.4*pulse);zGlow(cx+w*.07,cy-30,3,col,.55+.4*pulse);
   }else if(ty==='armory'){   // EVOLUTION CHAMBER: a thorn-ringed cocoon with glowing veins
     mud(w*.54);
     zE(cx,cy-3,w*.42,w*.42*k,ZCOL.mud2,0);
@@ -3843,7 +4026,14 @@ Object.assign(ICO,{
   ravager:'<ellipse cx="11" cy="13" rx="8" ry="4.5"/><path d="M19 11l3-5-5 3M6 17v4M10 17v4M14 17v4M18 16l1 5"/>',
   tree:'<path d="M9 21l1-9-5-6M15 21l-1-9 5-7M12 21V4M12 9l-4-4M12 13l4-3"/>'
 });
-const svg=(n,s)=>'<svg viewBox="0 0 24 24" width="'+(s||22)+'" height="'+(s||22)+'" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+ICO[n]+'</svg>';
+/* Zerg build-menu icons: Spawning Pool, Mutation Pit and Spore Tower replace the generic building icons when you play Zerg */
+Object.assign(ICO,{
+  zpool:'<path d="M2 13c0 4.500 4.500 8 10 8s10-3.500 10-8"/><ellipse cx="12" cy="13" rx="10" ry="4"/><path d="M5.500 13.500c1.500 1 3 1 4.500 0s3-1 4.500 0 2.500 1 4 0"/><ellipse cx="12" cy="7.500" rx="2.600" ry="3.700" fill="currentColor" fill-opacity=".35"/><path d="M5 10.500L3.500 7.500M19 10.500l1.500-3M8.500 17.500l-.8 1.800M15.500 17.500l.8 1.800"/>',
+  zmpit:'<path d="M3 21c0-5 3-8 9-8s9 3 9 8z" fill="currentColor" fill-opacity=".25"/><path d="M4 14.500l2-4.500 2 3.200M20 14.500l-2-4.500-2 3.200"/><path d="M9.500 13C7 9.500 13 8.500 9.800 4.500M14.500 13c2.500-3.500-3.500-4.500-.3-8.500"/><path d="M9.200 9.800h5.600M10 7h4"/><path d="M8 21l-1 1.500M12 21v1.500M16 21l1 1.500"/>',
+  zspore:'<path d="M9 21c1-4 1-8 0-11.500M15 21c-1-4-1-8 0-11.500M6.500 21h11"/><ellipse cx="12" cy="7" rx="5.200" ry="4.300" fill="currentColor" fill-opacity=".35"/><path d="M7.500 4.800L5 2.200M12 2.600V.8M16.500 4.800L19 2.200"/><circle cx="12" cy="7" r="1.500"/><circle cx="3" cy="9.500" r=".9" fill="currentColor"/><circle cx="21" cy="8.500" r=".9" fill="currentColor"/><circle cx="19.500" cy="12.500" r=".7" fill="currentColor"/>'
+});
+const ZIC={barracks:'zpool',factory:'zmpit',turret:'zspore'};
+const svg=(n,s)=>'<svg viewBox="0 0 24 24" width="'+(s||22)+'" height="'+(s||22)+'" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+ICO[(raceOf(0)==='zerg'&&ZIC[n])||n]+'</svg>';
 let toastT=0;
 function flash(m){const el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),1600);}
 const hpCol=e=>{const f=e.hp/e.maxhp;return f>.6?C.good:f>.3?'#f2a93b':C.bad;};
@@ -4319,7 +4509,8 @@ function pfig(kind,c,cd,t){
 function zfig(kind,c,cd,t){
   if(raceOf(t)!=='zerg')return null;
   if(!['worker','dog','ravager','tree','ptero','overlord','nexus','barracks','factory','armory','turret','pylon'].includes(kind))return null;
-  const M1='#6b5832',M2='#4a3a22',M3='#8a7646',DK='#20170c',BN='#efe6c8',AC='#a6e83c';
+  const BU=['worker','dog','ravager','overlord'].includes(kind);   // black units; buildings keep the swamp palette
+  const M1=BU?'#22202a':'#6b5832',M2=BU?'#15131a':'#4a3a22',M3=BU?'#34313f':'#8a7646',DK=BU?'#08070a':'#20170c',BN='#efe6c8',AC='#a6e83c';
   const S=' stroke="#120c06" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"';
   const sh='<ellipse cx="80" cy="132" rx="52" ry="11" fill="rgba(0,0,0,.4)"/>';
   const tth=(x,y,dx,dy,w)=>{const l=Math.hypot(dx,dy)||1,px=-dy/l*w,py=dx/l*w;return '<polygon points="'+(x+px)+','+(y+py)+' '+(x+dx)+','+(y+dy)+' '+(x-px)+','+(y-py)+'" fill="'+BN+'" stroke="#2a2012" stroke-width=".8"/>';};
@@ -4367,25 +4558,36 @@ function zfig(kind,c,cd,t){
      +'<ellipse cx="80" cy="96" rx="13" ry="17" fill="'+DK+'"'+S+'/>'
      +tth(70,84,2,8,2.6)+tth(80,82,0,9,2.6)+tth(90,84,-2,8,2.6)+tth(72,108,2,-8,2.6)+tth(80,112,0,-9,2.6)+tth(88,108,-2,-8,2.6)
      +eye(72,70,5)+eye(88,70,5);
-  }else if(kind==='ptero'){   // dark pterodactyl
-    o='<ellipse cx="80" cy="134" rx="36" ry="7" fill="rgba(0,0,0,.35)"/>'
-     +poly('78,72 10,30 26,64 4,80 40,84 54,98','#4a3560')+poly('82,72 150,26 134,62 156,78 120,84 106,98','#4a3560')
-     +L('M78 72L10 30',3,'#8a6aac')+L('M78 72L26 64',2.4,'#8a6aac')+L('M82 72L150 26',3,'#8a6aac')+L('M82 72L134 62',2.4,'#8a6aac')
-     +L('M52 76L36 60',2,'#d03a48')+L('M110 76L128 58',2,'#d03a48')
-     +L('M62 92L30 108',4,'#2d1f3d')+poly('22,108 32,100 40,108 30,114','#d03a48')
-     +L('M76 96L72 114',3,'#2d1f3d')+L('M92 96L98 114',3,'#2d1f3d')
-     +'<ellipse cx="80" cy="84" rx="22" ry="14" fill="#3a2a4c"'+S+'/><circle cx="82" cy="84" r="4" fill="'+c+'"/>'
-     +poly('98,60 78,46 98,72','#d03a48')
-     +'<ellipse cx="104" cy="70" rx="13" ry="10" fill="#4a3a60"'+S+'/>'
-     +poly('112,64 152,66 112,72','#241830')+poly('112,74 146,82 110,78','#241830')
-     +tth(124,68,0,6,2.2)+tth(134,68,0,6,2.2)+tth(142,68,0,5,2)+tth(124,76,0,-5,2)+tth(134,78,0,-5,2)
-     +'<circle cx="106" cy="66" r="3.6" fill="#ff3030" stroke="#120c06" stroke-width="1"/><circle cx="152" cy="70" r="7" fill="#ff3030" opacity=".65"/>';
+  }else if(kind==='ptero'){   // dragon phoenix: scaled lizard body, long tail with a flame plume
+    const BODY='#140808',BEL='#3a0c0c',WG='#0d0405',WG2='#a00c10',F1='#8a0a0a',F2='#e01414',F3='#ff4a3a';
+    const tube=sg=>sg.map(q=>'<path d="'+q[0]+'" fill="none" stroke="#120c06" stroke-width="'+(q[1]+3)+'" stroke-linecap="round" stroke-linejoin="round"/>').join('')
+      +sg.map(q=>'<path d="'+q[0]+'" fill="none" stroke="'+BODY+'" stroke-width="'+q[1]+'" stroke-linecap="round" stroke-linejoin="round"/>').join('');
+    o='<ellipse cx="80" cy="134" rx="44" ry="7" fill="rgba(0,0,0,.35)"/>'
+     +poly('92,68 118,16 146,6 140,28 152,32 138,44 150,52 130,58 134,70 112,74',WG)+poly('92,68 116,26 130,34 124,52 112,66',WG2)
+     +L('M92 68L118 16',2.4,'#8a1414')+L('M100 68L128 40',1.6,'#8a1414')
+     +poly('84,72 66,22 32,4 28,26 16,30 28,42 14,52 34,58 30,72 52,78',WG)+poly('84,72 68,32 52,22 52,44 62,62 70,72',WG2)+poly('84,72 70,40 62,40 66,60',F2)
+     +L('M84 72L66 22',3,'#8a1414')+L('M84 72L36 8',2.4,'#8a1414')+L('M74 70L26 38',1.8,'#8a1414')+L('M78 72L32 62',1.6,'#8a1414')
+     +L('M74 100L68 114L58 118',5,'#0a0405')+L('M98 100L104 114L114 116',4.5,'#0a0405')
+     +tth(58,118,-6,3,1.8)+tth(114,116,5,2,1.8)
+     +tube([['M18 104Q16 120 30 122',2.5],['M30 122Q44 124 54 112',5],['M54 112Q62 102 70 97',9],['M70 97Q82 102 96 92',21],['M92 92Q106 80 112 62',11],['M112 62Q118 50 126 47',8],['M124 47L146 53',7],['M138 51L153 56',4.5]])
+     +'<path d="M72 106Q84 112 96 102" stroke="'+BEL+'" stroke-width="6" fill="none" stroke-linecap="round" opacity=".75"/>'
+     +'<path d="M62 94Q80 82 96 82M100 76Q108 66 110 56" stroke="#b01818" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/>'
+     +'<path d="M70 92q3 3 6 0M80 96q3 3 6 0M90 92q3 3 6 0M76 86q3 3 6 0M86 84q3 3 6 0M104 70q3 3 5 0M44 116q2 2 4 0M30 120q2 2 4 0" stroke="#5a1010" stroke-width="1.2" fill="none" opacity=".7"/>'
+     +poly('70,82 70,72 78,80',F2)+poly('80,80 82,69 88,78',F2)+poly('90,78 94,67 98,78',F2)+poly('100,74 106,64 106,76',F2)
+     +poly('18,106 6,82 22,98',F1)+poly('18,106 20,78 28,98',F2)+poly('18,106 38,88 30,106',F3)
+     +poly('124,44 108,24 120,38',F1)+poly('124,44 112,14 128,38',F2)+poly('126,44 124,16 134,38',F3)
+     +'<path d="M126 41L116 38" stroke="#efe6c8" stroke-width="3" stroke-linecap="round"/>'
+     +L('M130 52L148 61',3.2,'#2a0a0a')
+     +tth(138,53,0,5,1.8)+tth(144,55,0,5,1.8)+tth(150,57,0,4,1.6)+tth(140,59,0,-5,1.8)+tth(146,60,0,-5,1.8)
+     +eye(133,45,4.2)
+     +'<circle cx="84" cy="88" r="4" fill="'+c+'" opacity=".9"/>'
+     +'<circle cx="153" cy="57" r="7" fill="#ff3030" opacity=".6"/>';
   }else if(kind==='overlord'){   // floater
     o='<ellipse cx="80" cy="134" rx="34" ry="7" fill="rgba(0,0,0,.3)"/>'
      +L('M60 98Q50 114 60 130',5,M2)+L('M70 102Q68 118 74 132',5,M2)+L('M80 104L80 134',5,M2)+L('M90 102Q92 118 86 132',5,M2)+L('M100 98Q110 114 100 130',5,M2)
      +tth(60,130,0,6,2.4)+tth(74,132,0,6,2.4)+tth(80,134,0,6,2.4)+tth(86,132,0,6,2.4)+tth(100,130,0,6,2.4)
-     +'<ellipse cx="80" cy="56" rx="50" ry="44" fill="#8d9e56"'+S+'/><ellipse cx="62" cy="36" rx="20" ry="13" fill="#b4c47c" opacity=".7"/>'
-     +'<path d="M36 60Q60 50 66 78M126 50Q104 60 108 82M54 26Q80 40 100 24" stroke="#5b6b34" stroke-width="3" fill="none"/>'
+     +'<ellipse cx="80" cy="56" rx="50" ry="44" fill="#22202a"'+S+'/><ellipse cx="62" cy="36" rx="20" ry="13" fill="#4a4658" opacity=".7"/>'
+     +'<path d="M36 60Q60 50 66 78M126 50Q104 60 108 82M54 26Q80 40 100 24" stroke="#0c0b10" stroke-width="3" fill="none"/>'
      +'<circle cx="110" cy="46" r="7" fill="'+c+'" opacity=".85"/><circle cx="46" cy="70" r="6" fill="'+c+'" opacity=".85"/><circle cx="84" cy="22" r="5" fill="'+c+'" opacity=".85"/>'
      +'<ellipse cx="80" cy="96" rx="20" ry="11" fill="'+DK+'"'+S+'/>'
      +tth(66,92,0,7,2.4)+tth(74,90,0,8,2.4)+tth(82,90,0,8,2.4)+tth(90,90,0,8,2.4)+tth(96,93,0,6,2.2)+tth(70,102,0,-6,2.2)+tth(80,104,0,-7,2.4)+tth(90,102,0,-6,2.2)
@@ -4974,25 +5176,26 @@ const DIFFS=[
 const RICON={terran:'<svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 8v8M8 10.5l8 3M16 10.5l-8 3"/></svg>',
              protoss:'<svg viewBox="0 0 24 24"><path d="M12 2l6 10-6 10-6-10z"/><path d="M6 12h12M12 2v20"/></svg>',
              zerg:'<svg viewBox="0 0 24 24"><path d="M3 15c0-5 4-8 9-8s9 3 9 8"/><path d="M6 15l-1 5M10 15l-.5 5M14 15l.5 5M18 15l1 5"/><path d="M8 9l-2-5M12 7V2M16 9l2-5"/></svg>'};
+function menuRaces(){const f1=$('optFoe').value,m=$('optMy').value,a=$('optAllyR').value,f2=$('optFoe2').value;return [m,f1,a==='me'?m:a,f2==='foe'?f1:f2];}
 function paintPick(sl){
   const a=assign(sl,$('optAlly').checked),names=['You','Enemy','Ally','Enemy'];
   document.querySelectorAll('.pk').forEach((b,i)=>{
-    const t=a[i];b.style.setProperty('--c',t<0?'#6c7a82':tcol(t));b.title=t<0?'Empty':names[t];
+    const t=a[i];b.style.setProperty('--c',t<0?'#6c7a82':tcol(t));b.title=t<0?'Empty':names[t]+' \u00b7 '+RACES[menuRaces()[t]].name;
     b.classList.toggle('sel',i===opts.slot);
   });
   $('pickInfo').textContent=$('optAlly').checked?'2v2: you (blue) and your teammate (green) share one bank, two enemy AIs (red, orange) hold the other.':'1v1: you (blue) against one enemy AI (red) on the opposite bank.';
 }
 function menuSummary(){
   const d=DIFFS.find(x=>x.id===opts.diff);
-  $('mSum').innerHTML='<b>'+RACES[$('optMy').value].name+'</b> vs <b>'+RACES[$('optFoe').value].name+'</b> &middot; '+($('optAlly').checked?'2v2 with teammate AI':'1v1')+'<br>Map: <b>'+MAPSET.find(m=>m.id===opts.map).name+'</b> &middot; Spawn <b>'+(opts.slot+1)+'</b><br>Difficulty: <b>'+d.name+'</b>';
+  $('mSum').innerHTML=(()=>{const r=menuRaces(),n=i=>'<b>'+RACES[r[i]].name+'</b>';return $('optAlly').checked?n(0)+' + '+n(2)+' (ally) vs '+n(1)+' + '+n(3):n(0)+' vs '+n(1);})()+' &middot; '+($('optAlly').checked?'2v2 with teammate AI':'1v1')+'<br>Map: <b>'+MAPSET.find(m=>m.id===opts.map).name+'</b> &middot; Spawn <b>'+(opts.slot+1)+'</b><br>Difficulty: <b>'+d.name+'</b>';
   paintPick(opts.slot);
 }
-function raceCards(host,sel,foe){
+function raceCards(host,sel,foe,same){
   const el=$(host);
   el.innerHTML=['terran','protoss','zerg'].map(r=>{
     const R=RACES[r],units=[R.worker].concat(R.bar,R.fac).map(k=>k===R.worker?k:UD[k].name).join(' \u00b7 ');
     return '<button type="button" class="mCard '+({terran:'t',protoss:'p',zerg:'z'})[r]+(foe?' foe':'')+'" data-r="'+r+'">'+RICON[r]+'<b>'+R.name+'</b><small>'+units+'</small></button>';
-  }).join('');
+  }).join('')+(same?'<button type="button" class="mCard s'+(foe?' foe':'')+'" data-r="'+same[0]+'"><b>'+same[1]+'</b></button>':'');
   el.querySelectorAll('.mCard').forEach(c=>c.addEventListener('click',()=>{$(sel).value=c.dataset.r;syncMenu();}));
 }
 const VSICON={
@@ -5012,6 +5215,9 @@ function paintVs(){
 function syncMenu(){
   document.querySelectorAll('#cardsMy .mCard').forEach(c=>c.classList.toggle('on',c.dataset.r===$('optMy').value));
   document.querySelectorAll('#cardsFoe .mCard').forEach(c=>c.classList.toggle('on',c.dataset.r===$('optFoe').value));
+  document.querySelectorAll('#cardsAlly .mCard').forEach(c=>c.classList.toggle('on',c.dataset.r===$('optAllyR').value));
+  document.querySelectorAll('#cardsFoe2 .mCard').forEach(c=>c.classList.toggle('on',c.dataset.r===$('optFoe2').value));
+  ['lblAlly','cardsAlly','lblFoe2','cardsFoe2'].forEach(id=>{$(id).style.display=$('optAlly').checked?'':'none';});
   document.querySelectorAll('#segMode button').forEach(b=>b.classList.toggle('on',(b.dataset.v==='2')===$('optAlly').checked));
   document.querySelectorAll('#diffList .mCard').forEach(c=>c.classList.toggle('on',c.dataset.d===opts.diff));
   document.querySelectorAll('#mapList .mMap').forEach(b=>b.classList.toggle('on',b.dataset.id===opts.map));
@@ -5021,7 +5227,7 @@ function syncMenu(){
 function buildPick(){
   const wrap=$('pickWrap');
   SLOTS.forEach((s,i)=>{
-    const b=document.createElement('button');b.type='button';b.className='pk';b.textContent=i+1;
+    const b=document.createElement('button');b.type='button';b.className='pk';b.setAttribute('aria-label','Spawn point '+(i+1));
     b.style.left=((s[0]+2)/W*100)+'%';b.style.top=((s[1]+2)/H*100)+'%';
     b.addEventListener('click',()=>{opts.slot=i;syncMenu();});
     b.addEventListener('mouseenter',()=>paintPick(i));
@@ -5030,7 +5236,7 @@ function buildPick(){
     b.addEventListener('blur',()=>paintPick(opts.slot));
     wrap.appendChild(b);
   });
-  raceCards('cardsMy','optMy',false);raceCards('cardsFoe','optFoe',true);
+  raceCards('cardsMy','optMy',false);raceCards('cardsFoe','optFoe',true);raceCards('cardsAlly','optAllyR',false,['me','Same as you']);raceCards('cardsFoe2','optFoe2',true,['foe','Same as Enemy 1']);
   $('segMode').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{$('optAlly').checked=b.dataset.v==='2';syncMenu();}));
   $('mapList').innerHTML=MAPSET.map((m,i)=>'<button type="button" class="mMap" data-id="'+m.id+'"><canvas width="108" height="108"></canvas><span><b>'+m.name+'</b><small>'+m.meta+'</small></span></button>').join('');
   $('mapList').querySelectorAll('.mMap').forEach(b=>b.addEventListener('click',()=>{opts.map=b.dataset.id;syncMenu();}));
@@ -5046,7 +5252,7 @@ function showPick(){
   syncMenu();$('pick').hidden=false;
 }
 function pickSlot(sl){
-  opts.slot=sl;opts.ally=$('optAlly').checked;opts.myRace=$('optMy').value;opts.foeRace=$('optFoe').value;document.body.classList.toggle('protoss',opts.myRace==='protoss');
+  opts.slot=sl;opts.ally=$('optAlly').checked;opts.myRace=$('optMy').value;opts.foeRace=$('optFoe').value;opts.allyRace=$('optAllyR').value;opts.foe2Race=$('optFoe2').value;document.body.classList.toggle('protoss',opts.myRace==='protoss');document.body.classList.toggle('zerg',opts.myRace==='zerg');
   newGame();$('pick').hidden=true;started=true;musicReset();
 }
 
@@ -5298,10 +5504,16 @@ const TRACKS={
   hurt:{id:'',vol:50}            // no link given for "under attack" yet: paste a YouTube video id here
 };
 const MENU_ID='O9hJhXsIBZU',MENU_VOL=45;   // setup-screen theme: plays only on the menu, fades out when Play is pressed
-const MIN_HOLD=30000,FADE_STEP=2.5;       // a track plays at least 30 s; 2.5 volume points per 100 ms is a 4-10 s crossfade
+const MIN_HOLD=25000,FADE_STEP=2.5;       // a track plays at least 25 s; 2.5 volume points per 100 ms is a 4-10 s crossfade
 let musicOn=true,ytReady=false,ytLoading=false,curId=null,curStart=0,musicWarned=false;
 const players={};
-function trackFor(st){const t=TRACKS[st];return {id:t.id||TRACKS.bldg.id,vol:t.id?t.vol:TRACKS.bldg.vol};}
+/* race themes: override the generic tracks above for the race you play. States a race does not list keep the generic track; "hurt" follows the race's attack track. */
+const RTRACKS={
+  zerg:{calm:{id:'oksW2ND4W2Y',vol:45},seen:{id:'sgfIzBtFB7k',vol:45},bldg:{id:'Ss4kX2_D5TE',vol:45}},
+  protoss:{calm:{id:'1PE4Shh4LKQ',vol:45}},
+  terran:{seen:{id:'tJxcKpWdTkg',vol:45}}
+};
+function trackFor(st){const R=RTRACKS[opts.myRace]||{},t=R[st]||(st==='hurt'?R.bldg:null)||TRACKS[st];return t&&t.id?{id:t.id,vol:t.vol}:{id:TRACKS.bldg.id,vol:TRACKS.bldg.vol};}
 function ensureYT(){
   if(ytReady||ytLoading)return;ytLoading=true;
   window.onYouTubeIframeAPIReady=()=>{ytReady=true;};
