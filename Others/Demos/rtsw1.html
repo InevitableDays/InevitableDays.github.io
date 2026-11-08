@@ -665,6 +665,9 @@ Object.assign(UD,{
   colossus:{name:'Colossus',cost:300,time:24,supply:6,hp:220,sh:150,speed:2.1,range:10.5,dmg:16,bonus:6,bt:'light',cd:1.07,splash:1.6,armored:true,noair:true,info:'Towering walker, 16 area damage, +6 vs light units (marines, zealots, workers), range 10.5. Cannot hit air',vis:14}
 });
 UD.tank.noair=true;
+UD.mecha={name:'Mecha',cost:450,time:26,supply:4,hp:400,speed:2,range:10,dmg:6,cd:.12,armored:true,noair:true,info:'Heavy walker. Gatling cannon (6 damage every 0.12s, range 9) plus a shoulder rocket pod (4 rockets, 20 area damage each, every 5s, range 10). Attacks ground units and buildings only, cannot hit air. Trained at the Factory',vis:13};
+UD.mothership={name:'Mothership',cost:600,time:45,supply:8,hp:600,sh:500,speed:1.4,range:12,dmg:14,cd:1.1,beams:5,info:'Protoss capital ship. Fires blue pulse beams at up to 5 targets per volley, 14 damage each, range 12. Hits ground and air. Trained at the Robotics Facility',vis:15,air:true};
+UD.ultralisk={name:'Ultralisk',cost:600,time:30,supply:6,hp:600,speed:1.9,range:2.4,dmg:35,cd:1.1,splash:1.5,armored:true,noair:true,spikes:5,spikeDmg:14,spikeRange:10,spikeCd:4,info:'Zerg siege beast. Kaiser blades sweep a 1.5 tile area for 35 damage every 1.1s (ground only, reach 2.4). Back spines also throw a barrage of 5 spikes every 4s at up to 5 targets, 14 damage each, range 10, ground and air. Armoured. Trained at the Mutation Pit',vis:13};
 Object.assign(UD,{
   dog:{name:'Hound',cost:50,time:5,supply:1,hp:100,speed:2.8,range:1,dmg:18,cd:.86,aggro:true,info:'Scorpion-tailed melee biter, 18 damage per bite. Half a Zealot, no shield, very cheap and quick to spawn. Cannot hit air',vis:11},
   ravager:{name:'Ravager',cost:100,time:11,supply:2,hp:200,speed:1.8,range:10,dmg:30,bonus:15,cd:2.1,armored:true,info:'Rhino-shaped mutant that spits acid, 30 damage (+15 vs armoured), range 10. Hits ground and air. Cheaper than a Tank and uses less supply',vis:13},
@@ -674,11 +677,11 @@ Object.assign(UD,{
 });
 /* ---------- factions: each side picks one; building types are shared, units and names differ ---------- */
 const RACES={
-  terran:{name:'Terran',bar:['marine','rocket'],fac:['tank','heli'],worker:'Worker',bn:{barracks:'Barracks',factory:'Factory',turret:'Turret',armory:'Armory'}},
+  terran:{name:'Terran',bar:['marine','rocket'],fac:['tank','heli','mecha'],worker:'Worker',bn:{barracks:'Barracks',factory:'Factory',turret:'Turret',armory:'Armory'}},
   protoss:{name:'Protoss',bar:['zealot','stalker'],fac:['immortal','colossus'],worker:'Probe',bn:{barracks:'Gateway',factory:'Robotics Facility',turret:'Air Cannon',armory:'Robotics Bay'}},
   zerg:{name:'Zerg',bar:['dog'],fac:['ravager'],worker:'Drone',bn:{nexus:'Hive',barracks:'Spawning Pool',factory:'Mutation Pit',turret:'Spore Tower',armory:'Evolution Chamber'}}
 };
-const PLURAL={marine:'Marines',rocket:'Rockets',tank:'Tanks',heli:'Copters',zealot:'Zealots',stalker:'Stalkers',immortal:'Immortals',colossus:'Colossi',dog:'Hounds',ravager:'Ravagers',tree:'Deadwoods',ptero:'Pterodactyls',overlord:'Floaters'};
+const PLURAL={marine:'Marines',rocket:'Rockets',tank:'Tanks',heli:'Copters',mecha:'Mechas',zealot:'Zealots',stalker:'Stalkers',immortal:'Immortals',colossus:'Colossi',dog:'Hounds',ravager:'Ravagers',tree:'Deadwoods',ptero:'Pterodactyls',overlord:'Floaters',mothership:'Motherships',ultralisk:'Ultralisks'};
 const raceOf=t=>(typeof teams!=='undefined'&&teams&&teams[t]&&teams[t].race)||'terran';
 const bnameOf=(ty,t)=>RACES[raceOf(t)].bn[ty]||BD[ty].name;
 const nameOf=e=>e.kind==='u'?(e.type==='worker'?RACES[raceOf(e.team)].worker:UD[e.type].name):bnameOf(e.type,e.team);
@@ -1615,6 +1618,9 @@ function fire(u,tg,d){
   u.face=Math.atan2(ty-u.y,tx-u.x);
   if(u.type==='zealot'||u.type==='tree')u.slN=(u.slN||0)+1;   // alternates the swinging arm
   sfxFire(u,tg);
+  if(u.type==='mecha'){mechaFire(u,tg,d);return;}
+  if(u.type==='mothership'){mothershipVolley(u,tg,d);return;}
+  if(u.type==='ultralisk'){ultraBlade(u,tg,d);return;}
   if(u.type==='tank'){
     effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.16,w:3.4,c:'#ffb347',z:30,z1:tg.kind==='u'&&UD[tg.type].air?36:12});
     effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ffb347'});
@@ -1671,6 +1677,131 @@ function fire(u,tg,d){
   if(u.type==='zealot'){splashHit(u,tg,tx,ty,d);return;}   // psi-blade sweeps hit nearby enemies too
   damage(tg,Math.round(dmgVs(d,tg)+dUp(u.team)),u.team);
   if(u.type==='tank'&&u.sieged)tankSplash(u,tg,tx,ty,d);
+}
+/* Mecha: gatling cannon (6 damage every 0.12s, range 9) plus a 4-rocket shoulder pod (20 area damage each, every 5s, range 10). Ground only. */
+function mechaTick(u,dt){
+  u.rcd=(u.rcd||0)-dt;
+  if(u.rcd<=.8)u.rfired=0;
+  if(u.salvo>0){
+    u.salvoT-=dt;
+    if(u.salvoT<=0){
+      const tg=u.salvoTg;
+      if(!tg||tg.dead||(tg.kind==='u'&&UD[tg.type].air)||(tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y))>11)u.salvo=0;
+      else{mechaRocket(u,tg,4-u.salvo);u.salvo--;u.salvoT=.2;}
+    }
+  }
+}
+function mechaRocket(u,tg,idx){
+  const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x+(Math.random()-.5)*.5,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y+(Math.random()-.5)*.3;
+  const zi=tg.kind==='b'?24:10,sx=u.x+Math.cos(u.face)*.15,sy=u.y+Math.sin(u.face)*.15;
+  u.rfired=idx+1;u.rIdx=idx;u.rft=time;
+  effects.push({k:'m',sx,sy,ex:tx,ey:ty,x:sx,y:sy,z0:64,z1:zi,z:64,t:.42,T:.42});
+  effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ff8a3d',d:.42});effects.push({k:'r',x:tx,y:ty,t:.35,c:'#ffd27a',d:.42});
+  boom(tx,ty,zi,tg.kind==='b'?30:22,.42,3);
+  for(let i=0;i<8;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.6;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.35,c:i%2?'#ffd27a':'#ff6a2d',d:.42});}
+  if(sfxOn()){const m=vmix(u.x,u.y);if(m&&sfxOK('mechaR',.08))rocketShot(bus(m.pan,m.v));}
+  if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
+  splashHit(u,tg,tx,ty,{splash:2,dmg:20});
+}
+function mechaFire(u,tg,d){
+  const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y;
+  const dist=tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y)-.3;
+  if((u.rcd||0)<=0&&!(u.salvo>0)){u.salvo=4;u.salvoT=0;u.salvoTg=tg;u.rcd=5;}
+  if(dist>9)return;   // the gatling reaches 9 tiles, the rockets 10
+  effects.push({k:'l',x:u.x,y:u.y,x1:tx+(Math.random()-.5)*.4,y1:ty+(Math.random()-.5)*.4,t:.08,w:1.8,c:'#ffcf6a',z:46,z1:tg.kind==='b'?14:10});
+  effects.push({k:'p',x:tx,y:ty,vx:(Math.random()-.5)*2.4,vy:(Math.random()-.5)*2.4,t:.2,c:'#ffd27a'});
+  if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
+  damage(tg,d.dmg,u.team);
+}
+/* Mothership: every volley hits the chosen target plus up to 4 more enemies in range (5 targets in total), ground or air */
+function mothershipVolley(u,tg,d){
+  const fr=isFriend(u.team),list=[tg],cand=[];
+  for(const e of units){
+    if(e===tg||e.dead||side(e.team)===side(u.team))continue;
+    if(fr&&!visAt(e.x,e.y))continue;
+    const dist=Math.hypot(e.x-u.x,e.y-u.y)-.3;
+    if(dist<=d.range)cand.push([e,dist]);
+  }
+  for(const b of buildings){
+    if(b===tg||b.dead||side(b.team)===side(u.team))continue;
+    if(fr&&!b.seen)continue;
+    const dist=distRect(u.x,u.y,b.tx,b.ty,b.size);
+    if(dist<=d.range)cand.push([b,dist]);
+  }
+  cand.sort((a,b)=>a[1]-b[1]);
+  for(const c of cand){if(list.length>=d.beams)break;list.push(c[0]);}
+  for(const e of list){
+    if(e.dead)continue;
+    const tx=e.kind==='b'?e.tx+e.size/2:e.x,ty=e.kind==='b'?e.ty+e.size/2:e.y;
+    const z1=e.kind==='u'&&UD[e.type].air?36:e.kind==='b'?14:10;
+    /* the beam leaves whichever of the six emitter ports under the rim faces the target */
+    const pa=Math.round(Math.atan2(ty-u.y,tx-u.x)/(Math.PI/3))*(Math.PI/3),sx=u.x+Math.cos(pa)*MS_PORT/T,sy=u.y+Math.sin(pa)*MS_PORT/T,sz=MS_HV-22*MS_S;
+    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.34,w:13,c:'rgba(61,184,242,.35)',z:sz,z1});
+    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.3,w:5.5,c:'#6fd0ff',z:sz,z1});
+    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.26,w:2,c:'#ffffff',z:sz,z1});
+    effects.push({k:'r',x:tx,y:ty,t:.45,c:'#8fe9ff'});
+    for(let i=0;i<5;i++){const a=Math.random()*6.283,sp=1+Math.random()*2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.25+Math.random()*.3,c:i%2?'#bff2ff':'#3db8f2'});}
+    if(u.team===0&&e.kind==='b'&&side(e.team)===1)mBldg=time;
+    damage(e,Math.round(dmgVs(d,e)+dUp(u.team)),u.team);
+  }
+}
+/* Ultralisk: Kaiser blades (35 area damage every 1.1s, ground only, reach 2.4) plus a barrage of 5 back-spine spikes every 4s at up to 5 targets (14 damage each, range 10, ground and air) */
+const ULTRA_SPX=[-26,-15,-4,7,18],ULTRA_SPY=[-5,5,-5,5,0],ULTRA_SPZ=[38,38,44,44,48.4];
+function ultraBlade(u,tg,d){
+  const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y;
+  effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.2,w:9,c:'rgba(166,232,60,.4)',z:34,z1:tg.kind==='b'?14:12});
+  effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.14,w:3,c:'#e8ffb0',z:34,z1:tg.kind==='b'?14:12});
+  effects.push({k:'r',x:tx,y:ty,t:.5,c:'#c8ff78'});
+  for(let i=0;i<9;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.4;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.3,c:i%2?'#a6e83c':'#d8ff8a'});}
+  if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
+  splashHit(u,tg,tx,ty,d);
+}
+function ultraTick(u,dt){
+  const d=UD.ultralisk;
+  u.scd=(u.scd===undefined?1:u.scd)-dt;
+  if(u.vol>0){
+    u.vT-=dt;
+    if(u.vT<=0){
+      const idx=5-u.vol;let tg=u.vList[idx%u.vList.length];
+      if(!tg||tg.dead)tg=u.vList.find(e=>!e.dead);
+      if(tg)ultraSpike(u,tg,idx);
+      u.vol--;u.vT=.1;
+    }
+    return;
+  }
+  if(u.scd>0)return;
+  u.sacq=(u.sacq||0)-dt;if(u.sacq>0)return;u.sacq=.35;
+  const fr=isFriend(u.team),R=d.spikeRange,cand=[];
+  for(const e of units){
+    if(e.dead||side(e.team)===side(u.team))continue;
+    if(fr&&!visAt(e.x,e.y))continue;
+    const dist=Math.hypot(e.x-u.x,e.y-u.y)-.3;
+    if(dist<=R)cand.push([e,dist]);
+  }
+  for(const b of buildings){
+    if(b.dead||side(b.team)===side(u.team))continue;
+    if(fr&&!b.seen)continue;
+    const dist=distRect(u.x,u.y,b.tx,b.ty,b.size);
+    if(dist<=R)cand.push([b,dist]);
+  }
+  if(!cand.length)return;
+  cand.sort((a,b)=>a[1]-b[1]);
+  u.vList=cand.slice(0,d.spikes).map(c=>c[0]);u.vol=d.spikes;u.vT=0;u.scd=d.spikeCd;u.volT=time;
+}
+function ultraSpike(u,tg,idx){
+  const d=UD.ultralisk,air=tg.kind==='u'&&UD[tg.type].air;
+  const tx=tg.kind==='b'?tg.tx+tg.size/2+(Math.random()-.5)*.6:tg.x+(Math.random()-.5)*.4,ty=tg.kind==='b'?tg.ty+tg.size/2+(Math.random()-.5)*.6:tg.y+(Math.random()-.5)*.3;
+  const hh=u.us?u.us.hh:u.face,c=Math.cos(hh),sn=Math.sin(hh),lx=ULTRA_SPX[idx],ly=ULTRA_SPY[idx];
+  const sx=u.x+(c*lx-sn*ly)/T,sy=u.y+(sn*lx+c*ly)/T;
+  const zi=air?36:tg.kind==='b'?16:10,z0=ULTRA_SPZ[idx]+17,dist=Math.hypot(tx-sx,ty-sy),Tf=clamp(dist*T/760,.34,.8);
+  effects.push({k:'sp',sx,sy,ex:tx,ey:ty,x:sx,y:sy,z0,z1:zi,z:z0,arc:40+dist*2,t:Tf,T:Tf});
+  effects.push({k:'r',x:tx,y:ty,t:.45,c:'#a6e83c',d:Tf});
+  for(let i=0;i<7;i++){const a=Math.random()*6.283,sp=1+Math.random()*2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.25+Math.random()*.3,c:i%2?'#a6e83c':'#d8ff8a',d:Tf});}
+  if(!u.spT)u.spT=[-99,-99,-99,-99,-99];
+  u.spT[idx]=time;u.lastSpk=time;
+  if(sfxOn()){const m=vmix(u.x,u.y);if(m&&sfxOK('ultraS',.08))turretZap(bus(m.pan,m.v));}
+  if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
+  damage(tg,d.spikeDmg+dUp(u.team),u.team);
 }
 /* siege mode: the shell also damages up to 4 more nearby enemy units/buildings (5 targets in total) */
 function tankSplash(u,tg,tx,ty,d){
@@ -1799,6 +1930,8 @@ function updateUnit(u,dt){
   u.cd-=dt;u.rp-=dt;u.acq-=dt;u.hit-=dt;
   if(u.maxsh&&u.sh<u.maxsh&&time-u.shT>8)u.sh=Math.min(u.maxsh,u.sh+2*dt);
   const d=UD[u.type],o=u.order;
+  if(u.type==='mecha')mechaTick(u,dt);
+  if(u.type==='ultralisk')ultraTick(u,dt);
   if(u.type==='tank'){
     if(u.sgp>0){u.sgp-=dt;u.path=null;return;}   // 0.4 s pause between siege and unsiege
     if(u.sieged){
@@ -1866,7 +1999,7 @@ function updateUnit(u,dt){
 /* unit collision: every unit has a body radius. A unit that is moving may pass through other units, but no two units of the same layer
    (ground / air) can stay overlapped while at rest: as soon as both are standing still, the overlap is pushed apart (2 passes per tick).
    Miners/builders at work stay put; idle units yield more than moving ones. */
-const RAD={worker:.2,marine:.22,rocket:.24,zealot:.25,stalker:.28,immortal:.36,tank:.42,colossus:.5,heli:.34,dog:.24,ravager:.4,tree:.34,ptero:.36,overlord:.5};
+const RAD={mecha:.4,worker:.2,marine:.22,rocket:.24,zealot:.25,stalker:.28,immortal:.36,tank:.42,colossus:.5,heli:.34,dog:.24,ravager:.4,tree:.34,ptero:.36,overlord:.5,mothership:.8,ultralisk:.55};
 function separate(){
   const n=units.length;
   for(let pass=0;pass<2;pass++){
@@ -2121,6 +2254,7 @@ function sim(dt){
     e.t-=dt;
     if(e.k==='p'){e.x+=e.vx*dt;e.y+=e.vy*dt;}
     else if(e.k==='sm'){e.x+=e.vx*dt;e.y+=e.vy*dt;e.z+=e.vz*dt;}
+    else if(e.k==='sp'){const f=clamp(1-e.t/e.T,0,1);e.x=e.sx+(e.ex-e.sx)*f;e.y=e.sy+(e.ey-e.sy)*f;}
     else if(e.k==='m'){
       const f=clamp(1-e.t/e.T,0,1);
       e.x=e.sx+(e.ex-e.sx)*f;e.y=e.sy+(e.ey-e.sy)*f;e.z=e.z0+(e.z1-e.z0)*f;
@@ -2214,7 +2348,7 @@ function groupMove(list,wx,wy){
 }
 function entityAt(wx,wy){
   let best=null,bd=.62;
-  for(const u of units){if(!isFriend(u.team)&&!visAt(u.x,u.y))continue;const d=Math.hypot(u.x-wx,(u.y-(UD[u.type].air?1.9:u.type==='colossus'?2.1:u.type==='immortal'?.7:.45))-wy)-(u.type==='tank'||u.type==='immortal'||u.type==='colossus'?.6:UD[u.type].air?.45:0);if(d<bd){bd=d;best=u;}}
+  for(const u of units){if(!isFriend(u.team)&&!visAt(u.x,u.y))continue;const d=Math.hypot(u.x-wx,(u.y-(u.type==='mothership'?3.4:UD[u.type].air?1.9:u.type==='colossus'?2.1:u.type==='mecha'?1.4:u.type==='ultralisk'?1.2:u.type==='immortal'?.7:.45))-wy)-(u.type==='tank'||u.type==='immortal'||u.type==='colossus'?.6:u.type==='ultralisk'?.5:u.type==='mothership'?1.6:UD[u.type].air?.45:0);if(d<bd){bd=d;best=u;}}
   if(best)return best;
   for(const b of buildings)if((isFriend(b.team)||b.seen)&&wx>=b.tx&&wx<=b.tx+b.size&&wy>=b.ty-.9&&wy<=b.ty+b.size)return b;
   for(const r of resources)if(expAt(r.tx+.5,r.ty+.5)&&wx>=r.tx-.2&&wx<=r.tx+1.2&&wy>=r.ty-.2&&wy<=r.ty+1.2)return r;
@@ -2315,10 +2449,13 @@ function cmdList(){
   if(e.kind==='b'){
     if(!e.done)return [];
     if(e.type==='nexus'){const nl=[{id:'train:worker',k:'Q',nm:RACES[raceOf(0)].worker,ic:'worker',co:50}];if(raceOf(0)==='zerg')nl.push({id:'train:overlord',k:'W',nm:UD.overlord.name,ic:'overlord',co:100},{id:'train:ptero',k:'E',nm:UD.ptero.name,ic:'ptero',co:300});nl.push({id:'rally',k:'R',nm:'Rally',ic:'rally'});nl.push({id:'upgrade:hp',k:'D',nm:'Defense Up',ic:'defup',co:600},{id:'upgrade:laser',k:'L',nm:'Laser Guns',ic:'laser',co:500});return nl;}
-    if(e.type==='armory')return [{id:'upgrade:ahp',k:'Q',nm:'Unit HP +'+(raceOf(0)==='zerg'?50:25),ic:'defup',co:300},{id:'upgrade:adm',k:'W',nm:'Damage +7',ic:'dmgup',co:300}];
+    if(e.type==='armory'){
+      const al=[{id:'upgrade:ahp',k:'Q',nm:'Unit HP +'+(raceOf(0)==='zerg'?50:25),ic:'defup',co:300},{id:'upgrade:adm',k:'W',nm:'Damage +7',ic:'dmgup',co:300}];
+      return al;
+    }
     if(e.type==='barracks'||e.type==='factory'){
-      const R=RACES[raceOf(0)],L=e.type==='barracks'?R.bar:R.fac;
-      return L.map((ty,i)=>({id:'train:'+ty,k:'QW'[i],nm:UD[ty].name,ic:ty,co:UD[ty].cost})).concat([{id:'rally',k:'R',nm:'Rally',ic:'rally'}]);
+      const R=RACES[raceOf(0)],L=e.type==='barracks'?R.bar:R.fac.concat(raceOf(0)==='protoss'?['mothership']:raceOf(0)==='zerg'?['ultralisk']:[]);
+      return L.map((ty,i)=>({id:'train:'+ty,k:'QWE'[i],nm:UD[ty].name,ic:ty,co:UD[ty].cost})).concat([{id:'rally',k:'R',nm:'Rally',ic:'rally'}]);
     }
     return [];
   }
@@ -3585,10 +3722,500 @@ function zBld(b,t,cx,cy,w,col,colD){
   }
 }
 
+/* ===== MOTHERSHIP: golden capital ship hovering high above the ground ===== */
+const MS_S=.6,MS_HV=70,MS_PORT=52;   // model scale, hover height in px, radius of the emitter ring in px
+function msGlow(x,y,r,col,a){
+  const c=glowSprite('ms'+col,[[0,col],[1,'rgba(61,184,242,0)']]),g=ctx.globalAlpha;
+  ctx.globalAlpha=g*a;ctx.drawImage(c,x-r,y-r,r*2,r*2);ctx.globalAlpha=g;
+}
+function drawMothership(u,t){
+  const S=MS_S,cx=u.x*T,gy=u.y*T*K,hv=MS_HV+Math.sin(t*1.3+u.id)*3,y0=gy-hv,R=112*S,Th=34*S;
+  const col=tcol(u.team),spin=t*.5,pulse=.65+.35*Math.sin(t*3+u.id),rec=u.cd>UD.mothership.cd-.16;
+  const GOLD='#d9b658',GOLD2='#a98a36',CY='#8fe9ff',BLUE='#3db8f2',CYG='rgba(143,233,255,.9)';
+  const E=(ex,ey,rx,ry,fill,stroke,lw)=>{ctx.beginPath();ctx.ellipse(ex,ey,Math.max(.1,rx),Math.max(.1,ry),0,0,7);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||1.5;ctx.stroke();}};
+  ctx.save();
+  shadow(cx,gy+3,R*.85);
+  // underside engine glow
+  msGlow(cx,y0+Th+10*S,R*1.1,'rgba(120,215,255,.9)',.35*pulse);
+  // lower hull
+  const gl=ctx.createLinearGradient(cx-R,0,cx+R,0);gl.addColorStop(0,'#4a3a12');gl.addColorStop(.5,'#8a6f2a');gl.addColorStop(1,'#3a2c0c');
+  ctx.beginPath();ctx.ellipse(cx,y0+Th,R,R*K,0,0,Math.PI);ctx.lineTo(cx-R,y0);ctx.ellipse(cx,y0,R,R*K,0,Math.PI,0,true);ctx.closePath();
+  ctx.fillStyle=gl;ctx.fill();ctx.strokeStyle='#1c1405';ctx.lineWidth=2;ctx.stroke();
+  // belly plating lines
+  ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=1.2;
+  for(let i=1;i<4;i++){ctx.beginPath();ctx.ellipse(cx,y0+Th*(i/3.6),R*(1-i*.012),R*K*(1-i*.012),0,0,Math.PI);ctx.stroke();}
+  // belly engine ring
+  E(cx,y0+Th+4*S,R*.55,R*.55*K,'rgba(8,20,34,.85)',GOLD2,2);
+  E(cx,y0+Th+4*S,R*.42,R*.42*K,null,CY,2);
+  ctx.save();ctx.globalAlpha=.55+.4*pulse;E(cx,y0+Th+4*S,R*.24,R*.24*K,CYG);ctx.restore();
+  E(cx,y0+Th+3*S,R*.1,R*.1*K,'#ffffff');
+  // rim lights on the side wall (front half only)
+  for(let i=0;i<22;i++){
+    const a=i/22*Math.PI*2+spin;if(Math.sin(a)<0)continue;
+    const lx=cx+Math.cos(a)*R*.995,ly=y0+Math.sin(a)*R*K*.995+Th*.55,on=Math.sin(t*5+i*.9)>-.2;
+    ctx.fillStyle=on?CY:'#1c3a52';ctx.beginPath();ctx.arc(lx,ly,2.8*S,0,7);ctx.fill();
+    if(on)msGlow(lx,ly,10*S,CYG,.7);
+  }
+  // emitter pods under the rim
+  for(let i=0;i<6;i++){
+    const a=i/6*Math.PI*2;if(Math.sin(a)<-.2)continue;
+    const ex=cx+Math.cos(a)*MS_PORT,ey=y0+Math.sin(a)*MS_PORT*K+22*S;
+    E(ex,ey,7*S,4*S,'#2b3447','#0b0f16',1.2);
+    ctx.save();ctx.globalAlpha=.7+.3*pulse;E(ex,ey,3.6*S,2*S,BLUE);ctx.restore();
+    if(rec)msGlow(ex,ey,16*S,'rgba(200,245,255,1)',.8);
+  }
+  // upper deck disc
+  const ug=ctx.createRadialGradient(cx-R*.3,y0-R*K*.4,R*.1,cx,y0,R);ug.addColorStop(0,'#f4e3a2');ug.addColorStop(.5,GOLD);ug.addColorStop(1,GOLD2);
+  E(cx,y0,R,R*K,ug,'#2a1f06',2.2);
+  // white armour band
+  E(cx,y0,R*.86,R*.86*K,null,'rgba(236,235,228,.85)',5*S);
+  E(cx,y0,R*.86,R*.86*K,null,'rgba(120,110,80,.5)',1);
+  // blue light channels on the deck
+  ctx.save();ctx.lineCap='round';
+  for(let i=0;i<8;i++){
+    const a=i/8*Math.PI*2+spin*.6,x1=cx+Math.cos(a)*R*.5,y1=y0+Math.sin(a)*R*.5*K,x2=cx+Math.cos(a)*R*.82,y2=y0+Math.sin(a)*R*.82*K;
+    ctx.strokeStyle='rgba(61,184,242,.35)';ctx.lineWidth=7*S;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.strokeStyle=CY;ctx.lineWidth=2.4*S;ctx.stroke();
+  }
+  ctx.restore();
+  // inner rings
+  E(cx,y0,R*.62,R*.62*K,'rgba(38,53,77,.55)','#6e5818',2);
+  E(cx,y0,R*.5,R*.5*K,null,'rgba(236,235,228,.7)',3*S);
+  // golden fins at four points, tipped with a team-colour light
+  for(let i=0;i<4;i++){
+    const a=i*Math.PI/2+Math.PI/4+spin*.2,fx=cx+Math.cos(a)*R*.9,fy=y0+Math.sin(a)*R*.9*K;
+    if(Math.sin(a)<-.3)continue;
+    ctx.fillStyle=GOLD2;ctx.strokeStyle='#2a1f06';ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(fx-6*S,fy);ctx.lineTo(fx,fy-12*S);ctx.lineTo(fx+6*S,fy);ctx.closePath();ctx.fill();ctx.stroke();
+    msGlow(fx,fy-12*S,10*S,CYG,.7*pulse);
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(fx,fy-12*S,2.4*S,0,7);ctx.fill();
+  }
+  // central dome
+  const dh=26*S,dr=R*.34,dome=()=>{ctx.beginPath();ctx.ellipse(cx,y0,dr,dr*K,0,0,Math.PI);ctx.bezierCurveTo(cx-dr,y0-dh*.7,cx-dr*.5,y0-dh,cx,y0-dh);ctx.bezierCurveTo(cx+dr*.5,y0-dh,cx+dr,y0-dh*.7,cx+dr,y0);ctx.closePath();};
+  const dg=ctx.createLinearGradient(cx-dr,0,cx+dr,0);dg.addColorStop(0,'#9a8340');dg.addColorStop(.35,'#f1e2a4');dg.addColorStop(1,'#6e5818');
+  dome();ctx.fillStyle=dg;ctx.fill();ctx.strokeStyle='#2a1f06';ctx.lineWidth=2;ctx.stroke();
+  // glass window band
+  ctx.save();dome();ctx.clip();
+  const wg=ctx.createLinearGradient(0,y0-dh*.7,0,y0-dh*.2);wg.addColorStop(0,'rgba(143,233,255,.1)');wg.addColorStop(.5,'rgba(143,233,255,.8)');wg.addColorStop(1,'rgba(61,184,242,.15)');
+  ctx.fillStyle=wg;ctx.fillRect(cx-dr,y0-dh*.7,dr*2,dh*.5);
+  ctx.restore();
+  // floating core crystal with a team-colour ring
+  const cyy=y0-dh-9*S+Math.sin(t*2+u.id)*2;
+  msGlow(cx,cyy,70*S,CYG,.5+.3*pulse);
+  ctx.fillStyle=CY;ctx.strokeStyle='#e8fbff';ctx.lineWidth=1.3;
+  ctx.beginPath();ctx.moveTo(cx,cyy-14*S);ctx.lineTo(cx+9*S,cyy);ctx.lineTo(cx,cyy+12*S);ctx.lineTo(cx-9*S,cyy);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.7)';ctx.beginPath();ctx.moveTo(cx,cyy-14*S);ctx.lineTo(cx-9*S,cyy);ctx.lineTo(cx,cyy+2*S);ctx.closePath();ctx.fill();
+  ctx.save();ctx.globalAlpha=.55+.4*pulse;E(cx,cyy+4*S,34*S,8*S,null,col,2);ctx.restore();
+  // hit flash and shield flash
+  if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.35)';ctx.beginPath();ctx.ellipse(cx,y0,R,R*K,0,0,7);ctx.fill();}
+  if(u.maxsh&&u.sh>0){const a=time-u.shT;if(a<=.3){ctx.strokeStyle='rgba(143,233,255,'+(.85*(1-a/.3)).toFixed(2)+')';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cx,y0-12*S,R*1.06,R*K*1.06+34*S,0,0,7);ctx.stroke();}}
+  ctx.restore();
+}
+
 const prismRaw=prism;
+/* ---------- Mecha: heavy walker (gunmetal with amber sensors, dark red trim) ---------- */
+const drawMecha=(()=>{
+  const BK='#1b2025',BK2='#262d33',BK3='#10141a',STL='#323b42',STL2='#46515a',STL3='#39434a',AMB='#ffb347',GUN='#12171c';
+  const MRED='#8f1d1d',MREDD='#5e1010';
+  const HZ0=36,LEG_A=18,LEG_B=18,AMP=11;
+  const angDiff=(a,b)=>{let d=(b-a)%(Math.PI*2);if(d>Math.PI)d-=Math.PI*2;if(d<-Math.PI)d+=Math.PI*2;return d;};
+  const turnTo=(a,b,m)=>{const d=angDiff(a,b);return Math.abs(d)<=m?b:a+Math.sign(d)*m;};
+  function glow(x,y,r,rgb,a){const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba('+rgb+',1)');g.addColorStop(1,'rgba('+rgb+',0)');ctx.save();ctx.globalAlpha=a;ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.restore();}
+  function limb(a,b,w,c,outline){
+    ctx.lineCap='round';
+    if(outline!==false){ctx.strokeStyle='#0a0d10';ctx.lineWidth=w+2.2;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+    ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+    ctx.strokeStyle=shade(c,1.45);ctx.lineWidth=Math.max(.6,w*.28);ctx.beginPath();ctx.moveTo(a[0]-w*.2,a[1]-w*.22);ctx.lineTo(b[0]-w*.2,b[1]-w*.22);ctx.stroke();
+    ctx.lineCap='butt';
+  }
+  function ik(hx,hz,fx,fz,a,b){
+    const dx=fx-hx,dz=fz-hz,d=Math.hypot(dx,dz)||1,dd=Math.min(d,a+b-.05);
+    const ux=dx/d,uz=dz/d,al=(a*a-b*b+dd*dd)/(2*dd),h=Math.sqrt(Math.max(0,a*a-al*al));
+    return {kx:hx+ux*al-uz*h,kz:hz+uz*al+ux*h,ax:hx+ux*dd,az:hz+uz*dd};
+  }
+  return function(u,t){
+    const D=UD.mecha,now=performance.now()/1000,gx0=u.x*T,gy0=u.y*T*K;
+    /* animation state lives on the unit: hips follow the walking direction, torso follows the aim */
+    let s=u.ms;if(!s)s=u.ms={ph:0,mv:0,bz:0,hh:u.face,at:u.face,lx:u.x,ly:u.y,lt:now,spin:0,spinV:0,rec:0,pitch:-.03};
+    const dt=clamp(now-s.lt,0,.05);s.lt=now;
+    const mdx=(u.x-s.lx)*T,mdy=(u.y-s.ly)*T,mdist=Math.hypot(mdx,mdy);s.lx=u.x;s.ly=u.y;
+    const moving=!!(u.path&&u.pi<u.path.length);
+    if(mdist>.02)s.hh=turnTo(s.hh,Math.atan2(mdy,mdx),3.2*dt);
+    s.at=turnTo(s.at,u.face,5*dt);
+    s.mv+=((moving?1:0)-s.mv)*Math.min(1,dt*4);
+    s.ph+=mdist*Math.PI/(2*AMP);
+    s.bz=-1.6*Math.abs(Math.sin(s.ph))*s.mv+Math.sin(t*1.6)*.4;
+    const sh=D.cd-u.cd,shooting=sh>=0&&sh<.3;
+    s.spinV+=((shooting?34:0)-s.spinV)*Math.min(1,dt*(shooting?6:2.2));
+    s.spin+=s.spinV*dt;
+    s.rec=Math.max(0,s.rec-dt*14);if(sh>=0&&sh<.05)s.rec=1.6;
+    const fired=u.rfired||0,loaded=[0,1,2,3].map(i=>i>=fired?1:0);
+    const tube=[0,1,2,3].map(i=>(i===u.rIdx&&u.rft!==undefined)?Math.max(0,.25-(time-u.rft)):0);
+    const M={hh:s.hh,at:s.at,ph:s.ph,mv:s.mv,bz:s.bz,spin:s.spin,spinV:s.spinV,rec:s.rec,flash:(sh>=0&&sh<.05)?1:0,pitch:s.pitch,loaded,tube};
+    const HZ=()=>HZ0+M.bz;
+    const legPose=sd=>{const p=M.ph+(sd>0?0:Math.PI),m=clamp(M.mv*1.3,0,1);return {fx:1+Math.sin(p)*AMP*m,fz:Math.max(0,Math.cos(p))*7*m};};
+    const col=MRED,colD=MREDD;
+    const hc=Math.cos(M.hh),hs=Math.sin(M.hh),tc=Math.cos(M.at),ts=Math.sin(M.at);
+  const hz=HZ(),zb=hz+4,mv=M.mv;
+  const PH=(lx,ly,z)=>[hc*lx-hs*ly,(hs*lx+hc*ly)*K-z];     // hip frame (legs)
+  const PT=(lx,ly,z)=>[tc*lx-ts*ly,(ts*lx+tc*ly)*K-z];     // torso frame (upper body)
+  const gH=(lx,ly)=>[hc*lx-hs*ly,(hs*lx+hc*ly)*K];         // ground anchors for prisms
+  const gT=(lx,ly)=>[tc*lx-ts*ly,(ts*lx+tc*ly)*K];
+  const parts=[],add=(d,f)=>parts.push([d,f]);
+  const vis=k=>clamp(k*3,0,1);   // how much a front-facing detail is turned toward the camera
+
+  ctx.save();ctx.translate(gx0,gy0);
+  shadow(2,3,24);
+
+  /* ---------- legs ---------- */
+  for(const sd of [-1,1]){
+    const lp=legPose(sd),ly=sd*7,r=ik(0,hz,lp.fx,lp.fz+4,LEG_A,LEG_B);
+    add(hs*lp.fx+hc*ly,()=>{
+      const hip=PH(0,ly,hz),kn=PH(r.kx,sd*8.6,r.kz),an=PH(r.ax,sd*7.4,r.az);
+      // hip plate and thigh
+      const hp=gH(0,sd*9.5);prism(hp[0],hp[1],[[-5,-2.6],[6,-2.6],[6,2.6],[-5,2.6]],hz-2,hz+6,STL3,M.hh);
+      limb(hip,kn,7.6,STL3);
+      const b0=[hip[0]+(kn[0]-hip[0])*.22,hip[1]+(kn[1]-hip[1])*.22],b1=[hip[0]+(kn[0]-hip[0])*.4,hip[1]+(kn[1]-hip[1])*.4];
+      limb(b0,b1,8.4,col,false);
+      // knee block and shin
+      limb(kn,an,6.6,'#2d353b');
+      const s0=[kn[0]+(an[0]-kn[0])*.5,kn[1]+(an[1]-kn[1])*.5],s1=[kn[0]+(an[0]-kn[0])*.82,kn[1]+(an[1]-kn[1])*.82];
+      limb(s0,s1,7.4,AMB,false);
+      const kg=gH(r.kx,sd*8.6);prism(kg[0],kg[1],[[-3,-3.4],[3.6,-3.4],[3.6,3.4],[-3,3.4]],r.kz-3,r.kz+3.6,STL2,M.hh);
+      orb(hip[0],hip[1],3.4,'#4a545c');
+      // ankle and foot
+      orb(an[0],an[1],2.8,'#4a545c');
+      const fg=gH(lp.fx,ly);
+      prism(fg[0],fg[1],[[-4.4,-3.8],[7.5,-3.8],[7.5,3.8],[-4.4,3.8]],lp.fz,lp.fz+3.6,BK2,M.hh);
+      prism(fg[0],fg[1],[[7.5,-3],[10.4,-2],[10.4,2],[7.5,3]],lp.fz,lp.fz+2.4,STL,M.hh);
+      prism(fg[0],fg[1],[[-3.4,-2.4],[3,-2.4],[3,2.4],[-3.4,2.4]],lp.fz+3.6,lp.fz+5.4,STL2,M.hh);
+    });
+  }
+  add(0,()=>{   // pelvis
+    prism(0,0,[[-7.5,-9],[7.5,-9],[7.5,9],[-7.5,9]],hz-3,hz+4,BK3,M.hh);
+    prism(0,0,[[6.8,-6],[8.2,-6],[8.2,6],[6.8,6]],hz-1,hz+3,colD,M.hh);
+  });
+
+  /* ---------- torso, head ---------- */
+  add(ts*3,()=>{
+    prism(0,0,[[-6,-8],[6,-8],[6,8],[-6,8]],zb,zb+4,BK3,M.at);                                            // waist
+    prism(0,0,[[-8.5,-10],[8,-10],[8,10],[-8.5,10]],zb+4,zb+14,BK2,M.at);                                  // lower chest
+    prism(0,0,[[8,-9.4],[9.3,-9.4],[9.3,9.4],[8,9.4]],zb+6,zb+9.4,col,M.at);                               // team stripe
+    prism(0,0,[[-9,-11],[5,-12],[9.5,-8],[9.5,8],[5,12],[-9,11]],zb+14,zb+25,STL,M.at);                    // upper chest
+    prism(0,0,[[-7,-9.5],[4.6,-10.6],[8,-7],[8,7],[4.6,10.6],[-7,9.5]],zb+25,zb+26.6,STL2,M.at);           // deck plate
+    // cockpit visor (amber slit with a soft glow, only when it faces the camera)
+    const v=vis(ts);
+    if(v>0){
+      const q=[PT(9.7,-6.4,zb+16.5),PT(9.7,6.4,zb+16.5),PT(9.7,5.2,zb+22.5),PT(9.7,-5.2,zb+22.5)];
+      ctx.save();ctx.globalAlpha=v;
+      ctx.fillStyle='#1a1006';ctx.beginPath();q.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();
+      const g=PT(9.8,0,zb+19.5);glow(g[0],g[1],9,'255,179,71',.5);
+      ctx.fillStyle=AMB;ctx.beginPath();[PT(9.9,-5,zb+18.4),PT(9.9,5,zb+18.4),PT(9.9,4.4,zb+20.8),PT(9.9,-4.4,zb+20.8)].forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();
+      ctx.restore();
+    }
+    // sensor head
+    const hg=gT(2,0);
+    prism(hg[0],hg[1],[[-3,-3.6],[3.5,-3.6],[5.2,-2],[5.2,2],[3.5,3.6],[-3,3.6]],zb+26.6,zb+31,BK,M.at);
+    if(v>0){
+      ctx.save();ctx.globalAlpha=v;
+      const e=PT(7.3,0,zb+28.8);glow(e[0],e[1],6,'255,179,71',.55);
+      ctx.fillStyle=AMB;ctx.beginPath();[PT(7.3,-2.4,zb+28),PT(7.3,2.4,zb+28),PT(7.3,2.4,zb+29.6),PT(7.3,-2.4,zb+29.6)].forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();
+      ctx.restore();
+    }
+    // antenna
+    const a0=PT(-1,4,zb+31),a1=PT(-3,5,zb+40);
+    ctx.strokeStyle='#0b0e12';ctx.lineWidth=.9;ctx.beginPath();ctx.moveTo(a0[0],a0[1]);ctx.lineTo(a1[0],a1[1]);ctx.stroke();
+    glow(a1[0],a1[1],3.2,'255,120,60',.5+.4*Math.sin(t*4));
+  });
+
+  /* ---------- backpack ---------- */
+  add(ts*-12,()=>{
+    prism(0,0,[[-16,-8.5],[-9,-8.5],[-9,8.5],[-16,8.5]],zb+3,zb+22,BK,M.at);
+    for(const ly of [-4,4]){const g=gT(-13,ly);prism(g[0],g[1],[[-1.6,-1.6],[1.6,-1.6],[1.6,1.6],[-1.6,1.6]],zb+22,zb+28,BK3,M.at);}
+    prism(0,0,[[-16.9,-6.4],[-16,-6.4],[-16,6.4],[-16.9,6.4]],zb+8,zb+18,col,M.at);                        // team plate
+    for(const ly of [-4.2,4.2]){const n=PT(-16.3,ly,zb+5);glow(n[0],n[1],4.5,'255,160,60',.18+.4*mv*(.7+.3*Math.sin(t*20)));}
+  });
+
+  /* ---------- shoulders ---------- */
+  for(const sd of [-1,1]){
+    add(tc*sd*14.5+ts*.5,()=>{
+      const g=gT(0,sd*14.5);
+      prism(g[0],g[1],[[-5.5,-5.2],[6,-5.2],[8.6,-2.6],[8.6,2.6],[6,5.2],[-5.5,5.2]],zb+12,zb+23,STL3,M.at);
+      prism(g[0],g[1],[[-5.8,-5.5],[6.4,-5.5],[9,-2.8],[9,2.8],[6.4,5.5],[-5.8,5.5]],zb+23,zb+25,col,M.at);
+    });
+  }
+
+  /* ---------- left arm: gatling cannon ---------- */
+  add(-tc*17+ts*6,()=>{
+    const g=gT(0,-17),rec=M.rec,ax=zb+4.2,p=M.pitch;
+    limb(PT(1,-14.5,zb+13),PT(4,-17,zb+7),5,STL3);                                                          // upper arm
+    // ammo drum and feed belt
+    prism(g[0],g[1],[[-5.5,-2.6],[1.5,-2.6],[1.5,2.6],[-5.5,2.6]],zb+.5,zb+8.4,BK3,M.at);
+    limb(PT(-3,-14.8,zb+8.4),PT(-3,-11,zb+13),1.6,'#6b5a2a',false);
+    // housing
+    prism(g[0],g[1],[[1.5-rec,-3.4],[15-rec,-3.4],[15-rec,3.4],[1.5-rec,3.4]],zb+.6,zb+7.8,'#2a3138',M.at);
+    prism(g[0],g[1],[[4-rec,-3.6],[7.2-rec,-3.6],[7.2-rec,3.6],[4-rec,3.6]],zb+3,zb+5.4,col,M.at);
+    prism(g[0],g[1],[[15-rec,-2.8],[18-rec,-2.8],[18-rec,2.8],[15-rec,2.8]],zb+1.4,zb+7,BK3,M.at);
+    // three rotating barrels
+    const cp=Math.cos(p),sp=Math.sin(p),bs=[];
+    for(let k=0;k<3;k++){const an=M.spin+k*2.0944;bs.push([Math.cos(an)*1.7,Math.sin(an)*1.7]);}
+    bs.sort((a,b)=>a[1]-b[1]);
+    const L0=18-rec,L1=32-rec;
+    for(const [oy,oz] of bs){
+      const a0=PT(L0,-17+oy,ax+oz),a1=PT(18+14*cp-rec,-17+oy,ax+oz+14*sp);
+      limb(a0,a1,1.7,GUN);
+    }
+    const c0=PT(18+7*cp-rec,-17,ax+7*sp),c1=PT(18+10*cp-rec,-17,ax+10*sp);
+    limb(c0,c1,5.4,'#232a30');
+    // muzzle flash
+    if(M.flash>0&&M.spinV>10){
+      const m=PT(34*cp-rec,-17,ax+14*sp+(2)*sp);
+      glow(m[0],m[1],11,'255,190,80',.8);
+      ctx.fillStyle='#ffe9a0';ctx.beginPath();
+      const dx=tc*cp,dy=ts*cp*K;
+      ctx.moveTo(m[0]+dx*10,m[1]+dy*10);ctx.lineTo(m[0]-dy*3,m[1]+dx*3);ctx.lineTo(m[0]-dx*3,m[1]-dy*3);ctx.lineTo(m[0]+dy*3,m[1]-dx*3);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(m[0],m[1],2.2,0,7);ctx.fill();
+    }
+  });
+
+  /* ---------- right shoulder: rocket pod ---------- */
+  add(tc*14.5+ts*.5,()=>{
+    const g=gT(0,14.5);
+    prism(g[0],g[1],[[-7.5,-4.6],[9,-4.6],[9,4.6],[-7.5,4.6]],zb+25,zb+34,BK2,M.at);
+    prism(g[0],g[1],[[-7.6,-1.1],[9.1,-1.1],[9.1,1.1],[-7.6,1.1]],zb+34,zb+35.2,AMB,M.at);
+    prism(g[0],g[1],[[-7.7,-4.8],[-5.2,-4.8],[-5.2,4.8],[-7.7,4.8]],zb+25.6,zb+33.4,STL,M.at);
+    const v=vis(ts);
+    if(v>.05){
+      ctx.save();ctx.globalAlpha=v;
+      for(let i=0;i<4;i++){
+        const c=i%2,row=i<2,ly=14.5+(c?2.3:-2.3),z=zb+(row?31.5:27.5),p=PT(9.1,ly,z),rx=1.8*Math.max(.3,Math.abs(ts));
+        ctx.fillStyle='#050709';ctx.beginPath();ctx.ellipse(p[0],p[1],rx,1.8,0,0,7);ctx.fill();
+        if(M.loaded[i]){ctx.fillStyle='#d9822b';ctx.beginPath();ctx.ellipse(p[0],p[1],rx*.55,1,0,0,7);ctx.fill();}
+        if(M.tube[i]>0)glow(p[0],p[1],8,'255,200,110',Math.min(1,M.tube[i]*4));
+      }
+      ctx.restore();
+    }
+  });
+
+  /* ---------- right arm: swings with the stride ---------- */
+  add(tc*17.5+ts*2,()=>{
+    const sw=-Math.sin(M.ph)*3*mv,sh=PT(0,14.8,zb+13),el=PT(1+sw*.5,17.8,zb+3),hd=PT(3+sw,17.4,zb-6);
+    limb(sh,el,5.2,STL3);limb(el,hd,5.8,'#2d353b');
+    const g=gT(3+sw,17.4);
+    prism(g[0],g[1],[[-3,-2.8],[3.2,-2.8],[3.2,2.8],[-3,2.8]],zb-11,zb-4,BK2,M.at);
+    orb(el[0],el[1],3.2,'#4a545c');
+  });
+
+  parts.sort((a,b)=>a[0]-b[0]);
+  for(const p of parts)p[1]();
+    if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.ellipse(0,-34,15,34,0,0,7);ctx.fill();}
+    ctx.restore();
+  };
+})();
+
+/* ---------- Ultralisk: Zerg siege beast (slate carapace, bone Kaiser blades, ichor green, team colour on the plates) ---------- */
+const drawUltralisk=(()=>{
+  const CAR='#3b3138',CAR2='#2a2229',CARL='#5c4a55',FLESH='#4d2f3c',FLESHD='#26171f',MOUTH='#8a2230';
+  const BONE='#d9cfae',BONE2='#b3a982',BONED='#8a7f5a',EYE='#ff5a2a';
+  const AMP=13,MELEE_T=.62,ROAR_T=.9;
+  const SPX=ULTRA_SPX,SPY=ULTRA_SPY,SPZ=ULTRA_SPZ;
+  const angDiff=(a,b)=>{let d=(b-a)%(Math.PI*2);if(d>Math.PI)d-=Math.PI*2;if(d<-Math.PI)d+=Math.PI*2;return d;};
+  const turnTo=(a,b,m)=>{const d=angDiff(a,b);return Math.abs(d)<=m?b:a+Math.sign(d)*m;};
+  function glow(x,y,r,rgb,a){const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba('+rgb+',1)');g.addColorStop(1,'rgba('+rgb+',0)');ctx.save();ctx.globalAlpha=a;ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.restore();}
+  function limb(a,b,w,c,outline){
+    ctx.lineCap='round';
+    if(outline!==false){ctx.strokeStyle='#0d070c';ctx.lineWidth=w+2.2;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+    ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+    ctx.strokeStyle=shade(c,1.45);ctx.lineWidth=Math.max(.6,w*.28);ctx.beginPath();ctx.moveTo(a[0]-w*.2,a[1]-w*.22);ctx.lineTo(b[0]-w*.2,b[1]-w*.22);ctx.stroke();
+    ctx.lineCap='butt';
+  }
+  /* two-bone leg in the (forward,height) plane; flip=-1 bends the knee backwards */
+  function ik(hx,hz,fx,fz,a,b,flip){
+    const dx=fx-hx,dz=fz-hz,d=Math.hypot(dx,dz)||1,dd=Math.min(d,a+b-.05);
+    const ux=dx/d,uz=dz/d,al=(a*a-b*b+dd*dd)/(2*dd),h=Math.sqrt(Math.max(0,a*a-al*al))*flip;
+    return {kx:hx+ux*al-uz*h,kz:hz+uz*al+ux*h,ax:hx+ux*dd,az:hz+uz*dd};
+  }
+  const swingAmt=p=>{   // -1 wind-up (blades spread and back) to 1.5 strike (blades sweep in and forward)
+    if(p<0)return 0;
+    if(p<.22){const k=p/.22;return -k*k*(3-2*k);}
+    if(p<.34)return -1+(p-.22)/.12*2.5;
+    if(p<MELEE_T)return Math.max(0,1.5*(1-(p-.34)/(MELEE_T-.34)));
+    return 0;
+  };
+  const LEGS=[{hx:16,sd:-1,fr:1},{hx:16,sd:1,fr:1},{hx:-19,sd:-1,fr:0},{hx:-19,sd:1,fr:0}];
+  return function(u,t){
+    const D=UD.ultralisk,now=performance.now()/1000,x=u.x*T,y=u.y*T*K,col=tcol(u.team);
+    /* animation state lives on the unit: hips follow the walking direction (or swing round to the aim when standing), the head follows the aim */
+    let s=u.us;if(!s)s=u.us={ph:0,mv:0,bz:0,hh:u.face,at:u.face,ha:u.face,lx:u.x,ly:u.y,lt:now,jaw:.1};
+    const dt=clamp(now-s.lt,0,.05);s.lt=now;
+    const mdx=(u.x-s.lx)*T,mdy=(u.y-s.ly)*T,mdist=Math.hypot(mdx,mdy);s.lx=u.x;s.ly=u.y;
+    const moving=!!(u.path&&u.pi<u.path.length);
+    s.at=turnTo(s.at,u.face,5*dt);
+    if(moving&&mdist>.02)s.hh=turnTo(s.hh,Math.atan2(mdy,mdx),2.4*dt);
+    else s.hh=turnTo(s.hh,s.at,2.2*dt);
+    s.ha=s.hh+clamp(angDiff(s.hh,s.at),-.75,.75);
+    s.mv+=((moving?1:0)-s.mv)*Math.min(1,dt*3.5);
+    s.ph+=mdist*Math.PI/(2*AMP);
+    s.bz=-1.9*Math.abs(Math.sin(s.ph))*s.mv+Math.sin(t*1.7)*.5;
+    /* blades: wind-up just before the strike, then the sweep and recovery after it */
+    const sh=D.cd-u.cd;let sw=0;
+    if(sh>=0&&sh<MELEE_T-.27)sw=swingAmt(.27+sh);
+    else if(u.cd>0&&u.cd<.22&&u.order.type==='attack')sw=swingAmt(.22-u.cd);
+    /* roar when a spike volley starts */
+    const rt=time-(u.volT===undefined?-99:u.volT),roarE=(rt>=0&&rt<ROAR_T)?Math.sin(Math.PI*rt/ROAR_T):0;
+    const jawT=roarE>0?1:(sw>.2?.55:.1+.06*Math.sin(t*3.1));
+    s.jaw+=(jawT-s.jaw)*Math.min(1,dt*(roarE>0?9:6));
+    /* back spines regrow after they have been thrown */
+    const spine=[0,1,2,3,4].map(i=>u.spT?clamp((time-u.spT[i])/3.2,0,1):1);
+    const fl=(u.lastSpk!==undefined&&time-u.lastSpk<.22)?1-(time-u.lastSpk)/.22:0;
+    const hc=Math.cos(s.hh),hs=Math.sin(s.hh),hhc=Math.cos(s.ha),hhs=Math.sin(s.ha);
+    const b=s.bz,mv=s.mv,breath=Math.sin(t*1.7);
+    const phase=s.ph;
+    const legPose=L=>{
+      const p=phase+(L.fr?(L.sd>0?Math.PI:0):(L.sd>0?0:Math.PI)),m=clamp(mv*1.3,0,1);
+      return {fx:L.hx+(L.fr?9:-7)+Math.sin(p)*AMP*m,fz:Math.max(0,Math.cos(p))*9*m,fy:L.sd*(L.fr?21:22)};
+    };
+    const PH=(lx,ly,z)=>[hc*lx-hs*ly,(hs*lx+hc*ly)*K-z];      // hip frame (legs, body)
+    const gH=(lx,ly)=>[hc*lx-hs*ly,(hs*lx+hc*ly)*K];           // ground anchors for prisms
+    const parts=[],add=(d,f)=>parts.push([d,f]);
+
+    ctx.save();ctx.translate(x,y);
+    shadow(0,4,40);
+
+    /* ---------- four legs: diagonal gait, knees high like an insect ---------- */
+    for(const L of LEGS){
+      const lp=legPose(L),hzL=26+b,sd=L.sd,flip=L.fr?1:-1;
+      const r=ik(L.hx,hzL,lp.fx,lp.fz+4,17,17,flip);
+      add(hs*lp.fx+hc*lp.fy,()=>{
+        const hip=PH(L.hx,sd*13,hzL),kn=PH(r.kx,sd*19.5,r.kz),an=PH(r.ax,sd*(L.fr?20.5:21.5),r.az);
+        const hp=gH(L.hx,sd*14);prism(hp[0],hp[1],[[-6,-5],[7,-5],[7,5],[-6,5]],hzL-3,hzL+6,CAR2,s.hh);
+        limb(hip,kn,11,CAR);
+        const a0=[hip[0]+(kn[0]-hip[0])*.18,hip[1]+(kn[1]-hip[1])*.18],a1=[hip[0]+(kn[0]-hip[0])*.62,hip[1]+(kn[1]-hip[1])*.62];
+        limb(a0,a1,12.4,CARL,false);
+        limb(kn,an,8.4,FLESHD);
+        const s0=[kn[0]+(an[0]-kn[0])*.4,kn[1]+(an[1]-kn[1])*.4],s1=[kn[0]+(an[0]-kn[0])*.72,kn[1]+(an[1]-kn[1])*.72];
+        limb(s0,s1,9.2,col,false);
+        orb(kn[0],kn[1],5,CARL);
+        limb([kn[0],kn[1]-1],[kn[0]+sd*3.5,kn[1]-11],3.6,BONE);
+        orb(an[0],an[1],3.2,CAR);
+        const fg=gH(lp.fx,lp.fy);
+        prism(fg[0],fg[1],[[-5.5,-5.5],[8,-5.5],[12,-2],[12,2],[8,5.5],[-5.5,5.5]],lp.fz,lp.fz+4.2,FLESHD,s.hh);
+        for(const oy of [-3.6,0,3.6])prism(fg[0],fg[1],[[10,oy-1.5],[19,oy],[10,oy+1.5]],lp.fz+.2,lp.fz+3,BONE,s.hh);
+      });
+    }
+
+    /* ---------- body: hindquarters, mid back, shoulder hump, plates, five spine launchers ---------- */
+    add(0,()=>{
+      prism(0,0,[[-30,-12],[22,-13],[28,0],[22,13],[-30,12],[-34,0]],14+b,24+b,FLESHD,s.hh);
+      prism(0,0,[[-35,-9],[-12,-17],[-8,17],[-35,9]],24+b,36+b,CAR,s.hh);
+      prism(0,0,[[-33,-7],[-13,-14],[-10,14],[-33,7]],36+b,38+b,CARL,s.hh);
+      prism(0,0,[[-12,-18],[12,-20],[14,20],[-12,18]],24+b,42+b,CAR,s.hh);
+      prism(0,0,[[-10,-16],[11,-18],[12,18],[-10,16]],42+b,44+b,CARL,s.hh);
+      prism(0,0,[[8,-20],[22,-16],[28,0],[22,16],[8,20]],24+b,46+b+breath*.4,CAR,s.hh);
+      prism(0,0,[[10,-17],[21,-13],[25,0],[21,13],[10,17]],46+b+breath*.4,48.4+b+breath*.4,CARL,s.hh);
+      for(const sd of [-1,1])prism(0,0,[[-27,sd*18.4],[19,sd*20.4],[19,sd*19.2],[-27,sd*17.2]],30+b,33+b,col,s.hh);
+      prism(0,0,[[-9,-1.1],[11,-1.1],[11,1.1],[-9,1.1]],44+b,45.2+b,col,s.hh);
+      prism(0,0,[[-31,-.9],[-14,-.9],[-14,.9],[-31,.9]],38+b,39.1+b,col,s.hh);
+      for(const sd of [-1,1]){
+        prism(0,0,[[3,sd*18],[20,sd*15],[26,sd*21],[20,sd*28],[5,sd*26]],28+b,44+b,CAR,s.hh);
+        prism(0,0,[[4,sd*18.5],[19,sd*16],[24,sd*21],[19,sd*26.5],[6,sd*25]],44+b,46.4+b,CARL,s.hh);
+        const tg=gH(24,sd*21);prism(tg[0],tg[1],[[-1.4,-1.4],[1.4,-1.4],[1.4,1.4],[-1.4,1.4]],46.4+b,52+b,BONE2,s.hh);
+      }
+      for(const sd of [-1,1])prism(0,0,[[-30,sd*9],[-14,sd*15],[-12,sd*21],[-30,sd*17]],26+b,34+b,CAR2,s.hh);
+      for(let i=0;i<7;i++){
+        const px=-30+i*7.6,py=(i%2?2.4:-2.4),zt=(px<-10?38:(px<10?44:48.4))+b;
+        const g=gH(px,py);
+        for(let k=0;k<3;k++){const w=2.2*(1-k*.3);prism(g[0],g[1],[[-w,-w],[w,-w],[w,w],[-w,w]],zt+k*2.6,zt+(k+1)*2.6,BONE2,s.hh);}
+      }
+      const rel=angDiff(s.hh,s.at);
+      for(let i=0;i<5;i++){
+        const g=spine[i],bz=SPZ[i]+b,sy=SPY[i]>0?1:(SPY[i]<0?-1:0);
+        const sock=gH(SPX[i],SPY[i]);
+        prism(sock[0],sock[1],[[-3.2,-3.2],[3.2,-3.2],[3.2,3.2],[-3.2,3.2]],bz,bz+3,CAR2,s.hh);
+        const L=5+24*g;
+        let dx=-.32,dy=sy*.28,dz=.92;
+        if(fl>0){dx+=(Math.cos(rel)*.5+.32)*fl;dy+=(Math.sin(rel)*.5-sy*.28)*fl;}
+        const n=Math.hypot(dx,dy,dz);dx/=n;dy/=n;dz/=n;
+        const p0=PH(SPX[i],SPY[i],bz+3),pm=PH(SPX[i]+dx*L*.5,SPY[i]+dy*L*.5,bz+3+dz*L*.5),p1=PH(SPX[i]+dx*L,SPY[i]+dy*L,bz+3+dz*L);
+        limb(p0,pm,6,BONE2);limb(pm,p1,3.4,BONE);
+        limb([pm[0]+(p1[0]-pm[0])*.6,pm[1]+(p1[1]-pm[1])*.6],p1,1.8,BONED,false);
+        if(g>.9)glow(p0[0],p0[1]-1,5,'166,232,60',.22+.1*Math.sin(t*3+i));
+        if(fl>0)glow(p0[0],p0[1],9,'200,255,120',.7*fl);
+      }
+    });
+
+    /* ---------- head: neck, skull, jaw, eyes ---------- */
+    const lunge=sw>0?sw*7:sw*3;
+    const headZ=31+b+roarE*7+(sw<0?-sw*3:0)+breath*.4;
+    const hOrg=gH(24+lunge,0);
+    const HP=(lx,ly,z)=>[hOrg[0]+hhc*lx-hhs*ly,hOrg[1]+(hhs*lx+hhc*ly)*K-z];
+    add(hs*24+hhs*14,()=>{
+      const ox=hOrg[0],oy=hOrg[1],j=s.jaw;
+      prism(ox,oy,[[-9,-11],[8,-10],[8,10],[-9,11]],26+b,headZ+10,CAR,s.ha);
+      prism(ox,oy,[[-7,-9],[7,-8.4],[7,8.4],[-7,9]],headZ+10,headZ+12,CARL,s.ha);
+      const jz=headZ-5-j*9;
+      prism(ox,oy,[[4,-8],[26,-5.6],[31,0],[26,5.6],[4,8]],jz,jz+5,FLESH,s.ha);
+      prism(ox,oy,[[6,-6.6],[26,-4.4],[29,0],[26,4.4],[6,6.6]],jz+5,jz+5.8,MOUTH,s.ha);
+      for(const oy2 of [-4.2,-1.4,1.4,4.2])prism(ox,oy,[[26,oy2-.9],[31,oy2],[26,oy2+.9]],jz+5.8,jz+9+j*1.5,BONE,s.ha);
+      prism(ox,oy,[[0,-10],[16,-9],[28,-5],[32,0],[28,5],[16,9],[0,10]],headZ,headZ+12,CAR,s.ha);
+      prism(ox,oy,[[2,-8],[14,-7.4],[22,-4],[24,0],[22,4],[14,7.4],[2,8]],headZ+12,headZ+15,CARL,s.ha);
+      prism(ox,oy,[[4,-1.1],[22,-1.1],[22,1.1],[4,1.1]],headZ+15,headZ+16.2,col,s.ha);
+      for(const sd of [-1,1]){
+        prism(ox,oy,[[10,sd*8.6],[20,sd*7.8],[22,sd*10.6],[12,sd*11.6]],headZ+4,headZ+13,CARL,s.ha);
+        limb(HP(25,sd*6,headZ+3),HP(35,sd*3.4,headZ-5-j*5),3,BONE2);
+      }
+      for(const oy2 of [-3.6,0,3.6])prism(ox,oy,[[27,oy2-1],[32,oy2],[27,oy2+1]],headZ+.8,headZ+3.4,BONE,s.ha);
+      const vf=clamp(hhs*3,0,1);
+      for(const sd of [-1,1]){
+        if(vf>0){
+          const e=HP(27,sd*4.4,headZ+8);
+          ctx.save();ctx.globalAlpha=vf;glow(e[0],e[1],6.5,'255,90,40',.6);ctx.fillStyle=EYE;ctx.beginPath();
+          [HP(27.4,sd*3,headZ+7.2),HP(27.4,sd*5.8,headZ+7.2),HP(27.4,sd*5.8,headZ+9),HP(27.4,sd*3,headZ+8.4)].forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();ctx.restore();
+        }
+        const vs=clamp(sd*hhc*3,0,1);
+        if(vs>0){
+          const e=HP(21,sd*9.4,headZ+8);
+          ctx.save();ctx.globalAlpha=vs;glow(e[0],e[1],6,'255,90,40',.55);ctx.fillStyle=EYE;ctx.beginPath();
+          [HP(19,sd*9.6,headZ+7.4),HP(24,sd*9.6,headZ+7.4),HP(24,sd*9.6,headZ+9),HP(19,sd*9.6,headZ+8.6)].forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();ctx.restore();
+        }
+      }
+      if(roarE>.2){const m=HP(30,0,jz+7);glow(m[0],m[1],12,'255,120,90',.35*roarE);}
+    });
+
+    /* ---------- kaiser blades: two curved scythe tusks that sweep in when it strikes ---------- */
+    const ls=1-.38*sw+.5*roarE,fx=9*sw;
+    const BLADE=[[26,9,5],[38,16,6],[52,21,3],[66,22,-4],[78,18,-12],[86,11,-20]];
+    const WID=[8.4,7.6,6.6,5.4,4,2.4];
+    for(const sd of [-1,1]){
+      add(hs*24+hhs*52+hhc*sd*20*ls,()=>{
+        const pts=BLADE.map(q=>HP(q[0]+fx*(q[0]-20)/66,sd*q[1]*ls,headZ+q[2]));
+        pts.unshift(HP(22,sd*7,headZ+4));
+        for(let i=0;i<pts.length-1;i++){
+          const w=WID[Math.min(i,WID.length-1)];
+          limb(pts[i],pts[i+1],w,BONE);
+          limb([pts[i][0]+w*.12,pts[i][1]+w*.2],[pts[i+1][0]+w*.12,pts[i+1][1]+w*.2],Math.max(1,w*.3),BONED,false);
+          const q=pts[i+1];ctx.strokeStyle='rgba(60,50,30,.55)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(q[0]-w*.5,q[1]-w*.1);ctx.lineTo(q[0]+w*.5,q[1]+w*.1);ctx.stroke();
+        }
+        const a=pts[pts.length-2],e=pts[pts.length-1];
+        limb([a[0]+(e[0]-a[0])*.45,a[1]+(e[1]-a[1])*.45],e,2.6,'#4a3b30',false);
+        orb(pts[0][0],pts[0][1],4.8,CAR2);
+        if(sw>.5){glow(e[0],e[1],11,'220,255,150',.5*Math.min(1,sw));}
+      });
+    }
+
+    parts.sort((a,b)=>a[0]-b[0]);
+    for(const p of parts)p[1]();
+    if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.ellipse(0,-30,34,30,0,0,7);ctx.fill();}
+    ctx.restore();
+  };
+})();
+
 function drawUnitRaw(u,t){
+  if(u.type==='ultralisk'){drawUltralisk(u,t);return;}
   if(raceOf(u.team)==='zerg'){drawZerg(u,t);return;}
   if(u.type==='heli'){drawHeli(u,t);return;}
+  if(u.type==='mecha'){drawMecha(u,t);return;}
+  if(u.type==='mothership'){drawMothership(u,t);return;}
   if(u.type==='zealot'||u.type==='stalker'||u.type==='immortal'||u.type==='colossus'){drawProtoss(u,t);return;}
   const x=u.x*T,y=u.y*T*K,col=tcol(u.team),colD=tcolD(u.team),fc=Math.cos(u.face),fs=Math.sin(u.face);
   if(u.type==='tank'){
@@ -3785,7 +4412,7 @@ function hpBar(x,y,w,e,h){
   ctx.fillStyle=f>.6?C.good:f>.3?'#f2a93b':C.bad;ctx.fillRect(x,y,w*f,h);
   if(e.maxsh){const sf=clamp(e.sh/e.maxsh,0,1);ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(x,y-gap,w,sh);ctx.fillStyle='#7fdcff';ctx.fillRect(x,y-gap,w*sf,sh);}
 }
-const BARS={tank:[46,40],heli:[82,32],worker:[36,20],zealot:[40,24],stalker:[46,26],immortal:[52,34],colossus:[124,40],dog:[30,24],ravager:[48,38],tree:[72,32],ptero:[66,30],overlord:[88,44]};
+const BARS={mecha:[88,40],tank:[46,40],heli:[82,32],worker:[36,20],zealot:[40,24],stalker:[46,26],immortal:[52,34],colossus:[124,40],dog:[30,24],ravager:[48,38],tree:[72,32],ptero:[66,30],overlord:[88,44],mothership:[150,100],ultralisk:[80,56]};
 let hzG=null,hzH=0;
 /* ---------- rain ---------- */
 let wx='rain',wxT=80,rainK=0,sunK=0,rainLast=0,rainNext=9,rainFlash=0,rainG=null,rainSnd=null;
@@ -3881,7 +4508,7 @@ function render(t){
   const inSel=new Set(sel);
   for(const e of sel){
     if(e.kind==='b'){const x=e.tx*T,y=e.ty*T,w=e.size*T;ctx.strokeStyle=side(e.team)?C.foe:C.good;ctx.lineWidth=2;ctx.strokeRect(x-3,y-3,w+6,w+6);}
-    else if(e.kind==='u'){const r=({tank:28,heli:17,colossus:34,immortal:20,stalker:14,zealot:12,ravager:26,tree:20,overlord:24,ptero:17})[e.type]||11;ctx.strokeStyle=side(e.team)?C.foe:C.good;ctx.lineWidth=1.8;ctx.beginPath();ctx.ellipse(e.x*T,e.y*T,r,r,0,0,7);ctx.stroke();}
+    else if(e.kind==='u'){const r=({mecha:24,tank:28,heli:17,colossus:34,immortal:20,stalker:14,zealot:12,ravager:26,tree:20,overlord:24,ptero:17,mothership:40,ultralisk:34})[e.type]||11;ctx.strokeStyle=side(e.team)?C.foe:C.good;ctx.lineWidth=1.8;ctx.beginPath();ctx.ellipse(e.x*T,e.y*T,r,r,0,0,7);ctx.stroke();}
     else if(e.kind==='r'){ctx.strokeStyle=C.ore;ctx.lineWidth=2;ctx.strokeRect(e.tx*T-2,e.ty*T-2,T+4,T+4);}
   }
   ET();
@@ -3934,6 +4561,17 @@ function render(t){
       const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f*2.4),sx=e.x*T,sy=e.y*T*K-e.z,a=clamp(e.t/e.T,0,1)*.55;
       ctx.globalAlpha=a;ctx.fillStyle='#5d6166';ctx.beginPath();ctx.arc(sx,sy,r,0,7);ctx.fill();
       ctx.globalAlpha=a*.7;ctx.fillStyle='#b9bdc1';ctx.beginPath();ctx.arc(sx-r*.25,sy-r*.25,r*.55,0,7);ctx.fill();ctx.globalAlpha=1;
+    }
+    else if(e.k==='sp'){   // Ultralisk spike: thrown in an arc, bone shaft with a dark tip
+      const f=clamp(1-e.t/e.T,0,.96),g=f+.04;
+      const SP=q=>[(e.sx+(e.ex-e.sx)*q)*T,(e.sy+(e.ey-e.sy)*q)*T*K-(e.z0+(e.z1-e.z0)*q+e.arc*4*q*(1-q))];
+      const a=SP(f),b=SP(g),an=Math.atan2(b[1]-a[1],b[0]-a[0]),c=Math.cos(an),s2=Math.sin(an);
+      ctx.save();ctx.lineCap='round';
+      ctx.drawImage(glowSprite('ultrail',[[0,'rgba(166,232,60,.9)'],[1,'rgba(166,232,60,0)']]),a[0]-c*9-8,a[1]-s2*9-8,16,16);
+      ctx.strokeStyle='#0d070c';ctx.lineWidth=5.4;ctx.beginPath();ctx.moveTo(a[0]-c*13,a[1]-s2*13);ctx.lineTo(a[0]+c*7,a[1]+s2*7);ctx.stroke();
+      ctx.strokeStyle='#d9cfae';ctx.lineWidth=3.2;ctx.beginPath();ctx.moveTo(a[0]-c*12,a[1]-s2*12);ctx.lineTo(a[0]+c*5,a[1]+s2*5);ctx.stroke();
+      ctx.strokeStyle='#4a3b30';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a[0]+c*2,a[1]+s2*2);ctx.lineTo(a[0]+c*7,a[1]+s2*7);ctx.stroke();
+      ctx.restore();
     }
     else if(e.k==='m'){
       const sx=e.x*T,sy=e.y*T*K-e.z;
@@ -4009,6 +4647,7 @@ const ICO={
   heli:'<path d="M3 5h18M12 5v4"/><ellipse cx="11" cy="13" rx="6" ry="4"/><path d="M17 12l5-2M7 17l-1 3h10l-1-3"/>',
   rocket:'<path d="M6.5 9.5a5.5 5.5 0 0 1 11 0z" fill="currentColor" fill-opacity=".4"/><path d="M5 9.5h14"/><path d="M8.5 9.5v2a3.5 3.5 0 0 0 7 0v-2"/><path d="M3.5 22c.6-4 3-6 6.5-6h4c3.5 0 5.9 2 6.5 6"/><rect x="13" y="5" width="9" height="3.4" rx="1.2" transform="rotate(-28 17 7)" fill="currentColor" fill-opacity=".6"/>',
   tank:'<rect x="3" y="14" width="18" height="5" rx="2.5"/><path d="M7 14v-3h8v3M15 12.5h6"/>',
+  mecha:'<rect x="9" y="2.5" width="6" height="4" rx="1"/><path d="M7 7.5h10v7H7zM9.5 14.5L8.5 21h3.5v-6.5M14.5 14.5l1 6.5H12M3 9h4v5M17 8l4-2M17 10l4-2"/>',
   zealot:'<circle cx="12" cy="6" r="3"/><path d="M7 21c0-5 2-8 5-8s5 3 5 8"/><path d="M4 4l5 9M20 4l-5 9" stroke-width="2.2"/>',
   stalker:'<ellipse cx="12" cy="10" rx="5" ry="3.5"/><path d="M7.5 11L3 21M10 13l-3 8M14 13l3 8M16.5 11L21 21M17 9l5-2"/>',
   immortal:'<rect x="7" y="8" width="10" height="7" rx="2"/><circle cx="12" cy="5" r="2.2"/><path d="M8 15l-2 6M16 15l2 6M17 11h5M7 11H2"/>',
@@ -4031,6 +4670,8 @@ Object.assign(ICO,{
   zmpit:'<path d="M3 21c0-5 3-8 9-8s9 3 9 8z" fill="currentColor" fill-opacity=".25"/><path d="M4 14.500l2-4.500 2 3.200M20 14.500l-2-4.500-2 3.200"/><path d="M9.500 13C7 9.500 13 8.500 9.800 4.500M14.500 13c2.500-3.500-3.500-4.500-.3-8.500"/><path d="M9.200 9.800h5.600M10 7h4"/><path d="M8 21l-1 1.500M12 21v1.500M16 21l1 1.500"/>',
   zspore:'<path d="M9 21c1-4 1-8 0-11.500M15 21c-1-4-1-8 0-11.500M6.500 21h11"/><ellipse cx="12" cy="7" rx="5.200" ry="4.300" fill="currentColor" fill-opacity=".35"/><path d="M7.500 4.800L5 2.200M12 2.600V.8M16.500 4.800L19 2.200"/><circle cx="12" cy="7" r="1.500"/><circle cx="3" cy="9.500" r=".9" fill="currentColor"/><circle cx="21" cy="8.500" r=".9" fill="currentColor"/><circle cx="19.500" cy="12.500" r=".7" fill="currentColor"/>'
 });
+ICO.mothership='<ellipse cx="12" cy="14" rx="10" ry="3.6"/><path d="M7.500 13.500C7.500 8.500 9.500 6.500 12 6.500s4.500 2 4.500 7" fill="currentColor" fill-opacity=".3"/><path d="M12 6.500V2.500M8 17.500l-1 3.500M12 18v3.500M16 17.500l1 3.500"/>';
+ICO.ultralisk='<path d="M4 15c0-4 3-7 8-7s8 3 8 7z" fill="currentColor" fill-opacity=".3"/><path d="M4 15v5.500M8 15v5.500M16 15v5.500M20 15v5.500"/><path d="M6.500 9C3 7.500 2.500 4.500 4 2.500M17.500 9C21 7.500 21.500 4.500 20 2.500"/><path d="M9 8V5.500M12 7.500V4M15 8V5.500"/>';
 const ZIC={barracks:'zpool',factory:'zmpit',turret:'zspore'};
 const svg=(n,s)=>'<svg viewBox="0 0 24 24" width="'+(s||22)+'" height="'+(s||22)+'" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+ICO[(raceOf(0)==='zerg'&&ZIC[n])||n]+'</svg>';
 let toastT=0;
@@ -4634,13 +5275,64 @@ function zfig(kind,c,cd,t){
   }
   return o;
 }
+function mothershipPF(c,t){
+  const O='#3a2a06',S=' stroke="'+O+'" stroke-width="2" stroke-linejoin="round"',E='#8fe9ff';
+  const defs='<defs><linearGradient id="mG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c0"/><stop offset=".4" stop-color="#d9b658"/><stop offset="1" stop-color="#8a6a1e"/></linearGradient><radialGradient id="mE"><stop offset="0" stop-color="#8fe9ff" stop-opacity=".9"/><stop offset="1" stop-color="#3db8f2" stop-opacity="0"/></radialGradient></defs>';
+  return defs+'<ellipse cx="80" cy="142" rx="54" ry="8" fill="rgba(0,0,0,.35)"/>'
+   +'<ellipse cx="80" cy="116" rx="66" ry="22" fill="url(#mE)"/>'
+   +'<path d="M16 88v12c0 12 29 20 64 20s64-8 64-20V88z" fill="url(#mG)"'+S+'/>'
+   +'<ellipse cx="80" cy="112" rx="26" ry="8" fill="#1a2433" stroke="'+E+'" stroke-width="2"/><ellipse cx="80" cy="112" rx="10" ry="3" fill="'+E+'"/>'
+   +'<ellipse cx="80" cy="88" rx="64" ry="22" fill="url(#mG)"'+S+'/>'
+   +'<ellipse cx="80" cy="88" rx="55" ry="18" fill="none" stroke="#ecebe4" stroke-width="4"/>'
+   +'<path d="M80 74v-6M80 102v6M44 82l-8-3M116 82l8-3M46 96l-8 4M114 96l8 4" stroke="'+E+'" stroke-width="3" stroke-linecap="round"/>'
+   +'<ellipse cx="80" cy="88" rx="30" ry="10" fill="#26354d" stroke="#6e5818" stroke-width="2"/>'
+   +'<path d="M28 82l5-20 5 20zM122 82l5-20 5 20z" fill="#a98a36"'+S+'/><circle cx="33" cy="62" r="3.4" fill="'+c+'" stroke="#fff" stroke-width="1"/><circle cx="127" cy="62" r="3.4" fill="'+c+'" stroke="#fff" stroke-width="1"/>'
+   +'<path d="M52 86C52 56 66 44 80 44s28 12 28 42z" fill="url(#mG)"'+S+'/>'
+   +'<path d="M60 74C62 62 70 56 80 56s18 6 20 18z" fill="'+E+'" opacity=".7"/>'
+   +'<ellipse cx="80" cy="26" rx="30" ry="8" fill="none" stroke="'+c+'" stroke-width="3" opacity=".85"/>'
+   +'<polygon points="80,4 91,24 80,46 69,24" fill="'+E+'" stroke="#e8fbff" stroke-width="1.5"/><polygon points="80,4 69,24 80,28" fill="rgba(255,255,255,.7)"/>';
+}
+function ultraPF(c,t){
+  const S=' stroke="#0d070c" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"',CA='#3b3138',CL='#5c4a55',FD='#26171f',BO='#d9cfae',B2='#b3a982';
+  const L=(d,w,col)=>'<path d="'+d+'" fill="none" stroke="#0d070c" stroke-width="'+(w+3)+'" stroke-linecap="round" stroke-linejoin="round"/><path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round"/>';
+  return '<ellipse cx="80" cy="134" rx="60" ry="9" fill="rgba(0,0,0,.4)"/>'
+   +L('M38 98L26 134',9,FD)+L('M62 104L58 134',9,FD)+L('M92 104L96 134',9,CA)+L('M114 98L128 134',9,CA)
+   +[[28,62,18],[44,52,28],[60,48,38],[78,46,46],[96,50,54]].map(q=>'<polygon points="'+q[0]+','+(q[1]+14)+' '+(q[0]+4)+','+(q[1]-q[2]*.5)+' '+(q[0]+9)+','+(q[1]+14)+'" fill="'+B2+'"'+S+'/>').join('')
+   +'<ellipse cx="62" cy="86" rx="44" ry="30" fill="'+CA+'"'+S+'/><ellipse cx="88" cy="76" rx="30" ry="26" fill="'+CL+'"'+S+'/>'
+   +'<path d="M36 90Q64 100 96 92" stroke="'+c+'" stroke-width="4" fill="none" stroke-linecap="round"/>'
+   +L('M116 98L120 126',10,CA)
+   +'<ellipse cx="120" cy="72" rx="24" ry="20" fill="'+CA+'"'+S+'/><path d="M104 84Q122 98 144 84L140 92Q122 104 108 94Z" fill="#8a2230"'+S+'/>'
+   +'<polygon points="132,86 140,94 128,90" fill="'+BO+'"/><polygon points="120,90 126,100 116,94" fill="'+BO+'"/>'
+   +L('M104 66Q92 38 118 14Q126 6 130 10',8,BO)+L('M138 64Q154 40 140 18Q136 10 128 8',8,B2)
+   +'<circle cx="132" cy="68" r="4.5" fill="#ff5a2a" stroke="#0d070c" stroke-width="1"/><circle cx="122" cy="64" r="3.6" fill="#ff5a2a" stroke="#0d070c" stroke-width="1"/>';
+}
 function fig(kind,c,cd,t){
+  if(kind==='mothership')return mothershipPF(c,t);
+  if(kind==='ultralisk')return ultraPF(c,t);
   {const zf=zfig(kind,c,cd,t);if(zf!==null)return zf;}
   {const pa=pfigA(kind,c,cd,t);if(pa!==null)return pa;}
   {const pn=pfigN(kind,c,cd,t);if(pn!==null)return pn;}
   {const pf=pfig(kind,c,cd,t);if(pf!==null)return pf;}
   {const rf=rfig(kind,c,cd,t);if(rf!==null)return rf;}
   const sh='<ellipse cx="80" cy="132" rx="50" ry="11" fill="rgba(0,0,0,.38)"/>',sp='url(#sp'+t+')',gl='url(#gl'+t+')';let fa='url(#fa'+t+')';
+  if(kind==='mecha'){
+    const RD='#8f1d1d',RD2='#5e1010',S='stroke="#05070a" stroke-width="1.6" stroke-linejoin="round"';
+    const leg=x=>'<path d="M'+(x+4)+' 78 L'+(x+20)+' 78 L'+(x+18)+' 102 L'+(x+2)+' 102Z" fill="#39434a" '+S+'/><rect x="'+(x+4)+'" y="84" width="16" height="6" fill="'+RD+'" '+S+'/>'
+      +'<rect x="'+x+'" y="98" width="22" height="10" rx="2" fill="#46515a" '+S+'/><path d="M'+(x+3)+' 108 L'+(x+19)+' 108 L'+(x+21)+' 124 L'+(x+1)+' 124Z" fill="#2d353b" '+S+'/><rect x="'+(x+4)+'" y="112" width="14" height="4" fill="#ffb347" '+S+'/>'
+      +'<path d="M'+(x-4)+' 122 L'+(x+26)+' 122 L'+(x+28)+' 132 L'+(x-6)+' 132Z" fill="#262d33" '+S+'/>';
+    return sh+leg(52)+leg(84)
+      +'<rect x="50" y="70" width="60" height="14" rx="2" fill="#10141a" '+S+'/><rect x="50" y="76" width="60" height="4" fill="'+RD2+'"/>'
+      +'<path d="M12 74 L36 54 L40 58 L18 82Z" fill="#2d353b" '+S+'/>'
+      +'<rect x="16" y="64" width="26" height="14" rx="2" fill="#2a3138" '+S+'/><rect x="22" y="64" width="6" height="14" fill="'+RD+'"/>'
+      +'<rect x="2" y="65" width="16" height="3.4" fill="#12171c" '+S+'/><rect x="2" y="70" width="16" height="3.4" fill="#12171c" '+S+'/><rect x="2" y="75" width="16" height="3.4" fill="#12171c" '+S+'/><rect x="14" y="63" width="5" height="17" rx="1" fill="#232a30" '+S+'/>'
+      +'<path d="M118 50 L128 84" stroke="#05070a" stroke-width="12" stroke-linecap="round"/><path d="M118 50 L128 84" stroke="#2d353b" stroke-width="8.5" stroke-linecap="round"/><rect x="120" y="82" width="14" height="14" rx="2" fill="#262d33" '+S+'/>'
+      +'<path d="M48 32 L112 32 L118 50 L112 74 L48 74 L42 50Z" fill="#323b42" '+S+'/><rect x="50" y="52" width="60" height="20" fill="#262d33"/><rect x="50" y="60" width="60" height="5" fill="'+RD+'"/><path d="M48 32 L112 32 L118 50 L42 50Z" fill="rgba(255,255,255,.1)"/>'
+      +'<rect x="64" y="37" width="32" height="14" rx="3" fill="#1a1006" '+S+'/><rect x="67" y="40" width="26" height="8" rx="1.5" fill="#ffb347"/><circle cx="80" cy="44" r="14" fill="rgba(255,179,71,.22)"/>'
+      +'<rect x="68" y="20" width="24" height="13" rx="3" fill="#12171c" '+S+'/><rect x="73" y="24.5" width="14" height="3.4" fill="#ffb347"/><path d="M88 20 L92 6" stroke="#0b0e12" stroke-width="1.6"/><circle cx="92" cy="6" r="2.4" fill="#ff783c"/>'
+      +'<path d="M26 34 L50 30 L52 56 L26 58Z" fill="#39434a" '+S+'/><rect x="26" y="30" width="26" height="5" fill="'+RD+'" '+S+'/>'
+      +'<rect x="108" y="14" width="34" height="42" rx="3" fill="#262d33" '+S+'/><rect x="108" y="14" width="34" height="4" fill="#ffb347"/>'
+      +[[117,26],[133,26],[117,42],[133,42]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="5.6" fill="#050709" '+S+'/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.6" fill="#d9822b"/>').join('');
+  }
   if(kind==='nexus'){
     const P=mkP(80,36);let o=sh.replace('<ellipse','<ellipse class="a-shad"')+'<g class="a-hover">'+ibox(P,0,0,0,70,70,14)+ibox(P,16,16,14,38,38,30);
     [[3,3],[59,3],[3,59],[59,59]].forEach(q=>{o+=ibox(P,q[0],q[1],14,8,8,20,fa);});
@@ -4739,6 +5431,7 @@ function infoHTML(e){
     const d=UD[e.type];
     const up7=dUp(e.team);k('Damage',(d.dmg+up7)+(d.bonus?' (+'+d.bonus+(d.bt==='light'?' vs light':' vs armoured')+')':'')+(d.range>1.5?' ranged':' melee'));if(d.sh)k('Shield',d.sh);k('Range',d.range);k('Attack rate',d.cd+'s');k('DPS',((d.dmg+up7)/d.cd).toFixed(1));
     k('Speed',d.speed);k('Vision',d.vis);k('Supply',d.supply,1);k('Cost',d.cost);
+    if(d.beams)k('Targets per volley',d.beams,1);
     if(e.type==='worker'&&mine)k('Carrying',e.carry);
     if(d.noatk){R.length=0;k('Attack','None');k('Speed',d.speed);k('Vision',d.vis);k('Supply','+'+d.give,1);k('Cost',d.cost);}
   }else{
@@ -4754,7 +5447,7 @@ function infoHTML(e){
     }
     if(e.type==='armory')k('Research','Unit HP +'+(raceOf(e.team)==='zerg'?50:25)+' · Unit damage +7');
     if(e.type==='barracks'){k('Trains',RACES[raceOf(e.team)].bar.map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
-    if(e.type==='factory'){k('Trains',RACES[raceOf(e.team)].fac.map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
+    if(e.type==='factory'){k('Trains',RACES[raceOf(e.team)].fac.concat(raceOf(e.team)==='protoss'?['mothership']:raceOf(e.team)==='zerg'?['ultralisk']:[]).map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
     if(e.type==='turret'){k('Damage',d.dmg+' ranged');k('Range',d.range,1);k('Attack rate',d.cd+'s');k('DPS',(d.dmg/d.cd).toFixed(1));k('Targets',raceOf(e.team)==='protoss'?'Ground, air and Colossi':'Air and Colossi');}
     if(mine&&e.done&&d.supply)k('Team supply',t0.used+' / '+t0.cap);
     k('Vision',d.vis);k('Size',d.size+' × '+d.size);k('Cost',d.cost);k('Build time',d.time+'s');
@@ -4980,6 +5673,7 @@ const TDESC={
   marine:'Cheap, fast rifle infantry. Hits ground and air units.',
   rocket:'Armoured anti-tank trooper with area damage. Bonus damage vs tanks. Can hit air units.',
   tank:'Heavy siege cannon with long range, bonus damage vs armoured. Cannot hit air units.',
+  mecha:'Heavy walker with a gatling cannon and a shoulder rocket pod. Attacks ground units and buildings only, cannot hit air.',
   heli:'Fast armored gunship that flies over terrain. Attacks units, not buildings.',
   zealot:'Melee psi-blade warrior with a plasma shield. Strong vs marines and workers. Cannot hit air.',
   stalker:'Long-range shielded skirmisher. Bonus vs armoured. Hits ground and air, the Protoss answer to copters.',
@@ -4998,16 +5692,18 @@ Object.assign(TDESC,{
   tree:'Walking dead tree that smashes targets with long logs at close range. Hits ground and air.',
   ptero:'Dark flying mutant. Red beams hit an area, ground and air. Trained at the Hive.',
   overlord:'Flying balloon monster. Gives +8 supply. Cannot attack, but you can fly it anywhere. Trained at the Hive.'});
+Object.assign(TDESC,{ultralisk:'Zerg siege beast. Kaiser blades sweep an area (ground only) and five back spines throw spike barrages at up to 5 targets, ground and air. Armoured. Trained at the Mutation Pit.'});
+Object.assign(TDESC,{mothership:'Protoss capital ship. Hovers high above the battlefield and fires blue pulse beams at up to 5 targets at once, ground and air. Trained at the Robotics Facility.'});
 const TD2={zerg:{
   worker:'Builds structures and mines minerals. Can fight in melee.',
   nexus:'Hive. Drop-off point for minerals; trains drones, floaters (supply) and pterodactyls.',
   barracks:'Trains hounds.',
-  factory:'Trains ravagers and deadwood trees.',
+  factory:'Trains ravagers, deadwood trees and Ultralisks.',
   turret:'Spore tower. Automatically shoots down enemy flying units and colossi.',
   armory:'Research: +50 hp and +7 damage for all your units, 300 minerals each.'},protoss:{
   worker:'Builds structures and mines minerals. Can fight in melee.',
   barracks:'Trains zealots and stalkers.',
-  factory:'Trains immortals and colossi.',
+  factory:'Trains immortals, colossi and the Mothership.',
   turret:'Cannon tower. Automatically shoots enemy ground units, flying units and colossi.',
   armory:'Research: +25 hp and +7 damage for all your units, 300 minerals each.'}};
 const tdesc=(ty,t)=>(TD2[raceOf(t)]||{})[ty]||TDESC[ty];
@@ -5369,7 +6065,7 @@ function sfxFire(u,tg){
   const gap=type==='tank'||type==='immortal'?.12:type==='rocket'||type==='colossus'?.1:type==='heli'?.09:.05;
   if(!sfxOK(type,gap))return;
   const b=bus(m.pan,m.v);
-  if(type==='tank'||type==='immortal')tankShot(b);else if(type==='rocket'||type==='colossus'||type==='ravager')rocketShot(b);else if(type==='heli'||type==='ptero')heliShot(b);else if(type==='zealot'||type==='dog'||type==='tree')turretZap(b);else rifleShot(b);
+  if(type==='tank'||type==='immortal'||type==='ultralisk')tankShot(b);else if(type==='rocket'||type==='colossus'||type==='ravager')rocketShot(b);else if(type==='heli'||type==='ptero'||type==='mothership')heliShot(b);else if(type==='zealot'||type==='dog'||type==='tree')turretZap(b);else rifleShot(b);
 }
 function turretZap(b){const t=AC.currentTime+.005;tone(t,.1,1500,500,.06,'sawtooth',b);nz(t,.06,3000,2,.07,'bandpass',b);}
 function sfxTurret(x,y){
@@ -5390,7 +6086,7 @@ function sfxDeath(e){
   if(isB){   // collapse: long rumble, deep thud, falling debris
     nz(t,1.1,220,.5,.34,'lowpass',b);tone(t,1,70,28,.3,'sine',b);nz(t,.1,1500,.8,.15,'bandpass',b);
     for(let i=0;i<5;i++)nz(t+.18+i*.12,.08,rnd(600,2000),2,.07,'bandpass',b);
-  }else if(e.type==='tank'||e.type==='immortal'||e.type==='colossus'){
+  }else if(e.type==='tank'||e.type==='immortal'||e.type==='colossus'||e.type==='mothership'||e.type==='ultralisk'){
     nz(t,.7,420,.6,.3,'lowpass',b);tone(t,.6,100,34,.26,'sine',b);nz(t,.08,2000,.8,.14,'bandpass',b);
     nz(t+.2,.08,2400,5,.07,'bandpass',b);nz(t+.32,.06,1800,5,.05,'bandpass',b);
   }else if(e.type==='heli'){   // falling whine, then the crash
@@ -5428,7 +6124,7 @@ function unitReady(type,team){
   if(type==='marine')marineVoice(b,1);
   else if(type==='rocket')rocketVoice(b,1);
   else if(type==='worker')workerVoice(b,.8);
-  else if(type==='tank'||type==='immortal'||type==='colossus')tankEngine(b,1,.9);
+  else if(type==='tank'||type==='immortal'||type==='colossus'||type==='mothership'||type==='ultralisk')tankEngine(b,1,.9);
   else if(type==='zealot'||type==='stalker')marineVoice(b,1);
   else if(type==='heli')rotorChop(b,1,14,.16,.06,true);
 }
