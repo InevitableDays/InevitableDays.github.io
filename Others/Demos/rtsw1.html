@@ -3336,6 +3336,7 @@ const SPR_CLS={worker:'s',marine:'s',rocket:'s',zealot:'s',stalker:'s',immortal:
 const SPR_TYPE={worker:0,marine:1,rocket:2,zealot:3,stalker:4,immortal:5,colossus:6,tank:7,dog:8,ravager:9,tree:10,ptero:11,overlord:12};
 const SPR_DIM={s:{hw:44,up:84,dn:24},m:{hw:84,up:92,dn:38},l:{hw:100,up:160,dn:46},a:{hw:104,up:130,dn:40}};
 /* the three big hand-built units (mecha, mothership, ultralisk) keep one private sprite each, re-baked at SPR_TB ticks per second (see spriteBig) */
+const SPR_BTB2=20;   // ticks per second for these three (the other cached units stay at SPR_TB)
 const SPR_BIG={mecha:{hw:64,up:104,dn:36},mothership:{hw:90,up:150,dn:48},ultralisk:{hw:150,up:140,dn:84}};   // sprite bounds around the unit's ground point, px
 const SPR=new Map(),sprPool={s:[],m:[],l:[],a:[]};let sprSc=0,sprFrame=0;
 function sprSweep(){   // once per rendered frame: follow the zoom, drop sprites nobody used lately
@@ -3391,13 +3392,13 @@ function spriteUnit(u,t,cls){
 function spriteBig(u,t){
   const dm=SPR_BIG[u.type],ty=u.type;
   if(ty==='ultralisk')drawUltralisk(u,t,1);else if(ty==='mecha')drawMecha(u,t,1);   // walking / aiming state moves on every frame, only the picture is ticked
-  const tb=Math.floor(t*SPR_TB),hit=u.hit>0?1:0,cw=Math.ceil(dm.hw*2*sprSc),ch=Math.ceil((dm.up+dm.dn)*sprSc);
+  const tb=Math.floor(t*SPR_BTB2),hit=u.hit>0?1:0,cw=Math.ceil(dm.hw*2*sprSc),ch=Math.ceil((dm.up+dm.dn)*sprSc);
   let sp=u._sp;
   if(!sp||sp.cw!==cw||sp.ch!==ch){const c=document.createElement('canvas');c.width=cw;c.height=ch;sp=u._sp={c,cw,ch,tb:-1,hit:-1,f:0};}
   if(sp.tb!==tb||sp.hit!==hit){
     sp.tb=tb;sp.hit=hit;
     sprDraw(sp.c,sprSc,()=>{
-      const p=Object.create(u),tt=tb/SPR_TB;   // stand-in unit parked at the sprite's anchor, everything else read from the real unit
+      const p=Object.create(u),tt=tb/SPR_BTB2;   // stand-in unit parked at the sprite's anchor, everything else read from the real unit
       p.x=dm.hw/T;p.y=dm.up/(T*K);
       if(ty==='ultralisk')drawUltralisk(p,tt,2);else if(ty==='mecha')drawMecha(p,tt,2);else drawMothership(p,tt);
     });
