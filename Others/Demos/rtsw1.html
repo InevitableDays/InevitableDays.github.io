@@ -1953,6 +1953,15 @@ function updateUnit(u,dt){
       }
       break;
     case 'move':
+      /* special weapons fire on their own while walking: mecha rocket pod and mothership beam volley (ultralisk spikes already do, see ultraTick) */
+      if(u.type==='mecha'&&(u.rcd||0)<=0&&!(u.salvo>0)&&u.acq<=0){
+        u.acq=.35;const t=findTarget(u,10);
+        if(t){u.salvo=4;u.salvoT=0;u.salvoTg=t;u.rcd=5;}
+      }
+      if(u.type==='mothership'&&u.cd<=0&&u.acq<=0){
+        u.acq=.35;const t=findTarget(u,d.range);
+        if(t){const f0=u.face;fire(u,t,d);u.face=f0;u.cd=d.cd;}
+      }
       if(!u.path){if(!pathOK(u))break;if(!setPath(u,o.x,o.y)){u.order={type:'idle'};break;}}
       if(!followPath(u,dt,d.speed))u.order={type:'idle'};
       break;
@@ -2348,10 +2357,10 @@ function groupMove(list,wx,wy){
   });
 }
 function entityAt(wx,wy){
-  let best=null,bd=.62;
-  for(const u of units){if(!isFriend(u.team)&&!visAt(u.x,u.y))continue;const d=Math.hypot(u.x-wx,(u.y-(u.type==='mothership'?3.4:UD[u.type].air?1.9:u.type==='colossus'?2.1:u.type==='mecha'?1.4:u.type==='ultralisk'?1.2:u.type==='immortal'?.7:.45))-wy)-(u.type==='tank'||u.type==='immortal'||u.type==='colossus'?.6:u.type==='ultralisk'?.5:u.type==='mothership'?1.6:UD[u.type].air?.45:0);if(d<bd){bd=d;best=u;}}
+  let best=null,bd=1.15;
+  for(const u of units){if(!isFriend(u.team)&&!visAt(u.x,u.y))continue;const d=Math.hypot((u.x-wx)/.56,(u.y-(u.type==='mothership'?3.8:UD[u.type].air?2.3:u.type==='colossus'?2.5:u.type==='mecha'?2.1:u.type==='ultralisk'?1.6:u.type==='immortal'?1.1:.8))-wy)-(u.type==='tank'||u.type==='immortal'||u.type==='colossus'?1.2:u.type==='ultralisk'?1.0:u.type==='mothership'?2.4:u.type==='mecha'?1.1:UD[u.type].air?.9:.3);if(d<bd){bd=d;best=u;}}
   if(best)return best;
-  for(const b of buildings)if((isFriend(b.team)||b.seen)&&wx>=b.tx&&wx<=b.tx+b.size&&wy>=b.ty-.9&&wy<=b.ty+b.size)return b;
+  for(const b of buildings)if((isFriend(b.team)||b.seen)&&wx>=b.tx-.6&&wx<=b.tx+b.size+.6&&wy>=b.ty-1.5&&wy<=b.ty+b.size+.6)return b;
   for(const r of resources)if(expAt(r.tx+.5,r.ty+.5)&&wx>=r.tx-.2&&wx<=r.tx+1.2&&wy>=r.ty-.2&&wy<=r.ty+1.2)return r;
   return null;
 }
@@ -3325,7 +3334,9 @@ function drawProtoss(u,t){
 const SPRITE_CACHE=true,SPR_TB=12,SPR_BTB=10,SPR_FACES=24,SPR_TAU=Math.PI*2;
 const SPR_CLS={worker:'s',marine:'s',rocket:'s',zealot:'s',stalker:'s',immortal:'m',tank:'m',colossus:'l',dog:'s',ravager:'s',tree:'s',overlord:'s',ptero:'a'};   // zerg units are cached too (a = wide flyer)
 const SPR_TYPE={worker:0,marine:1,rocket:2,zealot:3,stalker:4,immortal:5,colossus:6,tank:7,dog:8,ravager:9,tree:10,ptero:11,overlord:12};
-const SPR_DIM={s:{hw:44,up:84,dn:24},m:{hw:84,up:92,dn:38},l:{hw:100,up:160,dn:46},a:{hw:104,up:130,dn:40}};   // sprite bounds around the unit's ground point, px
+const SPR_DIM={s:{hw:44,up:84,dn:24},m:{hw:84,up:92,dn:38},l:{hw:100,up:160,dn:46},a:{hw:104,up:130,dn:40}};
+/* the three big hand-built units (mecha, mothership, ultralisk) keep one private sprite each, re-baked at SPR_TB ticks per second (see spriteBig) */
+const SPR_BIG={mecha:{hw:64,up:104,dn:36},mothership:{hw:90,up:150,dn:48},ultralisk:{hw:150,up:140,dn:84}};   // sprite bounds around the unit's ground point, px
 const SPR=new Map(),sprPool={s:[],m:[],l:[],a:[]};let sprSc=0,sprFrame=0;
 function sprSweep(){   // once per rendered frame: follow the zoom, drop sprites nobody used lately
   sprFrame++;
@@ -3335,6 +3346,7 @@ function sprSweep(){   // once per rendered frame: follow the zoom, drop sprites
   const old=sprFrame-4;
   for(const [k,v] of SPR){if(v.f<old){SPR.delete(k);const pl=sprPool[v.cls];if(pl.length<300)pl.push(v.c);}}
   for(const b of buildings)if(b._sp&&b._sp.f<sprFrame-90)b._sp=null;
+  for(const u of units)if(u._sp&&u._sp.f<sprFrame-90)u._sp=null;
 }
 function sprDraw(c,sc,fn){   // run fn() with every ctx call redirected into canvas c
   const g=c.getContext('2d');
@@ -3344,7 +3356,7 @@ function sprDraw(c,sc,fn){   // run fn() with every ctx call redirected into can
   try{fn();}finally{ctx=main;}
 }
 function drawUnit(u,t){
-  if(SPRITE_CACHE&&sprSc){const cls=SPR_CLS[u.type];if(cls){spriteUnit(u,t,cls);return;}}
+  if(SPRITE_CACHE&&sprSc){const cls=SPR_CLS[u.type];if(cls){spriteUnit(u,t,cls);return;}if(SPR_BIG[u.type]){spriteBig(u,t);return;}}
   drawUnitRaw(u,t);
 }
 function spriteUnit(u,t,cls){
@@ -3375,6 +3387,23 @@ function spriteUnit(u,t,cls){
   }
   v.f=sprFrame;
   ctx.drawImage(v.c,u.x*T-dm.hw,u.y*T*K-dm.up,dm.hw*2,dm.up+dm.dn);
+}
+function spriteBig(u,t){
+  const dm=SPR_BIG[u.type],ty=u.type;
+  if(ty==='ultralisk')drawUltralisk(u,t,1);else if(ty==='mecha')drawMecha(u,t,1);   // walking / aiming state moves on every frame, only the picture is ticked
+  const tb=Math.floor(t*SPR_TB),hit=u.hit>0?1:0,cw=Math.ceil(dm.hw*2*sprSc),ch=Math.ceil((dm.up+dm.dn)*sprSc);
+  let sp=u._sp;
+  if(!sp||sp.cw!==cw||sp.ch!==ch){const c=document.createElement('canvas');c.width=cw;c.height=ch;sp=u._sp={c,cw,ch,tb:-1,hit:-1,f:0};}
+  if(sp.tb!==tb||sp.hit!==hit){
+    sp.tb=tb;sp.hit=hit;
+    sprDraw(sp.c,sprSc,()=>{
+      const p=Object.create(u),tt=tb/SPR_TB;   // stand-in unit parked at the sprite's anchor, everything else read from the real unit
+      p.x=dm.hw/T;p.y=dm.up/(T*K);
+      if(ty==='ultralisk')drawUltralisk(p,tt,2);else if(ty==='mecha')drawMecha(p,tt,2);else drawMothership(p,tt);
+    });
+  }
+  sp.f=sprFrame;
+  ctx.drawImage(sp.c,u.x*T-dm.hw,u.y*T*K-dm.up,dm.hw*2,dm.up+dm.dn);
 }
 function drawBuilding(b,t){
   if(SPRITE_CACHE&&sprSc){spriteBuilding(b,t);return;}
@@ -3834,22 +3863,26 @@ const drawMecha=(()=>{
     const ux=dx/d,uz=dz/d,al=(a*a-b*b+dd*dd)/(2*dd),h=Math.sqrt(Math.max(0,a*a-al*al));
     return {kx:hx+ux*al-uz*h,kz:hz+uz*al+ux*h,ax:hx+ux*dd,az:hz+uz*dd};
   }
-  return function(u,t){
+  return function(u,t,mode){   // mode 1: only advance the animation state (every frame); mode 2: only draw (into the sprite cache); none: both
     const D=UD.mecha,now=performance.now()/1000,gx0=u.x*T,gy0=u.y*T*K;
     /* animation state lives on the unit: hips follow the walking direction, torso follows the aim */
     let s=u.ms;if(!s)s=u.ms={ph:0,mv:0,bz:0,hh:u.face,at:u.face,lx:u.x,ly:u.y,lt:now,spin:0,spinV:0,rec:0,pitch:-.03};
-    const dt=clamp(now-s.lt,0,.05);s.lt=now;
-    const mdx=(u.x-s.lx)*T,mdy=(u.y-s.ly)*T,mdist=Math.hypot(mdx,mdy);s.lx=u.x;s.ly=u.y;
-    const moving=!!(u.path&&u.pi<u.path.length);
-    if(mdist>.02)s.hh=turnTo(s.hh,Math.atan2(mdy,mdx),3.2*dt);
-    s.at=turnTo(s.at,u.face,5*dt);
-    s.mv+=((moving?1:0)-s.mv)*Math.min(1,dt*4);
-    s.ph+=mdist*Math.PI/(2*AMP);
-    s.bz=-1.6*Math.abs(Math.sin(s.ph))*s.mv+Math.sin(t*1.6)*.4;
+    const dt=clamp(now-s.lt,0,.05);
     const sh=D.cd-u.cd,shooting=sh>=0&&sh<.3;
-    s.spinV+=((shooting?34:0)-s.spinV)*Math.min(1,dt*(shooting?6:2.2));
-    s.spin+=s.spinV*dt;
-    s.rec=Math.max(0,s.rec-dt*14);if(sh>=0&&sh<.05)s.rec=1.6;
+    if(mode!==2){
+      s.lt=now;
+      const mdx=(u.x-s.lx)*T,mdy=(u.y-s.ly)*T,mdist=Math.hypot(mdx,mdy);s.lx=u.x;s.ly=u.y;
+      const moving=!!(u.path&&u.pi<u.path.length);
+      if(mdist>.02)s.hh=turnTo(s.hh,Math.atan2(mdy,mdx),3.2*dt);
+      s.at=turnTo(s.at,u.face,5*dt);
+      s.mv+=((moving?1:0)-s.mv)*Math.min(1,dt*4);
+      s.ph+=mdist*Math.PI/(2*AMP);
+      s.bz=-1.6*Math.abs(Math.sin(s.ph))*s.mv+Math.sin(t*1.6)*.4;
+      s.spinV+=((shooting?34:0)-s.spinV)*Math.min(1,dt*(shooting?6:2.2));
+      s.spin+=s.spinV*dt;
+      s.rec=Math.max(0,s.rec-dt*14);if(sh>=0&&sh<.05)s.rec=1.6;
+    }
+    if(mode===1)return;
     const fired=u.rfired||0,loaded=[0,1,2,3].map(i=>i>=fired?1:0);
     const tube=[0,1,2,3].map(i=>(i===u.rIdx&&u.rft!==undefined)?Math.max(0,.25-(time-u.rft)):0);
     const M={hh:s.hh,at:s.at,ph:s.ph,mv:s.mv,bz:s.bz,spin:s.spin,spinV:s.spinV,rec:s.rec,flash:(sh>=0&&sh<.05)?1:0,pitch:s.pitch,loaded,tube};
@@ -4044,20 +4077,23 @@ const drawUltralisk=(()=>{
     return 0;
   };
   const LEGS=[{hx:16,sd:-1,fr:1},{hx:16,sd:1,fr:1},{hx:-19,sd:-1,fr:0},{hx:-19,sd:1,fr:0}];
-  return function(u,t){
+  return function(u,t,mode){   // mode 1: only advance the animation state (every frame); mode 2: only draw (into the sprite cache); none: both
     const D=UD.ultralisk,now=performance.now()/1000,x=u.x*T,y=u.y*T*K,col=tcol(u.team);
     /* animation state lives on the unit: hips follow the walking direction (or swing round to the aim when standing), the head follows the aim */
     let s=u.us;if(!s)s=u.us={ph:0,mv:0,bz:0,hh:u.face,at:u.face,ha:u.face,lx:u.x,ly:u.y,lt:now,jaw:.1};
-    const dt=clamp(now-s.lt,0,.05);s.lt=now;
-    const mdx=(u.x-s.lx)*T,mdy=(u.y-s.ly)*T,mdist=Math.hypot(mdx,mdy);s.lx=u.x;s.ly=u.y;
-    const moving=!!(u.path&&u.pi<u.path.length);
-    s.at=turnTo(s.at,u.face,5*dt);
-    if(moving&&mdist>.02)s.hh=turnTo(s.hh,Math.atan2(mdy,mdx),2.4*dt);
-    else s.hh=turnTo(s.hh,s.at,2.2*dt);
-    s.ha=s.hh+clamp(angDiff(s.hh,s.at),-.75,.75);
-    s.mv+=((moving?1:0)-s.mv)*Math.min(1,dt*3.5);
-    s.ph+=mdist*Math.PI/(2*AMP);
-    s.bz=-1.9*Math.abs(Math.sin(s.ph))*s.mv+Math.sin(t*1.7)*.5;
+    const dt=clamp(now-s.lt,0,.05);
+    if(mode!==2){
+      s.lt=now;
+      const mdx=(u.x-s.lx)*T,mdy=(u.y-s.ly)*T,mdist=Math.hypot(mdx,mdy);s.lx=u.x;s.ly=u.y;
+      const moving=!!(u.path&&u.pi<u.path.length);
+      s.at=turnTo(s.at,u.face,5*dt);
+      if(moving&&mdist>.02)s.hh=turnTo(s.hh,Math.atan2(mdy,mdx),2.4*dt);
+      else s.hh=turnTo(s.hh,s.at,2.2*dt);
+      s.ha=s.hh+clamp(angDiff(s.hh,s.at),-.75,.75);
+      s.mv+=((moving?1:0)-s.mv)*Math.min(1,dt*3.5);
+      s.ph+=mdist*Math.PI/(2*AMP);
+      s.bz=-1.9*Math.abs(Math.sin(s.ph))*s.mv+Math.sin(t*1.7)*.5;
+    }
     /* blades: wind-up just before the strike, then the sweep and recovery after it */
     const sh=D.cd-u.cd;let sw=0;
     if(sh>=0&&sh<MELEE_T-.27)sw=swingAmt(.27+sh);
@@ -4065,7 +4101,8 @@ const drawUltralisk=(()=>{
     /* roar when a spike volley starts */
     const rt=time-(u.volT===undefined?-99:u.volT),roarE=(rt>=0&&rt<ROAR_T)?Math.sin(Math.PI*rt/ROAR_T):0;
     const jawT=roarE>0?1:(sw>.2?.55:.1+.06*Math.sin(t*3.1));
-    s.jaw+=(jawT-s.jaw)*Math.min(1,dt*(roarE>0?9:6));
+    if(mode!==2)s.jaw+=(jawT-s.jaw)*Math.min(1,dt*(roarE>0?9:6));
+    if(mode===1)return;
     /* back spines regrow after they have been thrown */
     const spine=[0,1,2,3,4].map(i=>u.spT?clamp((time-u.spT[i])/3.2,0,1):1);
     const fl=(u.lastSpk!==undefined&&time-u.lastSpk<.22)?1-(time-u.lastSpk)/.22:0;
