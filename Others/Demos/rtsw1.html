@@ -3677,6 +3677,7 @@ function buildPick(){
 }
 function showPick(){
   started=false;$('over').hidden=true;
+  ensureYT();
   const c=$('pickMap');c.width=c.height=384;c.getContext('2d').drawImage(mterr,0,0,384,384);
   document.querySelectorAll('#mapList canvas').forEach(m=>m.getContext('2d').drawImage(mterr,0,0,108,108));
   syncMenu();$('pick').hidden=false;
@@ -3933,6 +3934,7 @@ const TRACKS={
   bldg:{id:'mbMuOMPn94g',vol:45},
   hurt:{id:'',vol:50}            // no link given for "under attack" yet: paste a YouTube video id here
 };
+const MENU_ID='O9hJhXsIBZU',MENU_VOL=45;   // setup-screen theme: plays only on the menu, fades out when Play is pressed
 const MIN_HOLD=30000,FADE_STEP=2.5;       // a track plays at least 30 s; 2.5 volume points per 100 ms is a 4-10 s crossfade
 let musicOn=true,ytReady=false,ytLoading=false,curId=null,curStart=0,musicWarned=false;
 const players={};
@@ -3967,7 +3969,11 @@ function wantState(){
   return 'calm';
 }
 function musicTick(){
-  if(!musicOn||!started||!ytReady)return;
+  if(!musicOn||!ytReady)return;
+  if(!started){   // setup menu: hold the menu theme only
+    if(curId!==MENU_ID){curId=MENU_ID;curStart=performance.now();getPlayer(MENU_ID).base=MENU_VOL;}
+    return;
+  }
   const w=trackFor(wantState()),now=performance.now();
   if(w.id!==curId&&(curId===null||now-curStart>=MIN_HOLD)){
     curId=w.id;curStart=now;
@@ -3977,7 +3983,7 @@ function musicTick(){
 function musicFade(){
   for(const id in players){
     const e=players[id];if(!e.ready||e.err)continue;
-    const tgt=(id===curId&&musicOn&&!muted&&started)?e.base:0;
+    const tgt=(id===curId&&musicOn&&!muted&&(started||id===MENU_ID))?e.base:0;
     e.vol+=clamp(tgt-e.vol,-FADE_STEP,FADE_STEP);
     if(tgt>0&&!e.playing){e.p.playVideo();e.playing=true;}
     e.p.setVolume(Math.round(e.vol));
@@ -3991,6 +3997,8 @@ function toggleMusic(){
 }
 $('bMus').addEventListener('click',toggleMusic);
 setInterval(musicTick,500);setInterval(musicFade,100);
+const kickMenuMusic=()=>{const e=players[MENU_ID];if(!started&&e&&e.ready&&!e.err&&musicOn&&!muted){try{e.p.playVideo();e.playing=true;}catch(_){}}};
+document.addEventListener('pointerdown',kickMenuMusic,true);document.addEventListener('keydown',kickMenuMusic,true);
 
 /* ---------- main loop ---------- */
 let last=0,hudT=0,miniT=0,fogAcc=1;
