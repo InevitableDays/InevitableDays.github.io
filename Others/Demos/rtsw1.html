@@ -2347,6 +2347,7 @@ function newGame(){
   cam.z=1.3;
   centerOn(SLOTS[opts.slot][0]+2,SLOTS[opts.slot][1]+2);
   $('intro').style.display='';
+  try{warmBigSprites();}catch(e){}
 }
 
 /* ---------- commands ---------- */
@@ -3336,7 +3337,7 @@ const SPR_CLS={worker:'s',marine:'s',rocket:'s',zealot:'s',stalker:'s',immortal:
 const SPR_TYPE={worker:0,marine:1,rocket:2,zealot:3,stalker:4,immortal:5,colossus:6,tank:7,dog:8,ravager:9,tree:10,ptero:11,overlord:12};
 const SPR_DIM={s:{hw:44,up:84,dn:24},m:{hw:84,up:92,dn:38},l:{hw:100,up:160,dn:46},a:{hw:104,up:130,dn:40}};
 /* the three big hand-built units (mecha, mothership, ultralisk) keep one private sprite each, re-baked at SPR_TB ticks per second (see spriteBig) */
-const SPR_BTB2=20;   // ticks per second for these three (the other cached units stay at SPR_TB)
+const SPR_BTB2=25;   // ticks per second for these three (the other cached units stay at SPR_TB)
 const SPR_BIG={mecha:{hw:64,up:104,dn:36},mothership:{hw:90,up:150,dn:48},ultralisk:{hw:150,up:140,dn:84}};   // sprite bounds around the unit's ground point, px
 const SPR=new Map(),sprPool={s:[],m:[],l:[],a:[]};let sprSc=0,sprFrame=0;
 function sprSweep(){   // once per rendered frame: follow the zoom, drop sprites nobody used lately
@@ -3388,6 +3389,20 @@ function spriteUnit(u,t,cls){
   }
   v.f=sprFrame;
   ctx.drawImage(v.c,u.x*T-dm.hw,u.y*T*K-dm.up,dm.hw*2,dm.up+dm.dn);
+}
+let bigWarm=false;
+function warmBigSprites(){   // once per page load: runs the drawing code of the three big units on a scratch canvas so their shared helper caches (glow sprites, shades) and the code itself are warm before the first one is built in a match
+  if(bigWarm)return;bigWarm=true;
+  try{
+    const c=document.createElement('canvas');c.width=300;c.height=240;
+    for(const ty of ['ultralisk','mecha','mothership']){
+      const dm=SPR_BIG[ty],D=UD[ty];
+      for(let v=0;v<2;v++){
+        const p={type:ty,team:0,x:dm.hw/T,y:dm.up/(T*K),face:0,id:0,order:{type:v?'attack':'idle'},path:null,pi:0,hit:v,maxsh:0,sh:0,shT:-99,cd:v?D.cd-.01:0,volT:v?time-.45:undefined,lastSpk:v?time-.1:undefined,rfired:v?2:0,rIdx:v?1:undefined,rft:v?time-.1:undefined};
+        sprDraw(c,1,()=>{if(ty==='ultralisk')drawUltralisk(p,0,0);else if(ty==='mecha')drawMecha(p,0,0);else drawMothership(p,0);});
+      }
+    }
+  }catch(e){}
 }
 function spriteBig(u,t){
   const dm=SPR_BIG[u.type],ty=u.type;
