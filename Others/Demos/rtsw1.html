@@ -503,7 +503,9 @@ const fmt=t=>{t=Math.floor(t);return Math.floor(t/60)+':'+String(t%60).padStart(
 /* ---------- terrain ---------- */
 const ter=new Uint8Array(W*H);   // 0 grass, 1 water, 2 bridge, 3 rock
 const occ=new Uint8Array(W*H);   // 0 free, 1 terrain, 2 building, 3 crystal
-const riverX=yc=>W/2+3.2*Math.sin((yc-H/2)*0.2);
+const RIVER_TILT=Math.tan(15*Math.PI/180);   // river leans 15 degrees: top to the left, bottom to the right (MOBA-style diagonal)
+const riverX=yc=>W/2+(yc-H/2)*RIVER_TILT+3.2*Math.sin((yc-H/2)*0.2);
+const nearBr=(x,y,m,d)=>nearBridge(y,m)&&Math.abs(x-riverX(y+.5))<d;
 (function genTerrain(){
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     const xc=x+.5,yc=y+.5,i=y*W+x,dx=Math.abs(xc-riverX(yc));
@@ -514,7 +516,7 @@ const riverX=yc=>W/2+3.2*Math.sin((yc-H/2)*0.2);
   for(let n=0;n<120;n++){
     let x=2+Math.floor(R()*(HALF-4)),y=2+Math.floor(R()*(H-4));
     if(nearSlot(x,y,10))continue;
-    if(x>HALF-14&&nearBridge(y,5))continue;
+    if(nearBr(x,y,5,14))continue;
     const len=1+Math.floor(R()*3);
     for(let k=0;k<len;k++){
       const i=y*W+x,m=(H-1-y)*W+(W-1-x);
@@ -527,16 +529,29 @@ const riverX=yc=>W/2+3.2*Math.sin((yc-H/2)*0.2);
   for(let n=0;n<112;n++){
     const cx0=2+R2()*(HALF-5),cy0=2+R2()*(H-4);
     if(nearSlot(cx0,cy0,13))continue;
-    if(cx0>HALF-20&&nearBridge(cy0,7))continue;
+    if(nearBr(cx0,cy0,7,20))continue;
     const cnt=8+Math.floor(R2()*9);
     for(let k=0;k<cnt;k++){
       const a=R2()*6.283,r=Math.sqrt(R2())*3.2,x=Math.round(cx0+Math.cos(a)*r),y=Math.round(cy0+Math.sin(a)*r*.8);
       if(x<1||x>HALF-2||y<1||y>H-2)continue;
       if(nearSlot(x,y,11))continue;
-      if(x>HALF-20&&nearBridge(y,5))continue;
+      if(nearBr(x,y,5,20))continue;
       const i=y*W+x,m=(H-1-y)*W+(W-1-x);
       if(ter[i]===0&&ter[m]===0){ter[i]=4;ter[m]=4;}
     }
+  }
+  /* rocky banks: boulders hug both sides of the river in a random, clumpy pattern (mirrored), leaving the bridge approaches open */
+  const R3=rng(77);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+    const i=y*W+x,m=(H-1-y)*W+(W-1-x);
+    if(i>=m)continue;
+    const dx=Math.abs(x+.5-riverX(y+.5));
+    if(dx<3.4||dx>7.2)continue;
+    if(nearBridge(y,4.5))continue;
+    if((ter[i]!==0&&ter[i]!==4)||(ter[m]!==0&&ter[m]!==4))continue;
+    let p=dx<4.7?.8:dx<5.8?.42:dx<6.6?.18:.07;
+    p*=.55+.45*Math.sin(y*.65+Math.sin(y*.21)*3+(x>W/2?2:0));   // clumps and gaps along the bank
+    if(R3()<p){ter[i]=3;ter[m]=3;}
   }
 })();
 
@@ -640,8 +655,9 @@ function bakeChunk(g,x0,y0,x1,y1){g.save();g.translate(-x0*T,-y0*T);
       const cx=px+T/2,cy=py+T/2;
       g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.ellipse(cx+2,cy+8,13,6,0,0,7);g.fill();
       g.fillStyle='#56626c';g.beginPath();
-      for(let k=0;k<8;k++){const a=k/8*6.283,r=10+hash(x,y,k+20)*6;g.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r*.85);}
+      const sc=.75+hash(x,y,40)*.5;for(let k=0;k<8;k++){const a=k/8*6.283,r=(10+hash(x,y,k+20)*6)*sc;g.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r*.85);}
       g.closePath();g.fill();
+      if(hash(x,y,41)<.55){const ox=(hash(x,y,42)-.5)*30,oy=(hash(x,y,43)-.5)*22;g.fillStyle='#4a555e';g.beginPath();g.ellipse(cx+ox,cy+oy+5,5,3.6,0,0,7);g.fill();g.fillStyle='#6a7882';g.beginPath();g.ellipse(cx+ox-1,cy+oy+4,2.6,1.6,0,0,7);g.fill();}
       g.fillStyle='#7b8993';g.beginPath();g.moveTo(cx-8,cy-2);g.lineTo(cx-2,cy-9);g.lineTo(cx+5,cy-6);g.lineTo(cx-1,cy);g.closePath();g.fill();
     }
   }
@@ -736,7 +752,7 @@ function bakeRefl(){
   });
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){
     if(ter[y*W+x]!==4)continue;
-    const dir=x<W/2?1:-1;let d=0;
+    const dir=x+.5<riverX(y+.5)?1:-1;let d=0;
     for(let k=1;k<=6;k++){if(ter[y*W+x+dir*k]===1){d=k;break;}}
     if(!d)continue;
     const edge=dir>0?(x+d)*T:(x-d+1)*T,cx=x*T+T/2+(hash(x,y,50)-.5)*6,xr=2*edge-cx;
@@ -800,6 +816,24 @@ function drawWater(t,y0,y1,x0,x1){
   ctx.globalAlpha=1;
 }
 
+/* ---------- river mist: a few big soft sprites drifting along the river (one prebaked sprite, ~10 drawImage calls per frame, no gradients at runtime) ---------- */
+const mistSpr=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);
+  gr.addColorStop(0,'rgba(214,228,238,.9)');gr.addColorStop(.45,'rgba(200,218,230,.4)');gr.addColorStop(1,'rgba(200,218,230,0)');
+  g.fillStyle=gr;g.fillRect(0,0,128,128);return c;})();
+const mist=(()=>{const R=rng(91),a=[],n=34;for(let i=0;i<n;i++)a.push({y:(i+R()*.8)/n*H*T,off:(R()-.5)*7.5*T,w:150+R()*170,h:70+R()*70,sp:5+R()*9,al:.07+R()*.07,ph:R()*6.28,sw:10+R()*18});return a;})();
+function drawMist(t){
+  const L=H*T,vy=cam.y,vhei=vh/cam.z/K,vx=cam.x,vwid=vw/cam.z,tt=REDUCE?0:t;
+  for(const m of mist){
+    const yy=(m.y+tt*m.sp)%L;
+    if(yy<vy-m.h||yy>vy+vhei+m.h)continue;
+    const xx=riverX(yy/T)*T+m.off+Math.sin(tt*.12+m.ph)*m.sw;
+    if(xx<vx-m.w||xx>vx+vwid+m.w)continue;
+    const fade=Math.min(1,yy/240,(L-yy)/240),a=m.al*(.65+.35*Math.sin(tt*.25+m.ph))*fade;
+    if(a<.01)continue;
+    ctx.globalAlpha=a;ctx.drawImage(mistSpr,xx-m.w/2,yy-m.h/2,m.w,m.h);
+  }
+  ctx.globalAlpha=1;
+}
 /* ---------- state ---------- */
 let units,buildings,resources,teams,effects,floats,pings,log,sel,groups,nid,time,over,acc,aiT,ai;
 let opts={slot:0,ally:true,myRace:'terran',foeRace:'protoss',diff:'normal'},started=false,aiTeams=[],seenAt=new Map(),lastAlert=-99,alertPos=null,alertT=0,mHurt=-999,mBldg=-999,mEnemy=-999;
@@ -2614,7 +2648,7 @@ function render(t){
   GT();
   drawTerrain();
   const x0=Math.max(0,Math.floor(cam.x/T)-1),x1=Math.min(W-1,Math.ceil((cam.x+vw/cam.z)/T)),y0=Math.max(0,Math.floor(cam.y/T)-1),y1=Math.min(H-1,Math.ceil((cam.y+vh/cam.z/K)/T)+4);
-  drawWater(t,y0,y1,x0,x1);
+  drawWater(t,y0,y1,x0,x1);drawMist(t);
   // selection rings on the ground
   const inSel=new Set(sel);
   for(const e of sel){
