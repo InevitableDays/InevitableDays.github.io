@@ -547,8 +547,8 @@ Object.assign(UD,{
 UD.tank.noair=true;
 /* ---------- factions: each side picks one; building types are shared, units and names differ ---------- */
 const RACES={
-  terran:{name:'Terran',bar:['marine','rocket'],fac:['tank','heli'],worker:'Worker',bn:{barracks:'Barracks',factory:'Factory',turret:'Turret'}},
-  protoss:{name:'Protoss',bar:['zealot','stalker'],fac:['immortal','colossus'],worker:'Probe',bn:{barracks:'Gateway',factory:'Robotics Facility',turret:'Air Cannon'}}
+  terran:{name:'Terran',bar:['marine','rocket'],fac:['tank','heli'],worker:'Worker',bn:{barracks:'Barracks',factory:'Factory',turret:'Turret',armory:'Armory'}},
+  protoss:{name:'Protoss',bar:['zealot','stalker'],fac:['immortal','colossus'],worker:'Probe',bn:{barracks:'Gateway',factory:'Robotics Facility',turret:'Air Cannon',armory:'Robotics Bay'}}
 };
 const PLURAL={marine:'Marines',rocket:'Rockets',tank:'Tanks',heli:'Copters',zealot:'Zealots',stalker:'Stalkers',immortal:'Immortals',colossus:'Colossi'};
 const raceOf=t=>(typeof teams!=='undefined'&&teams&&teams[t]&&teams[t].race)||'terran';
@@ -559,6 +559,7 @@ const BD={
   barracks:{name:'Barracks',size:3,cost:150,time:20,hp:1100,supply:0,vis:10.4},
   pylon:{name:'Pylon',size:2,cost:100,time:12,hp:550,supply:8,vis:9.1},
   factory:{name:'Factory',size:3,cost:200,time:28,hp:1400,supply:0,vis:10.4},
+  armory:{name:'Armory',size:3,cost:200,time:24,hp:1000,supply:0,vis:10.4},
   turret:{name:'Turret',size:2,cost:150,time:16,hp:700,supply:0,vis:16,range:11,dmg:40,cd:.9,info:'Anti-air auto turret. Fires automatically at flying units and Colossi in range, 40 damage per shot: a copter dies in 4 hits. Range 11 (copters have 9 and cannot attack buildings)'}
 };
 
@@ -1352,6 +1353,7 @@ function addBuilding(type,team,tx,ty,done){
 function addUnit(type,team,x,y){
   const d=UD[type];
   const u={id:nid++,kind:'u',type,team,x,y,hp:d.hp,maxhp:d.hp,sh:d.sh||0,maxsh:d.sh||0,shT:-99,order:{type:'idle'},path:null,pi:0,cd:0,rp:0,acq:0,carry:0,face:side(team)?Math.PI:0,dead:false,stk:0,hit:0};
+  if(teams[team]&&teams[team].upHp){u.maxhp+=25;u.hp+=25;}
   units.push(u);return u;
 }
 function eject(b){
@@ -1431,6 +1433,7 @@ function findTarget(u,r){
   return best;
 }
 /* bonus damage vs armoured units (tanks, rocket soldiers); never applies to buildings */
+const dUp=t=>teams[t]&&teams[t].upDm?7:0;
 const dmgVs=(d,tg,base)=>{const b0=base===undefined?d.dmg:base;if(!d.bonus||tg.kind!=='u')return b0;const arm=!!UD[tg.type].armored;return b0+((d.bt==='light'?!arm:arm)?d.bonus*b0/d.dmg:0);};
 function damage(e,amt,by){
   if(e.dead)return;
@@ -1476,7 +1479,7 @@ function splashHit(u,tg,tx,ty,d){
     if(b.dead||side(b.team)===side(u.team))continue;
     if(distRect(tx,ty,b.tx,b.ty,b.size)<=R*.6)hit.push([b,0]);
   }
-  for(const [e,dd] of hit)if(!e.dead)damage(e,Math.round(e===tg?dmgVs(d,e):Math.max(6,dmgVs(d,e,d.dmg*(1-dd/R*.55)))),u.team);
+  for(const [e,dd] of hit)if(!e.dead)damage(e,Math.round((e===tg?dmgVs(d,e):Math.max(6,dmgVs(d,e,d.dmg*(1-dd/R*.55))))+dUp(u.team)),u.team);
 }
 function fire(u,tg,d){
   const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y;
@@ -1517,7 +1520,7 @@ function fire(u,tg,d){
   else effects.push({k:'p',x:tx,y:ty,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,t:.2,c:'#fff'});
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
   if(u.type==='zealot'){splashHit(u,tg,tx,ty,d);return;}   // psi-blade sweeps hit nearby enemies too
-  damage(tg,dmgVs(d,tg),u.team);
+  damage(tg,Math.round(dmgVs(d,tg)+dUp(u.team)),u.team);
   if(u.type==='tank'&&u.sieged)tankSplash(u,tg,tx,ty,d);
 }
 /* siege mode: the shell also damages up to 4 more nearby enemy units/buildings (5 targets in total) */
@@ -1532,7 +1535,7 @@ function tankSplash(u,tg,tx,ty,d){
     const dd=distRect(tx,ty,b.tx,b.ty,b.size);if(dd<=R*.6)hit.push([b,dd]);
   }
   hit.sort((a,b)=>a[1]-b[1]);
-  for(const [e,dd] of hit.slice(0,4))if(!e.dead)damage(e,Math.round(Math.max(6,dmgVs(d,e,d.dmg*(1-dd/R*.55)))),u.team);
+  for(const [e,dd] of hit.slice(0,4))if(!e.dead)damage(e,Math.round(Math.max(6,dmgVs(d,e,d.dmg*(1-dd/R*.55)))+dUp(u.team)),u.team);
   effects.push({k:'r',x:tx,y:ty,t:.45,c:'#ffd27a'});
 }
 
@@ -2108,6 +2111,17 @@ function runCmd(id){
   hudDirty=true;
   if(over)return;
   const [a,b]=id.split(':');
+  if(id==='upgrade:ahp'||id==='upgrade:adm'){
+    const ab=sel[0];
+    if(!ab||ab.kind!=='b'||ab.type!=='armory'||ab.team!==0||!ab.done)return;
+    const isHp=id==='upgrade:ahp',tm=teams[0];
+    if(isHp?tm.upHp:tm.upDm)return;
+    if(tm.minerals<300){flash('Not enough minerals');return;}
+    tm.minerals-=300;
+    if(isHp){tm.upHp=true;for(const u of units)if(u&&!u.dead&&u.team===0){u.maxhp+=25;u.hp+=25;}flash('Unit HP +25 researched');}
+    else{tm.upDm=true;flash('Unit damage +7 researched');}
+    return;
+  }
   if(id==='upgrade:laser'){
     const nx=sel[0];
     if(!nx||nx.kind!=='b'||nx.type!=='nexus'||nx.team!==0||!nx.done||nx.laser)return;
@@ -2137,6 +2151,7 @@ function cmdList(){
   if(e.kind==='b'){
     if(!e.done)return [];
     if(e.type==='nexus'){const nl=[{id:'train:worker',k:'Q',nm:RACES[raceOf(0)].worker,ic:'worker',co:50},{id:'rally',k:'R',nm:'Rally',ic:'rally'}];nl.push({id:'upgrade:hp',k:'D',nm:'Defense Up',ic:'defup',co:600},{id:'upgrade:laser',k:'L',nm:'Laser Guns',ic:'laser',co:500});return nl;}
+    if(e.type==='armory')return [{id:'upgrade:ahp',k:'Q',nm:'Unit HP +25',ic:'defup',co:300},{id:'upgrade:adm',k:'W',nm:'Damage +7',ic:'dmgup',co:300}];
     if(e.type==='barracks'||e.type==='factory'){
       const R=RACES[raceOf(0)],L=e.type==='barracks'?R.bar:R.fac;
       return L.map((ty,i)=>({id:'train:'+ty,k:'QW'[i],nm:UD[ty].name,ic:ty,co:UD[ty].cost})).concat([{id:'rally',k:'R',nm:'Rally',ic:'rally'}]);
@@ -2146,7 +2161,7 @@ function cmdList(){
   if(e.kind!=='u')return [];
   const list=[];
   if(sel.some(u=>u.type==='worker'&&u.team===0)){
-    list.push({id:'build:pylon',k:'Q',nm:'Pylon',ic:'pylon',co:100},{id:'build:barracks',k:'W',nm:bnameOf('barracks',0),ic:'barracks',co:150},{id:'build:factory',k:'F',nm:bnameOf('factory',0),ic:'factory',co:200},{id:'build:nexus',k:'E',nm:'Nexus',ic:'nexus',co:400},{id:'build:turret',k:'X',nm:bnameOf('turret',0),ic:'turret',co:150},{id:'gather',k:'G',nm:'Mine',ic:'gather'});
+    list.push({id:'build:pylon',k:'Q',nm:'Pylon',ic:'pylon',co:100},{id:'build:barracks',k:'W',nm:bnameOf('barracks',0),ic:'barracks',co:150},{id:'build:factory',k:'F',nm:bnameOf('factory',0),ic:'factory',co:200},{id:'build:nexus',k:'E',nm:'Nexus',ic:'nexus',co:400},{id:'build:turret',k:'X',nm:bnameOf('turret',0),ic:'turret',co:150},{id:'build:armory',k:'B',nm:bnameOf('armory',0),ic:'armory',co:200},{id:'gather',k:'G',nm:'Mine',ic:'gather'});
   }
   list.push({id:'stop',k:'S',nm:'Stop',ic:'stop'},{id:'amove',k:'A',nm:'Attack',ic:'amove'});
   return list;
@@ -2247,6 +2262,34 @@ function drawBuildingRaw(b,t){
     const pulse=.65+.35*Math.sin(t*2.2+b.id);
     const gy=cy-76,rr=w*.3,ga=ctx.globalAlpha;ctx.globalAlpha=ga*pulse;ctx.drawImage(glowSprite('nx'+col,[[0,'#fff'],[.3,col],[1,'rgba(0,0,0,0)']]),cx-rr,gy-rr,rr*2,rr*2);ctx.globalAlpha=ga;
     ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(cx,gy-13);ctx.lineTo(cx+7,gy);ctx.lineTo(cx,gy+11);ctx.lineTo(cx-7,gy);ctx.closePath();ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke();
+  }else if(b.type==='armory'&&PR){pArmoryN(b,t,cx,cy,w,col,.5+.5*Math.sin(t*2.2+b.id));
+  }else if(b.type==='armory'){
+    // armory: a green and black bus with its wheels removed, ringed with sandbags
+    const L=w*.8,bd=w*.32,fy=cy+bd/2*K,GR='#2f6b3a',GR2='#265a31',BLK='#14181b',SB='#b39a69',SB2='#9c8556';
+    const bag=(x,y,l,z,ang,c)=>prism(x,y,rectPts(l,7),z,z+4.5,c||SB,ang);
+    prism(cx,cy,rectPts(w*.98,w*.9),0,2,CONC);
+    for(let i=-3;i<=3;i++)bag(cx+i*w*.13,cy-w*.36,w*.12,2,0);
+    for(let i=-2;i<=2;i++)bag(cx+i*w*.13+w*.065,cy-w*.36,w*.12,6.5,0,SB2);
+    for(const sx of [-1,1]){
+      for(let j=-1;j<=1;j++)bag(cx+sx*w*.47,cy+j*w*.14,w*.1,2,Math.PI/2);
+      for(const j of [-.07,.07])bag(cx+sx*w*.47,cy+j*w,w*.1,6.5,Math.PI/2,SB2);
+    }
+    for(const sx of [-.3,.3])for(const sy of [-1,1])prism(cx+sx*L,cy+sy*bd*.34,rectPts(10,7),2,6,'#6b6f73');
+    prism(cx,cy,rectPts(L,bd),6,10,BLK);
+    prism(cx,cy,rectPts(L,bd),10,34,GR);
+    prism(cx,cy,rectPts(L+1,bd+1),22,25,BLK);
+    prism(cx+L*.5+4,cy,rectPts(9,bd*.8),10,24,GR2);
+    prism(cx-L*.04,cy,rectPts(L*.8,bd*.86),34,37,BLK);
+    prism(cx-L*.2,cy,rectPts(9,6),37,41,'#4a525a');prism(cx+L*.05,cy,rectPts(9,6),37,41,'#4a525a');
+    face(cx-L/2+3,cx+L/2-3,fy,19.5,21,col);
+    windows(cx-L*.06,fy,L*.7,26,32,7,2);
+    face(cx+L*.3-4,cx+L*.3+4,fy,10,24,'#06080a');
+    for(const xs of [-.28,.1]){const wx=cx+xs*L;ctx.fillStyle='#050608';ctx.beginPath();ctx.arc(wx,fy-10,7.5,Math.PI,0);ctx.closePath();ctx.fill();ctx.fillStyle='#7a838b';ctx.beginPath();ctx.arc(wx,fy-10,2.2,0,7);ctx.fill();}
+    {const ga=ctx.globalAlpha;ctx.globalAlpha=ga*(.5+.5*flick(3));ctx.fillStyle=LIT;ctx.fillRect(cx+L*.5+7,fy-18,2.5,5);ctx.globalAlpha=ga;}
+    ctx.strokeStyle='#8f9aa3';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(cx-L*.38,cy-37);ctx.lineTo(cx-L*.38,cy-60);ctx.stroke();
+    {const ga=ctx.globalAlpha;ctx.globalAlpha=ga*(Math.sin(t*4+b.id)>.5?1:.25);ctx.fillStyle='#ff5a4a';ctx.beginPath();ctx.arc(cx-L*.38,cy-61,2,0,7);ctx.fill();ctx.globalAlpha=ga;}
+    for(let i=-3;i<=3;i++)bag(cx+i*w*.13,cy+w*.37,w*.12,2,0);
+    for(let i=-2;i<=2;i++)bag(cx+i*w*.13+w*.065,cy+w*.37,w*.12,6.5,0,SB2);
   }else if(b.type==='barracks'&&PR){pGatewayN(b,t,cx,cy,w,col,.5+.5*Math.sin(t*2.2+b.id));
   }else if(b.type==='barracks'){
     const bw=w*.82,fy=cy+bw/2*K;
@@ -2565,6 +2608,38 @@ function pImmortalN(u,t,x,y,col,fc,fs,mv){
   ctx.fillStyle='#10202e';ctx.beginPath();ctx.ellipse(x+fc*8.4,y+fs*8.4*K-35-bob,2.6,2,0,0,7);ctx.fill();
   cannon(order[1]);
   if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.45)';ctx.beginPath();ctx.ellipse(x,y-18,14,16,0,0,7);ctx.fill();}
+}
+function pArmoryN(b,t,cx,cy,w,col,pulse){
+  const ga=ctx.globalAlpha,hw=w*.56,hd=w*.44,gy=cy-w*.06;
+  prism(cx,cy,rectPts(w*.96,w*.9),0,4,QGD);
+  prism(cx,cy,rectPts(w*.88,w*.82),4,7,QG);
+  // inside the glass: glow and a floating core
+  glowAt(cx,gy-24,w*.36,col,.4+.3*pulse);
+  crystalDia(cx,gy-24-Math.sin(t*2+b.id)*2,w*.07,w*.15,'#e9c96e');
+  ctx.globalAlpha=ga*.36;prism(cx,gy,rectPts(hw,hd),7,40,'#8fd9ee');ctx.globalAlpha=ga;
+  for(const [dx,dy] of [[-1,-1],[1,-1],[-1,1],[1,1]])prism(cx+dx*hw/2,gy+dy*hd/2,rectPts(4,4),7,42,QG);
+  prism(cx,gy,rectPts(hw+4,hd+4),40,43,QGD);
+  crystalDia(cx,gy-56,w*.13,w*.27,'#8fe9ff');
+  crystalDia(cx-hw*.36,gy-48,w*.06,w*.12,col);crystalDia(cx+hw*.36,gy-48,w*.06,w*.12,col);
+  // robot hologram sitting in front of the house
+  const hx=cx,hy=cy+w*.4,s=w/138,fl=.8+.2*Math.sin(t*9+b.id);
+  ctx.fillStyle='rgba(143,233,255,.25)';ctx.beginPath();ctx.ellipse(hx,hy,w*.15,w*.15*K,0,0,7);ctx.fill();
+  ringZ(hx,hy,w*.15,0,'#8fe9ff',1.4,.5+.4*pulse);ringZ(hx,hy,w*.1,0,'#e8fbff',1,.4+.3*pulse);
+  ctx.save();ctx.translate(hx,hy-8*s);ctx.scale(s,s);
+  const g=ctx.createLinearGradient(0,-48,0,0);g.addColorStop(0,'rgba(143,233,255,.5)');g.addColorStop(1,'rgba(143,233,255,.12)');
+  ctx.globalAlpha=ga*fl*(.7+.3*pulse);ctx.fillStyle=g;ctx.strokeStyle='#e8fbff';ctx.lineWidth=1;ctx.lineJoin='round';ctx.lineCap='round';
+  const rr=(x,y,w2,h2,r)=>{ctx.beginPath();ctx.roundRect?ctx.roundRect(x,y,w2,h2,r):ctx.rect(x,y,w2,h2);ctx.fill();ctx.stroke();};
+  rr(-9,-12,18,3,1.5);                       // seat slab
+  rr(-8,-12,6,8,2);rr(2,-12,6,8,2);          // thighs toward the viewer
+  rr(-7,-4,5,9,2);rr(2,-4,5,9,2);            // shins
+  rr(-8,5,8,3,1.5);rr(0,5,8,3,1.5);          // feet
+  rr(-8,-32,16,21,4);                        // torso
+  rr(-5,-43,10,10,3);                        // head
+  ctx.fillStyle='#e8fbff';ctx.fillRect(-3.5,-39,7,2.2);   // visor
+  ctx.beginPath();ctx.moveTo(-8,-29);ctx.lineTo(-13,-20);ctx.lineTo(-9,-13);ctx.moveTo(8,-29);ctx.lineTo(13,-20);ctx.lineTo(9,-13);ctx.stroke();   // arms resting on knees
+  ctx.fillStyle='#e8fbff';ctx.globalAlpha=ga*fl*.8;ctx.beginPath();ctx.arc(0,-22,2.2,0,7);ctx.fill();   // chest core
+  const sy=-44+((t*22+b.id*7)%46);ctx.globalAlpha=ga*.7;ctx.strokeStyle='#ffffff';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(-14,sy);ctx.lineTo(14,sy);ctx.stroke();   // scan line
+  ctx.restore();ctx.globalAlpha=ga;
 }
 function pPylonN(b,t,cx,cy,w,col,pulse){
   prism(cx,cy,ngon(w*.3,8,.39),0,6,QGD);
@@ -3434,6 +3509,8 @@ function renderMini(t){
 
 /* ---------- dashboard ---------- */
 const ICO={
+  armory:'<rect x="3" y="8" width="18" height="8" rx="2"/><path d="M6 16v3M18 16v3M7 12h3M12 12h3"/>',
+  dmgup:'<path d="M5 19L16 8M13 5h6v6M7 17l-2.500 2.500"/>',
   laser:'<circle cx="12" cy="12" r="3" fill="currentColor" fill-opacity=".35"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.500 2.500M16.500 16.500L19 19M19 5l-2.500 2.500M7.500 16.500L5 19"/>',
   defup:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.500-7-10V6z" fill="currentColor" fill-opacity=".25"/><path d="M12 8v7M8.500 11.500H15.500"/>',
   worker:'<circle cx="12" cy="8" r="4"/><path d="M5 21c1-5 4-7 7-7s6 2 7 7"/>',
@@ -3823,7 +3900,7 @@ function pfigA(kind,c,cd,t){
    +head(80,22,.8);
 }
 function pfigN(kind,c,cd,t){
-  if(raceOf(t)!=='protoss'||(kind!=='nexus'&&kind!=='worker'&&kind!=='stalker'&&kind!=='immortal'&&kind!=='pylon'&&kind!=='barracks'&&kind!=='factory'))return null;
+  if(raceOf(t)!=='protoss'||(kind!=='nexus'&&kind!=='worker'&&kind!=='stalker'&&kind!=='immortal'&&kind!=='pylon'&&kind!=='barracks'&&kind!=='factory'&&kind!=='armory'))return null;
   const shH='<ellipse class="a-shad" cx="80" cy="132" rx="50" ry="11" fill="rgba(0,0,0,.4)"/>',shG='<ellipse cx="80" cy="132" rx="52" ry="11" fill="rgba(0,0,0,.4)"/>';
   const sp='url(#sp'+t+')',fa='url(#fa'+t+')',gl='url(#gl'+t+')',PGf='url(#pg)',PWf='url(#pw)',PNf='url(#pn)';
   if(kind==='nexus'){
@@ -3866,6 +3943,14 @@ function pfigN(kind,c,cd,t){
     return shG+gcyl(80,112,36,9,10,PGf)+gcyl(80,104,25,6,6,PWf)
      +'<g class="a-hover"><circle cx="80" cy="56" r="46" fill="'+gl+'"/><ellipse cx="80" cy="100" rx="38" ry="9" fill="none" stroke="#e9c96e" stroke-width="2.4"/>'
      +'<polygon points="80,2 104,56 80,100 56,56" fill="'+fa+'"'+ST2+'/><polygon points="80,2 104,56 80,100" fill="rgba(0,0,0,.3)"/><polygon points="56,56 80,100 80,56" fill="rgba(0,0,0,.14)"/><polygon points="80,8 68,40 80,60" fill="rgba(255,255,255,.5)"/></g>';
+  }
+  if(kind==='armory'){   // Robotics Bay
+    return shG
+     +'<rect x="14" y="108" width="132" height="14" rx="5" fill="'+PGf+'"'+ST2+'/>'
+     +'<polygon points="34,108 34,50 126,50 126,108" fill="rgba(143,233,255,.32)" stroke="#e9c96e" stroke-width="2.4" stroke-linejoin="round"/>'
+     +'<g class="a-hover"><circle cx="80" cy="76" r="30" fill="'+gl+'"/><polygon points="80,58 90,76 80,94 70,76" fill="'+fa+'"'+ST2+'/></g>'
+     +'<polygon points="80,8 100,40 80,62 60,40" fill="'+fa+'"'+ST2+'/><polygon points="80,8 100,40 80,62" fill="rgba(0,0,0,.28)"/>'
+     +'<g fill="rgba(143,233,255,.55)" stroke="#e8fbff" stroke-width="1.2"><rect x="70" y="112" width="20" height="14" rx="3"/><rect x="73" y="100" width="14" height="12" rx="3"/><rect x="75" y="92" width="10" height="8" rx="2"/></g>';
   }
   if(kind==='barracks'){   // Gateway
     return shG
@@ -3930,6 +4015,16 @@ function fig(kind,c,cd,t){
     const P=mkP(80,36);let o=sh.replace('<ellipse','<ellipse class="a-shad"')+'<g class="a-hover">'+ibox(P,0,0,0,70,70,14)+ibox(P,16,16,14,38,38,30);
     [[3,3],[59,3],[3,59],[59,59]].forEach(q=>{o+=ibox(P,q[0],q[1],14,8,8,20,fa);});
     return o+'<circle cx="80" cy="26" r="34" fill="'+gl+'"/><polygon points="80,0 94,24 80,50 66,24" fill="'+fa+'"'+ST+'/><polygon points="80,0 94,24 80,50" fill="rgba(0,0,0,.28)"/><polygon points="80,4 72,22 80,30" fill="rgba(255,255,255,.5)"/></g>';
+  }
+  if(kind==='armory'){
+    const bag=(x,y)=>'<rect x="'+x+'" y="'+y+'" width="16" height="7" rx="3" fill="#b39a69"'+ST+'/>';
+    let o=sh+'<rect x="26" y="96" width="108" height="12" rx="4" fill="#6b6f73"'+ST+'/>'
+     +'<rect x="22" y="58" width="116" height="42" rx="7" fill="#2f6b3a"'+ST+'/><rect x="22" y="76" width="116" height="7" fill="#14181b"/><rect x="30" y="50" width="86" height="9" rx="3" fill="#14181b"'+ST+'/>'
+     +'<rect x="26" y="64" width="12" height="9" fill="#f0cf7a"/><rect x="44" y="64" width="12" height="9" fill="#f0cf7a"/><rect x="62" y="64" width="12" height="9" fill="#f0cf7a"/><rect x="80" y="64" width="12" height="9" fill="#f0cf7a"/><rect x="98" y="64" width="12" height="9" fill="#f0cf7a"/>'
+     +'<path d="M42 100a10 10 0 0 1 20 0z" fill="#050608"/><path d="M98 100a10 10 0 0 1 20 0z" fill="#050608"/><circle cx="52" cy="100" r="3" fill="#7a838b"/><circle cx="108" cy="100" r="3" fill="#7a838b"/>';
+    for(let i=0;i<5;i++)o+=bag(14+i*26,112);
+    for(let i=0;i<4;i++)o+=bag(27+i*26,106);
+    return o;
   }
   if(kind==='barracks'){
     const P=mkP(80,50),f=(xa,xb,za,zb)=>pts([P(xa,54,zb),P(xb,54,zb),P(xb,54,za),P(xa,54,za)]);
@@ -4012,7 +4107,7 @@ function infoHTML(e){
   const R=[],t0=teams[0],mine=e.team===0,k=(a,v,hl)=>R.push([a,v,hl]);
   if(e.kind==='u'){
     const d=UD[e.type];
-    k('Damage',d.dmg+(d.bonus?' (+'+d.bonus+(d.bt==='light'?' vs light':' vs armoured')+')':'')+(d.range>1.5?' ranged':' melee'));if(d.sh)k('Shield',d.sh);k('Range',d.range);k('Attack rate',d.cd+'s');k('DPS',(d.dmg/d.cd).toFixed(1));
+    const up7=dUp(e.team);k('Damage',(d.dmg+up7)+(d.bonus?' (+'+d.bonus+(d.bt==='light'?' vs light':' vs armoured')+')':'')+(d.range>1.5?' ranged':' melee'));if(d.sh)k('Shield',d.sh);k('Range',d.range);k('Attack rate',d.cd+'s');k('DPS',((d.dmg+up7)/d.cd).toFixed(1));
     k('Speed',d.speed);k('Vision',d.vis);k('Supply',d.supply,1);k('Cost',d.cost);
     if(e.type==='worker'&&mine)k('Carrying',e.carry);
   }else{
@@ -4026,6 +4121,7 @@ function infoHTML(e){
         k('Trains','Worker · 50');k('Queue',e.queue.length+' / 5');
       }
     }
+    if(e.type==='armory')k('Research','Unit HP +25 · Unit damage +7');
     if(e.type==='barracks'){k('Trains',RACES[raceOf(e.team)].bar.map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
     if(e.type==='factory'){k('Trains',RACES[raceOf(e.team)].fac.map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
     if(e.type==='turret'){k('Damage',d.dmg+' ranged');k('Range',d.range,1);k('Attack rate',d.cd+'s');k('DPS',(d.dmg/d.cd).toFixed(1));k('Targets',raceOf(e.team)==='protoss'?'Ground, air and Colossi':'Air and Colossi');}
@@ -4097,9 +4193,11 @@ function cmdHTML(){
     let dis=false;
     if(id==='upgrade:hp')dis=t0.minerals<600;
     else if(id==='upgrade:laser')dis=t0.minerals<500||!!(sel[0]&&sel[0].laser);
+    else if(id==='upgrade:ahp')dis=t0.minerals<300||!!t0.upHp;
+    else if(id==='upgrade:adm')dis=t0.minerals<300||!!t0.upDm;
     else if(a==='train'||a==='build'){const cost=(a==='train'?UD:BD)[b].cost;dis=t0.minerals<cost;if(a==='train'&&t0.used+1>t0.cap)dis=true;}
     el.disabled=dis||!!over;
-    el.classList.toggle('on',(id==='upgrade:laser'&&!!(sel[0]&&sel[0].laser))||(id==='amove'&&aMode)||(id==='rally'&&rallyMode)||(a==='build'&&place&&place.type===b));
+    el.classList.toggle('on',(id==='upgrade:laser'&&!!(sel[0]&&sel[0].laser))||(id==='upgrade:ahp'&&!!t0.upHp)||(id==='upgrade:adm'&&!!t0.upDm)||(id==='amove'&&aMode)||(id==='rally'&&rallyMode)||(a==='build'&&place&&place.type===b));
   }
 }
 function drawSpark(){
@@ -4257,6 +4355,7 @@ const TDESC={
   immortal:'Heavy anti-armour walker. Huge bonus damage vs tanks and rocket soldiers. Cannot hit air.',
   colossus:'Giant walker with twin lances: area damage, bonus vs light infantry. Cannot hit air.',
   nexus:'Command center. Drop-off point for minerals; trains workers.',
+  armory:'Research: +25 hp and +7 damage for all your units, 300 minerals each.',
   pylon:'Raises your command points (supply cap) by 8 so you can train more units.',
   barracks:'Trains marines and rocket soldiers.',
   factory:'Trains tanks and copters.',
@@ -4266,9 +4365,12 @@ const TD2={protoss:{
   worker:'Builds structures and mines minerals. Can fight in melee.',
   barracks:'Trains zealots and stalkers.',
   factory:'Trains immortals and colossi.',
-  turret:'Cannon tower. Automatically shoots enemy ground units, flying units and colossi.'}};
+  turret:'Cannon tower. Automatically shoots enemy ground units, flying units and colossi.',
+  armory:'Research: +25 hp and +7 damage for all your units, 300 minerals each.'}};
 const tdesc=(ty,t)=>(TD2[raceOf(t)]||{})[ty]||TDESC[ty];
 const ODESC={
+  'upgrade:ahp':['Unit HP +25','All your units gain +25 max hp, current and future. One-time research.<small>300 minerals</small>'],
+  'upgrade:adm':['Unit Damage +7','All your units deal +7 damage per attack. One-time research.<small>300 minerals</small>'],
   'upgrade:laser':['Laser Guns','This Nexus fires a single-target laser at the nearest enemy unit within its sight range: 30 damage, +15 vs armoured, every 2.1s. No splash. Only the selected Nexus is upgraded.<small>500 minerals · once per Nexus</small>'],
   'upgrade:hp':['Defense Up','Reinforces this Nexus, +2000 max hit points and repairs the same amount. Only the selected Nexus is upgraded.<small>600 minerals · one upgrade per Nexus</small>'],
   rally:['Rally point','New units from this building walk to the spot you click.'],
