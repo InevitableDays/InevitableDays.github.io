@@ -5657,11 +5657,12 @@ cv.addEventListener('pointerdown',e=>{
   cv.style.cursor=KN.gold;   // keep the golden knife while dragging a selection box
   drag={sx,sy,x:sx,y:sy,touch:e.pointerType==='touch',cx:cam.x,cy:cam.y,moved:false,box:e.pointerType!=='touch'};
 });
+const RPAN_ON=false;   // set to true to bring back panning the map by holding the right mouse button
 cv.addEventListener('pointermove',e=>{
   const r=cv.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top;
   mouse={sx,sy,inside:true,type:e.pointerType};
   if(rpan){
-    if(Math.hypot(sx-rpan.sx,sy-rpan.sy)>6)rpan.moved=true;
+    if(RPAN_ON&&Math.hypot(sx-rpan.sx,sy-rpan.sy)>6)rpan.moved=true;   // right-button drag panning is switched off (RPAN_ON=false); right-click orders still work
     if(rpan.moved){cam.x=rpan.cx-(sx-rpan.sx)/cam.z;cam.y=rpan.cy-(sy-rpan.sy)/cam.z/K;clampCam();cv.style.cursor=KN.gold;}
     return;
   }
