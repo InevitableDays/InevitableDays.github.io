@@ -2042,6 +2042,7 @@ function queueTrain(b,type){
   const d=UD[type],tm=teams[b.team];
   if(!b.done||b.dead||b.queue.length>=5)return false;
   if(tm.minerals<d.cost){if(b.team===0)flash('Not enough minerals');return false;}
+  if(!d.give&&aiTeams.includes(b.team)&&tm.used+d.supply>({easy:20,normal:30,hard:60})[opts.diff])return false;   // AI command point cap: Easy 20, Medium 30, Hard 60
   if(!d.give&&tm.used+d.supply>tm.cap){if(b.team===0)flash(raceOf(b.team)==='zerg'?'Supply blocked. Train a Floater.':'Supply blocked. Build a Pylon.');return false;}
   tm.minerals-=d.cost;tm.used+=d.supply;b.queue.push({type,t:d.time});return true;
 }
