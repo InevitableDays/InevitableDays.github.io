@@ -1,4 +1,4 @@
-<title>Last Earth</title>
+<title>Two Banks</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -406,7 +406,7 @@ body{padding-block:3px 6px}
         <p>Smoke covers the map. Your units only see a short distance, so scout to find the enemy.</p>
       </div>
       <div id="pick" hidden>
-        <header class="mHead"><h1>Last Earth</h1><span>Skirmish setup</span></header>
+        <header class="mHead"><h1>Two Banks</h1><span>Skirmish setup</span></header>
         <div class="mGrid">
           <section class="mPanel" aria-label="Teams">
             <h3>1 &middot; Teams</h3>
@@ -472,7 +472,7 @@ const UD={
   tank:{name:'Tank',cost:150,time:14,supply:3,hp:220,speed:1.6,range:11,dmg:30,bonus:15,cd:2.1,armored:true,info:'Heavy siege cannon, 30 damage, +15 vs armoured units, range 11. Cannot hit air',vis:14}
 };
 Object.assign(UD,{
-  zealot:{name:'Zealot',cost:100,time:10,supply:2,hp:120,sh:80,speed:3,range:1,dmg:18,cd:.86,aggro:true,info:'Psi-blade warrior, 18 damage per strike, plasma shield. No charge, no upgrades. Cannot hit air',vis:11},
+  zealot:{name:'Zealot',cost:100,time:10,supply:2,hp:120,sh:80,speed:2.4,range:1,dmg:18,cd:.86,aggro:true,info:'Psi-blade warrior, 18 damage per strike, plasma shield. No charge, no upgrades. Cannot hit air',vis:11},
   stalker:{name:'Stalker',cost:125,time:11,supply:2,hp:100,sh:85,speed:2.6,range:10,dmg:16,bonus:5,cd:1.2,armored:true,info:'Long-range skirmisher, 16 damage (+5 vs armoured), range 10. Hits ground and air',vis:12},
   immortal:{name:'Immortal',cost:275,time:20,supply:4,hp:220,sh:120,speed:2,range:9,dmg:32,bonus:28,cd:1.04,armored:true,noair:true,info:'Anti-armour walker, 32 damage, +28 vs armoured units, range 9. Cannot hit air',vis:13},
   colossus:{name:'Colossus',cost:300,time:24,supply:6,hp:220,sh:150,speed:2.1,range:10.5,dmg:16,bonus:6,bt:'light',cd:1.07,splash:1.6,armored:true,noair:true,info:'Towering walker, 16 area damage, +6 vs light units (marines, zealots, workers), range 10.5. Cannot hit air',vis:14}
@@ -947,6 +947,9 @@ function drawFog(t){
 
 /* ---------- pathfinding ---------- */
 const gV=new Uint32Array(W*H),gC=new Uint32Array(W*H),gG=new Float32Array(W*H),gPar=new Int32Array(W*H);let stamp=0;
+/* A* budget: at most PATH_PER_TICK ground searches per sim tick; units that don't get one simply wait a tick */
+const PATH_PER_TICK=6;let pathBudget=PATH_PER_TICK;
+function pathOK(u){if(UD[u.type].air)return true;if(pathBudget<=0)return false;pathBudget--;return true;}
 const DX=[1,-1,0,0,1,1,-1,-1],DY=[0,0,1,-1,1,-1,1,-1];
 function oct(ax,ay,bx,by){const dx=Math.abs(ax-bx),dy=Math.abs(ay-by);return dx+dy-0.5858*Math.min(dx,dy);}
 function findPath(sx,sy,gx,gy){
@@ -1074,14 +1077,38 @@ function note(msg,kind,x,y){
 
 /* ---------- targeting and combat ---------- */
 const noAir=u=>!!UD[u.type].noair||UD[u.type].range<=1.5;   // tanks and melee workers cannot hit flying targets
+/* spatial grids over the units (linked lists of unit indices), rebuilt every sim tick:
+   coarse 8-tile cells make findTarget cheap, fine 2-tile cells make unit separation cheap */
+const GC8=8,G8W=Math.ceil(W/GC8),G8H=Math.ceil(H/GC8),GC2=2,G2W=Math.ceil(W/GC2),G2H=Math.ceil(H/GC2);
+const g8Head=new Int32Array(G8W*G8H).fill(-1),g2Head=new Int32Array(G2W*G2H).fill(-1);
+let g8Next=new Int32Array(1024),g2Next=new Int32Array(1024);
+function buildGrid8(){
+  const n=units.length;if(g8Next.length<n)g8Next=new Int32Array(n*2);
+  g8Head.fill(-1);
+  for(let i=0;i<n;i++){const u=units[i];if(u.dead)continue;
+    const c=clamp((u.y/GC8)|0,0,G8H-1)*G8W+clamp((u.x/GC8)|0,0,G8W-1);
+    g8Next[i]=g8Head[c];g8Head[c]=i;}
+}
+function buildGrid2(){
+  const n=units.length;if(g2Next.length<n)g2Next=new Int32Array(n*2);
+  g2Head.fill(-1);
+  for(let i=0;i<n;i++){const u=units[i];if(u.dead)continue;
+    const c=clamp((u.y/GC2)|0,0,G2H-1)*G2W+clamp((u.x/GC2)|0,0,G2W-1);
+    g2Next[i]=g2Head[c];g2Head[c]=i;}
+}
 function findTarget(u,r){
   let best=null,bd=r;
-  for(const e of units){
-    if(e.dead||side(e.team)===side(u.team))continue;
-    if(UD[e.type].air&&noAir(u))continue;
-    if(isFriend(u.team)&&!visAt(e.x,e.y))continue;
-    const d=Math.hypot(e.x-u.x,e.y-u.y);
-    if(d<bd){bd=d;best=e;}
+  const us=side(u.team),fr=isFriend(u.team),noA=noAir(u),ux=u.x,uy=u.y;
+  const qx0=clamp(((ux-r)/GC8)|0,0,G8W-1),qx1=clamp(((ux+r)/GC8)|0,0,G8W-1),qy0=clamp(((uy-r)/GC8)|0,0,G8H-1),qy1=clamp(((uy+r)/GC8)|0,0,G8H-1);
+  for(let qy=qy0;qy<=qy1;qy++)for(let qx=qx0;qx<=qx1;qx++){
+    for(let i=g8Head[qy*G8W+qx];i>=0;i=g8Next[i]){
+      const e=units[i];
+      if(!e||e.dead||side(e.team)===us)continue;
+      if(noA&&UD[e.type].air)continue;
+      if(fr&&!visAt(e.x,e.y))continue;
+      const d=Math.hypot(e.x-ux,e.y-uy);
+      if(d<bd){bd=d;best=e;}
+    }
   }
   if(best||u.type==='heli')return best;   // copters never pick buildings
   for(const b of buildings){
@@ -1225,7 +1252,7 @@ function updateHarvest(u,dt){
     }
     if(!u.path||u.pi>=u.path.length){
       if(u.rp>0)return;
-      u.rp=.5;const a=approach(r.tx,r.ty,1,u.x,u.y);setPath(u,a.x,a.y);if(!u.path)return;
+      if(!pathOK(u))return;u.rp=.5;const a=approach(r.tx,r.ty,1,u.x,u.y);setPath(u,a.x,a.y);if(!u.path)return;
     }
     if(!followPath(u,dt,d.speed))u.path=null;
   }else if(o.st==='mining'){
@@ -1249,7 +1276,7 @@ function updateHarvest(u,dt){
     }
     if(!u.path||u.pi>=u.path.length){
       if(u.rp>0)return;
-      u.rp=.5;const a=approach(b.tx,b.ty,b.size,u.x,u.y);setPath(u,a.x,a.y);if(!u.path)return;
+      if(!pathOK(u))return;u.rp=.5;const a=approach(b.tx,b.ty,b.size,u.x,u.y);setPath(u,a.x,a.y);if(!u.path)return;
     }
     if(!followPath(u,dt,d.speed))u.path=null;
   }
@@ -1270,7 +1297,7 @@ function updateBuild(u,dt){
     }
     if(!u.path||u.pi>=u.path.length){
       if(u.rp>0)return;
-      u.rp=.5;const a=approach(o.tx,o.ty,s,u.x,u.y);setPath(u,a.x,a.y);if(!u.path)return;
+      if(!pathOK(u))return;u.rp=.5;const a=approach(o.tx,o.ty,s,u.x,u.y);setPath(u,a.x,a.y);if(!u.path)return;
     }
     if(!followPath(u,dt,d.speed))u.path=null;
     return;
@@ -1300,7 +1327,7 @@ function updateUnit(u,dt){
       }
       break;
     case 'move':
-      if(!u.path&&!setPath(u,o.x,o.y)){u.order={type:'idle'};break;}
+      if(!u.path){if(!pathOK(u))break;if(!setPath(u,o.x,o.y)){u.order={type:'idle'};break;}}
       if(!followPath(u,dt,d.speed))u.order={type:'idle'};
       break;
     case 'amove':
@@ -1308,7 +1335,7 @@ function updateUnit(u,dt){
         u.acq=1/1.5;const t=findTarget(u,Math.max(10,d.range+2));
         if(t){u.order={type:'attack',target:t,home:null,leash:0,then:o};u.path=null;break;}
       }
-      if(!u.path&&!setPath(u,o.x,o.y)){u.order={type:'idle'};break;}
+      if(!u.path){if(!pathOK(u))break;if(!setPath(u,o.x,o.y)){u.order={type:'idle'};break;}}
       if(!followPath(u,dt,d.speed))u.order={type:'idle'};
       break;
     case 'attack':{
@@ -1322,10 +1349,19 @@ function updateUnit(u,dt){
         if(u.cd<=0){fire(u,tg,d);u.cd=d.cd;}
       }else{
         if(o.leash&&o.home&&Math.hypot(u.x-o.home.x,u.y-o.home.y)>o.leash){u.order={type:'idle'};u.path=null;break;}
-        if(!u.path||u.pi>=u.path.length||u.rp<=0){
-          u.rp=.5;
-          if(tg.kind==='b'){const a=approach(tg.tx,tg.ty,tg.size,u.x,u.y);setPath(u,a.x,a.y);}
-          else setPath(u,tg.x,tg.y);
+        const needP=!u.path||u.pi>=u.path.length;
+        if((needP||u.rp<=0)&&time>=(u.np||0)){
+          const gx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,gy=tg.kind==='b'?tg.ty+tg.size/2:tg.y;
+          if(!u.pg)u.pg={x:0,y:0};
+          if(needP||Math.abs(gx-u.pg.x)+Math.abs(gy-u.pg.y)>2.5){   // only re-path when the target actually moved
+            if(pathOK(u)){
+              u.rp=.9+Math.random()*.5;
+              if(tg.kind==='b'){const a=approach(tg.tx,tg.ty,tg.size,u.x,u.y);setPath(u,a.x,a.y);}
+              else setPath(u,tg.x,tg.y);
+              u.pg.x=gx;u.pg.y=gy;
+              if(!u.path)u.np=time+.8;   // unreachable: don't hammer A* every tick
+            }
+          }else u.rp=.9+Math.random()*.5;
         }
         if(u.path&&!followPath(u,dt,d.speed))u.path=null;
       }
@@ -1341,28 +1377,34 @@ const RAD={worker:.2,marine:.22,rocket:.24,zealot:.25,stalker:.28,immortal:.36,t
 function separate(){
   const n=units.length;
   for(let pass=0;pass<2;pass++){
+    buildGrid2();
     for(let i=0;i<n;i++){
       const a=units[i];if(a.dead)continue;
       const ra=RAD[a.type]||.24,aAir=!!UD[a.type].air;
-      for(let j=i+1;j<n;j++){
-        const b=units[j];if(b.dead)continue;
-        const dx=b.x-a.x,dy=b.y-a.y;
-        if(dx>1.05||dx<-1.05||dy>1.05||dy<-1.05)continue;
-        if(aAir!==!!UD[b.type].air)continue;
-        const min=ra+(RAD[b.type]||.24),d2=dx*dx+dy*dy;
-        if(d2>=min*min)continue;
-        const d=Math.sqrt(d2)||.01,nx=d2>1e-6?dx/d:1,ny=d2>1e-6?dy/d:0;
-        const move=Math.min(.1,(min-d)*.8);
-        if(aAir){a.x-=nx*move/2;a.y-=ny*move/2;b.x+=nx*move/2;b.y+=ny*move/2;continue;}
-        const am=a.order.type==='harvest'&&a.order.st==='mining'||a.order.type==='build'&&a.order.st==='building';
-        const bm=b.order.type==='harvest'&&b.order.st==='mining'||b.order.type==='build'&&b.order.st==='building';
-        const ya=am?0:(a.path&&a.pi<a.path.length?1:1.6),yb=bm?0:(b.path&&b.pi<b.path.length?1:1.6);
-        if(ya+yb===0)continue;
-        let sa=move*ya/(ya+yb),sb=move*yb/(ya+yb);
-        const aOk=sa>0&&passable(a.x-nx*sa,a.y-ny*sa),bOk=sb>0&&passable(b.x+nx*sb,b.y+ny*sb);
-        if(aOk&&bOk){a.x-=nx*sa;a.y-=ny*sa;b.x+=nx*sb;b.y+=ny*sb;}
-        else if(aOk){a.x-=nx*move;a.y-=ny*move;if(!passable(a.x,a.y)){a.x+=nx*move;a.y+=ny*move;}}   // b is wedged: a takes it all
-        else if(bOk){b.x+=nx*move;b.y+=ny*move;if(!passable(b.x,b.y)){b.x-=nx*move;b.y-=ny*move;}}
+      const gcx=clamp((a.x/GC2)|0,0,G2W-1),gcy=clamp((a.y/GC2)|0,0,G2H-1);
+      const qx0=gcx>0?gcx-1:0,qx1=gcx<G2W-1?gcx+1:G2W-1,qy0=gcy>0?gcy-1:0,qy1=gcy<G2H-1?gcy+1:G2H-1;
+      for(let qy=qy0;qy<=qy1;qy++)for(let qx=qx0;qx<=qx1;qx++){
+        for(let j=g2Head[qy*G2W+qx];j>=0;j=g2Next[j]){
+          if(j<=i)continue;
+          const b=units[j];if(b.dead)continue;
+          const dx=b.x-a.x,dy=b.y-a.y;
+          if(dx>1.05||dx<-1.05||dy>1.05||dy<-1.05)continue;
+          if(aAir!==!!UD[b.type].air)continue;
+          const min=ra+(RAD[b.type]||.24),d2=dx*dx+dy*dy;
+          if(d2>=min*min)continue;
+          const d=Math.sqrt(d2)||.01,nx=d2>1e-6?dx/d:1,ny=d2>1e-6?dy/d:0;
+          const move=Math.min(.1,(min-d)*.8);
+          if(aAir){a.x-=nx*move/2;a.y-=ny*move/2;b.x+=nx*move/2;b.y+=ny*move/2;continue;}
+          const am=a.order.type==='harvest'&&a.order.st==='mining'||a.order.type==='build'&&a.order.st==='building';
+          const bm=b.order.type==='harvest'&&b.order.st==='mining'||b.order.type==='build'&&b.order.st==='building';
+          const ya=am?0:(a.path&&a.pi<a.path.length?1:1.6),yb=bm?0:(b.path&&b.pi<b.path.length?1:1.6);
+          if(ya+yb===0)continue;
+          let sa=move*ya/(ya+yb),sb=move*yb/(ya+yb);
+          const aOk=sa>0&&passable(a.x-nx*sa,a.y-ny*sa),bOk=sb>0&&passable(b.x+nx*sb,b.y+ny*sb);
+          if(aOk&&bOk){a.x-=nx*sa;a.y-=ny*sa;b.x+=nx*sb;b.y+=ny*sb;}
+          else if(aOk){a.x-=nx*move;a.y-=ny*move;if(!passable(a.x,a.y)){a.x+=nx*move;a.y+=ny*move;}}   // b is wedged: a takes it all
+          else if(bOk){b.x+=nx*move;b.y+=ny*move;if(!passable(b.x,b.y)){b.x-=nx*move;b.y-=ny*move;}}
+        }
       }
     }
   }
@@ -1399,11 +1441,16 @@ function updateBuilding(b,dt){
     if(b.cd<=0){
       const d=BD.turret,cx=b.tx+b.size/2,cy=b.ty+b.size/2;
       let best=null,bd=d.range;
-      for(const e of units){
-        if(e.dead||side(e.team)===side(b.team)||!(UD[e.type].air||e.type==='colossus'))continue;
-        if(isFriend(b.team)&&!visAt(e.x,e.y))continue;
-        const dd=Math.hypot(e.x-cx,e.y-cy);
-        if(dd<bd){bd=dd;best=e;}
+      const bs=side(b.team),bf=isFriend(b.team);
+      const qx0=clamp(((cx-d.range)/GC8)|0,0,G8W-1),qx1=clamp(((cx+d.range)/GC8)|0,0,G8W-1),qy0=clamp(((cy-d.range)/GC8)|0,0,G8H-1),qy1=clamp(((cy+d.range)/GC8)|0,0,G8H-1);
+      for(let qy=qy0;qy<=qy1;qy++)for(let qx=qx0;qx<=qx1;qx++){
+        for(let i=g8Head[qy*G8W+qx];i>=0;i=g8Next[i]){
+          const e=units[i];
+          if(!e||e.dead||side(e.team)===bs||!(UD[e.type].air||e.type==='colossus'))continue;
+          if(bf&&!visAt(e.x,e.y))continue;
+          const dd=Math.hypot(e.x-cx,e.y-cy);
+          if(dd<bd){bd=dd;best=e;}
+        }
       }
       if(best){
         b.cd=d.cd;b.aim=Math.atan2(best.y-cy,best.x-cx);
@@ -1519,6 +1566,7 @@ function aiRun(t){
 /* ---------- simulation ---------- */
 function sim(dt){
   time+=dt;
+  pathBudget=PATH_PER_TICK;buildGrid8();
   for(const b of buildings)updateBuilding(b,dt);
   for(const u of units)updateUnit(u,dt);
   separate();
@@ -1770,7 +1818,7 @@ function glowSprite(key,stops){
 }
 function shadow(x,y,rx){ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.ellipse(x+rx*.25,y,rx,rx*K,0,0,7);ctx.fill();}
 function bHeight(b){return b.type==='nexus'?92:b.type==='turret'?52:b.type==='factory'?72:b.type==='barracks'?46:62;}
-function drawBuilding(b,t){
+function drawBuildingRaw(b,t){
   const w=b.size*T,cx=(b.tx+b.size/2)*T,cy=(b.ty+b.size/2)*T*K,col=tcol(b.team),colD=tcolD(b.team),h2=w/2;
   ctx.save();
   shadow(cx,cy+2,w*.55);
@@ -2449,8 +2497,97 @@ function drawProtoss(u,t){
     return;
   }
 }
-const prismRaw=prism;
+/* ---------- sprite cache ----------
+   Units and buildings are vector art made of many paths. The cache bakes them into small offscreen canvases and
+   re-draws those instead:
+   - units share sprites by (type, team, facing, pose, animation tick), so a group of marines costs a few bakes
+   - every building keeps its own sprite and is re-baked when its state or animation tick changes
+   Animation plays at SPR_TB (units) / SPR_BTB (buildings) ticks per second and facing snaps to SPR_FACES steps.
+   Helicopters are always drawn directly (their rotor spins too fast for ticked animation).
+   Set SPRITE_CACHE=false to go back to drawing everything directly. */
+const SPRITE_CACHE=true,SPR_TB=12,SPR_BTB=10,SPR_FACES=24,SPR_TAU=Math.PI*2;
+const SPR_CLS={worker:'s',marine:'s',rocket:'s',zealot:'s',stalker:'s',immortal:'m',tank:'m',colossus:'l'};
+const SPR_TYPE={worker:0,marine:1,rocket:2,zealot:3,stalker:4,immortal:5,colossus:6,tank:7};
+const SPR_DIM={s:{hw:44,up:84,dn:24},m:{hw:84,up:92,dn:38},l:{hw:100,up:160,dn:46}};   // sprite bounds around the unit's ground point, px
+const SPR=new Map(),sprPool={s:[],m:[],l:[]};let sprSc=0,sprFrame=0;
+function sprSweep(){   // once per rendered frame: follow the zoom, drop sprites nobody used lately
+  sprFrame++;
+  const sc=Math.min(2,Math.max(.5,Math.ceil(cam.z*dpr*2)/2));
+  if(sc!==sprSc){sprSc=sc;SPR.clear();sprPool.s.length=sprPool.m.length=sprPool.l.length=0;}
+  if(sprFrame%4)return;
+  const old=sprFrame-4;
+  for(const [k,v] of SPR){if(v.f<old){SPR.delete(k);const pl=sprPool[v.cls];if(pl.length<300)pl.push(v.c);}}
+  for(const b of buildings)if(b._sp&&b._sp.f<sprFrame-90)b._sp=null;
+}
+function sprDraw(c,sc,fn){   // run fn() with every ctx call redirected into canvas c
+  const g=c.getContext('2d');
+  g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.globalCompositeOperation='source-over';g.clearRect(0,0,c.width,c.height);
+  g.setTransform(sc,0,0,sc,0,0);g.lineCap='butt';g.lineJoin='miter';g.lineWidth=1;
+  const main=ctx;ctx=g;
+  try{fn();}finally{ctx=main;}
+}
 function drawUnit(u,t){
+  if(SPRITE_CACHE&&sprSc){const cls=SPR_CLS[u.type];if(cls){spriteUnit(u,t,cls);return;}}
+  drawUnitRaw(u,t);
+}
+function spriteUnit(u,t,cls){
+  const d=UD[u.type],o=u.order,dm=SPR_DIM[cls];
+  const mv=(u.path&&u.pi<u.path.length)?1:0;
+  let fq=Math.round(u.face/SPR_TAU*SPR_FACES)%SPR_FACES;if(fq<0)fq+=SPR_FACES;if(!(fq>=0))fq=0;
+  const sh=d.cd-u.cd,sb=(sh>=0&&sh<.4)?1+((sh/.05)|0):0,idle=u.cd<=-1?1:0;   // sb: time since the last shot in 0.05 s steps (0 = none)
+  const hit=u.hit>0?1:0,carry=u.carry>0?1:0,idv=u.id&3,sl=(u.slN||0)&1;
+  const ob=(o.type==='build'&&o.st==='building')?1:0,om=(o.type==='harvest'&&o.st==='mining')?1:0,oi=o.type==='idle'?1:0;
+  const z8=cam.z>=.8?1:0,rp=raceOf(u.team)==='protoss'?1:0;
+  let shb=0;if(u.maxsh&&u.sh>0){const a=time-u.shT;if(a<=.3)shb=1+Math.min(2,(a/.1)|0);}   // shield flash stage
+  let k=SPR_TYPE[u.type];
+  k=k<<2|u.team;k=k<<5|fq;k=k<<1|mv;k=k<<4|sb;k=k<<1|idle;k=k<<1|hit;k=k<<1|carry;k=k<<1|ob;k=k<<1|om;k=k<<1|oi;k=k<<2|idv;k=k<<1|z8;k=k<<3|shb;k=k<<1|sl;k=k<<1|rp;
+  const tb=Math.floor(t*SPR_TB),key=tb*536870912+k;
+  let v=SPR.get(key);
+  if(!v){
+    const pool=sprPool[cls];
+    let c=pool.pop();
+    if(!c){c=document.createElement('canvas');c.width=Math.ceil(dm.hw*2*sprSc);c.height=Math.ceil((dm.up+dm.dn)*sprSc);}
+    sprDraw(c,sprSc,()=>{
+      const p=Object.create(u);   // stand-in unit: same data, but quantised pose, parked at the sprite's anchor
+      p.x=dm.hw/T;p.y=dm.up/(T*K);p.face=fq*SPR_TAU/SPR_FACES;p.id=idv;
+      p.cd=sb?d.cd-(sb-.5)*.05:(idle?-5:-.5);
+      p.hit=hit;p.carry=carry;p.slN=sl;
+      if(shb)p.shT=time-(shb-.5)*.1;
+      drawUnitRaw(p,tb/SPR_TB);
+    });
+    v={c,cls,f:sprFrame};SPR.set(key,v);
+  }
+  v.f=sprFrame;
+  ctx.drawImage(v.c,u.x*T-dm.hw,u.y*T*K-dm.up,dm.hw*2,dm.up+dm.dn);
+}
+function drawBuilding(b,t){
+  if(SPRITE_CACHE&&sprSc){spriteBuilding(b,t);return;}
+  drawBuildingRaw(b,t);
+}
+function spriteBuilding(b,t){
+  const sc=sprSc,sz=b.size*T,hw=sz/2+60,up=bHeight(b)+100,dn=sz*K/2+40;
+  const cw=Math.ceil(hw*2*sc),ch=Math.ceil((up+dn)*sc);
+  let sp=b._sp;
+  if(!sp||sp.cw!==cw||sp.ch!==ch){const c=document.createElement('canvas');c.width=cw;c.height=ch;sp=b._sp={c,cw,ch,sig:-1,f:0};}
+  const tb=Math.floor(t*SPR_BTB);
+  const aq=b.aim!==undefined?1+(((Math.round(b.aim/SPR_TAU*SPR_FACES)%SPR_FACES)+SPR_FACES)%SPR_FACES):0;   // turret facing, 0 = default
+  const pr=b.done?0:Math.round(b.prog*40)+1;   // construction progress
+  const low=(((pr*32+aq)*2+(((b.cd||0)>BD.turret.cd-.08)?1:0))*2+((b.done&&b.queue.length>0)?1:0))*2+(b.done?1:0);
+  const sig=tb*16384+low;
+  if(sp.sig!==sig){
+    sp.sig=sig;
+    sprDraw(sp.c,sc,()=>{
+      const p=Object.create(b);   // stand-in building centred on the sprite's anchor
+      p.tx=hw/T-b.size/2;p.ty=up/(T*K)-b.size/2;
+      if(aq)p.aim=(aq-1)*SPR_TAU/SPR_FACES;
+      drawBuildingRaw(p,tb/SPR_BTB);
+    });
+  }
+  sp.f=sprFrame;
+  ctx.drawImage(sp.c,(b.tx+b.size/2)*T-hw,(b.ty+b.size/2)*T*K-up,hw*2,up+dn);
+}
+const prismRaw=prism;
+function drawUnitRaw(u,t){
   if(u.type==='heli'){drawHeli(u,t);return;}
   if(u.type==='zealot'||u.type==='stalker'||u.type==='immortal'||u.type==='colossus'){drawProtoss(u,t);return;}
   const x=u.x*T,y=u.y*T*K,col=tcol(u.team),colD=tcolD(u.team),fc=Math.cos(u.face),fs=Math.sin(u.face);
@@ -2688,7 +2825,17 @@ function drawRain(t){
   if(rainFlash>0){rainFlash=Math.max(0,rainFlash-dt*2.2);const fl=rainFlash*(.55+.45*Math.sin(rainFlash*30));ctx.fillStyle='rgba(225,238,255,'+(fl*.3).toFixed(3)+')';ctx.fillRect(0,0,vw,vh);}
   ctx.restore();
 }
+/* viewport culling: skip entities and effects that cannot be on screen (margins are screen px at zoom 1) */
+function inV(x,y,mx,mt,mb){
+  const z=cam.z,sx=(x*T-cam.x)*z,sy=(y*T-cam.y)*K*z;
+  return sx>-mx*z&&sx<vw+mx*z&&sy>-mt*z&&sy<vh+mb*z;
+}
+function bldgInV(b){
+  const z=cam.z,sz=b.size*T,l=(b.tx*T-cam.x)*z,r=l+sz*z,tp=(b.ty*T-cam.y)*K*z,bt=tp+sz*K*z;
+  return r>-70*z&&l<vw+70*z&&bt>-70*z&&tp-170*z<vh;
+}
 function render(t){
+  sprSweep();
   ctx.setTransform(1,0,0,1,0,0);
   ctx.fillStyle='#090e12';ctx.fillRect(0,0,cv.width,cv.height);
   const GT=()=>ctx.setTransform(dpr*cam.z,0,0,dpr*cam.z*K,-cam.x*cam.z*dpr,-cam.y*cam.z*K*dpr);
@@ -2707,13 +2854,14 @@ function render(t){
   ET();
   const ents=[];
   for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if(ter[y*W+x]===4)ents.push([y+.9,{kind:'t',x,y}]);
-  for(const r of resources)if(!r.dead)ents.push([r.ty+.6,{kind:'r2',r}]);
-  for(const b of buildings)if(isFriend(b.team)||b.seen)ents.push([b.ty+b.size,b]);
-  for(const u of units)if(isFriend(u.team)||visAt(u.x,u.y))ents.push([u.y+(UD[u.type].air?6:.3),u]);
+  for(const r of resources)if(!r.dead&&inV(r.tx+.5,r.ty+1,60,60,110))ents.push([r.ty+.6,{kind:'r2',r}]);
+  for(const b of buildings)if((isFriend(b.team)||b.seen)&&bldgInV(b))ents.push([b.ty+b.size,b]);
+  for(const u of units)if((isFriend(u.team)||visAt(u.x,u.y))&&inV(u.x,u.y,80,70,200))ents.push([u.y+(UD[u.type].air?6:.3),u]);
   ents.sort((a,b)=>a[0]-b[0]);
   for(const [,e] of ents){if(e.kind==='b')drawBuilding(e,t);else if(e.kind==='t')drawTree(e.x,e.y);else if(e.kind==='r2')drawResource(e.r);else drawUnit(e,t);}
   // health bars above heads
-  for(const e of buildings.concat(units)){
+  for(let pass=0;pass<2;pass++)for(const e of (pass?units:buildings)){
+    if(e.kind==='b'?!bldgInV(e):!inV(e.x,e.y,80,100,200))continue;
     if(!isFriend(e.team)&&(e.kind==='u'?!visAt(e.x,e.y):!e.seen))continue;
     const s=inSel.has(e);
     if(e.kind==='b'){
@@ -2726,6 +2874,8 @@ function render(t){
   // effects
   for(const e of effects){
     if(e.d>0)continue;
+    if(e.k==='l'){if(!inV(e.x,e.y,120,100,170)&&!inV(e.x1,e.y1,120,100,170))continue;}
+    else if(!inV(e.x,e.y,120,100,170))continue;
     if(e.k!=='r'&&!(visAt(e.x,e.y)||(e.k==='l'&&visAt(e.x1,e.y1))))continue;
     if(e.k==='l'){ctx.strokeStyle=e.c;ctx.globalAlpha=clamp(e.t/.1,0,1);ctx.lineWidth=e.w||1.6;ctx.beginPath();ctx.moveTo(e.x*T,e.y*T*K-(e.z||16));ctx.lineTo(e.x1*T,e.y1*T*K-(e.z1||12));ctx.stroke();ctx.globalAlpha=1;}
     else if(e.k==='p'){ctx.globalAlpha=clamp(e.t*2,0,1);ctx.fillStyle=e.c;ctx.beginPath();ctx.arc(e.x*T,e.y*T*K-8,2.4,0,7);ctx.fill();ctx.globalAlpha=1;}
@@ -3720,7 +3870,7 @@ window.addEventListener('keyup',e=>{keys[e.key]=false;});
 window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
 
 /* ---------- full-screen setup menu ---------- */
-const MAPSET=[{id:'twobanks',name:'Last Earth',meta:'128 \u00d7 128 \u00b7 river with 4 bridges \u00b7 4 spawns'}];
+const MAPSET=[{id:'twobanks',name:'Two Banks',meta:'128 \u00d7 128 \u00b7 river with 4 bridges \u00b7 4 spawns'}];
 const DIFFS=[
   {id:'normal',name:'Normal',pips:2,desc:'The enemy AI fields half the troops: its army caps and attack waves are halved.',cl:'norm'},
   {id:'hard',name:'Hard',pips:4,desc:'Full-strength AI, exactly as it plays now.',cl:'hard'}];
@@ -4154,7 +4304,7 @@ function frame(ts){
 }
 
 function releaseGfx(){
-  try{chunks.clear();orbC.clear();glowC.clear();shadeC.clear();treeSpr.length=0;wRefl=null;hzG=null;hzH=0;
+  try{SPR.clear();sprPool.s.length=sprPool.m.length=sprPool.l.length=0;chunks.clear();orbC.clear();glowC.clear();shadeC.clear();treeSpr.length=0;wRefl=null;hzG=null;hzH=0;
     for(const c of [cv,mini,fogCv,mfog])c.width=c.height=1;}catch(_){}
 }
 window.addEventListener('pagehide',releaseGfx);
