@@ -2052,7 +2052,7 @@ function updateUnit(u,dt){
       break;
     case 'attack':{
       const tg=o.target;
-      if(o.follow&&tg&&!tg.dead&&o.then&&o.then.type==='amove'){o.then.x=clamp(tg.kind==='b'?tg.tx+tg.size/2:tg.x,.5,W-.5);o.then.y=clamp(tg.kind==='b'?tg.ty+tg.size/2:tg.y,.5,H-.5);}
+      if(o.follow&&tg&&!tg.dead&&o.then&&o.then.type==='amove'){{const bx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,by=tg.kind==='b'?tg.ty+tg.size/2:tg.y,nx=clamp(bx+(o.then.ox||0),.5,W-.5),ny=clamp(by+(o.then.oy||0),.5,H-.5),ok=!o.then.ox&&!o.then.oy||UD[u.type].air||passable(nx,ny);o.then.x=ok?nx:clamp(bx,.5,W-.5);o.then.y=ok?ny:clamp(by,.5,H-.5);}}
       if(!tg||tg.dead||(tg.kind==='u'&&UD[tg.type].air&&noAir(u))||(tg.kind==='b'&&u.type==='heli')){u.order=o.then||{type:'idle'};u.path=null;break;}
       if(isFriend(u.team)&&tg.kind==='u'&&!visAt(tg.x,tg.y)){u.order={type:'amove',x:tg.x,y:tg.y};u.path=null;break;}
       const dist=tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y)-.3;
@@ -2480,7 +2480,7 @@ function rightClick(wx,wy){
     const airT=ent.kind==='u'&&UD[ent.type].air,shooters=mine.filter(u=>!UD[u.type].noatk&&!(airT&&noAir(u)));
     const flo=mine.filter(u=>UD[u.type].noatk);if(flo.length)groupMove(flo,wx,wy);   // floaters cannot attack: they just fly there
     if(!shooters.length){if(!flo.length)flash('Cannot hit air units');return;}
-    shooters.forEach(u=>setOrder(u,{type:'attack',target:ent,home:null,leash:0,follow:true,then:{type:'amove',x:clamp(ex,.5,W-.5),y:clamp(ey,.5,H-.5)}}));
+    shooters.forEach((u,i)=>{const o=spreadOff(u,i,ex,ey);setOrder(u,{type:'attack',target:ent,home:null,leash:0,follow:true,then:{type:'amove',x:clamp(ex+o[0],.5,W-.5),y:clamp(ey+o[1],.5,H-.5),ox:o[0],oy:o[1]}});});
     ring(wx,wy,C.foe);return;
   }
   if(ent&&ent.kind==='b'&&ent.team===0&&!ent.done){
@@ -2491,9 +2491,11 @@ function rightClick(wx,wy){
 }
 function attackMove(wx,wy){
   const mine=sel.filter(e=>e.team===0&&e.kind==='u');
-  mine.forEach(u=>setOrder(u,{type:'amove',x:clamp(wx,.5,W-.5),y:clamp(wy,.5,H-.5)}));
+  mine.forEach((u,i)=>{const o=spreadOff(u,i,wx,wy);setOrder(u,{type:'amove',x:clamp(wx+o[0],.5,W-.5),y:clamp(wy+o[1],.5,H-.5),ox:o[0],oy:o[1]});});
   ring(wx,wy,C.foe);
 }
+/* one-time per-unit offset (sunflower pattern, spacing scales with body size): units attack-moving to one point settle in a small cluster instead of a conga line. Computed once per order, no per-frame cost. */
+function spreadOff(u,i,bx,by){const sp=Math.max(.6,(RAD[u.type]||.24)*2.1),r=sp*Math.sqrt(i%40)*.9,a=i*2.4,dx=Math.cos(a)*r,dy=Math.sin(a)*r;return(UD[u.type].air||passable(clamp(bx+dx,.5,W-.5),clamp(by+dy,.5,H-.5)))?[dx,dy]:[0,0];}   // blocked spot: fall back to the exact point
 function doPlace(){
   if(!place)return;
   const s=BD[place.type].size,w=toWorld(mouse.sx,mouse.sy);
@@ -3462,7 +3464,7 @@ function spriteUnit(u,t,cls){
   const z8=cam.z>=.8?1:0,rc=({terran:0,protoss:1,zerg:2})[raceOf(u.team)]||0,atk=o.type==='attack'?1:0;
   let shb=0;if(u.maxsh&&u.sh>0){const a=time-u.shT;if(a<=.3)shb=1+Math.min(2,(a/.1)|0);}   // shield flash stage
   let k=u.team;k=k<<5|fq;k=k<<1|mv;k=k<<4|sb;k=k<<1|idle;k=k<<1|hit;k=k<<1|carry;k=k<<1|ob;k=k<<1|om;k=k<<1|oi;k=k<<2|idv;k=k<<1|z8;k=k<<3|shb;k=k<<1|sl;k=k<<2|rc;k=k<<1|atk;
-  const tb=Math.floor(t*SPR_TB),key=(tb*16+SPR_TYPE[u.type])*1073741824+k;   // k is 30 bits, the unit type sits above it
+  const tb=Math.floor(t*SPR_TB+idv*.25),key=(tb*16+SPR_TYPE[u.type])*1073741824+k;   // idv (id&3) is already part of the key, so same-key units share a phase: re-bakes now roll over on 4 staggered frames instead of all at once   // k is 30 bits, the unit type sits above it
   let v=SPR.get(key);
   if(!v){
     const pool=sprPool[cls];
@@ -4239,7 +4241,7 @@ const drawUltralisk=(()=>{
         limb(a0,a1,12.4,CARL,false);
         limb(kn,an,8.4,FLESHD);
         const s0=[kn[0]+(an[0]-kn[0])*.4,kn[1]+(an[1]-kn[1])*.4],s1=[kn[0]+(an[0]-kn[0])*.72,kn[1]+(an[1]-kn[1])*.72];
-        limb(s0,s1,9.2,col,false);
+        limb(s0,s1,9.2,FLESH,false);   // ankle band: same brown flesh tone as the rest of the body (was team colour)
         orb(kn[0],kn[1],5,CARL);
         limb([kn[0],kn[1]-1],[kn[0]+sd*3.5,kn[1]-11],3.6,BONE);
         orb(an[0],an[1],3.2,CAR);
