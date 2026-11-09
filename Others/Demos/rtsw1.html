@@ -539,7 +539,7 @@ body.zerg #zdeco{display:block;position:absolute;inset:0;z-index:3;pointer-event
       <div id="fps">-- FPS</div>
       <button id="alert" type="button" aria-live="polite"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><path d="M12 9v4M12 15.5v.5"/></svg>Enemy detected</button>
       <div id="intro">
-        <p><b>Build an economy, then cross a bridge.</b></p>
+        <p><b>Build an economy, then cross a bridge. That's how it always starts.</b></p>
         <p>Drag to select workers. Right-click a crystal to mine. Use Q / W / F / E / X to place a Pylon, Barracks, Factory, Nexus or anti-air Turret (shoots helicopters from far outside their range). Train marines, rocket soldiers (area damage), tanks and helicopters and destroy the red Nexus on the far bank. On the spawn screen you can choose your faction and the enemy's: Terran (marines, rocket soldiers, tanks, copters) or Protoss (zealots, stalkers, immortals, colossi with regenerating shields).</p>
         <p>Smoke covers the map. Your units only see a short distance, so scout to find the enemy.</p>
       </div>
@@ -564,10 +564,27 @@ body.zerg #zdeco{display:block;position:absolute;inset:0;z-index:3;pointer-event
           <section class="mPanel" aria-label="Map and spawn">
             <h3>2 &middot; Map &amp; spawn location</h3>
             <div class="mMaps" id="mapList"></div>
-            <div class="mLbl">Click a coloured point to choose where you start</div>
+            <div class="mLbl">Click a coloured point to choose where you start, you are the blue.</div>
             <div id="pickWrap"><canvas id="pickMap"></canvas></div>
             <p id="pickInfo"></p>
-            <p class="mDesc" style="margin:0;color:var(--muted);font-size:15px;line-height:1.5;text-align:center"><b style="color:var(--fg)">Terran</b> fields cheap, flexible troops: Marines, armoured Rocket Soldiers, siege Tanks and Helicopter gunships built from Barracks and Factories. <b style="color:var(--fg)">Protoss</b> units cost more but are tougher, with regenerating shields: Zealots, Stalkers, Immortals and giant Colossi built from Gateways and Robotics Facilities. <b style="color:var(--fg)">Zerg</b> swarm with cheap, fast Hounds, acid-spitting Ravagers and dark Pterodactyls that rain red beams. Floaters, balloon monsters you can fly around, provide supply. Build an economy, scout through the smoke and destroy the enemy Nexus.</p>
+<div class="mDesc" style="margin:0; color:var(--muted); font-size:15px; line-height:1.5; text-align:center">
+
+    <div style="margin-bottom:16px">
+        <b style="color:var(--fg)">Terran</b>
+        fields cheap, flexible troops: Marines, armoured Rocket Soldiers, siege Tanks and Helicopter gunships built from Barracks and Factories.
+    </div>
+
+    <div style="margin-bottom:16px">
+        <b style="color:var(--fg)">Protoss</b>
+        units cost more but are tougher, with regenerating shields: Zealots, Stalkers, Immortals and giant Colossi built from Gateways and Robotics Facilities.
+    </div>
+
+    <div>
+        <b style="color:var(--fg)">Zerg</b>
+        swarm with cheap, fast Hounds, acid-spitting Ravagers. Floaters, balloon monsters you can fly around, provide supply. Build an economy, scout through the smoke and destroy the enemy Nexus.
+    </div>
+
+</div>
           </section>
           <section class="mPanel" aria-label="Difficulty">
             <h3>3 &middot; Difficulty</h3>
@@ -665,15 +682,15 @@ Object.assign(UD,{
   colossus:{name:'Colossus',cost:300,time:24,supply:6,hp:220,sh:150,speed:2.1,range:10.5,dmg:16,bonus:6,bt:'light',cd:1.07,splash:1.6,armored:true,noair:true,info:'Towering walker, 16 area damage, +6 vs light units (marines, zealots, workers), range 10.5. Cannot hit air',vis:14}
 });
 UD.tank.noair=true;
-UD.mecha={name:'Mecha',cost:450,time:26,supply:4,hp:400,speed:2,range:10,dmg:6,cd:.12,armored:true,noair:true,info:'Heavy walker. Gatling cannon (6 damage every 0.12s, range 9) plus a shoulder rocket pod (4 rockets, 20 area damage each, every 5s, range 10). Attacks ground units and buildings only, cannot hit air. Trained at the Factory',vis:13};
+UD.mecha={name:'Mecha',cost:450,time:26,supply:4,hp:400,speed:2,range:10,dmg:6,cd:.12,armored:true,noair:true,info:'Heavy walker. Gatling cannon (6 damage every 0.12s, range 10, ground units and buildings only) plus a shoulder rocket pod (4 rockets, 20 area damage each, every 5s, range 10) that also hits flying units. Trained at the Factory',vis:13};
 UD.mothership={name:'Mothership',cost:600,time:45,supply:8,hp:600,sh:500,speed:1.4,range:12,dmg:14,cd:1.1,beams:5,info:'Protoss capital ship. Fires blue pulse beams at up to 5 targets per volley, 14 damage each, range 12. Hits ground and air. Trained at the Robotics Facility',vis:15,air:true};
-UD.ultralisk={name:'Ultralisk',cost:600,time:30,supply:6,hp:600,speed:1.9,range:2.4,dmg:35,cd:1.1,splash:1.5,armored:true,noair:true,spikes:5,spikeDmg:14,spikeRange:10,spikeCd:4,info:'Zerg siege beast. Kaiser blades sweep a 1.5 tile area for 35 damage every 1.1s (ground only, reach 2.4). Back spines also throw a barrage of 5 spikes every 4s at up to 5 targets, 14 damage each, range 10, ground and air. Armoured. Trained at the Mutation Pit',vis:13};
+UD.ultralisk={name:'Ultralisk',cost:300,time:30,supply:6,hp:600,speed:2.375,range:2.4,dmg:35,cd:1.1,splash:1.5,armored:true,noair:true,spikes:5,spikeDmg:14,spikeRange:10,spikeCd:4,info:'Zerg siege beast. Kaiser blades sweep a 1.5 tile area for 35 damage every 1.1s (ground only, reach 2.4). Back spines also throw a barrage of 5 spikes every 4s at up to 5 targets, 14 damage each, range 10, ground and air. Armoured. Trained at the Mutation Pit',vis:13};
 Object.assign(UD,{
-  dog:{name:'Hound',cost:50,time:5,supply:1,hp:100,speed:2.8,range:1,dmg:18,cd:.86,aggro:true,info:'Scorpion-tailed melee biter, 18 damage per bite. Half a Zealot, no shield, very cheap and quick to spawn. Cannot hit air',vis:11},
-  ravager:{name:'Ravager',cost:100,time:11,supply:2,hp:200,speed:1.8,range:10,dmg:30,bonus:15,cd:2.1,armored:true,info:'Rhino-shaped mutant that spits acid, 30 damage (+15 vs armoured), range 10. Hits ground and air. Cheaper than a Tank and uses less supply',vis:13},
-  tree:{name:'Deadwood',cost:125,time:12,supply:2,hp:260,speed:1.9,range:3.2,dmg:28,cd:1.1,info:'Walking dead tree that smashes with long logs, 28 damage at close range. Hits ground and air',vis:11},
-  ptero:{name:'Pterodactyl',cost:300,time:18,supply:3,hp:170,speed:3.2,range:9,dmg:16,cd:1.3,splash:1.7,info:'Dark flying mutant, red beams deal 16 area damage, range 9. Hits ground and air. Trained at the Hive',vis:13,air:true},
-  overlord:{name:'Floater',cost:100,time:12,supply:0,give:8,hp:200,speed:1.5,range:0,dmg:0,cd:99,noatk:true,info:'Flying balloon monster. Gives +8 supply. Cannot attack, but you can fly it anywhere. Trained at the Hive',vis:12,air:true}
+  dog:{name:'Hound',cost:50,time:5,supply:1,hp:100,speed:3.5,range:1,dmg:18,cd:.86,aggro:true,info:'Scorpion-tailed melee biter, 18 damage per bite. Half a Zealot, no shield, very cheap and quick to spawn. Cannot hit air',vis:11},
+  ravager:{name:'Ravager',cost:100,time:11,supply:2,hp:200,speed:2.25,range:10,dmg:30,bonus:15,cd:2.1,armored:true,info:'Rhino-shaped mutant that spits acid, 30 damage (+15 vs armoured), range 10. Hits ground and air. Cheaper than a Tank and uses less supply',vis:13},
+  tree:{name:'Deadwood',cost:125,time:12,supply:2,hp:260,speed:2.375,range:3.2,dmg:28,cd:1.1,info:'Walking dead tree that smashes with long logs, 28 damage at close range. Hits ground and air',vis:11},
+  ptero:{name:'Pterodactyl',cost:300,time:18,supply:3,hp:170,speed:4,range:9,dmg:16,cd:1.3,splash:1.7,info:'Dark flying mutant, red beams deal 16 area damage, range 9. Hits ground and air. Trained at the Hive',vis:13,air:true},
+  overlord:{name:'Floater',cost:100,time:12,supply:0,give:8,hp:200,speed:1.875,range:0,dmg:0,cd:99,noatk:true,info:'Flying balloon monster. Gives +8 supply. Cannot attack, but you can fly it anywhere. Trained at the Hive',vis:12,air:true}
 });
 /* ---------- factions: each side picks one; building types are shared, units and names differ ---------- */
 const RACES={
@@ -691,7 +708,7 @@ const BD={
   pylon:{name:'Pylon',size:2,cost:100,time:12,hp:550,supply:8,vis:9.1},
   factory:{name:'Factory',size:3,cost:200,time:28,hp:1400,supply:0,vis:10.4},
   armory:{name:'Armory',size:3,cost:200,time:24,hp:1000,supply:0,vis:10.4},
-  turret:{name:'Turret',size:2,cost:150,time:16,hp:700,supply:0,vis:16,range:11,dmg:40,cd:.9,info:'Anti-air auto turret. Fires automatically at flying units and Colossi in range, 40 damage per shot: a copter dies in 4 hits. Range 11 (copters have 9 and cannot attack buildings)'}
+  turret:{name:'Turret',size:2,cost:150,time:16,hp:700,supply:0,vis:16,range:11,dmg:40,cd:.9,info:'Anti-air auto turret. Fires automatically at flying units, Colossi, Mechas and Ultralisks in range, 40 damage per shot: a copter dies in 4 hits. Range 11 (copters have 9 and cannot attack buildings)'}
 };
 
 function hash(x,y,s){let h=(x*374761393+y*668265263+(s||0)*982451653)|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296;}
@@ -1463,6 +1480,7 @@ function moveBy0(u,dx,dy){
 }
 function followPath(u,dt,sp){
   if(!u.path||u.pi>=u.path.length)return false;
+  if(u.type==='worker'&&raceOf(u.team)==='zerg')sp*=1.25;   // Drones: +25% like the other Zerg units
   const p=u.path[u.pi],dx=p.x-u.x,dy=p.y-u.y,d=Math.hypot(dx,dy),step=sp*dt,ox=u.x,oy=u.y;
   if(d<=step+.02){moveBy(u,dx,dy);u.pi++;}
   else{moveBy(u,dx/d*step,dy/d*step);u.face=Math.atan2(dy,dx);}
@@ -1603,7 +1621,7 @@ function splashHit(u,tg,tx,ty,d){
   const R=d.splash,hit=[];
   for(const e of units){
     if(e.dead||side(e.team)===side(u.team))continue;
-    if(UD[e.type].air&&noAir(u))continue;
+    if(UD[e.type].air&&noAir(u)&&!d.air)continue;   // d.air: the mecha rocket pod also hits flyers
     const dd=Math.hypot(e.x-tx,e.y-ty);
     if(dd<=R)hit.push([e,dd]);
   }
@@ -1679,21 +1697,66 @@ function fire(u,tg,d){
   if(u.type==='tank'&&u.sieged)tankSplash(u,tg,tx,ty,d);
 }
 /* Mecha: gatling cannon (6 damage every 0.12s, range 9) plus a 4-rocket shoulder pod (20 area damage each, every 5s, range 10). Ground only. */
+/* Mecha steam and dust: while it walks, smoke climbs from the two backpack stacks and every footfall kicks up a little dust.
+   Spawned only for mechas that are on screen and visible; drawn as 'ms' / 'md' effects from two prebaked soft sprites (glowSprite cache), so no extra paths per puff. */
+function mechaPuffs(u,dt){
+  const s=u.ms;
+  if(!s||!(u.path&&u.pi<u.path.length)||s.mv<=.2||effects.length>700||!visAt(u.x,u.y)||!inV(u.x,u.y,120,100,170))return;
+  u.mex=(u.mex||0)-dt;
+  if(u.mex<=0){
+    u.mex=.18;   // one puff per emission, alternating stacks: a quarter of the original rate
+    const tc=Math.cos(s.at),ts=Math.sin(s.at),z=68+s.bz;   // stack tops: torso frame (-13,+-4), height 40+bz+28
+    u.mst=!u.mst;for(const ly of [u.mst?-4:4])effects.push({k:'ms',x:u.x+(-13*tc-ly*ts)/T,y:u.y+(-13*ts+ly*tc)/T,z,vx:(Math.random()*16-8)/T,vy:0,vz:25+Math.random()*20,t:.7,T:.7,r:2.5+Math.random()*1.5,a:.38});
+  }
+  const hc=Math.cos(s.hh),hs=Math.sin(s.hh),m=clamp(s.mv*1.3,0,1),pl=u.mlift||(u.mlift=[0,0]);
+  for(let i=0;i<2;i++){   // same leg phase as drawMecha: a foot has landed when its lift drops below .9
+    const sd=i?1:-1,p=s.ph+(sd>0?0:Math.PI),fz=Math.max(0,Math.cos(p))*7*m,fx=1+Math.sin(p)*11*m;
+    if(pl[i]>.9&&fz<=.9&&s.mv>.3){
+      const gx=u.x+(hc*fx-hs*sd*7)/T,gy=u.y+(hs*fx+hc*sd*7)/T;
+      for(let k=0;k<1;k++)effects.push({k:'md',x:gx+(Math.random()*12-6)/T,y:gy+(Math.random()*6-3)/T,z:2,vx:(Math.random()*40-20)/T,vy:0,vz:5+Math.random()*15,t:.35+Math.random()*.25,T:.6,r:5+Math.random()*4});
+    }
+    pl[i]=fz;
+  }
+}
+/* nearest enemy flyer in range, for the rocket pod (the gatling stays ground-only) */
+function mechaAirTarget(u,r){
+  let best=null,bd=r;
+  const us=side(u.team),fr=isFriend(u.team),ux=u.x,uy=u.y;
+  const qx0=clamp(((ux-r)/GC8)|0,0,G8W-1),qx1=clamp(((ux+r)/GC8)|0,0,G8W-1),qy0=clamp(((uy-r)/GC8)|0,0,G8H-1),qy1=clamp(((uy+r)/GC8)|0,0,G8H-1);
+  for(let qy=qy0;qy<=qy1;qy++)for(let qx=qx0;qx<=qx1;qx++){
+    for(let i=g8Head[qy*G8W+qx];i>=0;i=g8Next[i]){
+      const e=units[i];
+      if(!e||e.dead||side(e.team)===us||!UD[e.type].air)continue;
+      if(fr&&!visAt(e.x,e.y))continue;
+      const d=Math.hypot(e.x-ux,e.y-uy);
+      if(d<bd){bd=d;best=e;}
+    }
+  }
+  return best;
+}
 function mechaTick(u,dt){
   u.rcd=(u.rcd||0)-dt;
+  mechaPuffs(u,dt);
+  if(u.rcd<=0&&!(u.salvo>0)){   // rocket pod also fires on its own at flying units (only when it is not busy attacking a ground target)
+    u.acqA=(u.acqA||0)-dt;
+    if(u.acqA<=0&&!(u.order.type==='attack'&&u.order.target&&!u.order.target.dead)){
+      u.acqA=.35;const ta=mechaAirTarget(u,10);
+      if(ta){u.salvo=4;u.salvoT=0;u.salvoTg=ta;u.rcd=5;}
+    }
+  }
   if(u.rcd<=.8)u.rfired=0;
   if(u.salvo>0){
     u.salvoT-=dt;
     if(u.salvoT<=0){
       const tg=u.salvoTg;
-      if(!tg||tg.dead||(tg.kind==='u'&&UD[tg.type].air)||(tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y))>11)u.salvo=0;
+      if(!tg||tg.dead||(tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y))>11)u.salvo=0;
       else{mechaRocket(u,tg,4-u.salvo);u.salvo--;u.salvoT=.2;}
     }
   }
 }
 function mechaRocket(u,tg,idx){
   const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x+(Math.random()-.5)*.5,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y+(Math.random()-.5)*.3;
-  const zi=tg.kind==='b'?24:10,sx=u.x+Math.cos(u.face)*.15,sy=u.y+Math.sin(u.face)*.15;
+  const zi=tg.kind==='b'?24:UD[tg.type].air?36:10,sx=u.x+Math.cos(u.face)*.15,sy=u.y+Math.sin(u.face)*.15;
   u.rfired=idx+1;u.rIdx=idx;u.rft=time;
   effects.push({k:'m',sx,sy,ex:tx,ey:ty,x:sx,y:sy,z0:64,z1:zi,z:64,t:.42,T:.42});
   effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ff8a3d',d:.42});effects.push({k:'r',x:tx,y:ty,t:.35,c:'#ffd27a',d:.42});
@@ -1701,13 +1764,13 @@ function mechaRocket(u,tg,idx){
   for(let i=0;i<8;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.6;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.35,c:i%2?'#ffd27a':'#ff6a2d',d:.42});}
   if(sfxOn()){const m=vmix(u.x,u.y);if(m&&sfxOK('mechaR',.08))rocketShot(bus(m.pan,m.v));}
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
-  splashHit(u,tg,tx,ty,{splash:2,dmg:20});
+  splashHit(u,tg,tx,ty,{splash:2,dmg:20,air:true});
 }
 function mechaFire(u,tg,d){
   const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y;
   const dist=tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y)-.3;
   if((u.rcd||0)<=0&&!(u.salvo>0)){u.salvo=4;u.salvoT=0;u.salvoTg=tg;u.rcd=5;}
-  if(dist>9)return;   // the gatling reaches 9 tiles, the rockets 10
+  if(dist>10)return;   // the gatling now reaches 10 tiles, same as the rockets
   effects.push({k:'l',x:u.x,y:u.y,x1:tx+(Math.random()-.5)*.4,y1:ty+(Math.random()-.5)*.4,t:.08,w:1.8,c:'#ffcf6a',z:46,z1:tg.kind==='b'?14:10});
   effects.push({k:'p',x:tx,y:ty,vx:(Math.random()-.5)*2.4,vy:(Math.random()-.5)*2.4,t:.2,c:'#ffd27a'});
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
@@ -1756,8 +1819,23 @@ function ultraBlade(u,tg,d){
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
   splashHit(u,tg,tx,ty,d);
 }
+/* Ultralisk footstep dust: one puff each time a front foot lands (front feet alternate, like the mecha's two), only on screen; same cached 'md' dust effect */
+function ultraPuffs(u,dt){
+  const s=u.us;
+  if(!s||!(u.path&&u.pi<u.path.length)||s.mv<=.3||effects.length>700||!visAt(u.x,u.y)||!inV(u.x,u.y,150,140,170))return;
+  const hc=Math.cos(s.hh),hs=Math.sin(s.hh),m=clamp(s.mv*1.3,0,1),pl=u.ulift||(u.ulift=[0,0]);
+  for(let i=0;i<2;i++){
+    const sd=i?1:-1,p=s.ph+(sd>0?Math.PI:0),fz=Math.max(0,Math.cos(p))*9*m,fx=25+Math.sin(p)*13*m,fy=sd*21;   // front legs, same pose as drawUltralisk
+    if(pl[i]>.9&&fz<=.9){
+      const gx=u.x+(hc*fx-hs*fy)/T,gy=u.y+(hs*fx+hc*fy)/T;
+      effects.push({k:'md',x:gx+(Math.random()*12-6)/T,y:gy+(Math.random()*6-3)/T,z:2,vx:(Math.random()*40-20)/T,vy:0,vz:5+Math.random()*15,t:.35+Math.random()*.25,T:.6,r:6+Math.random()*4});
+    }
+    pl[i]=fz;
+  }
+}
 function ultraTick(u,dt){
   const d=UD.ultralisk;
+  ultraPuffs(u,dt);
   u.scd=(u.scd===undefined?1:u.scd)-dt;
   if(u.vol>0){
     u.vT-=dt;
@@ -1971,7 +2049,7 @@ function updateUnit(u,dt){
         if(t){u.order={type:'attack',target:t,home:null,leash:0,then:o};u.path=null;break;}
       }
       if(!u.path){if(!pathOK(u))break;if(!setPath(u,o.x,o.y)){u.order={type:'idle'};break;}}
-      if(!followPath(u,dt,d.speed))u.order={type:'idle'};
+      if(!followPath(u,dt,u.mcap?Math.min(d.speed,u.mcap):d.speed))u.order={type:'idle'};
       break;
     case 'attack':{
       const tg=o.target;
@@ -2051,7 +2129,7 @@ function queueTrain(b,type){
   const d=UD[type],tm=teams[b.team];
   if(!b.done||b.dead||b.queue.length>=5)return false;
   if(tm.minerals<d.cost){if(b.team===0)flash('Not enough minerals');return false;}
-  if(!d.give&&aiTeams.includes(b.team)&&tm.used+d.supply>({easy:20,normal:30,hard:60})[opts.diff])return false;   // AI command point cap: Easy 20, Medium 30, Hard 60
+  if(!d.give&&type!=='ultralisk'&&aiTeams.includes(b.team)&&tm.used+d.supply>({easy:20,normal:30,hard:60})[opts.diff])return false;   // AI command point cap: Easy 20, Medium 30, Hard 60
   if(!d.give&&tm.used+d.supply>tm.cap){if(b.team===0)flash(raceOf(b.team)==='zerg'?'Supply blocked. Train a Floater.':'Supply blocked. Build a Pylon.');return false;}
   tm.minerals-=d.cost;tm.used+=d.supply;b.queue.push({type,t:d.time});return true;
 }
@@ -2105,7 +2183,7 @@ function updateBuilding(b,dt){
       for(let qy=qy0;qy<=qy1;qy++)for(let qx=qx0;qx<=qx1;qx++){
         for(let i=g8Head[qy*G8W+qx];i>=0;i=g8Next[i]){
           const e=units[i];
-          if(!e||e.dead||side(e.team)===bs||!(UD[e.type].air||e.type==='colossus'||raceOf(b.team)==='protoss'))continue;
+          if(!e||e.dead||side(e.team)===bs||!(UD[e.type].air||e.type==='colossus'||e.type==='mecha'||e.type==='ultralisk'||raceOf(b.team)==='protoss'))continue;
           if(bf&&!visAt(e.x,e.y))continue;
           const dd=Math.hypot(e.x-cx,e.y-cy);
           if(dd<bd){bd=dd;best=e;}
@@ -2177,6 +2255,8 @@ function aiRun(t){
   const grow=hardM?time:Math.min(time,240);   // Easy/Normal: army caps stop growing with time after the 4-minute mark
   const mine=units.filter(u=>u.team===t),wk=mine.filter(u=>u.type==='worker'),mar=mine.filter(u=>u.type==='marine'),rkt=mine.filter(u=>u.type==='rocket'),tnk=mine.filter(u=>u.type==='tank'),hel=mine.filter(u=>u.type==='heli'),army=mine.filter(u=>u.type!=='worker'&&u.type!=='overlord'),pro=raceOf(t)==='protoss',zea=mine.filter(u=>u.type==='zealot'),stk=mine.filter(u=>u.type==='stalker'),imm=mine.filter(u=>u.type==='immortal'),col=mine.filter(u=>u.type==='colossus');
   const zrg=raceOf(t)==='zerg',zdg=mine.filter(u=>u.type==='dog'),zrv=mine.filter(u=>u.type==='ravager'),ztr=mine.filter(u=>u.type==='tree'),zpt=mine.filter(u=>u.type==='ptero');
+  const ulN=mine.filter(u=>u.type==='ultralisk').length+buildings.reduce((n,b)=>n+(b.team===t&&!b.dead&&b.type==='factory'?b.queue.filter(q=>q.type==='ultralisk').length:0),0);   // alive + in training
+  const wantUl=zrg&&zrv.length>=3&&ulN<Math.floor(zrv.length/3)&&buildings.some(b=>b.team===t&&b.type==='factory'&&b.done&&!b.dead);   // an Ultralisk is due: hold back hounds/pterodactyls and keep spare supply until it is bought
   const nex=buildings.find(b=>b.team===t&&b.type==='nexus'&&b.done&&!b.dead);
   if(!nex||!A)return;
   for(const w of wk)if(w.order.type==='idle'){
@@ -2185,12 +2265,12 @@ function aiRun(t){
     else{const r=freeRes(w.x,w.y)||nearestRes(w.x,w.y);if(r)startHarvest(w,r);}
   }
   if(wk.length<12&&nex.queue.length<2)queueTrain(nex,'worker');
-  if(zrg&&nex.queue.length<1&&zrv.length>=2&&time>200&&zpt.length<cp(Math.min(10,2+Math.floor(grow/90))))queueTrain(nex,'ptero');
+  if(zrg&&nex.queue.length<1&&zrv.length>=2&&time>200&&!wantUl&&zpt.length<cp(Math.min(10,2+Math.floor(grow/90))))queueTrain(nex,'ptero');
   const builders=wk.filter(w=>w.order.type==='build');
   const pending=type=>builders.some(w=>w.order.btype===type)||buildings.some(b=>b.team===t&&b.type===type&&!b.done&&!b.dead);
   const pickBuilder=()=>wk.find(w=>w.order.type==='harvest'&&w.carry===0&&w.order.st!=='mining')||wk.find(w=>w.order.type==='harvest');
   const bars=buildings.filter(b=>b.team===t&&b.type==='barracks'&&!b.dead);
-  if(zrg&&tm.cap-tm.used<=3&&tm.minerals>=100&&!nex.queue.some(q=>q.type==='overlord'))queueTrain(nex,'overlord');
+  if(zrg&&tm.cap-tm.used<=(wantUl?6:3)&&tm.minerals>=100&&!nex.queue.some(q=>q.type==='overlord'))queueTrain(nex,'overlord');
   else if(!zrg&&!pending('pylon')&&tm.cap-tm.used<=3&&tm.minerals>=100){const w=pickBuilder();if(w)buildNear(w,'pylon',nex);}
   else if(!pending('barracks')&&tm.minerals>=150&&((bars.length<1&&wk.length>=7)||(bars.length<2&&wk.length>=10&&time>300))){const w=pickBuilder();if(w)buildNear(w,'barracks',nex);}
   const facs=buildings.filter(b=>b.team===t&&b.type==='factory'&&!b.dead);
@@ -2202,25 +2282,28 @@ function aiRun(t){
     if(!f.rally)f.rally=rally;
     if(zrg){
       if(f.done&&f.queue.length<1){
-        if(zrv.length<cp(12))queueTrain(f,'ravager');
+        if(zrv.length>=3&&ulN<Math.floor(zrv.length/3))queueTrain(f,'ultralisk');   // super unit unlocked by 3 ravagers on the field
+        else if(zrv.length<cp(12))queueTrain(f,'ravager');
       }
     }
     else if(pro&&f.done&&f.queue.length<1){
       /* immortals first, then a colossus for every two immortals */
-      if(imm.length>=2&&col.length<Math.min(6,Math.ceil(imm.length/2))&&time>200)queueTrain(f,'colossus');
+      if(imm.length>=5&&mine.filter(u=>u.type==='mothership').length<Math.floor(imm.length/5)&&tm.minerals>=UD.mothership.cost&&queueTrain(f,'mothership')){}   // super unit unlocked by 5 immortals on the field; only bought when affordable right now, otherwise normal production carries on (no waiting)
+      else if(imm.length>=2&&col.length<Math.min(6,Math.ceil(imm.length/2))&&time>200)queueTrain(f,'colossus');
       else if(imm.length<cp(10))queueTrain(f,'immortal');
     }
     else if(f.done&&f.queue.length<1){
       /* mix: tanks first, then a copter for every two tanks, never starving either */
       const wantHeli=tnk.length>=2&&hel.length<Math.min(10,Math.ceil(tnk.length/2))&&time>200;
-      if(wantHeli)queueTrain(f,'heli');
+      if(tnk.length>=3&&mine.filter(u=>u.type==='mecha').length<Math.floor(tnk.length/3))queueTrain(f,'mecha');   // super unit unlocked by 3 tanks on the field
+      else if(wantHeli)queueTrain(f,'heli');
       else if(tnk.length<cp(14))queueTrain(f,'tank');
     }
   }
   for(const b of bars){
     if(!b.rally)b.rally=rally;
     if(zrg){
-      if(b.done&&b.queue.length<1&&zdg.length<cp(Math.min(60,6+Math.floor(grow/24))))queueTrain(b,'dog');
+      if(b.done&&b.queue.length<1&&!wantUl&&zdg.length<cp(Math.min(60,6+Math.floor(grow/24))))queueTrain(b,'dog');
     }
     else if(pro){
       if(b.done&&b.queue.length<1&&zea.length+stk.length<cp(Math.min(40,4+Math.floor(grow/36))))queueTrain(b,zea.length<=stk.length?'zealot':'stalker');
@@ -2235,12 +2318,15 @@ function aiRun(t){
   const gx=foe.tx+foe.size/2,gy=foe.ty+foe.size/2;
   const need=Math.max(3,cp(A.wave));
   if(!A.attacking&&army.length>=need&&time>=A.after){
-    A.attacking=true;
+    A.attacking=true;A.go=new Set(army.map(u=>u.id));
     if(sd)note('Enemy wave is crossing','warn');else note('Your ally is moving out','good');
   }
   if(A.attacking){
-    for(const m of army)if(m.order.type==='idle')setOrder(m,{type:'amove',x:gx,y:gy});
-    if(army.length<=Math.min(2,need-1)){A.attacking=false;if(hardM)A.wave+=pro?2:3;A.after=time+60;}   // only Hard escalates its waves
+    /* AI waves (all races) move out together: only the units that were in the wave at launch are sent (new recruits wait at the rally point for the next wave), and the march keeps the pace of the slowest unit */
+    const go=army.filter(m=>A.go&&A.go.has(m.id));
+    let pace=99;for(const m of go)pace=Math.min(pace,UD[m.type].speed);
+    for(const m of go){m.mcap=pace;if(m.order.type==='idle')setOrder(m,{type:'amove',x:gx,y:gy});}
+    if(go.length<=Math.min(2,need-1)){A.attacking=false;A.go=null;for(const m of army)m.mcap=0;if(hardM)A.wave+=pro?2:3;A.after=time+60;}
   }
 }
 
@@ -2263,7 +2349,7 @@ function sim(dt){
     if(e.d>0){e.d-=dt;continue;}
     e.t-=dt;
     if(e.k==='p'){e.x+=e.vx*dt;e.y+=e.vy*dt;}
-    else if(e.k==='sm'){e.x+=e.vx*dt;e.y+=e.vy*dt;e.z+=e.vz*dt;}
+    else if(e.k==='sm'||e.k==='ms'||e.k==='md'){e.x+=e.vx*dt;e.y+=e.vy*dt;e.z+=e.vz*dt;}
     else if(e.k==='sp'){const f=clamp(1-e.t/e.T,0,1);e.x=e.sx+(e.ex-e.sx)*f;e.y=e.sy+(e.ey-e.sy)*f;}
     else if(e.k==='m'){
       const f=clamp(1-e.t/e.T,0,1);
@@ -3862,7 +3948,7 @@ const prismRaw=prism;
 /* ---------- Mecha: heavy walker (gunmetal with amber sensors, dark red trim) ---------- */
 const drawMecha=(()=>{
   const BK='#1b2025',BK2='#262d33',BK3='#10141a',STL='#323b42',STL2='#46515a',STL3='#39434a',AMB='#ffb347',GUN='#12171c';
-  const MRED='#8f1d1d',MREDD='#5e1010';
+  const MRED='#8a0303',MREDD='#4a0202';   // blood red
   const HZ0=36,LEG_A=18,LEG_B=18,AMP=11;
   const angDiff=(a,b)=>{let d=(b-a)%(Math.PI*2);if(d>Math.PI)d-=Math.PI*2;if(d<-Math.PI)d+=Math.PI*2;return d;};
   const turnTo=(a,b,m)=>{const d=angDiff(a,b);return Math.abs(d)<=m?b:a+Math.sign(d)*m;};
@@ -3930,7 +4016,7 @@ const drawMecha=(()=>{
       // knee block and shin
       limb(kn,an,6.6,'#2d353b');
       const s0=[kn[0]+(an[0]-kn[0])*.5,kn[1]+(an[1]-kn[1])*.5],s1=[kn[0]+(an[0]-kn[0])*.82,kn[1]+(an[1]-kn[1])*.82];
-      limb(s0,s1,7.4,AMB,false);
+      limb(s0,s1,7.4,'#0b0d10',false);
       const kg=gH(r.kx,sd*8.6);prism(kg[0],kg[1],[[-3,-3.4],[3.6,-3.4],[3.6,3.4],[-3,3.4]],r.kz-3,r.kz+3.6,STL2,M.hh);
       orb(hip[0],hip[1],3.4,'#4a545c');
       // ankle and foot
@@ -4615,6 +4701,14 @@ function render(t){
       const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f*2.4),sx=e.x*T,sy=e.y*T*K-e.z,a=clamp(e.t/e.T,0,1)*.55;
       ctx.globalAlpha=a;ctx.fillStyle='#5d6166';ctx.beginPath();ctx.arc(sx,sy,r,0,7);ctx.fill();
       ctx.globalAlpha=a*.7;ctx.fillStyle='#b9bdc1';ctx.beginPath();ctx.arc(sx-r*.25,sy-r*.25,r*.55,0,7);ctx.fill();ctx.globalAlpha=1;
+    }
+    else if(e.k==='ms'){   // mecha stack steam: cached grey disc, grows and fades as it climbs
+      const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f*1.4);
+      ctx.globalAlpha=e.a*(1-f);ctx.drawImage(glowSprite('mstk',[[0,'rgba(138,144,150,1)'],[.72,'rgba(138,144,150,1)'],[1,'rgba(138,144,150,0)']]),e.x*T-r,e.y*T*K-e.z-r,r*2,r*2);ctx.globalAlpha=1;
+    }
+    else if(e.k==='md'){   // mecha footfall dust: cached tan disc, flattened to the ground plane
+      const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f);
+      ctx.globalAlpha=.4*(1-f);ctx.drawImage(glowSprite('mdst',[[0,'rgba(167,155,134,1)'],[.72,'rgba(167,155,134,1)'],[1,'rgba(167,155,134,0)']]),e.x*T-r,e.y*T*K-e.z-r*K,r*2,r*2*K);ctx.globalAlpha=1;
     }
     else if(e.k==='sp'){   // Ultralisk spike: thrown in an arc, bone shaft with a dark tip
       const f=clamp(1-e.t/e.T,0,.96),g=f+.04;
@@ -5484,7 +5578,7 @@ function infoHTML(e){
   if(e.kind==='u'){
     const d=UD[e.type];
     const up7=dUp(e.team);k('Damage',(d.dmg+up7)+(d.bonus?' (+'+d.bonus+(d.bt==='light'?' vs light':' vs armoured')+')':'')+(d.range>1.5?' ranged':' melee'));if(d.sh)k('Shield',d.sh);k('Range',d.range);k('Attack rate',d.cd+'s');k('DPS',((d.dmg+up7)/d.cd).toFixed(1));
-    k('Speed',d.speed);k('Vision',d.vis);k('Supply',d.supply,1);k('Cost',d.cost);
+    k('Speed',e.type==='worker'&&raceOf(e.team)==='zerg'?+(d.speed*1.25).toFixed(2):d.speed);k('Vision',d.vis);k('Supply',d.supply,1);k('Cost',d.cost);
     if(d.beams)k('Targets per volley',d.beams,1);
     if(e.type==='worker'&&mine)k('Carrying',e.carry);
     if(d.noatk){R.length=0;k('Attack','None');k('Speed',d.speed);k('Vision',d.vis);k('Supply','+'+d.give,1);k('Cost',d.cost);}
@@ -5502,7 +5596,7 @@ function infoHTML(e){
     if(e.type==='armory')k('Research','Unit HP +'+(raceOf(e.team)==='zerg'?50:25)+' · Unit damage +7');
     if(e.type==='barracks'){k('Trains',RACES[raceOf(e.team)].bar.map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
     if(e.type==='factory'){k('Trains',RACES[raceOf(e.team)].fac.concat(raceOf(e.team)==='protoss'?['mothership']:raceOf(e.team)==='zerg'?['ultralisk']:[]).map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
-    if(e.type==='turret'){k('Damage',d.dmg+' ranged');k('Range',d.range,1);k('Attack rate',d.cd+'s');k('DPS',(d.dmg/d.cd).toFixed(1));k('Targets',raceOf(e.team)==='protoss'?'Ground, air and Colossi':'Air and Colossi');}
+    if(e.type==='turret'){k('Damage',d.dmg+' ranged');k('Range',d.range,1);k('Attack rate',d.cd+'s');k('DPS',(d.dmg/d.cd).toFixed(1));k('Targets',raceOf(e.team)==='protoss'?'Ground, air and Colossi':'Air, Colossi, Mechas and Ultralisks');}
     if(mine&&e.done&&d.supply)k('Team supply',t0.used+' / '+t0.cap);
     k('Vision',d.vis);k('Size',d.size+' × '+d.size);k('Cost',d.cost);k('Build time',d.time+'s');
   }
@@ -5728,7 +5822,7 @@ const TDESC={
   marine:'Cheap, fast rifle infantry. Hits ground and air units.',
   rocket:'Armoured anti-tank trooper with area damage. Bonus damage vs tanks. Can hit air units.',
   tank:'Heavy siege cannon with long range, bonus damage vs armoured. Cannot hit air units.',
-  mecha:'Heavy walker with a gatling cannon and a shoulder rocket pod. Attacks ground units and buildings only, cannot hit air.',
+  mecha:'Heavy walker with a gatling cannon and a shoulder rocket pod. The gatling hits ground units and buildings only; the rockets also hit air.',
   heli:'Fast armored gunship that flies over terrain. Attacks units, not buildings.',
   zealot:'Melee psi-blade warrior with a plasma shield. Strong vs marines and workers. Cannot hit air.',
   stalker:'Long-range shielded skirmisher. Bonus vs armoured. Hits ground and air, the Protoss answer to copters.',
@@ -5739,7 +5833,7 @@ const TDESC={
   pylon:'Raises your command points (supply cap) by 8 so you can train more units.',
   barracks:'Trains marines and rocket soldiers.',
   factory:'Trains tanks and copters.',
-  turret:'Anti-air tower. Automatically shoots down enemy helicopters and colossi.'
+  turret:'Anti-air tower. Automatically shoots down enemy helicopters, colossi, mechas and ultralisks.'
 };
 Object.assign(TDESC,{
   dog:'Cheap scorpion-tailed melee biter. Half the strength of a Zealot, no shield, spawns fast. Cannot hit air.',
@@ -5754,12 +5848,12 @@ const TD2={zerg:{
   nexus:'Hive. Drop-off point for minerals; trains drones, floaters (supply) and pterodactyls.',
   barracks:'Trains hounds.',
   factory:'Trains ravagers, deadwood trees and Ultralisks.',
-  turret:'Spore tower. Automatically shoots down enemy flying units and colossi.',
+  turret:'Spore tower. Automatically shoots down enemy flying units, colossi, mechas and ultralisks.',
   armory:'Research: +50 hp and +7 damage for all your units, 300 minerals each.'},protoss:{
   worker:'Builds structures and mines minerals. Can fight in melee.',
   barracks:'Trains zealots and stalkers.',
   factory:'Trains immortals, colossi and the Mothership.',
-  turret:'Cannon tower. Automatically shoots enemy ground units, flying units and colossi.',
+  turret:'Cannon tower. Automatically shoots enemy ground units, flying units, colossi, mechas and ultralisks.',
   armory:'Research: +25 hp and +7 damage for all your units, 300 minerals each.'}};
 const tdesc=(ty,t)=>(TD2[raceOf(t)]||{})[ty]||TDESC[ty];
 const ODESC={
@@ -5920,9 +6014,9 @@ function setMap(id){
 }
 function drawPickMap(){const c=$('pickMap');if(c.width!==384)c.width=c.height=384;c.getContext('2d').drawImage(mapThumbs[opts.map],0,0,384,384);}
 const DIFFS=[
-  {id:'easy',name:'Easy',pips:1,desc:'Every AI (enemies and your ally) fields a quarter of the troops. Attack waves and army sizes never grow.',cl:'easy'},
-  {id:'normal',name:'Normal',pips:2,desc:'Every AI (enemies and your ally) fields half the troops. Attack waves and army sizes never grow.',cl:'norm'},
-  {id:'hard',name:'Hard',pips:4,desc:'Full-strength AI, exactly as it plays now: armies and attack waves keep growing.',cl:'hard'}];
+  {id:'easy',name:'Easy',pips:1,desc:'Every AI (enemies and your ally) fields a quarter of the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings',cl:'easy'},
+  {id:'normal',name:'Normal',pips:2,desc:'Every AI (enemies and your ally) fields half the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings',cl:'norm'},
+  {id:'hard',name:'Hard',pips:4,desc:'Full-strength AI, exactly as it plays mostly unrestricted: armies and attack waves keep growing. Plans Defense and Dynamic Strike Timings',cl:'hard'}];
 const RICON={terran:'<svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 8v8M8 10.5l8 3M16 10.5l-8 3"/></svg>',
              protoss:'<svg viewBox="0 0 24 24"><path d="M12 2l6 10-6 10-6-10z"/><path d="M6 12h12M12 2v20"/></svg>',
              zerg:'<svg viewBox="0 0 24 24"><path d="M3 15c0-5 4-8 9-8s9 3 9 8"/><path d="M6 15l-1 5M10 15l-.5 5M14 15l.5 5M18 15l1 5"/><path d="M8 9l-2-5M12 7V2M16 9l2-5"/></svg>'};
