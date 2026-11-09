@@ -1208,7 +1208,7 @@ function buildFoam(){   // rebuilt when a map is generated (after Play)
   }
 }
 function drawWater(t,y0,y1,x0,x1){
-  if(curMap==='volcano'){drawLava(t);return;}   // the volcano map has lava, not water
+  if(curMap==='volcano')return;   // disabled: the frozen lava glow overlay is no longer drawn (lava colour is baked into the terrain)
   const tw=t,vx=cam.x,vy=cam.y,vwid=vw/cam.z,vhei=vh/cam.z/K;   // water always drifts (slowly), even with reduced-motion on
   const rx0=Math.max(vx,wTx0*T-4),rx1=Math.min(vx+vwid,(wTx1+1)*T+4);
   if(rx1<=rx0)return;   // river is off screen
@@ -1247,6 +1247,7 @@ const mistSpr=(()=>{const c=document.createElement('canvas');c.width=c.height=12
   g.fillStyle=gr;g.fillRect(0,0,128,128);return c;})();
 const mist=(()=>{const R=rng(91),a=[],n=34;for(let i=0;i<n;i++)a.push({y:(i+R()*.8)/n*H*T,off:(R()-.5)*7.5*T,w:150+R()*170,h:70+R()*70,sp:5+R()*9,al:.07+R()*.07,ph:R()*6.28,sw:10+R()*18});return a;})();
 function drawMist(t){
+  return;   // disabled: river mist and volcano smoke are no longer drawn (performance)
   if(curMap==='volcano'){drawSmoke(t);return;}
   if(curMap==='snow')return;
   const L=H*T,vy=cam.y,vhei=vh/cam.z/K,vx=cam.x,vwid=vw/cam.z,tt=REDUCE?0:t;
@@ -2344,7 +2345,7 @@ function sim(dt){
   units=units.filter(u=>!u.dead);
   buildings=buildings.filter(b=>!b.dead);
   resources=resources.filter(r=>!r.dead);
-  sel=sel.filter(e=>!e.dead);
+  if(sel.some(e=>e.dead)){sel=sel.filter(e=>!e.dead);hudDirty=true;}
   supply();
   fogT-=dt;if(fogT<=0){fogT=1;updateFog();detectEnemies();}
   aiT-=dt;if(aiT<=0){aiT=.6;aiTick();}
@@ -5655,7 +5656,7 @@ function selInner(){
   h+='</div><div class="info"><div class="ir"><span>Total HP</span><b>'+Math.ceil(thp)+'</b></div><div class="ir hl"><span>Supply</span><b>'+sup+'</b></div><div class="ir"><span>Units</span><b>'+sel.length+'</b></div></div>';
   return h;
 }
-let cmdSig='';
+let cmdSig=null;
 function cmdHTML(){
   const L=cmdList(),sig=L.map(c=>c.id).join(',');
   if(sig!==cmdSig){
@@ -5719,7 +5720,7 @@ hud.lastSel='';
 let hudDirty=false;
 
 /* ---------- input ---------- */
-function setSel(list){sel=list;hud.lastSel='';cmdSig='';hudDirty=true;}
+function setSel(list){sel=list;hud.lastSel='';cmdSig=null;hudDirty=true;}
 function clickSelect(w,shift){
   const ent=entityAt(w.x,w.y),now=performance.now();
   if(!ent){if(!shift)userSel([]);return;}
