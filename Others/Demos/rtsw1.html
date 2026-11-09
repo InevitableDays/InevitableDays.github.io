@@ -540,7 +540,7 @@ body.zerg #zdeco{display:block;position:absolute;inset:0;z-index:3;pointer-event
       <button id="alert" type="button" aria-live="polite"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><path d="M12 9v4M12 15.5v.5"/></svg>Enemy detected</button>
       <div id="intro">
         <p><b>Build an economy, then cross a bridge. That's how it always starts.</b></p>
-        <p>Drag to select workers. Right-click a crystal to mine. Use Q / W / F / E / X to place a Pylon, Barracks, Factory, Nexus or anti-air Turret (shoots helicopters from far outside their range). Train marines, rocket soldiers (area damage), tanks and helicopters and destroy the red Nexus on the far bank. On the spawn screen you can choose your faction and the enemy's: Terran (marines, rocket soldiers, tanks, copters) or Protoss (zealots, stalkers, immortals, colossi with regenerating shields).</p>
+        <p>Drag to select workers. Right-click a crystal to mine. Use Q / W / F / E / X to place a Pylon, Barracks, Factory, Nexus or anti-air Turret (shoots helicopters from far outside their range). Train marines, rocket soldiers (area damage), tanks and helicopters and destroy every enemy building on the far bank. On the spawn screen you can choose your faction and the enemy's: Terran (marines, rocket soldiers, tanks, copters) or Protoss (zealots, stalkers, immortals, colossi with regenerating shields).</p>
         <p>Smoke covers the map. Your units only see a short distance, so scout to find the enemy.</p>
       </div>
       <div id="pick" hidden>
@@ -581,7 +581,7 @@ body.zerg #zdeco{display:block;position:absolute;inset:0;z-index:3;pointer-event
 
     <div>
         <b style="color:var(--fg)">Zerg</b>
-        swarm with cheap, fast Hounds, acid-spitting Ravagers. Floaters, balloon monsters you can fly around, provide supply. Build an economy, scout through the smoke and destroy the enemy Nexus.
+        swarm with cheap, fast Hounds, acid-spitting Ravagers. Floaters, balloon monsters you can fly around, provide supply. Build an economy, scout through the smoke and destroy every enemy building.
     </div>
 
 </div>
@@ -669,7 +669,7 @@ const side=t=>(t===1||t===3)?1:0,isFriend=t=>side(t)===0;
 const REDUCE=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
 const UD={
-  worker:{name:'Worker',cost:50,time:8,supply:1,hp:40,speed:3.1,range:.85,dmg:5,cd:1,info:'Builds, mines, can fight in melee',vis:9},
+  worker:{name:'Worker',cost:50,time:8,supply:1,hp:40,speed:1.86,range:.85,dmg:5,cd:1,info:'Builds, mines, can fight in melee',vis:9},
   marine:{name:'Marine',cost:50,time:7,supply:1,hp:55,speed:2.2,range:9,dmg:7,cd:.94,info:'Rifle, 7 damage, range 9. Cheap all-rounder',vis:12},
   rocket:{name:'Rocket Soldier',cost:100,time:11,supply:2,hp:90,speed:1.95,range:10,dmg:22,bonus:18,cd:2.2,splash:2.1,armored:true,info:'Armoured anti-tank trooper (Marauder-style). 22 area damage, +18 vs armoured units (tanks, rocket soldiers), range 10. Can hit air units',vis:12},
   heli:{name:'Helicopter',cost:175,time:16,supply:2,hp:150,speed:3,range:9,dmg:10,cd:.6,info:'Banshee-style gunship, 10 damage per shot, ignores terrain. Hits ground and air units but cannot attack buildings. Tanks and workers cannot hit it',vis:13,air:true},
@@ -1480,7 +1480,6 @@ function moveBy0(u,dx,dy){
 }
 function followPath(u,dt,sp){
   if(!u.path||u.pi>=u.path.length)return false;
-  if(u.type==='worker'&&raceOf(u.team)==='zerg')sp*=1.25;   // Drones: +25% like the other Zerg units
   const p=u.path[u.pi],dx=p.x-u.x,dy=p.y-u.y,d=Math.hypot(dx,dy),step=sp*dt,ox=u.x,oy=u.y;
   if(d<=step+.02){moveBy(u,dx,dy);u.pi++;}
   else{moveBy(u,dx/d*step,dy/d*step);u.face=Math.atan2(dy,dx);}
@@ -1640,7 +1639,7 @@ function fire(u,tg,d){
   if(u.type==='mothership'){mothershipVolley(u,tg,d);return;}
   if(u.type==='ultralisk'){ultraBlade(u,tg,d);return;}
   if(u.type==='tank'){
-    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.16,w:3.4,c:'#ffb347',z:30,z1:tg.kind==='u'&&UD[tg.type].air?36:12});
+    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.16,w:1.2,c:'#ffb347',z:30,z1:tg.kind==='u'&&UD[tg.type].air?36:12});
     effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ffb347'});
     boom(tx,ty,tg.kind==='b'?26:UD[tg.type].air?36:10,tg.kind==='b'?44:26,0,tg.kind==='b'?5:2);
     for(let i=0;i<7;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.3,c:i%2?'#ffd27a':'#ff8a3d'});}
@@ -1665,14 +1664,14 @@ function fire(u,tg,d){
     splashHit(u,tg,tx,ty,d);return;
   }
   else if(u.type==='immortal'){
-    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.15,w:3.4,c:'#9defff',z:34,z1:tg.kind==='b'?12:10});
+    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.15,w:1.2,c:'#9defff',z:34,z1:tg.kind==='b'?12:10});
     effects.push({k:'r',x:tx,y:ty,t:.4,c:'#9defff'});
     boom(tx,ty,tg.kind==='b'?14:9,tg.kind==='b'?26:16,0,1);
   }
   else if(u.type==='ravager'){
     const az=tg.kind==='u'&&UD[tg.type].air?36:tg.kind==='b'?14:10;
-    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.2,w:5.5,c:'#a6e83c',z:24,z1:az});
-    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.12,w:2,c:'#eaffb0',z:24,z1:az});
+    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.2,w:1.2,c:'#a6e83c',z:24,z1:az});
+    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.12,w:1.2,c:'#eaffb0',z:24,z1:az});
     effects.push({k:'r',x:tx,y:ty,t:.45,c:'#a6e83c'});
     for(let i=0;i<8;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.3,c:i%2?'#c9f06a':'#6f9a22'});}
   }
@@ -1682,14 +1681,14 @@ function fire(u,tg,d){
   }
   else if(u.type==='ptero'){
     const az=tg.kind==='u'&&UD[tg.type].air?36:tg.kind==='b'?14:10;
-    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.22,w:5,c:'#ff2a2a',z:34,z1:az});
-    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.14,w:1.8,c:'#ffd0d0',z:34,z1:az});
+    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.22,w:1.2,c:'#ff2a2a',z:34,z1:az});
+    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.14,w:1.2,c:'#ffd0d0',z:34,z1:az});
     effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ff4040'});effects.push({k:'r',x:tx,y:ty,t:.35,c:'#ff9a9a',d:.05});
     for(let i=0;i<8;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.4;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.3,c:i%2?'#ff7a7a':'#c01818'});}
     if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
     splashHit(u,tg,tx,ty,d);return;
   }
-  else if(d.range>1.5)effects.push({k:'l',x:u.x,y:u.y,x1:tx+(Math.random()-.5)*.4,y1:ty+(Math.random()-.5)*.4,t:.1,c:d.air?'#ffe08a':u.team===0?'#bfeaff':tcol(u.team),z:d.air?36:undefined,z1:tg.kind==='u'&&UD[tg.type].air?36:undefined});
+  else if(d.range>1.5)effects.push({k:'l',x:u.x,y:u.y,x1:tx+(Math.random()-.5)*.4,y1:ty+(Math.random()-.5)*.4,t:.1,w:1.2,c:d.air?'#ffe08a':u.team===0?'#bfeaff':tcol(u.team),z:d.air?36:undefined,z1:tg.kind==='u'&&UD[tg.type].air?36:undefined});
   else effects.push({k:'p',x:tx,y:ty,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,t:.2,c:'#fff'});
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
   if(u.type==='zealot'){splashHit(u,tg,tx,ty,d);return;}   // psi-blade sweeps hit nearby enemies too
@@ -1771,7 +1770,6 @@ function mechaFire(u,tg,d){
   const dist=tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y)-.3;
   if((u.rcd||0)<=0&&!(u.salvo>0)){u.salvo=4;u.salvoT=0;u.salvoTg=tg;u.rcd=5;}
   if(dist>10)return;   // the gatling now reaches 10 tiles, same as the rockets
-  effects.push({k:'l',x:u.x,y:u.y,x1:tx+(Math.random()-.5)*.4,y1:ty+(Math.random()-.5)*.4,t:.08,w:1.8,c:'#ffcf6a',z:46,z1:tg.kind==='b'?14:10});
   effects.push({k:'p',x:tx,y:ty,vx:(Math.random()-.5)*2.4,vy:(Math.random()-.5)*2.4,t:.2,c:'#ffd27a'});
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
   damage(tg,d.dmg,u.team);
@@ -1799,9 +1797,9 @@ function mothershipVolley(u,tg,d){
     const z1=e.kind==='u'&&UD[e.type].air?36:e.kind==='b'?14:10;
     /* the beam leaves whichever of the six emitter ports under the rim faces the target */
     const pa=Math.round(Math.atan2(ty-u.y,tx-u.x)/(Math.PI/3))*(Math.PI/3),sx=u.x+Math.cos(pa)*MS_PORT/T,sy=u.y+Math.sin(pa)*MS_PORT/T,sz=MS_HV-22*MS_S;
-    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.34,w:13,c:'rgba(61,184,242,.35)',z:sz,z1});
-    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.3,w:5.5,c:'#6fd0ff',z:sz,z1});
-    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.26,w:2,c:'#ffffff',z:sz,z1});
+    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.34,w:1.2,c:'rgba(61,184,242,.35)',z:sz,z1});
+    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.3,w:1.2,c:'#6fd0ff',z:sz,z1});
+    effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.26,w:1.2,c:'#ffffff',z:sz,z1});
     effects.push({k:'r',x:tx,y:ty,t:.45,c:'#8fe9ff'});
     for(let i=0;i<5;i++){const a=Math.random()*6.283,sp=1+Math.random()*2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.25+Math.random()*.3,c:i%2?'#bff2ff':'#3db8f2'});}
     if(u.team===0&&e.kind==='b'&&side(e.team)===1)mBldg=time;
@@ -1812,8 +1810,8 @@ function mothershipVolley(u,tg,d){
 const ULTRA_SPX=[-26,-15,-4,7,18],ULTRA_SPY=[-5,5,-5,5,0],ULTRA_SPZ=[38,38,44,44,48.4];
 function ultraBlade(u,tg,d){
   const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y;
-  effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.2,w:9,c:'rgba(166,232,60,.4)',z:34,z1:tg.kind==='b'?14:12});
-  effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.14,w:3,c:'#e8ffb0',z:34,z1:tg.kind==='b'?14:12});
+  effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.2,w:1.2,c:'rgba(166,232,60,.4)',z:34,z1:tg.kind==='b'?14:12});
+  effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.14,w:1.2,c:'#e8ffb0',z:34,z1:tg.kind==='b'?14:12});
   effects.push({k:'r',x:tx,y:ty,t:.5,c:'#c8ff78'});
   for(let i=0;i<9;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.4;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.3,c:i%2?'#a6e83c':'#d8ff8a'});}
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
@@ -1949,7 +1947,7 @@ function updateHarvest(u,dt){
     u.face+=dt*0;
     if(o.t<=0){
       const r=o.res;
-      u.carry=Math.min(5,Math.max(0,r.amount));r.amount-=5;
+      u.carry=Math.min(8,Math.max(0,r.amount));r.amount-=8;
       if(r.miner===u)r.miner=null;
       if(r.amount<=0){r.dead=true;occ[r.ty*W+r.tx]=0;}
       o.st='toBase';u.path=null;
@@ -2142,7 +2140,13 @@ function spawnUnit(b,type){
   if(b.team===0&&!onScreen(u.x,u.y)){flash(nameOf({kind:'u',type,team:b.team})+' ready');note(nameOf({kind:'u',type,team:b.team})+' ready','good',u.x,u.y);}
   if(b.rally){
     if(b.rally.res&&!b.rally.res.dead&&type==='worker')startHarvest(u,b.rally.res);
-    else setOrder(u,{type:'move',x:b.rally.x,y:b.rally.y});
+    else{
+      /* spread arrivals in a small sunflower cluster around the rally point (one-time offset per spawn, zero per-frame cost) */
+      const k=(b.rn=((b.rn|0)+1)%28),sp=Math.max(.6,(RAD[type]||.24)*2.1),r=sp*Math.sqrt(k)*.9,an=k*2.4+b.tx;
+      let rx=clamp(b.rally.x+Math.cos(an)*r,.5,W-.5),ry=clamp(b.rally.y+Math.sin(an)*r,.5,H-.5);
+      if(!passable(rx,ry)){rx=b.rally.x;ry=b.rally.y;}
+      setOrder(u,{type:'move',x:rx,y:ry});
+    }
   }else if(type==='worker'){
     const r=freeRes(u.x,u.y)||nearestRes(u.x,u.y);
     if(r)startHarvest(u,r);
@@ -2230,15 +2234,15 @@ function income(t){
 /* ---------- opponent ---------- */
 function buildNear(unit,type,home){
   const s=BD[type].size,cx=home.tx+home.size/2,cy=home.ty+home.size/2,cands=[];
-  for(let dy=-14;dy<=14;dy++)for(let dx=-14;dx<=14;dx++){
+  for(let dy=-24;dy<=24;dy++)for(let dx=-24;dx<=24;dx++){
     const tx=Math.round(cx+dx-s/2),ty=Math.round(cy+dy-s/2),dist=Math.hypot(dx,dy);
-    if(dist<5||dist>14)continue;
+    if(dist<6||dist>24)continue;
     let ok=true;
-    for(let y=ty-1;y<=ty+s&&ok;y++)for(let x=tx-1;x<=tx+s;x++){if(x<0||y<0||x>=W||y>=H||occ[y*W+x]!==0){ok=false;break;}}
+    for(let y=ty-2;y<=ty+s+1&&ok;y++)for(let x=tx-2;x<=tx+s+1;x++){if(x<0||y<0||x>=W||y>=H||occ[y*W+x]!==0){ok=false;break;}}
     if(!ok)continue;
     let near=false;for(const r of resources)if(!r.dead&&Math.hypot(r.tx-cx-dx,r.ty-cy-dy)<4){near=true;break;}
     if(near)continue;
-    cands.push({tx,ty,d:dist+Math.random()*2});
+    cands.push({tx,ty,d:dist+Math.random()*8});
   }
   if(!cands.length)return false;
   cands.sort((a,b)=>a.d-b.d);
@@ -2367,7 +2371,7 @@ function sim(dt){
   tm.histT-=dt;
   if(tm.histT<=0){tm.histT=5;tm.hist.push(income(0));if(tm.hist.length>60)tm.hist.shift();}
   if(!over){
-    const a=buildings.some(b=>side(b.team)===0&&b.type==='nexus'),c=buildings.some(b=>side(b.team)===1&&b.type==='nexus');
+    const a=buildings.some(b=>side(b.team)===0&&!b.dead),c=buildings.some(b=>side(b.team)===1&&!b.dead);   // the game ends only when a side has lost ALL its buildings
     if(!a)endGame('lose');else if(!c)endGame('win');
   }
 }
@@ -3418,7 +3422,7 @@ function drawProtoss(u,t){
    Animation plays at SPR_TB (units) / SPR_BTB (buildings) ticks per second and facing snaps to SPR_FACES steps.
    Helicopters are always drawn directly (their rotor spins too fast for ticked animation).
    Set SPRITE_CACHE=false to go back to drawing everything directly. */
-const SPRITE_CACHE=true,SPR_TB=12,SPR_BTB=10,SPR_FACES=24,SPR_TAU=Math.PI*2;
+const SPRITE_CACHE=true,SPR_TB=12,SPR_BTB=6,SPR_FACES=24,SPR_TAU=Math.PI*2;
 const SPR_CLS={worker:'s',marine:'s',rocket:'s',zealot:'s',stalker:'s',immortal:'m',tank:'m',colossus:'l',dog:'s',ravager:'s',tree:'s',overlord:'s',ptero:'a'};   // zerg units are cached too (a = wide flyer)
 const SPR_TYPE={worker:0,marine:1,rocket:2,zealot:3,stalker:4,immortal:5,colossus:6,tank:7,dog:8,ravager:9,tree:10,ptero:11,overlord:12};
 const SPR_DIM={s:{hw:44,up:84,dn:24},m:{hw:84,up:92,dn:38},l:{hw:100,up:160,dn:46},a:{hw:104,up:130,dn:40}};
@@ -5578,7 +5582,7 @@ function infoHTML(e){
   if(e.kind==='u'){
     const d=UD[e.type];
     const up7=dUp(e.team);k('Damage',(d.dmg+up7)+(d.bonus?' (+'+d.bonus+(d.bt==='light'?' vs light':' vs armoured')+')':'')+(d.range>1.5?' ranged':' melee'));if(d.sh)k('Shield',d.sh);k('Range',d.range);k('Attack rate',d.cd+'s');k('DPS',((d.dmg+up7)/d.cd).toFixed(1));
-    k('Speed',e.type==='worker'&&raceOf(e.team)==='zerg'?+(d.speed*1.25).toFixed(2):d.speed);k('Vision',d.vis);k('Supply',d.supply,1);k('Cost',d.cost);
+    k('Speed',d.speed);k('Vision',d.vis);k('Supply',d.supply,1);k('Cost',d.cost);
     if(d.beams)k('Targets per volley',d.beams,1);
     if(e.type==='worker'&&mine)k('Carrying',e.carry);
     if(d.noatk){R.length=0;k('Attack','None');k('Speed',d.speed);k('Vision',d.vis);k('Supply','+'+d.give,1);k('Cost',d.cost);}
@@ -5970,9 +5974,9 @@ window.addEventListener('keyup',e=>{keys[e.key]=false;});
 window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
 
 /* ---------- full-screen setup menu ---------- */
-const MAPSET=[{id:'twobanks',name:'Two Banks',meta:'128 \u00d7 128 \u00b7 river with 4 bridges \u00b7 4 spawns'},
-  {id:'snow',name:'Snowfield',meta:'128 \u00d7 128 \u00b7 open snow, pasture and fallen leaves \u00b7 4 spawns'},
-  {id:'volcano',name:'Volcano',meta:'128 \u00d7 128 \u00b7 lava river with 4 crossings, black rocks and smoke \u00b7 4 spawns'}];
+const MAPSET=[{id:'twobanks',name:'Two Banks',meta:' \u00b7 river map \u00b7 4 players'},
+  {id:'snow',name:'Snowfield',meta:' \u00b7 winter map\u00b7 4 players'},
+  {id:'volcano',name:'Volcano',meta:' \u00b7 lava map\u00b7 4 players'}];
 const mapThumbs={};
 /* static mock previews for the menu: a few hand-placed shapes, no terrain is generated until Play is pressed */
 function mockThumb(id){
