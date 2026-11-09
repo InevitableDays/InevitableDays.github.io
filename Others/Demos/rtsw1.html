@@ -3617,6 +3617,7 @@ function zHound(Z){
 }
 function zRavager(Z){
   const {u,t,x,y,fs,P,ang,mv,ph,rec,col,near}=Z;
+  Object.assign(ZCOL,{dark:'#050506',mud2:'#0d0d10',chit:'#0d0d10',chit2:'#15151a',bone:'#1a1a1f'});   // phoenix skin: near-black body, dark horns/teeth (palette is reset before every unit)
   shadow(x,y+3,24);
   const spit=rec>=0&&rec<.3;
   const legs=s=>()=>{for(const lx of [-12,11]){
@@ -3631,14 +3632,6 @@ function zRavager(Z){
     c=P(8,0,23);zE(c[0],c[1],11.5,9,ZCOL.chit2,ang);   // shoulder hump
     for(let i=0;i<5;i++){const lx=-14+i*5,b=P(lx,0,27-i*.3),tp=P(lx-2.5,0,36+(i===2?4:0));zPoly([[b[0]-3.2,b[1]],[tp[0],tp[1]],[b[0]+3.2,b[1]]],ZCOL.bone);}
     c=P(-2,0,22);zGlow(c[0],c[1],2.4,col,.85);
-    for(let i=0;i<6;i++){   // fire burning along the spine: flickering red / orange / yellow tongues
-      const lx=-16+i*5,fl=Math.sin(t*13+i*2.3+u.id)*.5+.5,fl2=Math.sin(t*9+i*1.7+u.id*2)*.5+.5,h=11+fl*7+(i===2||i===3?4:0),lean=-3-fl2*2.5;
-      const b0=P(lx,0,26),tp=P(lx+lean,0,26+h),m=P(lx-1,0,26+h*.5);
-      zGlow(b0[0],b0[1]-4,9+fl*2,'#ff6a1a',.28);
-      zPoly([[b0[0]-4.4,b0[1]],[m[0]-3.2+fl2,m[1]],[tp[0],tp[1]],[m[0]+3.2+fl2,m[1]],[b0[0]+4.4,b0[1]]],'#d9340c');
-      zPoly([[b0[0]-3,b0[1]],[m[0]-2+fl2,m[1]+1],[tp[0],tp[1]+h*.18],[m[0]+2+fl2,m[1]+1],[b0[0]+3,b0[1]]],'#ff9a1f');
-      zPoly([[b0[0]-1.6,b0[1]],[m[0]+fl2*.5,m[1]+h*.12],[tp[0],tp[1]+h*.42],[m[0]+1.6,m[1]+h*.12],[b0[0]+1.6,b0[1]]],'#ffe27a');
-    }
   }]);
   Q.push([-24*fs,()=>{   // short tail with a bony club
     const a=P(-18,0,17),b=P(-27,0,13),k=P(-31,0,9),pp=[a,b,k];
@@ -3650,7 +3643,7 @@ function zRavager(Z){
     const sn=P(31,0,12);zE(sn[0],sn[1],6,5,ZCOL.mud2,ang);
     const h0=P(30,0,16),h1=P(36,0,31),h2=P(33,0,15.5);zPoly([[h0[0]-3,h0[1]],[h1[0],h1[1]],[h2[0]+3,h2[1]]],ZCOL.bone);
     const g0=P(21,0,21),g1=P(23,0,29);zPoly([[g0[0]-2.4,g0[1]],[g1[0],g1[1]],[g0[0]+2.4,g0[1]]],ZCOL.bone);
-    for(const s of [-1,1]){const e=P(26,s*4.4,18);zGlow(e[0],e[1],2.1,col,1);}
+    for(const s of [-1,1]){const e=P(26,s*4.4,18);zGlow(e[0],e[1],1,col,1);}   // eye: small dot
     zLine([P(20,0,10),P(32,0,8.5-(spit?3:0))],3.4,ZCOL.dark);
     for(let k=0;k<4;k++){const a=P(24+k*2.6,0,10.2),b=P(24+k*2.6,0,9-(spit?3:0));zTooth(a[0],a[1],3,Math.PI/2);zTooth(b[0],b[1],3,-Math.PI/2);}
     if(spit){const m=P(34,0,11);zGlow(m[0],m[1],6,ZCOL.acid,.55);zGlow(m[0],m[1],3.2,'#e6ff9a',.95);}
@@ -3702,47 +3695,48 @@ function zPtero(Z){   // dragon-phoenix: scaled lizard body, long tail ending in
   const S=1.4;
   ctx.fillStyle='rgba(0,0,0,.26)';ctx.beginPath();ctx.ellipse(x+8,y+6,24,7.5,0,0,7);ctx.fill();
   const flap=Math.sin(t*(mv?9:5.5)+u.id*1.3),z=40+Math.sin(t*2.3+u.id)*1.8;
-  const BODY='#140708',DKB='#0a0405',EDGE='#000000',open=rec>=0&&rec<.3?1:0;
+  const BODY='#0d0d10',DKB='#050506',EDGE='#000000',open=rec>=0&&rec<.3?1:0;
   const Q2=(lx,ly,zz)=>P(lx*S,ly*S,z+zz*S);
   const wing=s=>()=>{
     const wz=flap*20,W=(lx,ly,zz,k)=>P(lx*S,ly*S,z+zz*S+wz*k);
     const r=W(3,s*4,2,0),el=W(5,s*17,7,.45),f1=W(15,s*34,8,.8),tp=W(-5,s*46,8,1.05);
     const outline=[r,f1,tp,W(-12,s*42,2,.95),W(-9,s*36,4,.85),W(-19,s*33,0,.8),W(-14,s*26,3,.65),W(-24,s*22,-2,.6),W(-16,s*14,2,.4),W(-14,s*6,-1,.1)];
-    zPoly(outline,'#0b0304');
+    zPoly(outline,'#08080a');
     const lp=(q,k)=>[r[0]+(q[0]-r[0])*k,r[1]+(q[1]-r[1])*k];
-    zPoly(outline.map(q=>lp(q,.74)),'#190607');zPoly(outline.map(q=>lp(q,.48)),'#a30d12');zPoly(outline.map(q=>lp(q,.24)),'#e82020');
-    zLine([r,el,f1],1.8,'#7a1010');zLine([el,tp],1.5,'#7a1010');zLine([el,outline[5]],1.3,'#7a1010');zLine([el,outline[7]],1.3,'#7a1010');
+    zPoly(outline.map(q=>lp(q,.74)),'#0f0f12');zPoly(outline.map(q=>lp(q,.48)),'#15151a');zPoly(outline.map(q=>lp(q,.24)),'#1b1b21');
+    zLine([r,el,f1],1.8,'#26262c');zLine([el,tp],1.5,'#26262c');zLine([el,outline[5]],1.3,'#26262c');zLine([el,outline[7]],1.3,'#26262c');
   };
+  const oldBone=ZCOL.bone;ZCOL.bone='#1a1a1f';   // teeth black too (restored after drawing)
   const Q=[];
   Q.push([-40,wing(-near)]);Q.push([40,wing(near)]);
   Q.push([0,()=>{
     const sw=k=>Math.sin(t*3.2+u.id-k*.8)*k*.9;
     for(const s of [-1,1]){   // lizard legs tucked under the body
       zLine([Q2(-5,s*3,-2),Q2(-8,s*7,-7),Q2(-4,s*8,-11)],2.4,DKB);zLine([Q2(5,s*3,-2),Q2(8,s*6,-7),Q2(12,s*6,-10)],2.1,DKB);
-      for(const f of [Q2(-4,s*8,-11),Q2(12,s*6,-10)])zGlow(f[0],f[1],1.1,'#efe6c8',1);
+      for(const f of [Q2(-4,s*8,-11),Q2(12,s*6,-10)])zGlow(f[0],f[1],1.1,'#1a1a1f',1);
     }
     const T=[[-54,sw(5.4),-5],[-44,sw(4.4),-5],[-34,sw(3.4),-4],[-24,sw(2.4),-3],[-14,sw(1.2),-1],[-6,0,0],[3,0,.5],[9,0,2.5],[13,0,6.5],[17,0,9.5],[22,0,10],[28,0,8.5]];
     const R=[.7,1.2,1.9,2.7,3.8,4.8,5.4,4.2,3.2,3.4,2.6,1.6].map(r=>r*S);
     const pts=T.map(q=>Q2(q[0],q[1],q[2]));
-    for(let i=2;i<9;i++){const q=pts[i];zPoly([[q[0]-1.5,q[1]-R[i]*.7],[q[0]+.5,q[1]-R[i]-3.6],[q[0]+1.7,q[1]-R[i]*.7]],'#c81212');}   // dorsal spines
+    for(let i=2;i<9;i++){const q=pts[i];zPoly([[q[0]-1.5,q[1]-R[i]*.7],[q[0]+.5,q[1]-R[i]-3.6],[q[0]+1.7,q[1]-R[i]*.7]],'#1a1a1f');}   // dorsal spines
     zTube(pts,R,BODY,EDGE);
-    zLine([Q2(-14,0,-1.6),Q2(-4,0,-2),Q2(8,0,.6)],2.6,'rgba(190,25,25,.5)');
-    zLine([Q2(-24,0,-1),Q2(-10,0,2.4),Q2(2,0,3.2),Q2(11,0,8.6)],1.5,'rgba(255,50,40,.35)');
-    let c=Q2(-1,0,5.8);zGlow(c[0],c[1],2.5,col,.95);
-    {const b0=pts[0],b1=pts[1],base=Math.atan2(b0[1]-b1[1],b0[0]-b1[0]),fc3=['#7a0808','#d81212','#ff4a3a'];   // flame plume at the tail tip
+    for(let j=0;j<5;j++){   // gold stripe spiralling round the neck: slanted bands across the tube, one after another
+      const f=6.3+j*.7,i0=Math.floor(f),w=f-i0,pa=pts[i0],pb=pts[i0+1],cx=pa[0]+(pb[0]-pa[0])*w,cy=pa[1]+(pb[1]-pa[1])*w,rr=(R[i0]+(R[i0+1]-R[i0])*w)*.8;
+      const al=Math.hypot(pb[0]-pa[0],pb[1]-pa[1])||1,ax=(pb[0]-pa[0])/al,ay=(pb[1]-pa[1])/al,nx=-ay,ny=ax,sl=rr*.45;
+      zLine([[cx-nx*rr-ax*sl,cy-ny*rr-ay*sl],[cx+ax*rr*.12,cy+ay*rr*.12],[cx+nx*rr+ax*sl,cy+ny*rr+ay*sl]],1.5,'#e0b341');
+    }
+    {const b0=pts[0],b1=pts[1],base=Math.atan2(b0[1]-b1[1],b0[0]-b1[0]),fc3=['#050506','#0e0e11','#17171b'];   // flame plume at the tail tip
       for(let j=-1;j<=1;j++){const a=base+j*.55+Math.sin(t*9+j*2+u.id)*.2,len=S*(j===0?12:8.5),px=-Math.sin(a),py=Math.cos(a);
-        zPoly([[b0[0]+px*2.6,b0[1]+py*2.6],[b0[0]+Math.cos(a)*len,b0[1]+Math.sin(a)*len],[b0[0]-px*2.6,b0[1]-py*2.6]],fc3[j+1]);}
-      zGlow(b0[0],b0[1],3,'#ff3030',.7);}
+        zPoly([[b0[0]+px*2.6,b0[1]+py*2.6],[b0[0]+Math.cos(a)*len,b0[1]+Math.sin(a)*len],[b0[0]-px*2.6,b0[1]-py*2.6]],fc3[j+1]);}}
     {const base=Q2(16,0,12);   // phoenix crest plumes swept back from the head
-      const cc=['#7a0808','#d81212','#ff4a3a'];
+      const cc=['#050506','#0e0e11','#17171b'];
       for(let j=-1;j<=1;j++){const tip=Q2(5+Math.sin(t*8+j+u.id)*1.2,j*4,16+(j===0?5:0)),pw=2.2;
         zPoly([[base[0]-pw,base[1]+1],tip,[base[0]+pw,base[1]+1]],cc[j+1]);}}
-    zLine([Q2(18,0,7.5),Q2(27,0,6.2-open*5)],2.5,'#2a0a0a');   // lower jaw
+    zLine([Q2(18,0,7.5),Q2(27,0,6.2-open*5)],2.5,'#0a0a0c');   // lower jaw
     for(let k=0;k<4;k++){const a=Q2(22+k*1.8,0,8.2),b2=Q2(22+k*1.8,0,6.8-open*4);zTooth(a[0],a[1],2,Math.PI/2);zTooth(b2[0],b2[1],2,-Math.PI/2);}
-    for(const s of [-1,1]){const e=Q2(21,s*2.6,11.4);zGlow(e[0],e[1],2,'#ff3030',1);zGlow(e[0],e[1],.8,'#fff0b0',1);}
-    if(open){const m=Q2(31,0,7);zGlow(m[0],m[1],7,'#ff3030',.6);zGlow(m[0],m[1],3.4,'#ffd0d0',.95);}
+    for(const s of [-1,1]){const e=Q2(21,s*2.6,11.4);zGlow(e[0],e[1],.9,'#e0b341',1);}   // eye: small dot
   }]);
-  zRun(Q);
+  zRun(Q);ZCOL.bone=oldBone;
 }
 function zFloater(Z){
   const {u,t,x,y,fc,col}=Z;
@@ -5333,6 +5327,7 @@ function zfig(kind,c,cd,t){
      +tth(140,90,2,-6,2.4)+tth(147,92,1,-6,2.2)+tth(140,97,2,6,2.4)+tth(147,98,1,6,2.2)
      +eye(124,78,5);
   }else if(kind==='ravager'){   // rhino mutant
+    const M1='#0d0d10',M2='#08080a',M3='#15151a',BN='#1a1a1f';   // phoenix skin
     o=sh+L('M44 98L36 128',10,M2)+L('M70 104L66 130',10,M2)+L('M30 84Q12 90 10 104',8,M2)+'<circle cx="10" cy="106" r="7" fill="'+M3+'"'+S+'/>'
      +'<ellipse cx="76" cy="84" rx="50" ry="30" fill="'+M2+'"'+S+'/><ellipse cx="86" cy="70" rx="30" ry="22" fill="'+M1+'"'+S+'/>'
      +poly('50,62 58,32 70,60',BN)+poly('68,56 78,24 92,56',BN)+poly('90,56 102,28 112,62',BN)
@@ -5342,7 +5337,7 @@ function zfig(kind,c,cd,t){
      +poly('136,72 158,38 152,76',BN)+poly('120,70 124,50 134,72',BN)
      +'<path d="M116 96Q134 110 152 94L148 102Q134 114 118 104Z" fill="'+DK+'"/>'
      +tth(124,98,0,-8,2.4)+tth(132,102,0,-9,2.4)+tth(141,100,0,-8,2.4)
-     +'<circle cx="152" cy="98" r="8" fill="'+AC+'" opacity=".8"/>'+eye(134,78,5);
+     +'<circle cx="152" cy="98" r="8" fill="'+AC+'" opacity=".8"/>'+'<circle cx="134" cy="78" r="1.8" fill="'+c+'"/>';
   }else if(kind==='tree'){   // deadwood
     o=sh+L('M62 124Q46 132 32 128',6,DK)+L('M98 124Q114 132 128 128',6,DK)+L('M70 126Q64 134 56 136',5,DK)+L('M90 126Q96 134 104 136',5,DK)
      +L('M70 70L30 34',12,M1)+'<ellipse cx="28" cy="32" rx="8" ry="6" fill="#a07a4a"'+S+'/>'
@@ -5354,29 +5349,28 @@ function zfig(kind,c,cd,t){
      +tth(70,84,2,8,2.6)+tth(80,82,0,9,2.6)+tth(90,84,-2,8,2.6)+tth(72,108,2,-8,2.6)+tth(80,112,0,-9,2.6)+tth(88,108,-2,-8,2.6)
      +eye(72,70,5)+eye(88,70,5);
   }else if(kind==='ptero'){   // dragon phoenix: scaled lizard body, long tail with a flame plume
-    const BODY='#140808',BEL='#3a0c0c',WG='#0d0405',WG2='#a00c10',F1='#8a0a0a',F2='#e01414',F3='#ff4a3a';
+    const BODY='#0d0d10',BEL='#1a1a20',WG='#0a0a0c',WG2='#17171c',F1='#0e0e11',F2='#16161b',F3='#1d1d23';
     const tube=sg=>sg.map(q=>'<path d="'+q[0]+'" fill="none" stroke="#120c06" stroke-width="'+(q[1]+3)+'" stroke-linecap="round" stroke-linejoin="round"/>').join('')
       +sg.map(q=>'<path d="'+q[0]+'" fill="none" stroke="'+BODY+'" stroke-width="'+q[1]+'" stroke-linecap="round" stroke-linejoin="round"/>').join('');
     o='<ellipse cx="80" cy="134" rx="44" ry="7" fill="rgba(0,0,0,.35)"/>'
      +poly('92,68 118,16 146,6 140,28 152,32 138,44 150,52 130,58 134,70 112,74',WG)+poly('92,68 116,26 130,34 124,52 112,66',WG2)
-     +L('M92 68L118 16',2.4,'#8a1414')+L('M100 68L128 40',1.6,'#8a1414')
+     +L('M92 68L118 16',2.4,'#2a2a31')+L('M100 68L128 40',1.6,'#2a2a31')
      +poly('84,72 66,22 32,4 28,26 16,30 28,42 14,52 34,58 30,72 52,78',WG)+poly('84,72 68,32 52,22 52,44 62,62 70,72',WG2)+poly('84,72 70,40 62,40 66,60',F2)
-     +L('M84 72L66 22',3,'#8a1414')+L('M84 72L36 8',2.4,'#8a1414')+L('M74 70L26 38',1.8,'#8a1414')+L('M78 72L32 62',1.6,'#8a1414')
+     +L('M84 72L66 22',3,'#2a2a31')+L('M84 72L36 8',2.4,'#2a2a31')+L('M74 70L26 38',1.8,'#2a2a31')+L('M78 72L32 62',1.6,'#2a2a31')
      +L('M74 100L68 114L58 118',5,'#0a0405')+L('M98 100L104 114L114 116',4.5,'#0a0405')
      +tth(58,118,-6,3,1.8)+tth(114,116,5,2,1.8)
      +tube([['M18 104Q16 120 30 122',2.5],['M30 122Q44 124 54 112',5],['M54 112Q62 102 70 97',9],['M70 97Q82 102 96 92',21],['M92 92Q106 80 112 62',11],['M112 62Q118 50 126 47',8],['M124 47L146 53',7],['M138 51L153 56',4.5]])
      +'<path d="M72 106Q84 112 96 102" stroke="'+BEL+'" stroke-width="6" fill="none" stroke-linecap="round" opacity=".75"/>'
-     +'<path d="M62 94Q80 82 96 82M100 76Q108 66 110 56" stroke="#b01818" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/>'
-     +'<path d="M70 92q3 3 6 0M80 96q3 3 6 0M90 92q3 3 6 0M76 86q3 3 6 0M86 84q3 3 6 0M104 70q3 3 5 0M44 116q2 2 4 0M30 120q2 2 4 0" stroke="#5a1010" stroke-width="1.2" fill="none" opacity=".7"/>'
+     +'<path d="M62 94Q80 82 96 82M100 76Q108 66 110 56" stroke="#26262c" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/>'
+     +'<path d="M70 92q3 3 6 0M80 96q3 3 6 0M90 92q3 3 6 0M76 86q3 3 6 0M86 84q3 3 6 0M104 70q3 3 5 0M44 116q2 2 4 0M30 120q2 2 4 0" stroke="#26262c" stroke-width="1.2" fill="none" opacity=".7"/>'
      +poly('70,82 70,72 78,80',F2)+poly('80,80 82,69 88,78',F2)+poly('90,78 94,67 98,78',F2)+poly('100,74 106,64 106,76',F2)
      +poly('18,106 6,82 22,98',F1)+poly('18,106 20,78 28,98',F2)+poly('18,106 38,88 30,106',F3)
      +poly('124,44 108,24 120,38',F1)+poly('124,44 112,14 128,38',F2)+poly('126,44 124,16 134,38',F3)
-     +'<path d="M126 41L116 38" stroke="#efe6c8" stroke-width="3" stroke-linecap="round"/>'
-     +L('M130 52L148 61',3.2,'#2a0a0a')
+     +'<path d="M126 41L116 38" stroke="#1d1d23" stroke-width="3" stroke-linecap="round"/>'
+     +L('M130 52L148 61',3.2,'#0a0a0c')
      +tth(138,53,0,5,1.8)+tth(144,55,0,5,1.8)+tth(150,57,0,4,1.6)+tth(140,59,0,-5,1.8)+tth(146,60,0,-5,1.8)
-     +eye(133,45,4.2)
-     +'<circle cx="84" cy="88" r="4" fill="'+c+'" opacity=".9"/>'
-     +'<circle cx="153" cy="57" r="7" fill="#ff3030" opacity=".6"/>';
+     +'<circle cx="133" cy="45" r="1.7" fill="#e0b341"/>'
+     +[[96,86],[100.5,79.5],[105,73],[109.5,66.5],[116,57]].map(q=>'<path d="M'+(q[0]-4.6)+' '+(q[1]-1.2)+'L'+(q[0]+4.6)+' '+(q[1]+1.2)+'" stroke="#e0b341" stroke-width="1.7" fill="none" stroke-linecap="round"/>').join('');
   }else if(kind==='overlord'){   // floater
     o='<ellipse cx="80" cy="134" rx="34" ry="7" fill="rgba(0,0,0,.3)"/>'
      +L('M60 98Q50 114 60 130',5,M2)+L('M70 102Q68 118 74 132',5,M2)+L('M80 104L80 134',5,M2)+L('M90 102Q92 118 86 132',5,M2)+L('M100 98Q110 114 100 130',5,M2)
