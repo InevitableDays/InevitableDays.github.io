@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MP3 Cutter</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e6eaee;--panel:#f6f8fa;--ink:#101a2e;--mute:#5b6678;--wave:#9aa6b8;--sel:#2b59ff;--selbg:rgba(43,89,255,.16);--line:#c5ccd6;--onsel:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1220;--panel:#151c2e;--ink:#e8edf7;--mute:#8e9ab0;--wave:#4a5873;--sel:#6f8dff;--selbg:rgba(111,141,255,.2);--line:#273149;--onsel:#0d1220}}
+:root[data-theme="dark"]{--bg:#0d1220;--panel:#151c2e;--ink:#e8edf7;--mute:#8e9ab0;--wave:#4a5873;--sel:#6f8dff;--selbg:rgba(111,141,255,.2);--line:#273149;--onsel:#0d1220}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+body {
+  margin: 0;
+  background:
+    linear-gradient(rgba(8, 13, 27, 0.68), rgba(8, 13, 27, 0.82)),
+    url("https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=2000&q=85")
+    center / cover fixed no-repeat;
+  color: #f1f5ff;
+  font: 16px/1.5 "Bricolage Grotesque", system-ui, sans-serif;
+  min-height: 100vh;
+}
+main{max-width:860px;margin:0 auto;padding:clamp(20px,5vw,56px) 20px}
+h1{font-size:clamp(2.4rem,9vw,4.6rem);font-weight:800;line-height:.95;letter-spacing:-.04em;margin:0 0 8px}
+.sub{color:var(--mute);margin:0 0 28px}
+#drop{display:block;border:2px dashed var(--line);border-radius:18px;background:var(--panel);padding:clamp(36px,9vw,80px) 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+#drop.over,#drop:focus-visible{border-color:var(--sel);background:var(--selbg);outline:none}
+#drop b{display:block;font-size:1.4rem;margin-bottom:4px}
+#drop span{color:var(--mute)}
+#editor{display:none}
+.name{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:10px}
+.name b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.name button{background:none;border:0;color:var(--mute);cursor:pointer;font:inherit;text-decoration:underline;padding:0}
+#wrap{position:relative;height:180px;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;touch-action:none;cursor:ew-resize}
+canvas{width:100%;height:100%;display:block}
+.times{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:14px 0 20px;font-variant-numeric:tabular-nums}
+.times div{color:var(--mute)}.times strong{color:var(--ink);font-size:1.15rem}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+button.btn{font:inherit;font-weight:500;border-radius:999px;padding:12px 26px;border:2px solid var(--sel);background:transparent;color:var(--sel);cursor:pointer}
+button.btn.main{background:var(--sel);color:var(--onsel)}
+button.btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+select.btn{background:var(--panel);padding:12px 18px}
+button.btn:disabled{opacity:.5;cursor:wait}
+#msg{min-height:1.5em;margin-top:14px;color:var(--mute)}
+.hint{color:var(--mute);font-size:.9rem;margin-top:6px}
+</style>
+</head>
+<body>
+<main>
+<h1>MP3 Cutter</h1>
+<p class="sub">Drop a song, drag the handles, play it back, keep the part you want. Everything stays on your device.</p>
+
+<label id="drop" tabindex="0">
+  <b>Drop an audio file here</b><span>or click to choose one (MP3, WAV, M4A, OGG)</span>
+  <input id="file" type="file" accept="audio/*" hidden>
+</label>
+
+<section id="editor">
+  <div class="name"><b id="fname"></b><button id="another">Choose another file MP3, WAV, M4A, OGG</button></div>
+  <div id="wrap"><canvas id="cv"></canvas></div>
+  <div class="hint">Drag the edges of the highlighted area to set where the cut starts and ends.</div>
+  <div class="times">
+    <div>Start <strong id="ts">0:00.0</strong></div>
+    <div>Length <strong id="tl">0:00.0</strong></div>
+    <div>End <strong id="te">0:00.0</strong></div>
+  </div>
+  <div class="row">
+    <button class="btn main" id="play">Play selection</button>
+    <button class="btn" id="save">Crop &amp; download</button>
+  </div>
+  <div id="msg" role="status"></div>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const drop=$('drop'),file=$('file'),editor=$('editor'),cv=$('cv'),wrap=$('wrap'),msg=$('msg'),playBtn=$('play'),saveBtn=$('save');
+let raw=null,isMp3=false,AC=null,buf=null,fileName='clip',peaks=null,s=0,e=0,drag=null,src=null,t0=0,playing=false,raf=0;
+
+const fmt=t=>{const m=Math.floor(t/60),x=t-m*60;return m+':'+(x<10?'0':'')+x.toFixed(1)};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const say=t=>msg.textContent=t||'';
+
+function ctx(){return AC||(AC=new (window.AudioContext||window.webkitAudioContext)())}
+
+drop.addEventListener('click',()=>file.click());
+drop.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();file.click()}});
+['dragenter','dragover'].forEach(n=>document.addEventListener(n,ev=>{ev.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(n=>document.addEventListener(n,ev=>{ev.preventDefault();drop.classList.remove('over')}));
+document.addEventListener('drop',ev=>{const f=ev.dataTransfer&&ev.dataTransfer.files[0];if(f)load(f)});
+file.addEventListener('change',()=>{if(file.files[0])load(file.files[0])});
+$('another').addEventListener('click',()=>{stop();file.value='';file.click()});
+
+async function load(f){
+  stop();say('');
+  drop.querySelector('b').textContent='Reading '+f.name+'…';
+  try{
+    const data=await f.arrayBuffer();raw=data.slice(0);isMp3=/\.mp3$/i.test(f.name)||f.type==='audio/mpeg';
+    buf=await new Promise((ok,no)=>ctx().decodeAudioData(data,ok,no));
+  }catch(err){
+    drop.querySelector('b').textContent='Drop an audio file here';
+    alert('That file couldn’t be read as audio. Try an MP3, WAV, M4A or OGG file.');
+    return;
+  }
+  fileName=f.name.replace(/\.[^.]+$/,'')||'clip';
+  $('fname').textContent=f.name+' · '+fmt(buf.duration);
+  drop.style.display='none';editor.style.display='block';
+  s=0;e=buf.duration;
+  requestAnimationFrame(()=>{sizeCanvas();draw()});
+}
+
+function sizeCanvas(){
+  const r=window.devicePixelRatio||1,w=wrap.clientWidth,h=wrap.clientHeight;
+  cv.width=Math.round(w*r);cv.height=Math.round(h*r);
+  const n=cv.width,d=buf.getChannelData(0),step=Math.max(1,Math.floor(d.length/n));
+  peaks=new Float32Array(n);
+  for(let i=0;i<n;i++){let m=0;const a=i*step,b=Math.min(a+step,d.length);for(let j=a;j<b;j+=Math.max(1,step>>6)){const v=Math.abs(d[j]);if(v>m)m=v}peaks[i]=m}
+}
+
+function draw(ph){
+  if(!buf)return;
+  const c=cv.getContext('2d'),w=cv.width,h=cv.height,mid=h/2,D=buf.duration;
+  c.clearRect(0,0,w,h);
+  const xs=s/D*w,xe=e/D*w;
+  c.fillStyle=css('--selbg');c.fillRect(xs,0,xe-xs,h);
+  for(let i=0;i<w;i++){
+    c.fillStyle=(i>=xs&&i<=xe)?css('--sel'):css('--wave');
+    const a=Math.max(1,peaks[i]*mid*.95);c.fillRect(i,mid-a,1,a*2);
+  }
+  const hw=Math.max(3,w/280);
+  c.fillStyle=css('--sel');
+  c.fillRect(xs-hw/2,0,hw,h);c.fillRect(xe-hw/2,0,hw,h);
+  c.beginPath();c.arc(xs,mid,hw*2.2,0,7);c.arc(xe,mid,hw*2.2,0,7);c.fill();
+  if(ph!=null){c.fillStyle=css('--ink');c.fillRect(ph/D*w-1,0,2,h)}
+  $('ts').textContent=fmt(s);$('te').textContent=fmt(e);$('tl').textContent=fmt(e-s);
+}
+
+function posT(ev){const r=wrap.getBoundingClientRect();return Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width))*buf.duration}
+wrap.addEventListener('pointerdown',ev=>{
+  if(!buf)return;const t=posT(ev);
+  drag=Math.abs(t-s)<Math.abs(t-e)?'s':'e';
+  wrap.setPointerCapture(ev.pointerId);move(ev);
+});
+wrap.addEventListener('pointermove',ev=>{if(drag)move(ev)});
+wrap.addEventListener('pointerup',()=>{drag=null});
+function move(ev){
+  const t=posT(ev),gap=Math.min(.1,buf.duration/2);
+  if(drag==='s')s=Math.min(t,e-gap);else e=Math.max(t,s+gap);
+  if(playing)stop();draw();
+}
+window.addEventListener('resize',()=>{if(buf){sizeCanvas();draw()}});
+
+function stop(){
+  if(src){try{src.onended=null;src.stop()}catch(_){}src=null}
+  playing=false;cancelAnimationFrame(raf);playBtn.textContent='Play selection';
+  if(buf)draw();
+}
+function play(){
+  if(!buf)return;
+  if(playing){stop();return}
+  const a=ctx();if(a.state==='suspended')a.resume();
+  src=a.createBufferSource();src.buffer=buf;src.connect(a.destination);
+  t0=a.currentTime;src.start(0,s,e-s);playing=true;playBtn.textContent='Stop';
+  src.onended=()=>{if(playing)stop()};
+  (function tick(){if(!playing)return;draw(Math.min(e,s+a.currentTime-t0));raf=requestAnimationFrame(tick)})();
+}
+playBtn.addEventListener('click',play);
+document.addEventListener('keydown',ev=>{if(ev.code==='Space'&&buf&&ev.target===document.body){ev.preventDefault();play()}});
+
+/* MP3 encode */
+function encode(){
+  const sr=buf.sampleRate,ch=Math.min(2,buf.numberOfChannels),a=Math.floor(s*sr),b=Math.floor(e*sr);
+  const data=[];
+  for(let c=0;c<ch;c++){
+    const f=buf.getChannelData(c).subarray(a,b),i16=new Int16Array(f.length);
+    for(let i=0;i<f.length;i++){const v=Math.max(-1,Math.min(1,f[i]));i16[i]=v<0?v*32768:v*32767}
+    data.push(i16);
+  }
+  const enc=new lamejs.Mp3Encoder(ch,sr,320),out=[],B=1152;
+  for(let i=0;i<data[0].length;i+=B){
+    const l=data[0].subarray(i,i+B),r=ch>1?data[1].subarray(i,i+B):undefined;
+    const p=ch>1?enc.encodeBuffer(l,r):enc.encodeBuffer(l);
+    if(p.length)out.push(new Uint8Array(p));
+  }
+  const end=enc.flush();if(end.length)out.push(new Uint8Array(end));
+  return new Blob(out,{type:'audio/mpeg'});
+}
+
+/* Lossless MP3 cut: copy whole frames, no re-encoding */
+function cutMp3(){
+  try{
+    const u=new Uint8Array(raw),B1=[0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0],B2=[0,8,16,24,32,40,48,56,64,80,96,112,128,144,160,0],S=[44100,48000,32000];
+    let i=0;
+    if(u[0]===73&&u[1]===68&&u[2]===51)i=10+((u[6]&127)<<21|(u[7]&127)<<14|(u[8]&127)<<7|(u[9]&127));
+    const offs=[];let sr=0,spf=0,end=u.length;
+    while(i+4<=u.length){
+      if(u[i]===255&&(u[i+1]&224)===224){
+        const v=(u[i+1]>>3)&3,l=(u[i+1]>>1)&3,bi=u[i+2]>>4,si=(u[i+2]>>2)&3,pad=(u[i+2]>>1)&1;
+        if(v!==1&&l===1&&bi>0&&bi<15&&si<3){
+          const m1=v===3,br=(m1?B1:B2)[bi]*1000;sr=S[si]/(m1?1:v===2?2:4);spf=m1?1152:576;
+          const len=Math.floor((m1?144:72)*br/sr)+pad;
+          if(i+len>u.length)break;
+          offs.push(i);i+=len;end=i;continue;
+        }
+      }
+      i++;
+    }
+    if(offs.length<10)return null;
+    const fd=spf/sr,a=Math.max(0,Math.floor(s/fd)),b=Math.min(offs.length,Math.ceil(e/fd));
+    if(b<=a)return null;
+    return new Blob([u.slice(offs[a],b<offs.length?offs[b]:end)],{type:'audio/mpeg'});
+  }catch(_){return null}
+}
+
+/* Store-only ZIP, since the host only saves a fixed list of file types */
+const crcT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(u){let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=crcT[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}
+function zip(name,u){
+  const nm=new TextEncoder().encode(name),crc=crc32(u),n=u.length;
+  const lh=new DataView(new ArrayBuffer(30));
+  lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);
+  lh.setUint32(14,crc,true);lh.setUint32(18,n,true);lh.setUint32(22,n,true);lh.setUint16(26,nm.length,true);
+  const ch=new DataView(new ArrayBuffer(46));
+  ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);
+  ch.setUint32(16,crc,true);ch.setUint32(20,n,true);ch.setUint32(24,n,true);ch.setUint16(28,nm.length,true);
+  const cdOff=30+nm.length+n,cdLen=46+nm.length;
+  const ed=new DataView(new ArrayBuffer(22));
+  ed.setUint32(0,0x06054b50,true);ed.setUint16(8,1,true);ed.setUint16(10,1,true);ed.setUint32(12,cdLen,true);ed.setUint32(16,cdOff,true);
+  return new Blob([lh,nm,u,ch,nm,ed],{type:'application/zip'});
+}
+
+saveBtn.addEventListener('click',async()=>{
+  if(!buf)return;stop();
+  saveBtn.disabled=true;say(isMp3?'Cutting…':'Encoding…');
+  await new Promise(r=>setTimeout(r,30));
+  try{
+    const mp3=(isMp3&&cutMp3())||encode(),mp3Name=fileName+'-cut.mp3';
+    const bytes=new Uint8Array(await mp3.arrayBuffer());
+    const dl=window.claude&&await claude.use('downloads');
+    if(dl){
+      await dl.save({filename:fileName+'-cut.zip',data:zip(mp3Name,bytes)});
+      say('Saved. Unzip it to get '+mp3Name+'. (Open the downloaded HTML file on your computer to get a plain .mp3.)');
+    }else{
+      const u=URL.createObjectURL(mp3),a=document.createElement('a');
+      a.href=u;a.download=mp3Name;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(u),5000);say('Downloaded '+mp3Name+'.');
+    }
+  }catch(err){
+    say(err&&err.code==='declined'?'Download cancelled.':'Couldn’t save the file. Try again.');
+  }
+  saveBtn.disabled=false;
+});
+})();
+</script>
+</body>
+</html>
