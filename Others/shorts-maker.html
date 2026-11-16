@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shorts Maker</title>
+<title>Shorts Maker - Inevitabledays.github.io - Umit Ozkul 2026</title>
 <style>
 :root{--bg:#0e1118;--panel:#171c27;--ink:#eef1f7;--mute:#8993a8;--line:#2a3144;--acc:#ff3b30}
 *{box-sizing:border-box}
@@ -33,7 +33,7 @@ h1{margin:0 0 22px;font-size:2rem;letter-spacing:-.03em}
 .g p{margin:0 0 8px;color:var(--mute);font-weight:600;display:flex;justify-content:space-between}
 .g p span{color:var(--ink);font-variant-numeric:tabular-nums}
 .opts{display:flex;flex-wrap:wrap;gap:8px}
-.opts button{font:inherit;min-width:62px;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.opts button,.opts label{font:inherit;min-width:62px;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
 .opts button.on{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
 input[type=range]{width:100%;margin:12px 0 0;accent-color:var(--acc)}
 button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2px}
@@ -43,9 +43,43 @@ button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2
 #ph{position:absolute;top:0;bottom:0;width:2px;background:#fff;pointer-events:none}
 .tm{display:flex;justify-content:space-between;margin-top:6px;color:var(--mute);font-variant-numeric:tabular-nums}
 .tm b{color:var(--ink)}
-#go{width:100%;font:inherit;font-weight:700;font-size:1.1rem;padding:15px;border:0;border-radius:14px;background:var(--acc);color:#fff;cursor:pointer;margin-top:6px}
-#go:disabled{opacity:.45;cursor:not-allowed}
+#go,#go2{width:100%;font:inherit;font-weight:700;font-size:1.1rem;padding:15px;border:0;border-radius:14px;background:var(--acc);color:#fff;cursor:pointer;margin-top:6px}
+#go:disabled,#go2:disabled{opacity:.45;cursor:not-allowed}
 #msg{margin-top:12px;color:var(--mute);min-height:1.5em}
+input[type=color]{width:46px;height:38px;border:1.5px solid var(--line);border-radius:10px;background:var(--panel);padding:2px;cursor:pointer}
+.tx{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;margin-bottom:8px}
+.r{display:flex;align-items:center;gap:10px;margin-top:8px;color:var(--mute)}.r span{width:68px}.r input{flex:1;width:auto;margin:0}
+.opts{align-items:center}
+.cr{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
+.cr .tx{margin-bottom:6px}
+.cr .r{margin-top:0;gap:6px}
+.cr .r span{width:auto}
+.cr .r input.n{flex:none;width:72px;padding:6px 8px;border-radius:8px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.cr .del{margin-left:auto;font:inherit;border:1.5px solid var(--line);background:transparent;color:var(--mute);border-radius:8px;padding:4px 10px;cursor:pointer}
+.cr .del:hover{color:#fff;border-color:var(--acc)}
+textarea.tx{resize:vertical;min-height:90px}
+.hint{color:var(--mute);font-size:.85rem;margin:0 0 8px}
+#bulk{margin-top:10px}
+#bulk .r input.n{flex:none;width:72px;padding:6px 8px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);font:inherit}
+#go2{margin-top:14px}
+.dd{width:100%;display:flex;justify-content:space-between;align-items:center;font:inherit;font-weight:700;padding:11px 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.dd i{font-style:normal;transition:transform .2s}
+.dd[aria-expanded=true] i{transform:rotate(180deg)}
+#fxbody{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(23,28,39,.6)}
+#fxbody .g:last-child{margin-bottom:0}
+#fxbody .r input.n{flex:none;width:72px;padding:6px 8px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);font:inherit}
+#fxbody .r span.u{width:auto}
+.mini{font:inherit;padding:4px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.cl{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px solid var(--line);background:var(--panel);border-radius:12px;margin-bottom:6px;cursor:pointer}
+.cl.on{border-color:var(--acc)}
+.cl .ix{width:22px;height:22px;border-radius:50%;background:var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;flex:none}
+.cl.on .ix{background:var(--acc);color:#fff}
+.cl .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl .ln{color:var(--mute);font-variant-numeric:tabular-nums;font-size:.9rem}
+.cl button{font:inherit;border:1.5px solid var(--line);background:transparent;color:var(--mute);border-radius:8px;padding:0 8px;line-height:1.6;cursor:pointer}
+.cl button:hover:not(:disabled){color:#fff;border-color:var(--acc)}
+.cl button:disabled{opacity:.3;cursor:default}
+#cutname{max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -53,20 +87,59 @@ button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2
   <div id="left">
     <div id="stage">
       <canvas id="cv" width="1080" height="1920"></canvas>
-      <label id="drop" tabindex="0"><b>Drop a video here</b>or click to choose one<input id="file" type="file" accept="video/*" hidden></label>
+      <label id="drop" tabindex="0"><b>Drop a video here</b>or click to choose one<input id="file" type="file" accept="video/*" multiple hidden></label>
     </div>
     <button id="play" disabled>Play</button>
     <input type="range" id="seek" min="0" max="1000" step="1" value="0" aria-label="Video position" style="width:100%;margin:10px 0 0;accent-color:var(--acc)">
     <div class="tm"><b id="now">0:00.0</b><span id="dur">0:00.0</span></div>
+    <button id="go2" disabled>Create Short</button>
   </div>
   <div id="panel">
-    <h1>Shorts Maker</h1>
-    <div class="g"><p>Cut</p>
+    <h1>Shorts Maker - Inevitabledays.github.io - Umit Ozkul 2026</h1>
+    <div class="g"><p>Videos<span id="clipn"></span></p>
+      <div id="clips"></div>
+      <div class="opts"><button id="addvid">+ Add video</button></div>
+      <p class="hint" style="margin-top:8px">Videos play and export in this order, merged into one Short. Select one to trim it.</p>
+    </div>
+    <div class="g"><p>Cut<span id="cutname"></span></p>
       <div id="trim"><div id="sel"></div><i class="h" id="h1"></i><i class="h" id="h2"></i><div id="ph"></div></div>
       <div class="tm"><div>Start <b id="ts">0:00.0</b></div><div>Length <b id="tl">0:00.0</b></div><div>End <b id="te">0:00.0</b></div></div>
     </div>
     <div class="g"><p>Timestamps</p><div class="opts" id="stamps"></div></div>
     <div id="groups"></div>
+    <div class="g fx"><button id="fxbtn" class="dd" aria-expanded="false" aria-controls="fxbody"><span>Video effects</span><i>▾</i></button>
+      <div id="fxbody" hidden>
+        <div class="g"><p>Black &amp; white<span id="bwl">Off</span></p>
+          <div class="opts"><button id="bwon">Black &amp; white</button></div>
+          <div class="r"><span>From</span><input class="n" id="bws" type="number" min="0" step="0.5" value="0"><span class="u">s</span><button class="mini" id="bwsn">Now</button></div>
+          <div class="r"><span>To</span><input class="n" id="bwe" type="number" min="0" step="0.5" value="0"><span class="u">s</span><button class="mini" id="bwen">Now</button></div>
+        </div>
+        <div id="lv"></div>
+      </div>
+    </div>
+    <div class="g"><p>Captions<span id="capn"></span></p>
+      <p class="hint">Times are seconds from the start of the merged video.</p>
+      <div id="caps"></div>
+      <div class="opts"><button id="capadd">+ Add caption</button><button id="capbulk">Add many at once</button></div>
+      <div id="bulk" hidden>
+        <textarea class="tx" id="bulkt" placeholder="One caption per line. Each line becomes its own caption, placed one after another."></textarea>
+        <div class="r"><span>Each lasts</span><input class="n" id="bulkl" type="number" min="1" step="1" value="25"><span>seconds</span></div>
+        <div class="opts" style="margin-top:8px"><button id="bulkgo">Add these captions</button></div>
+      </div>
+      <p class="hint" style="margin-top:14px">Style (applies to all captions)</p>
+      <div class="opts"><button data-y="8">Top</button><button data-y="50">Middle</button><button data-y="88">Bottom</button><input id="cc" type="color" value="#ffffff" aria-label="Caption color"></div>
+      <div class="r"><span>Size</span><input id="cs" type="range" min="30" max="140" value="64"></div>
+      <div class="r"><span>Height</span><input id="cy" type="range" min="0" max="100" value="88"></div>
+    </div>
+    <div class="g"><p>Watermark</p>
+      <input class="tx" id="wt" type="text" placeholder="Text watermark, or load an image">
+      <div class="opts"><label>Load image<input id="wi" type="file" accept="image/*" hidden></label><button id="wr" hidden>Remove image</button></div>
+      <div class="opts" style="margin-top:8px"><button data-c="0,0">Top left</button><button data-c="100,0">Top right</button><button data-c="0,100">Bottom left</button><button data-c="100,100">Bottom right</button></div>
+      <div class="r"><span>Size</span><input id="ws" type="range" min="5" max="80" value="25"></div>
+      <div class="r"><span>Opacity</span><input id="wo" type="range" min="10" max="100" value="80"></div>
+      <div class="r"><span>Left/right</span><input id="wxs" type="range" min="0" max="100" value="100"></div>
+      <div class="r"><span>Up/down</span><input id="wys" type="range" min="0" max="100" value="0"></div>
+    </div>
     <div class="g"><p>Background</p><div class="opts"><button id="blur">Blur</button></div></div>
     <button id="go" disabled>Create Short</button>
     <div id="msg" role="status"></div>
@@ -75,12 +148,14 @@ button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2
 <script>
 (function(){
 const $=id=>document.getElementById(id);
-const cv=$('cv'),c=cv.getContext('2d'),drop=$('drop'),file=$('file'),go=$('go'),msg=$('msg'),playBtn=$('play'),trim=$('trim');
+const cv=$('cv'),c=cv.getContext('2d'),drop=$('drop'),file=$('file'),go=$('go'),go2=$('go2'),msg=$('msg'),playBtn=$('play'),trim=$('trim');
 const bg=document.createElement('canvas');bg.width=270;bg.height=480;const b=bg.getContext('2d');const canBlur='filter' in b;if(canBlur)b.filter='blur(12px)';
-const v=document.createElement('video');v.playsInline=true;v.preload='auto';
-const st={zoom:0,side:0,bottom:0,blur:false};
+const mkVid=()=>{const x=document.createElement('video');x.playsInline=true;x.preload='auto';x.clip=null;return x};
+const vids=[mkVid(),mkVid()];let v=vids[0];/* two players so the next clip is ready before the current one ends */
+const st={zoom:0,side:0,bottom:0,blur:false,vol:100,bright:100,bwOn:false,bwS:0,bwE:0};
 const groups=[['zoom','Zoom',[25,50,100,200],200],['side','Crop sides',[10,20,30,40,50,60],60],['bottom','Crop bottom',[10,20,30,40,50,60],60]];
-let name='short',exporting=false,actx=null,dest=null,gain=null,ts=0,te=0,run=false,endCb=null,drag=null;
+let name='short',exporting=false,actx=null,dest=null,gain=null,vol=null,run=false,endCb=null,drag=null;
+function setGo(x){go.disabled=x;go2.disabled=x}
 const fmt=t=>{const m=Math.floor(t/60),x=t-m*60;return m+':'+(x<10?'0':'')+x.toFixed(1)};
 
 /* option groups: buttons + slider */
@@ -96,67 +171,283 @@ groups.forEach(([k,title,opts,max])=>{
 });
 $('blur').onclick=e=>{st.blur=!st.blur;e.target.classList.toggle('on',st.blur)};
 
-/* loading */
-drop.onclick=()=>file.click();
-drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();file.click()}};
-['dragenter','dragover'].forEach(n=>document.addEventListener(n,e=>{e.preventDefault();drop.classList.add('over')}));
-['dragleave','drop'].forEach(n=>document.addEventListener(n,e=>{e.preventDefault();drop.classList.remove('over')}));
-document.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)load(f)});
-file.onchange=()=>{if(file.files[0])load(file.files[0])};
-function load(f){
-  if(!f.type.startsWith('video/')){msg.textContent='Choose a video file.';return}
-  name=f.name.replace(/\.[^.]+$/,'')||'short';
-  v.src=URL.createObjectURL(f);
-  v.onloadeddata=()=>{drop.style.display='none';go.disabled=false;playBtn.disabled=false;ts=0;te=v.duration;run=false;v.currentTime=0;setTrim();buildStamps();$('dur').textContent=fmt(v.duration);msg.textContent='';};
-  v.onerror=()=>{msg.textContent='This browser can’t play that video. Try an MP4 (H.264) or WebM.'};
+
+/* video effects dropdown: black & white range, volume, brightness */
+const fxBtn=$('fxbtn'),fxBody=$('fxbody'),PRESETS=[25,50,75,100,200,300];
+fxBtn.onclick=()=>{const o=fxBody.hidden;fxBody.hidden=!o;fxBtn.setAttribute('aria-expanded',o)};
+const bwS=$('bws'),bwE=$('bwe'),bwOn=$('bwon');
+const nowT=()=>Math.round(mt()*10)/10;
+function bwSync(){
+  bwOn.classList.toggle('on',st.bwOn);
+  $('bwl').textContent=st.bwOn?fmt(st.bwS)+' – '+fmt(st.bwE):'Off';
+}
+bwOn.onclick=()=>{
+  st.bwOn=!st.bwOn;
+  if(st.bwOn&&st.bwE<=st.bwS){st.bwE=Math.round((cutLen()||5)*10)/10;bwE.value=st.bwE}
+  bwSync();
+};
+bwS.oninput=()=>{st.bwS=Math.max(0,+bwS.value||0);bwSync()};
+bwE.oninput=()=>{st.bwE=Math.max(0,+bwE.value||0);bwSync()};
+$('bwsn').onclick=()=>{st.bwS=nowT();bwS.value=st.bwS;bwSync()};
+$('bwen').onclick=()=>{st.bwE=nowT();bwE.value=st.bwE;bwSync()};
+function level(title,key,apply){
+  const g=document.createElement('div');g.className='g';
+  g.innerHTML='<p>'+title+'<span></span></p><div class="opts"></div><input type="range" min="0" max="300" step="1" value="100" aria-label="'+title+'">';
+  const box=g.querySelector('.opts'),sl=g.querySelector('input'),lab=g.querySelector('span'),btns=[];
+  const sync=()=>{sl.value=st[key];lab.textContent=st[key]+'%';btns.forEach(([n,x])=>x.classList.toggle('on',n===st[key]));apply&&apply()};
+  PRESETS.forEach(n=>{const x=document.createElement('button');x.textContent=n+'%';x.onclick=()=>{st[key]=n;sync()};box.appendChild(x);btns.push([n,x])});
+  sl.oninput=()=>{st[key]=+sl.value;sync()};
+  sync();$('lv').appendChild(g);
+}
+level('Volume','vol',()=>{if(vol)vol.gain.value=st.vol/100});
+level('Brightness (video only)','bright');
+
+/* clips: loading, list, merged timeline */
+const clips=[];let sel=-1,cur=-1,navTok=0,playTok=0,switching=false;
+const lenOf=c0=>Math.max(0,c0.te-c0.ts);
+const total=()=>clips.reduce((a,c0)=>a+lenOf(c0),0);
+const offOf=i=>{let o=0;for(let k=0;k<i;k++)o+=lenOf(clips[k]);return o};
+const mt=()=>{const c0=clips[cur];if(!c0)return 0;return offOf(cur)+Math.min(lenOf(c0),Math.max(0,v.currentTime-c0.ts))};
+const other=()=>vids[0]===v?vids[1]:vids[0];
+const seek=$('seek');let sk=false;
+
+/* load clip cl into player el and park it at time t (default: the clip's cut start) */
+function prep(el,cl,t){
+  if(t==null)t=cl.ts;
+  return new Promise(res=>{
+    let done=false;const fin=()=>{if(!done){done=true;clearTimeout(to);res()}};
+    const to=setTimeout(fin,4000);
+    const seekIt=()=>{
+      if(el.readyState>=2&&Math.abs(el.currentTime-t)<.02){fin();return}
+      el.onseeked=fin;el.currentTime=t;
+    };
+    if(el.clip!==cl){el.clip=cl;el.pause();el.src=cl.url}
+    if(el.readyState>=2)seekIt();else el.onloadeddata=()=>{el.onloadeddata=null;seekIt()};
+  });
+}
+/* show clip i at time t (source time) on the canvas */
+async function show(i,t){
+  const cl=clips[i];if(!cl)return;
+  const tok=++navTok;
+  let el=vids.find(x=>x.clip===cl);
+  if(el===v&&el.readyState>=2){cur=i;if(t!=null)v.currentTime=t;return}
+  if(!el)el=other();
+  await prep(el,cl,t);
+  if(tok!==navTok)return;
+  v=el;cur=clips.indexOf(cl);
+}
+/* go to a position on the merged timeline */
+function goto(T){
+  const tot=total();if(!tot)return;
+  T=Math.min(Math.max(0,T),Math.max(0,tot-.05));
+  let i=0,o=0;
+  for(;i<clips.length-1;i++){const l=lenOf(clips[i]);if(T<o+l)break;o+=l}
+  return show(i,clips[i].ts+(T-o));
+}
+function preloadNext(){if(cur>=0&&cur+1<clips.length)prep(other(),clips[cur+1])}
+function pauseAll(){run=false;switching=false;playTok++;vids.forEach(x=>x.pause());playBtn.textContent='Play'}
+
+function probe(f){
+  return new Promise(res=>{
+    const url=URL.createObjectURL(f),t=document.createElement('video');
+    const bad=()=>{URL.revokeObjectURL(url);res(null)};
+    t.preload='metadata';
+    t.onloadedmetadata=()=>{const d=t.duration;t.removeAttribute('src');t.load();
+      if(isFinite(d)&&d>0)res({url,name:f.name.replace(/\.[^.]+$/,'')||'short',dur:d,ts:0,te:d});else bad()};
+    t.onerror=bad;t.src=url;
+  });
+}
+async function addFiles(list){
+  if(exporting)return;
+  const fs=[...list].filter(f=>f.type.startsWith('video/'));
+  if(!fs.length){msg.textContent='Choose a video file.';return}
+  pauseAll();msg.textContent='Loading…';
+  const first=!clips.length;let n=0;const bad=[];
+  for(const f of fs){const cl=await probe(f);if(cl){clips.push(cl);n++}else bad.push(f.name)}
+  if(!n){msg.textContent='This browser can’t play '+(bad.length>1?'those videos':bad[0])+'. Try an MP4 (H.264) or WebM.';return}
+  if(first){sel=0;drop.style.display='none';setGo(false);playBtn.disabled=false}
+  refresh();
+  if(first)await show(0,clips[0].ts);
+  msg.textContent='Added '+n+' video'+(n>1?'s':'')+'. Total length '+fmt(total())+'.'+(bad.length?' Couldn’t load: '+bad.join(', ')+'.':'');
+}
+function refresh(){
+  if(clips.length)name=(clips.length>1?clips[0].name+'-merged':clips[0].name)||'short';
+  renderClips();setTrim();buildStamps();$('dur').textContent=fmt(total());
+  if(!clips.length){$('now').textContent=fmt(0);seek.value=0}
+}
+function renderClips(){
+  const box=$('clips');box.innerHTML='';
+  $('clipn').textContent=clips.length?clips.length+(clips.length>1?' videos':' video'):'';
+  clips.forEach((cl,i)=>{
+    const d=document.createElement('div');d.className='cl'+(i===sel?' on':'');d.tabIndex=0;
+    d.innerHTML='<span class="ix">'+(i+1)+'</span><span class="nm"></span><span class="ln">'+fmt(lenOf(cl))+'</span><button class="up" aria-label="Move earlier">↑</button><button class="dn" aria-label="Move later">↓</button><button class="rm" aria-label="Remove video">✕</button>';
+    d.querySelector('.nm').textContent=cl.name;
+    const up=d.querySelector('.up'),dn=d.querySelector('.dn'),rm=d.querySelector('.rm');
+    up.disabled=i===0;dn.disabled=i===clips.length-1;
+    d.onclick=()=>pick(i);
+    d.onkeydown=e=>{if(e.target===d&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pick(i)}};
+    up.onclick=e=>{e.stopPropagation();moveClip(i,-1)};
+    dn.onclick=e=>{e.stopPropagation();moveClip(i,1)};
+    rm.onclick=e=>{e.stopPropagation();removeClip(i)};
+    box.appendChild(d);
+  });
+}
+function pick(i){if(exporting)return;pauseAll();sel=i;refresh();show(i,clips[i].ts)}
+function moveClip(i,d){
+  const j=i+d;if(exporting||j<0||j>=clips.length)return;
+  pauseAll();[clips[i],clips[j]]=[clips[j],clips[i]];
+  if(sel===i)sel=j;else if(sel===j)sel=i;
+  cur=Math.max(0,clips.indexOf(v.clip));refresh();
+}
+function removeClip(i){
+  if(exporting)return;pauseAll();
+  const [cl]=clips.splice(i,1);
+  vids.forEach(x=>{if(x.clip===cl){x.clip=null;x.removeAttribute('src');x.load()}});
+  URL.revokeObjectURL(cl.url);
+  if(!clips.length){
+    sel=-1;cur=-1;drop.style.display='';setGo(true);playBtn.disabled=true;
+    msg.textContent='';refresh();return;
+  }
+  if(i<sel)sel--;else if(i===sel)sel=Math.min(sel,clips.length-1);
+  cur=Math.max(0,clips.indexOf(v.clip));refresh();
+  show(sel,clips[sel].ts);
 }
 
-/* cut bar */
+drop.onclick=()=>file.click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();file.click()}};
+$('addvid').onclick=()=>{if(!exporting)file.click()};
+['dragenter','dragover'].forEach(n=>document.addEventListener(n,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(n=>document.addEventListener(n,e=>{e.preventDefault();drop.classList.remove('over')}));
+document.addEventListener('drop',e=>{if(e.dataTransfer.files.length)addFiles(e.dataTransfer.files)});
+file.onchange=()=>{addFiles(file.files).then(()=>{file.value=''})};
+
+/* cut bar (trims the selected clip) */
 function setTrim(){
-  const D=v.duration||1;
-  $('sel').style.left=ts/D*100+'%';$('sel').style.width=(te-ts)/D*100+'%';
-  $('h1').style.left=ts/D*100+'%';$('h2').style.left=te/D*100+'%';
-  $('ts').textContent=fmt(ts);$('te').textContent=fmt(te);$('tl').textContent=fmt(te-ts);
+  const cl=clips[sel];
+  $('cutname').textContent=cl?cl.name:'';
+  if(!cl){$('sel').style.width='0';$('h1').style.left='0';$('h2').style.left='0';$('ts').textContent=$('te').textContent=$('tl').textContent=fmt(0);return}
+  const D=cl.dur||1;
+  $('sel').style.left=cl.ts/D*100+'%';$('sel').style.width=(cl.te-cl.ts)/D*100+'%';
+  $('h1').style.left=cl.ts/D*100+'%';$('h2').style.left=cl.te/D*100+'%';
+  $('ts').textContent=fmt(cl.ts);$('te').textContent=fmt(cl.te);$('tl').textContent=fmt(cl.te-cl.ts);
 }
-const tAt=ev=>{const r=trim.getBoundingClientRect();return Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width))*v.duration};
+const tAt=ev=>{const r=trim.getBoundingClientRect();return Math.min(1,Math.max(0,(ev.clientX-r.left)/r.width))*(clips[sel]?clips[sel].dur:0)};
 trim.onpointerdown=ev=>{
-  if(!v.duration||exporting)return;stopPlay();
-  const t=tAt(ev);drag=Math.abs(t-ts)<Math.abs(t-te)?'s':'e';
+  if(sel<0||exporting)return;pauseAll();
+  const cl=clips[sel],t=tAt(ev);drag=Math.abs(t-cl.ts)<Math.abs(t-cl.te)?'s':'e';
   trim.setPointerCapture(ev.pointerId);moveH(ev);
 };
 trim.onpointermove=ev=>{if(drag)moveH(ev)};
 trim.onpointerup=()=>{drag=null};
 function moveH(ev){
-  const t=tAt(ev),gap=Math.min(.5,v.duration/2);
-  if(drag==='s'){ts=Math.min(t,te-gap);v.currentTime=ts}else{te=Math.max(t,ts+gap);v.currentTime=Math.max(ts,te-.05)}
-  setTrim();
+  const cl=clips[sel],t=tAt(ev),gap=Math.min(.5,cl.dur/2);
+  if(drag==='s'){cl.ts=Math.min(t,cl.te-gap);show(sel,cl.ts)}else{cl.te=Math.max(t,cl.ts+gap);show(sel,Math.max(cl.ts,cl.te-.05))}
+  setTrim();renderClips();buildStamps();$('dur').textContent=fmt(total());
 }
 
-/* timestamps + seek */
-const seek=$('seek');let sk=false;
-function jump(t){if(exporting||!v.duration)return;run=false;v.pause();playBtn.textContent='Play';v.currentTime=Math.min(Math.max(0,t),v.duration-.05)}
+/* timestamps + seek (across the whole merged video) */
+function jump(t){if(exporting||!clips.length)return;pauseAll();goto(t)}
 function buildStamps(){
-  const box=$('stamps');box.innerHTML='';
-  for(let i=0;i<=6;i++){const t=v.duration*i/6,x=document.createElement('button');x.textContent=fmt(t).replace(/\.\d$/,'');x.onclick=()=>jump(t);box.appendChild(x)}
+  const box=$('stamps');box.innerHTML='';const T=total();if(!T)return;
+  for(let i=0;i<=6;i++){const t=T*i/6,x=document.createElement('button');x.textContent=fmt(t).replace(/\.\d$/,'');x.onclick=()=>jump(t);box.appendChild(x)}
 }
 seek.onpointerdown=()=>{sk=true};
 window.addEventListener('pointerup',()=>{sk=false});
-seek.oninput=()=>jump(seek.value/1000*v.duration);
+seek.oninput=()=>jump(seek.value/1000*total());
 
 /* play / stop */
-function startPlay(){
-  if(!v.src)return;
-  if(v.currentTime<ts||v.currentTime>=te-.05)v.currentTime=ts;
-  run=true;v.play();playBtn.textContent='Stop';
+async function startPlay(){
+  if(!clips.length)return;
+  try{audioSetup();if(actx.state==='suspended')actx.resume()}catch(e){}
+  if(cur===clips.length-1&&v.currentTime>=clips[cur].te-.05)await show(0,clips[0].ts);
+  const cl=clips[cur];
+  if(v.currentTime<cl.ts||v.currentTime>=cl.te-.05)v.currentTime=cl.ts;
+  run=true;v.play();playBtn.textContent='Stop';preloadNext();
 }
-function stopPlay(){run=false;v.pause();if(v.src)v.currentTime=ts;playBtn.textContent='Play'}
+function stopPlay(){pauseAll();if(clips.length)show(0,clips[0].ts)}
 playBtn.onclick=()=>{if(exporting)return;run?stopPlay():startPlay()};
-cv.onclick=()=>{if(v.src&&!exporting)playBtn.click()};
+cv.onclick=()=>{if(clips.length&&!exporting)playBtn.click()};
+
+/* caption + watermark (drawn on the canvas, so they are baked into the export) */
+const cap={size:64,y:88,color:'#ffffff'},caps=[],wm={img:null,text:'',size:25,op:80,x:100,y:0};
+$('cs').oninput=e=>cap.size=+e.target.value;
+$('cy').oninput=e=>cap.y=+e.target.value;
+$('cc').oninput=e=>cap.color=e.target.value;
+document.querySelectorAll('[data-y]').forEach(x=>x.onclick=()=>{cap.y=+x.dataset.y;$('cy').value=cap.y});
+$('wt').oninput=e=>wm.text=e.target.value;
+$('ws').oninput=e=>wm.size=+e.target.value;
+$('wo').oninput=e=>wm.op=+e.target.value;
+$('wxs').oninput=e=>wm.x=+e.target.value;
+$('wys').oninput=e=>wm.y=+e.target.value;
+document.querySelectorAll('[data-c]').forEach(x=>x.onclick=()=>{const q=x.dataset.c.split(',');wm.x=+q[0];wm.y=+q[1];$('wxs').value=q[0];$('wys').value=q[1]});
+$('wi').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{wm.img=im;$('wr').hidden=false};im.src=URL.createObjectURL(f)};
+$('wr').onclick=()=>{wm.img=null;$('wr').hidden=true;$('wi').value=''};
+
+/* multiple captions */
+const capBox=$('caps'),CAPLEN=()=>Math.max(1,Math.round(+$('bulkl').value||25));
+const cutLen=()=>total();
+function renderCaps(){
+  capBox.innerHTML='';$('capn').textContent=caps.length?caps.length+' added':'';
+  caps.forEach((cp,i)=>{
+    const d=document.createElement('div');d.className='cr';
+    d.innerHTML='<input class="tx" type="text" placeholder="Caption '+(i+1)+'"><div class="r"><span>From</span><input class="n" type="number" min="0" step="0.5"><span>to</span><input class="n" type="number" min="0" step="0.5"><span>s</span><button class="del" aria-label="Remove caption">Remove</button></div>';
+    const [tx,a,z]=d.querySelectorAll('input');tx.value=cp.text;a.value=cp.s;z.value=cp.e;
+    tx.oninput=()=>cp.text=tx.value;
+    a.oninput=()=>cp.s=Math.max(0,+a.value||0);
+    z.oninput=()=>cp.e=Math.max(0,+z.value||0);
+    d.querySelector('.del').onclick=()=>{caps.splice(i,1);renderCaps()};
+    capBox.appendChild(d);
+  });
+}
+function nextStart(){return caps.length?Math.max(...caps.map(x=>x.e)):0}
+function addCap(text,len){const s0=nextStart();caps.push({text:text||'',s:s0,e:s0+len});}
+$('capadd').onclick=()=>{addCap('',CAPLEN());renderCaps();const t=capBox.querySelectorAll('.tx');if(t.length)t[t.length-1].focus()};
+$('capbulk').onclick=()=>{const b=$('bulk');b.hidden=!b.hidden;if(!b.hidden)$('bulkt').focus()};
+$('bulkgo').onclick=()=>{
+  const lines=$('bulkt').value.split('\n').map(x=>x.trim()).filter(Boolean);
+  if(!lines.length){msg.textContent='Type at least one caption line first.';return}
+  const len=CAPLEN();lines.forEach(l=>addCap(l,len));
+  $('bulkt').value='';$('bulk').hidden=true;renderCaps();
+  const end=nextStart(),L=cutLen();
+  msg.textContent=lines.length+' captions added'+(L&&end>L+.05?' – the last ones run past your cut length ('+fmt(L)+'), so they will be cut off.':'.');
+};
+function activeCap(){
+  const t=mt();
+  return caps.find(x=>x.text.trim()&&t>=x.s&&t<x.e)||null;
+}
+function wrap(t,w){const out=[];t.split('\n').forEach(p=>{let l='';p.split(' ').forEach(wd=>{const x=l?l+' '+wd:wd;if(c.measureText(x).width>w&&l){out.push(l);l=wd}else l=x});out.push(l)});return out}
+function overlays(){
+  c.textAlign='center';c.textBaseline='middle';c.lineJoin='round';
+  const ac=activeCap();
+  if(ac){
+    c.font='800 '+cap.size+'px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
+    const L=wrap(ac.text.trim(),960),lh=cap.size*1.2,y0=cap.y/100*1920-(L.length-1)*lh/2;
+    c.lineWidth=cap.size/5;c.strokeStyle='#000';c.fillStyle=cap.color;
+    L.forEach((l,i)=>{c.strokeText(l,540,y0+i*lh);c.fillText(l,540,y0+i*lh)});
+  }
+  if(wm.img||wm.text.trim()){
+    c.save();c.globalAlpha=wm.op/100;let w,h,fs;
+    if(wm.img){w=1080*wm.size/100;h=w*wm.img.height/wm.img.width}
+    else{fs=1080*wm.size/100*.35;c.font='800 '+fs+'px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';w=c.measureText(wm.text).width;if(w>1000){fs*=1000/w;w=1000;c.font='800 '+fs+'px system-ui,sans-serif'}h=fs}
+    const m=30,cx=m+w/2+wm.x/100*Math.max(0,1080-w-2*m),cy=m+h/2+wm.y/100*Math.max(0,1920-h-2*m);
+    if(wm.img)c.drawImage(wm.img,cx-w/2,cy-h/2,w,h);
+    else{c.lineWidth=h/8;c.strokeStyle='rgba(0,0,0,.6)';c.fillStyle='#fff';c.strokeText(wm.text,cx,cy);c.fillText(wm.text,cx,cy)}
+    c.restore();
+  }
+}
 
 /* drawing */
+function fxFallback(dx,dy,dw,dh,bw){
+  if(!bw&&st.bright===100)return;
+  c.save();c.beginPath();c.rect(dx,dy,dw,dh);c.clip();
+  if(bw){c.globalCompositeOperation='saturation';c.fillStyle='#808080';c.fillRect(dx,dy,dw,dh);c.globalCompositeOperation='source-over'}
+  if(st.bright<100){c.fillStyle='rgba(0,0,0,'+(1-st.bright/100)+')';c.fillRect(dx,dy,dw,dh)}
+  else if(st.bright>100){c.globalCompositeOperation='lighter';c.fillStyle='rgba(255,255,255,'+Math.min(1,(st.bright-100)/300)+')';c.fillRect(dx,dy,dw,dh)}
+  c.restore();
+}
 function frame(){
   c.fillStyle='#000';c.fillRect(0,0,1080,1920);
-  if(v.videoWidth){
+  if(v.videoWidth&&clips[cur]){
     const W=v.videoWidth,H=v.videoHeight;
     const sx=W*st.side/100,sw=W-2*sx,sh=H*(1-st.bottom/100);
     if(st.blur){
@@ -168,12 +459,16 @@ function frame(){
     }
     const sc=Math.min(1080/sw,1920/sh)*(1+st.zoom/100),dw=sw*sc,dh=sh*sc;
     c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
-    c.drawImage(v,sx,0,sw,sh,(1080-dw)/2,(1920-dh)/2,dw,dh);
-    $('ph').style.left=v.currentTime/v.duration*100+'%';
-    if(!sk)seek.value=v.currentTime/v.duration*1000;$('now').textContent=fmt(v.currentTime);
-    if(run&&(v.currentTime>=te-.03||v.ended)){
-      if(endCb){const f=endCb;endCb=null;run=false;v.pause();f()}else stopPlay();
-    }
+    const dx=(1080-dw)/2,dy=(1920-dh)/2,tt=mt(),bw=st.bwOn&&tt>=st.bwS&&tt<st.bwE;
+    if(canBlur&&(bw||st.bright!==100))c.filter=(bw?'grayscale(1) ':'')+'brightness('+st.bright/100+')';
+    c.drawImage(v,sx,0,sw,sh,dx,dy,dw,dh);
+    if(canBlur)c.filter='none';else fxFallback(dx,dy,dw,dh,bw);
+    overlays();
+    $('ph').style.display=cur===sel?'':'none';
+    if(cur===sel)$('ph').style.left=v.currentTime/clips[cur].dur*100+'%';
+    const T=total();
+    if(!sk)seek.value=T?mt()/T*1000:0;$('now').textContent=fmt(mt());
+    if(run&&!switching&&(v.currentTime>=clips[cur].te-.03||v.ended))advance();
   }
   requestAnimationFrame(frame);
 }
@@ -183,17 +478,34 @@ frame();
 function audioSetup(){
   if(dest)return;
   actx=new (window.AudioContext||window.webkitAudioContext)();
-  const s=actx.createMediaElementSource(v);
-  dest=actx.createMediaStreamDestination();gain=actx.createGain();
-  s.connect(dest);s.connect(gain);gain.connect(actx.destination);
+  dest=actx.createMediaStreamDestination();gain=actx.createGain();vol=actx.createGain();
+  vol.gain.value=st.vol/100;
+  vids.forEach(el=>actx.createMediaElementSource(el).connect(vol));
+  vol.connect(dest);vol.connect(gain);gain.connect(actx.destination);
 }
-go.onclick=async()=>{
-  if(!v.src||exporting)return;
-  stopPlay();exporting=true;go.disabled=true;playBtn.disabled=true;
+function finish(){
+  if(endCb){const f=endCb;endCb=null;run=false;v.pause();f()}else stopPlay();
+}
+/* current clip reached its end: hand over to the next one (already preloaded), or finish */
+async function advance(){
+  if(switching)return;
+  if(cur>=clips.length-1){finish();return}
+  switching=true;const tok=playTok;
+  const nx=clips[cur+1],n=other(),old=v;
+  if(!(n.clip===nx&&n.readyState>=2&&Math.abs(n.currentTime-nx.ts)<.3))await prep(n,nx);
+  if(tok!==playTok)return;
+  old.pause();v=n;cur++;
+  v.play().catch(()=>{});
+  switching=false;preloadNext();
+}
+go.onclick=go2.onclick=async()=>{
+  if(!clips.length||exporting)return;
+  pauseAll();exporting=true;setGo(true);playBtn.disabled=true;
+  let tick=null;
   try{
     audioSetup();if(actx.state==='suspended')await actx.resume();
     gain.gain.value=0;
-    if(Math.abs(v.currentTime-ts)>.01)await new Promise(r=>{v.onseeked=r;v.currentTime=ts});
+    await show(0,clips[0].ts);
     const types=['video/mp4;codecs=avc1.640028,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
     const mime=types.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||'';
     const stream=cv.captureStream(60);
@@ -201,17 +513,20 @@ go.onclick=async()=>{
     const rec=new MediaRecorder(stream,{mimeType:mime||undefined,videoBitsPerSecond:30000000,audioBitsPerSecond:256000});
     const parts=[];rec.ondataavailable=e=>{if(e.data.size)parts.push(e.data)};
     const done=new Promise(r=>{rec.onstop=r});
-    rec.start(1000);run=true;v.play();
-    const tick=setInterval(()=>{msg.textContent='Recording… '+Math.round((v.currentTime-ts)/(te-ts)*100)+'% (keep this tab open)'},300);
+    const T=total();
+    rec.start(1000);run=true;v.play();preloadNext();
+    tick=setInterval(()=>{msg.textContent='Recording… '+Math.min(100,Math.round(mt()/T*100))+'% (keep this tab open)'},300);
     await new Promise(r=>{endCb=r});
-    clearInterval(tick);rec.stop();await done;
+    clearInterval(tick);tick=null;rec.stop();await done;
     const ext=rec.mimeType.includes('mp4')?'mp4':'webm';
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(parts,{type:rec.mimeType}));
     a.download=name+'-short.'+ext;document.body.appendChild(a);a.click();a.remove();
     msg.textContent='Done. Saved '+name+'-short.'+ext+'.';
   }catch(err){msg.textContent='Couldn’t create the Short. Try Chrome or Edge on a computer.'}
-  endCb=null;run=false;if(gain)gain.gain.value=1;v.pause();v.currentTime=ts;playBtn.textContent='Play';
-  exporting=false;go.disabled=false;playBtn.disabled=false;
+  if(tick)clearInterval(tick);
+  endCb=null;run=false;switching=false;playTok++;if(gain)gain.gain.value=1;vids.forEach(x=>x.pause());playBtn.textContent='Play';
+  if(clips.length)await show(0,clips[0].ts);
+  exporting=false;setGo(false);playBtn.disabled=false;
 };
 })();
 </script>
