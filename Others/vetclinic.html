@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0b1118">
-<title>VetClinic · Veteriner Klinik Yönetimi · InevitableDays.github.io · Ümit Özkul · 2026</title>
+<title>VetClinic — Veteriner Klinik Yönetimi</title>
 
 <style>
 :root{
+  --main-photo:url('https://images.unsplash.com/photo-1787319581297-3f5cd491abf7?q=80&w=1600');
   --bg:#05080d;
   --bg2:#080e16;
   --panel:rgba(14,22,32,.78);
@@ -22,7 +23,7 @@
 
   --primary:#42e8c0;
   --primary2:#18b996;
-  --primary-soft:rgba(66,232,192,.10);
+  --primary-soft:rgba(var(--accent-rgb),.10);
 
   --blue:#62a8ff;
   --purple:#9b7cff;
@@ -32,14 +33,47 @@
   --sidebar:255px;
   --radius:15px;
 
+  /* accent palette (green = original; sky / orange are set per background) */
+  --accent-rgb:66,232,192;
+  --accent2-rgb:53,214,173;
+  --accent-dark-rgb:27,77,68;
+  --muted-accent:#5f9ea8;
+  --p-hi:#64f2ce; --p-1:#48e8c1; --p-2:#20b998; --p-3:#29cba6; --p-4:#2dc7a7;
+
   --glow:
-    0 0 25px rgba(66,232,192,.08),
-    0 0 70px rgba(66,232,192,.035);
+    0 0 25px rgba(var(--accent-rgb),.08),
+    0 0 70px rgba(var(--accent-rgb),.035);
+}
+
+/* Background 2: sky blue */
+:root[data-accent="sky"]{
+  --accent-rgb:220,245,255; --accent2-rgb:150,220,255; --accent-dark-rgb:55,85,100;
+  --primary:#dcf5ff; --primary2:#96dcff; --muted-accent:#9fc9d8;
+  --p-hi:#ffffff; --p-1:#e8faff; --p-2:#72c9ed; --p-3:#b5eaff; --p-4:#c8f0ff;
+  --border-hi:rgba(220,245,255,.55);
+}
+
+/* Background 3: orange */
+:root[data-accent="orange"]{
+  --accent-rgb:255,154,61; --accent2-rgb:245,138,36; --accent-dark-rgb:92,50,18;
+  --primary:#ff9a3d; --primary2:#e8730c; --muted-accent:#c79566;
+  --p-hi:#ffb766; --p-1:#ffa04a; --p-2:#ec7a10; --p-3:#f58a24; --p-4:#f9922e;
+  --border-hi:rgba(255,154,61,.35);
 }
 
 *{
   box-sizing:border-box;
 }
+
+
+html {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
 
 html,body{
   margin:0;
@@ -57,7 +91,7 @@ html,body{
 
   background:
     radial-gradient(circle at 80% -10%,rgba(65,180,255,.10),transparent 35%),
-    radial-gradient(circle at 15% 10%,rgba(66,232,192,.07),transparent 30%),
+    radial-gradient(circle at 15% 10%,rgba(var(--accent-rgb),.07),transparent 30%),
     var(--bg);
 
   color:var(--text);
@@ -175,7 +209,7 @@ button{
   background:
     linear-gradient(
       135deg,
-      rgba(66,232,192,.18),
+      rgba(var(--accent-rgb),.18),
       rgba(98,168,255,.08)
     );
 
@@ -184,11 +218,11 @@ button{
   font-size:20px;
   font-weight:800;
 
-  border:1px solid rgba(66,232,192,.20);
+  border:1px solid rgba(var(--accent-rgb),.20);
 
   box-shadow:
-    inset 0 0 20px rgba(66,232,192,.08),
-    0 0 25px rgba(66,232,192,.08);
+    inset 0 0 20px rgba(var(--accent-rgb),.08),
+    0 0 25px rgba(var(--accent-rgb),.08);
 
   transition:.3s ease;
 }
@@ -197,8 +231,8 @@ button{
   transform:rotate(-6deg) scale(1.08);
 
   box-shadow:
-    inset 0 0 25px rgba(66,232,192,.15),
-    0 0 35px rgba(66,232,192,.18);
+    inset 0 0 25px rgba(var(--accent-rgb),.15),
+    0 0 35px rgba(var(--accent-rgb),.18);
 }
 
 .logo-text{
@@ -304,12 +338,12 @@ button{
   background:
     linear-gradient(
       90deg,
-      rgba(66,232,192,.12),
-      rgba(66,232,192,.035)
+      rgba(var(--accent-rgb),.12),
+      rgba(var(--accent-rgb),.035)
     );
 
   box-shadow:
-    inset 0 0 25px rgba(66,232,192,.035);
+    inset 0 0 25px rgba(var(--accent-rgb),.035);
 }
 
 .nav button.active::before{
@@ -344,7 +378,7 @@ button{
   background:
     linear-gradient(
       135deg,
-      rgba(66,232,192,.07),
+      rgba(var(--accent-rgb),.07),
       rgba(255,255,255,.015)
     );
 
@@ -378,10 +412,11 @@ button{
 
   min-height:100vh;
  background:
-    radial-gradient(circle at 50% 25%,rgba(53,214,173,.11),transparent 75%),
+    radial-gradient(circle at 50% 25%,rgba(var(--accent2-rgb),.11),transparent 75%),
     radial-gradient(circle at 20% 80%,rgba(98,168,255,.06),transparent 75%),
     linear-gradient(rgba(5,9,13,.12),rgba(5,9,13,.82)),
-    url('https://images.unsplash.com/photo-1606411415427-09484ee673b8?q=80&w=1600') center/cover no-repeat;
+    var(--main-photo) center/cover no-repeat;
+  background-attachment: fixed;
 }
 
 .topbar{
@@ -447,7 +482,7 @@ button{
   background:
     linear-gradient(
       135deg,
-      rgba(66,232,192,.16),
+      rgba(var(--accent-rgb),.16),
       rgba(98,168,255,.12)
     );
 
@@ -461,9 +496,9 @@ button{
 
   font-weight:750;
 
-  border:1px solid rgba(66,232,192,.22);
+  border:1px solid rgba(var(--accent-rgb),.22);
 
-  box-shadow:0 0 20px rgba(66,232,192,.07);
+  box-shadow:0 0 20px rgba(var(--accent-rgb),.07);
 
   transition:.25s;
 }
@@ -472,7 +507,7 @@ button{
   transform:scale(1.08);
 
   box-shadow:
-    0 0 25px rgba(66,232,192,.18);
+    0 0 25px rgba(var(--accent-rgb),.18);
 }
 
 .mobile-menu{
@@ -602,8 +637,8 @@ button{
   background:
     linear-gradient(
       135deg,
-      #48e8c1,
-      #20b998
+      var(--p-1),
+      var(--p-2)
     );
 
   color:#03110d;
@@ -611,19 +646,19 @@ button{
   border-color:transparent;
 
   box-shadow:
-    0 5px 20px rgba(66,232,192,.13);
+    0 5px 20px rgba(var(--accent-rgb),.13);
 }
 
 .btn-primary:hover{
   background:
     linear-gradient(
       135deg,
-      #64f2ce,
-      #29cba6
+      var(--p-hi),
+      var(--p-3)
     );
 
   box-shadow:
-    0 8px 30px rgba(66,232,192,.25);
+    0 8px 30px rgba(var(--accent-rgb),.25);
 }
 
 .btn-danger{
@@ -697,7 +732,7 @@ button{
 
   box-shadow:
     0 20px 60px rgba(0,0,0,.22),
-    0 0 35px rgba(66,232,192,.025);
+    0 0 35px rgba(var(--accent-rgb),.025);
 }
 
 .card-header{
@@ -896,8 +931,8 @@ textarea:focus{
   background:#09131b;
 
   box-shadow:
-    0 0 0 3px rgba(66,232,192,.07),
-    0 0 20px rgba(66,232,192,.05);
+    0 0 0 3px rgba(var(--accent-rgb),.07),
+    0 0 20px rgba(var(--accent-rgb),.05);
 }
 
 textarea{
@@ -970,7 +1005,7 @@ tbody tr:hover{
   background:
     linear-gradient(
       90deg,
-      rgba(66,232,192,.035),
+      rgba(var(--accent-rgb),.035),
       rgba(255,255,255,.012)
     );
 }
@@ -994,11 +1029,11 @@ tbody tr:hover{
 }
 
 .badge-green{
-  background:rgba(66,232,192,.08);
+  background:rgba(var(--accent-rgb),.08);
 
   color:var(--primary);
 
-  border-color:rgba(66,232,192,.14);
+  border-color:rgba(var(--accent-rgb),.14);
 }
 
 .badge-red{
@@ -1141,7 +1176,7 @@ tbody tr:hover{
   font-variant-numeric:tabular-nums;
 
   text-shadow:
-    0 0 18px rgba(66,232,192,.15);
+    0 0 18px rgba(var(--accent-rgb),.15);
 }
 
 /* =========================
@@ -1182,8 +1217,8 @@ tbody tr:hover{
   background:
     linear-gradient(
       90deg,
-      rgba(66,232,192,.10),
-      rgba(66,232,192,.025)
+      rgba(var(--accent-rgb),.10),
+      rgba(var(--accent-rgb),.025)
     );
 }
 
@@ -1218,7 +1253,7 @@ tbody tr:hover{
   background:
     linear-gradient(
       135deg,
-      rgba(66,232,192,.14),
+      rgba(var(--accent-rgb),.14),
       rgba(98,168,255,.10)
     );
 
@@ -1230,10 +1265,10 @@ tbody tr:hover{
 
   font-size:27px;
 
-  border:1px solid rgba(66,232,192,.14);
+  border:1px solid rgba(var(--accent-rgb),.14);
 
   box-shadow:
-    0 0 30px rgba(66,232,192,.06);
+    0 0 30px rgba(var(--accent-rgb),.06);
 }
 
 .profile-name{
@@ -1278,7 +1313,7 @@ tbody tr:hover{
 }
 
 .info-box:hover{
-  border-color:rgba(66,232,192,.18);
+  border-color:rgba(var(--accent-rgb),.18);
 
   transform:translateY(-2px);
 }
@@ -1354,7 +1389,7 @@ tbody tr:hover{
 }
 
 .day:hover{
-  background:rgba(66,232,192,.025);
+  background:rgba(var(--accent-rgb),.025);
 }
 
 .day.other{
@@ -1372,7 +1407,7 @@ tbody tr:hover{
     linear-gradient(
       135deg,
       var(--primary),
-      #2dc7a7
+      var(--p-4)
     );
 
   color:#03110d;
@@ -1387,7 +1422,7 @@ tbody tr:hover{
   place-items:center;
 
   box-shadow:
-    0 0 18px rgba(66,232,192,.25);
+    0 0 18px rgba(var(--accent-rgb),.25);
 }
 
 .event{
@@ -1400,8 +1435,8 @@ tbody tr:hover{
   background:
     linear-gradient(
       90deg,
-      rgba(66,232,192,.12),
-      rgba(66,232,192,.045)
+      rgba(var(--accent-rgb),.12),
+      rgba(var(--accent-rgb),.045)
     );
 
   color:var(--primary);
@@ -1450,11 +1485,11 @@ tbody tr:hover{
 
   margin:11px auto 18px;
 
-  border:5px solid rgba(66,232,192,.10);
+  border:5px solid rgba(var(--accent-rgb),.10);
 
   border-top-color:var(--primary);
 
-  border-right-color:rgba(66,232,192,.45);
+  border-right-color:rgba(var(--accent-rgb),.45);
 
   border-radius:50%;
 
@@ -1465,18 +1500,18 @@ tbody tr:hover{
   position:relative;
 
   box-shadow:
-    0 0 30px rgba(66,232,192,.07);
+    0 0 30px rgba(var(--accent-rgb),.07);
 
   animation:timerGlow 3s ease-in-out infinite;
 }
 
 @keyframes timerGlow{
   0%,100%{
-    box-shadow:0 0 20px rgba(66,232,192,.04);
+    box-shadow:0 0 20px rgba(var(--accent-rgb),.04);
   }
 
   50%{
-    box-shadow:0 0 35px rgba(66,232,192,.12);
+    box-shadow:0 0 35px rgba(var(--accent-rgb),.12);
   }
 }
 
@@ -1565,7 +1600,7 @@ tbody tr:hover{
   opacity:.78;
 
   box-shadow:
-    0 -5px 20px rgba(66,232,192,.08);
+    0 -5px 20px rgba(var(--accent-rgb),.08);
 
   transition:
     height .5s ease,
@@ -1576,7 +1611,7 @@ tbody tr:hover{
   opacity:1;
 
   box-shadow:
-    0 -8px 28px rgba(66,232,192,.20);
+    0 -8px 28px rgba(var(--accent-rgb),.20);
 }
 
 .bar-label{
@@ -1657,7 +1692,7 @@ tbody tr:hover{
 
   box-shadow:
     0 35px 100px rgba(0,0,0,.65),
-    0 0 50px rgba(66,232,192,.035);
+    0 0 50px rgba(var(--accent-rgb),.035);
 
   animation:modalIn .25s ease;
 }
@@ -1730,7 +1765,7 @@ tbody tr:hover{
       rgba(10,19,27,.97)
     );
 
-  border:1px solid rgba(66,232,192,.18);
+  border:1px solid rgba(var(--accent-rgb),.18);
 
   padding:12px 16px;
 
@@ -1750,7 +1785,7 @@ tbody tr:hover{
 
   box-shadow:
     0 15px 45px rgba(0,0,0,.4),
-    0 0 25px rgba(66,232,192,.05);
+    0 0 25px rgba(var(--accent-rgb),.05);
 }
 
 .toast.show{
@@ -1773,7 +1808,7 @@ tbody tr:hover{
   background:
     radial-gradient(
       circle at 30% 20%,
-      rgba(27,77,68,.45),
+      rgba(var(--accent-dark-rgb),.45),
       transparent 35%
     ),
     radial-gradient(
@@ -1794,7 +1829,7 @@ tbody tr:hover{
   overflow:hidden;
 
  background:
-    radial-gradient(circle at 50% 25%,rgba(53,214,173,.11),transparent 55%),
+    radial-gradient(circle at 50% 25%,rgba(var(--accent2-rgb),.11),transparent 55%),
     radial-gradient(circle at 20% 80%,rgba(98,168,255,.06),transparent 55%),
     linear-gradient(rgba(5,9,13,.12),rgba(5,9,13,.82)),
     url('https://images.unsplash.com/photo-1587300003388-59208cc962cb?q=80&w=1600') center/cover no-repeat;
@@ -1811,10 +1846,10 @@ tbody tr:hover{
 
   border-radius:50%;
 
-  border:1px solid rgba(66,232,192,.06);
+  border:1px solid rgba(var(--accent-rgb),.06);
 
   box-shadow:
-    0 0 100px rgba(66,232,192,.04);
+    0 0 100px rgba(var(--accent-rgb),.04);
 
   animation:loginOrbit 15s linear infinite;
 }
@@ -1845,7 +1880,7 @@ tbody tr:hover{
 
   box-shadow:
     0 35px 100px rgba(0,0,0,.65),
-    0 0 60px rgba(66,232,192,.05);
+    0 0 60px rgba(var(--accent-rgb),.05);
 
   backdrop-filter:blur(25px);
 
@@ -1868,7 +1903,7 @@ tbody tr:hover{
   background:
     linear-gradient(
       135deg,
-      rgba(66,232,192,.25),
+      rgba(var(--accent-rgb),.25),
       transparent 35%,
       rgba(98,168,255,.12)
     );
@@ -1889,7 +1924,7 @@ tbody tr:hover{
   top:-1px;
   height:-1px;
   background:linear-gradient(90deg,transparent,var(--primary),transparent);
-  box-shadow:0 0 18px rgba(53,214,173,.45);
+  box-shadow:0 0 18px rgba(var(--accent2-rgb),.45);
 }
 
 .login-logo{
@@ -1992,15 +2027,21 @@ tbody tr:hover{
    READ ONLY
 ========================= */
 
-body.role-readonly .btn-primary[onclick*="openModal"],
+body.role-readonly .btn-primary[onclick*="openModal"]:not([onclick*="saleModal"]),
 body.role-readonly button[onclick*="adjustStock"],
+body.role-readonly button[onclick*="openEditStockModal"],
 body.role-readonly button[onclick*="deleteTimer"],
 body.role-readonly button[onclick*="toggleTimer"],
 body.role-readonly button[onclick*="deletePatient"],
 body.role-readonly button[onclick*="openVisitModal"],
 body.role-readonly button[onclick*="openEditPatientModal"],
+body.role-readonly button[onclick*="openEditSaleModal"],
+body.role-readonly button[onclick*="deleteSale"],
+body.role-readonly button[onclick*="addVaccineSeries"],
+body.role-readonly button[onclick*="checkOutPatient"],
 body.role-readonly button[onclick*="openClinicNoteModal"],
-body.role-readonly button[onclick="importFile.click()"]{
+body.role-readonly button[onclick="importFile.click()"],
+body.role-readonly button[onclick="exportData()"]{
   display:none !important;
 }
 
@@ -2082,10 +2123,349 @@ body.role-readonly .storage-status strong::after{
 }
 
 .month-history-chip.active{
-  background:rgba(54,197,160,.12);
+  background:rgba(var(--accent2-rgb),.12);
   color:var(--primary);
-  border-color:rgba(54,197,160,.3);
+  border-color:rgba(var(--accent2-rgb),.3);
 }
+
+/* ============ Search-as-you-type combo (added) ============ */
+
+.search-results{
+  display:none;
+  position:absolute;
+  left:0;
+  right:0;
+  top:100%;
+  margin-top:4px;
+  max-height:220px;
+  overflow:auto;
+  background:#101821;
+  border:1px solid var(--border);
+  border-radius:9px;
+  box-shadow:0 18px 40px rgba(0,0,0,.45);
+  z-index:60;
+}
+
+.search-results.open{
+  display:block;
+}
+
+.search-result-item{
+  padding:10px 12px;
+  font-size:12px;
+  cursor:pointer;
+  border-bottom:1px solid rgba(34,48,61,.6);
+}
+
+.search-result-item:last-child{
+  border-bottom:0;
+}
+
+.search-result-item:hover,
+.search-result-item.highlighted{
+  background:#17232d;
+}
+
+.search-result-item small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-top:2px;
+}
+
+.search-result-empty{
+  padding:12px;
+  font-size:11px;
+  color:var(--muted);
+  text-align:center;
+}
+
+/* ============ Calendar day modal (added) ============ */
+
+.day-modal-list{
+  max-height:280px;
+  overflow:auto;
+  margin-bottom:16px;
+}
+
+.day-modal-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.day-modal-item:last-child{
+  border-bottom:0;
+}
+
+.day-modal-time{
+  width:50px;
+  color:var(--primary);
+  font-weight:650;
+  font-size:12px;
+}
+
+.day-modal-info strong{
+  display:block;
+  font-size:12px;
+}
+
+.day-modal-info span{
+  color:var(--muted);
+  font-size:10px;
+}
+
+
+/* ============ Dropdown date picker (added) ============ */
+
+.datepick{ position:relative; }
+
+.datepick-pop{
+  display:none;
+  position:absolute;
+  top:calc(100% + 8px);
+  right:0;
+  width:280px;
+  z-index:60;
+  padding:12px;
+  background:var(--panel-solid);
+  border:1px solid var(--border-hi);
+  border-radius:12px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
+}
+
+.datepick-pop.open{ display:block; }
+
+.datepick-top{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.datepick-top select{ flex:1; min-width:0; padding:6px 8px; font-size:12px; }
+
+.datepick-week,
+.datepick-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:3px;
+}
+
+.datepick-week span{
+  text-align:center;
+  font-size:10px;
+  color:var(--muted);
+  padding:4px 0;
+}
+
+.datepick-day{
+  position:relative;
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  border-radius:8px;
+  cursor:pointer;
+  border:1px solid transparent;
+  user-select:none;
+}
+
+.datepick-day:hover{ background:var(--primary-soft); border-color:var(--border-hi); }
+.datepick-day.other{ color:var(--muted); opacity:.45; }
+.datepick-day.today{ border-color:var(--primary); color:var(--primary); font-weight:650; }
+.datepick-day.selected{ background:var(--primary); color:#04110e; font-weight:700; }
+
+.datepick-day.has::after{
+  content:"";
+  position:absolute;
+  bottom:3px;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:var(--blue);
+}
+
+.datepick-day.selected.has::after{ background:#04110e; }
+
+.datepick-foot{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--border);
+}
+
+.datepick-foot input{ flex:1; min-width:0; padding:6px 8px; font-size:12px; }
+
+@media(max-width:600px){
+  .datepick-pop{ right:auto; left:0; }
+}
+
+
+/* ============ Stok Yönetimi: fit-to-window + sliders (added) ============ */
+
+.stock-card{ display:flex; flex-direction:column; min-height:0; }
+.stock-card .card-header{ flex:none; }
+
+.stock-card .table-wrap{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;               /* the slider */
+}
+
+.stock-card thead th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:var(--panel-solid);
+}
+
+/* desktop: the whole page fits the window; only the two lists scroll */
+@media(min-width:901px){
+  #page-sales.active{
+    display:flex;
+    flex-direction:column;
+    height:calc(100vh - 78px - 60px);
+    min-height:420px;
+  }
+
+  #page-sales .page-heading,
+  #page-sales .grid-3{ flex:none; }
+
+  #page-sales .page-heading{ margin-bottom:16px; }
+
+  #page-sales .stock-card{ margin-top:16px !important; }
+
+  #page-sales .stock-card.stock-main{ flex:1 1 0; }
+}
+
+/* small screens: normal page flow, but each list is height-limited */
+@media(max-width:900px){
+  .stock-card .table-wrap{ max-height:55vh; }
+}
+
+.stock-actions{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  white-space:nowrap;
+}
+
+.stock-actions .stock-qty{
+  width:62px;
+  padding:5px 7px;
+  font-size:11px;
+}
+
+body.role-readonly .stock-qty{ display:none; }
+
+/* ============ Dashboard lists: sliders (added) ============ */
+
+.dash-scroll{
+  max-height:330px;
+  overflow-y:auto;
+}
+
+@media(max-width:900px){
+  .dash-scroll{ max-height:280px; }
+}
+
+.list-more{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+  font-size:12px;
+}
+
+/* ============ Patients as small cards (added) ============ */
+
+.patient-layout{ grid-template-columns:1fr; }
+
+.patient-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:10px;
+  padding:12px 14px 14px;
+  max-height:420px;
+  overflow:auto;
+}
+
+.patient-list > .muted{ grid-column:1 / -1; }
+
+.patient-row{
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:rgba(255,255,255,.02);
+  padding:12px 14px;
+}
+
+.patient-row:hover{
+  background:rgba(255,255,255,.05);
+  padding-left:14px;
+  transform:translateY(-1px);
+}
+
+.patient-row{ overflow:hidden; }
+.patient-row strong,
+.patient-row small{ overflow-wrap:anywhere; }
+
+.patient-row.selected{
+  border-color:rgba(var(--accent-rgb),.55);
+  background:linear-gradient(135deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-rgb),.03));
+}
+
+/* ============ Background theme switcher (added) ============ */
+
+.theme-switch{
+  display:none;                 /* shown only on the Ana Menü page */
+  align-items:center;
+  gap:7px;
+  margin-left:6px;
+  padding:5px 8px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:rgba(255,255,255,.02);
+}
+
+body[data-page="dashboard"] .theme-switch{ display:flex; }
+
+.theme-dot{
+  width:22px;
+  height:22px;
+  padding:0;
+  border-radius:50%;
+  border:2px solid transparent;
+  background-color:var(--panel2);
+  background-size:cover;
+  background-position:center;
+  cursor:pointer;
+  opacity:.75;
+  transition:.2s;
+}
+
+.theme-dot:hover{ opacity:1; transform:scale(1.12); }
+.theme-dot.active{ opacity:1; border-color:var(--primary); box-shadow:0 0 10px rgba(var(--accent-rgb),.35); }
+
+/* ============ Patient card: quick actions + old (checked-out) sales ============ */
+
+.patient-quick{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:18px 0 4px;
+}
+
+body.role-readonly .patient-quick{ display:none; }
+
+.procedure-old{ opacity:.5; }
+.procedure-old strong{ text-decoration:none; }
 
 /* =========================
    SCROLLBARS
@@ -2115,7 +2495,7 @@ body.role-readonly .storage-status strong::after{
 }
 
 ::-webkit-scrollbar-thumb:hover{
-  background:rgba(66,232,192,.35);
+  background:rgba(var(--accent-rgb),.35);
 }
 
 /* =========================
@@ -2228,6 +2608,66 @@ body.role-readonly .storage-status strong::after{
     transition-duration:.01ms !important;
   }
 }
+/* SYNC LOCK (added) */
+.sync-lock{
+  position:fixed;
+  inset:0;
+  z-index:2147483000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(8,12,18,.9);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  color:#fff;
+  text-align:center;
+  padding:24px;
+}
+.sync-lock.show{ display:flex; }
+.sync-lock-box{ max-width:420px; }
+.sync-lock-box h2{ margin:16px 0 8px; font-size:22px; }
+.sync-lock-box p{ margin:6px 0; opacity:.85; font-size:14px; line-height:1.5; }
+.sync-lock-box .sync-lock-note{ font-weight:600; opacity:1; margin-bottom:16px; }
+.sync-lock-spinner{
+  width:42px; height:42px; margin:0 auto;
+  border:4px solid rgba(255,255,255,.25);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:syncLockSpin 1s linear infinite;
+}
+@keyframes syncLockSpin{ to{ transform:rotate(360deg); } }
+
+</style>
+<style id="search-dock-css">
+/* Search bars: bigger, centered, kept in view while scrolling (test version) */
+.search-dock{
+  position:sticky; top:var(--dock-top,0px); z-index:25;
+  display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px;
+  padding:6px 0 7px; margin:0 0 2px;
+  background:none; pointer-events:none;              /* nothing dark across the sides, clicks pass through */
+}
+.search-pill{
+  pointer-events:auto; flex:0 1 560px; min-width:240px; max-width:100%;
+  padding:5px; border-radius:14px;
+  background:rgba(8,14,19,.88); border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 10px 28px rgba(0,0,0,.38);
+}
+.search-pill input{
+  display:block; width:100% !important; max-width:none !important; box-sizing:border-box;
+  font-size:15px !important; padding:7px 16px !important; border-radius:10px !important;
+}
+.search-dock .btn-primary{
+  pointer-events:auto; white-space:nowrap; flex:0 0 auto;
+  font-size:14px; padding:7px 18px; border-radius:11px;
+  box-shadow:0 6px 16px rgba(var(--accent-rgb),.26);
+}
+    * {
+    user-select: none;             /* text not selectable */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none; /* removes long-press menu on iOS */
+}
+input,textarea{ user-select:text; -webkit-user-select:text; }  /* typing/selecting inside boxes keeps working */
 </style>
 </head>
 
@@ -2245,7 +2685,7 @@ body.role-readonly .storage-status strong::after{
       </div>
     </div>
 
-    <p class="login-title">Giriş Yap(Demo Şifresi: 1234)</p>
+    <p class="login-title">Giriş Yap</p>
     <p class="login-sub">Devam etmek için kullanıcınızı seçin.</p>
 
     <div class="login-error" id="loginError"></div>
@@ -2273,19 +2713,6 @@ body.role-readonly .storage-status strong::after{
     </form>
 
   </div>
-  <div id="versionNote" style="
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    font-family: Arial, sans-serif;
-    pointer-events: none;
-    user-select: none;
-    z-index:9999;
-">
-    v1.0.0 – 2026, Umit Ozkul
-</div>
 </div>
 
 <div class="app" id="appRoot" style="display:none">
@@ -2307,7 +2734,7 @@ body.role-readonly .storage-status strong::after{
 
     <button class="nav-btn active" data-page="dashboard">
       <span class="nav-icon">⌂</span> Ana Menü
-    </button>
+     </button>
 
     <button class="nav-btn" data-page="patients">
       <span class="nav-icon">♙</span> Hastalar
@@ -2335,6 +2762,10 @@ body.role-readonly .storage-status strong::after{
       <span class="nav-icon">▥</span> Raporlar
     </button>
 
+    <button class="nav-btn" data-page="payments">
+      <span class="nav-icon">₺</span> Ödemeler ve Borçlar
+    </button>
+
     <div class="nav-label">Sistem</div>
 
     <button onclick="exportData()">
@@ -2351,7 +2782,6 @@ body.role-readonly .storage-status strong::after{
     <div class="storage-status">
       <strong>● Çevrimdışı Mod</strong>
       Veriler bu cihazda saklanıyor.
-      InevitableDays.github.io · Ümit Özkul · 2026
     </div>
 
     <!-- SERVER SYNC (added) -->
@@ -2376,7 +2806,19 @@ body.role-readonly .storage-status strong::after{
   <header class="topbar">
     <div style="display:flex;align-items:center;gap:12px">
       <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
-      <div class="page-title" id="pageTitle">Ana Menü</div>
+      <div class="page-title" id="pageTitle">Ana Menü </div>
+
+      <div class="theme-switch" id="themeSwitch" title="Arka plan" onpointerenter="preloadThemes()">
+        <button type="button" class="theme-dot active" data-theme="0" title="Arka plan 1 (orijinal)"
+                aria-label="Arka plan 1" onclick="setBackgroundTheme(0)"
+                style="background-image:url('https://images.unsplash.com/photo-1606411415427-09484ee673b8?q=60&w=120&h=120&fit=crop')"></button>
+        <button type="button" class="theme-dot" data-theme="1" title="Arka plan 2"
+                aria-label="Arka plan 2" onclick="setBackgroundTheme(1)"
+                style="background-image:url('https://images.unsplash.com/photo-1444212477490-ca407925329e?q=60&w=120&h=120&fit=crop')"></button>
+        <button type="button" class="theme-dot" data-theme="2" title="Arka plan 3"
+                aria-label="Arka plan 3" onclick="setBackgroundTheme(2)"
+                style="background-image:url('https://images.unsplash.com/photo-1560813562-fd09315f5ce8?q=60&w=120&h=120&fit=crop')"></button>
+      </div>
     </div>
 
     <div class="topbar-right">
@@ -2388,7 +2830,7 @@ body.role-readonly .storage-status strong::after{
           <span id="userRoleLabel">—</span>
         </div>
       </div>
-      <button class="logout-btn" onclick="doLogout()">Çıkış</button>
+      <button class="logout-btn" onclick="doLogout(); location.reload();">Çıkış</button>
     </div>
   </header>
 
@@ -2402,9 +2844,14 @@ body.role-readonly .storage-status strong::after{
           <h1 id="dashboardGreeting">Günaydın, Doktor</h1>
           <p id="dashboardDate"></p>
         </div>
-        <button class="btn btn-primary" onclick="openModal('patientModal')">
-          + Yeni Hasta
-        </button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="openModal('saleModal')">
+            + Yeni Satış
+          </button>
+          <button class="btn btn-primary" onclick="openModal('patientModal')">
+            + Yeni Hasta
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-4">
@@ -2443,7 +2890,7 @@ body.role-readonly .storage-status strong::after{
             <button class="btn btn-small" onclick="showPage('calendar')">Takvim</button>
           </div>
 
-          <div class="card-body" id="appointmentsList"></div>
+          <div class="card-body dash-scroll" id="appointmentsList"></div>
         </div>
 
         <div class="card">
@@ -2452,7 +2899,7 @@ body.role-readonly .storage-status strong::after{
             <button class="btn btn-small" onclick="showPage('timers')">Tümü</button>
           </div>
 
-          <div class="card-body" id="dashboardTimers"></div>
+          <div class="card-body dash-scroll" id="dashboardTimers"></div>
         </div>
 
       </div>
@@ -2464,7 +2911,7 @@ body.role-readonly .storage-status strong::after{
             <h3>Kritik Stok</h3>
             <button class="btn btn-small" onclick="showPage('inventory')">Stok</button>
           </div>
-          <div class="card-body" id="criticalStock"></div>
+          <div class="card-body dash-scroll" id="criticalStock"></div>
         </div>
 
         <div class="card">
@@ -2472,7 +2919,7 @@ body.role-readonly .storage-status strong::after{
             <h3>Son Satışlar</h3>
             <button class="btn btn-small" onclick="showPage('sales')">Tümü</button>
           </div>
-          <div class="card-body" id="recentSales"></div>
+          <div class="card-body dash-scroll" id="recentSales"></div>
         </div>
 
       </div>
@@ -2508,6 +2955,12 @@ body.role-readonly .storage-status strong::after{
           </div>
 
           <div class="patient-list" id="patientList"></div>
+
+          <div class="card-body" style="border-top:1px solid rgba(128,128,128,.25)">
+            <div class="muted" style="margin-bottom:6px">Arşivdeki hastalar (5+ yıldır işlem yok)</div>
+            <input id="archiveSearch" placeholder="Arşivde ara..." oninput="searchArchive()">
+            <div id="archiveResults" style="margin-top:8px"></div>
+          </div>
         </div>
 
         <div class="card" id="patientProfile">
@@ -2531,9 +2984,41 @@ body.role-readonly .storage-status strong::after{
           <p>Randevu ve klinik planlaması</p>
         </div>
 
-        <button class="btn btn-primary" onclick="openModal('appointmentModal')">
-          + Randevu
-        </button>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+
+          <div class="datepick" id="datePick">
+            <button type="button" class="btn" id="datePickBtn" onclick="toggleDatePick(event)">
+              📅 Tarih Seç ▾
+            </button>
+
+            <div class="datepick-pop" id="datePickPop" onclick="event.stopPropagation()">
+
+              <div class="datepick-top">
+                <button type="button" class="btn btn-small" onclick="datePickStep(-1)">‹</button>
+                <select id="datePickMonth" onchange="datePickJump()"></select>
+                <select id="datePickYear" onchange="datePickJump()"></select>
+                <button type="button" class="btn btn-small" onclick="datePickStep(1)">›</button>
+              </div>
+
+              <div class="datepick-week">
+                <span>Pt</span><span>Sa</span><span>Ça</span><span>Pe</span><span>Cu</span><span>Ct</span><span>Pz</span>
+              </div>
+
+              <div class="datepick-grid" id="datePickGrid"></div>
+
+              <div class="datepick-foot">
+                <input type="date" id="datePickInput" onchange="datePickTyped(this.value)">
+                <button type="button" class="btn btn-small" onclick="datePickToday()">Bugün</button>
+              </div>
+
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="openModal('appointmentModal')">
+            + Randevu
+          </button>
+
+        </div>
       </div>
 
       <div class="card calendar">
@@ -2622,7 +3107,7 @@ body.role-readonly .storage-status strong::after{
 
       </div>
 
-      <div class="card" style="margin-top:16px">
+      <div class="card stock-card stock-main" style="margin-top:16px">
 
         <div class="card-header">
           <h3>Ürünler</h3>
@@ -2631,7 +3116,7 @@ body.role-readonly .storage-status strong::after{
                  oninput="renderInventory()">
         </div>
 
-        <div class="table-wrap">
+        <div class="table-wrap" data-rows="50">
           <table>
             <thead>
               <tr>
@@ -2648,17 +3133,18 @@ body.role-readonly .storage-status strong::after{
             <tbody id="inventoryTable"></tbody>
           </table>
         </div>
+        <div class="list-more" id="inventoryMore"></div>
 
       </div>
 
-      <!-- STOK HAREKET GEÇMİŞİ (added) -->
-      <div class="card" style="margin-top:16px">
+      <!-- STOK HAREKET GEÇMİŞİ (restored) -->
+      <div class="card stock-card stock-history" style="margin-top:16px">
 
         <div class="card-header">
           <h3>Stok Hareket Geçmişi</h3>
         </div>
 
-        <div class="table-wrap">
+        <div class="table-wrap" data-rows="10">
           <table>
             <thead>
               <tr>
@@ -2712,10 +3198,13 @@ body.role-readonly .storage-status strong::after{
 
       </div>
 
-      <div class="card" style="margin-top:16px">
+      <div class="card stock-card stock-main" style="margin-top:16px">
 
         <div class="card-header">
           <h3>Satış Geçmişi</h3>
+          <input style="max-width:250px" id="salesSearch"
+                 placeholder="Ürün ara..."
+                 oninput="renderSales()">
         </div>
 
         <div class="table-wrap">
@@ -2726,6 +3215,7 @@ body.role-readonly .storage-status strong::after{
                 <th>Ürün / Hizmet</th>
                 <th>Hasta</th>
                 <th>Adet</th>
+                <th>Kalan Stok</th>
                 <th>Birim Fiyat</th>
                 <th>Toplam</th>
                 <th>Ödeme</th>
@@ -2734,6 +3224,7 @@ body.role-readonly .storage-status strong::after{
             <tbody id="salesTable"></tbody>
           </table>
         </div>
+        <div class="list-more" id="salesMore"></div>
 
       </div>
 
@@ -2741,6 +3232,8 @@ body.role-readonly .storage-status strong::after{
 
 
     <!-- REPORTS -->
+    <section class="page" id="page-payments"><div class="page-heading"><div><h1>Ödemeler ve Borçlar</h1><p>Borç takibi, aşı hatırlatma, yazdırma, raporlar ve PETVET tablosu</p></div></div><div id="payTabs" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px"></div><div id="payBody"></div></section>
+
     <section class="page" id="page-reports">
 
       <div class="page-heading">
@@ -2749,7 +3242,10 @@ body.role-readonly .storage-status strong::after{
           <p>Klinik performans özeti</p>
         </div>
 
-        <input type="month" id="reportMonth" onchange="renderReports()">
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="month" id="reportMonth" onchange="renderReports()">
+          <button class="btn btn-small" onclick="exportStaffReportCSV()">Excel'e Aktar</button>
+        </div>
       </div>
 
       <!-- GEÇMİŞ AYLAR (added) -->
@@ -2795,6 +3291,35 @@ body.role-readonly .storage-status strong::after{
             <h3>Özet</h3>
           </div>
           <div class="card-body" id="reportSummary"></div>
+        </div>
+
+      </div>
+
+      <!-- PERSONEL RAPORU (added): same content as the "Excel'e Aktar" file -->
+      <div class="grid grid-2" style="margin-top:16px">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Personel Bazlı Rapor</h3>
+          </div>
+          <div class="table-wrap">
+            <table style="min-width:0">
+              <thead><tr><th>Kişi</th><th>Satış Adedi</th><th>Hasta Sayısı</th><th>Ciro</th></tr></thead>
+              <tbody id="reportStaffTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Ürün Bazlı Satış Detayı</h3>
+          </div>
+          <div class="table-wrap" style="max-height:420px">
+            <table style="min-width:0">
+              <thead><tr><th>Kişi</th><th>Ürün</th><th>Adet</th><th>Tutar</th></tr></thead>
+              <tbody id="reportDetailTable"></tbody>
+            </table>
+          </div>
         </div>
 
       </div>
@@ -2865,6 +3390,11 @@ body.role-readonly .storage-status strong::after{
           <div class="form-group">
             <label>Sahip Adı *</label>
             <input name="owner" required>
+          </div>
+
+          <div class="form-group">
+            <label>Hasta Sahibi TC Kimlik No</label>
+            <input name="tc" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" title="11 haneli TC Kimlik No" placeholder="11 haneli">
           </div>
 
           <div class="form-group">
@@ -2970,6 +3500,11 @@ body.role-readonly .storage-status strong::after{
           </div>
 
           <div class="form-group">
+            <label>Hasta Sahibi TC Kimlik No</label>
+            <input name="tc" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" title="11 haneli TC Kimlik No" placeholder="11 haneli">
+          </div>
+
+          <div class="form-group">
             <label>Telefon</label>
             <input name="phone">
           </div>
@@ -3045,6 +3580,24 @@ body.role-readonly .storage-status strong::after{
 </div>
 
 
+<!-- CONFIRM DIALOG (added — replaces the browser confirm() for Taburcu / hasta silme) -->
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <h2 id="confirmTitle">Onay</h2>
+      <button class="modal-close" onclick="resolveConfirm(false)">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMessage" style="white-space:pre-line;margin:0 0 20px;line-height:1.5"></p>
+      <div class="actions">
+        <button type="button" class="btn" onclick="resolveConfirm(false)">İptal</button>
+        <button type="button" class="btn btn-primary" id="confirmOk" onclick="resolveConfirm(true)">Onayla</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- VISIT / MUAYENE NOTU MODAL (added — replaces the browser prompt()) -->
 
 <div class="modal-overlay" id="visitNoteModal">
@@ -3110,9 +3663,12 @@ body.role-readonly .storage-status strong::after{
             <input type="time" name="time" required>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="position:relative">
             <label>Hasta *</label>
-            <select name="patient" id="appointmentPatient" required></select>
+            <input type="text" id="appointmentPatientSearch" autocomplete="off"
+                   placeholder="Hasta adı yazarak arayın...">
+            <div id="appointmentPatientResults" class="search-results"></div>
+            <select name="patient" id="appointmentPatient" style="display:none"></select>
           </div>
 
           <div class="form-group">
@@ -3155,9 +3711,12 @@ body.role-readonly .storage-status strong::after{
 
         <div class="form-grid">
 
-          <div class="form-group">
+          <div class="form-group" style="position:relative">
             <label>Hasta *</label>
-            <select name="patient" id="timerPatient" required></select>
+            <input type="text" id="timerPatientSearch" autocomplete="off"
+                   placeholder="Hasta adı yazarak arayın...">
+            <div id="timerPatientResults" class="search-results"></div>
+            <select name="patient" id="timerPatient" style="display:none"></select>
           </div>
 
           <div class="form-group">
@@ -3249,6 +3808,97 @@ body.role-readonly .storage-status strong::after{
 </div>
 
 
+<!-- EDIT STOCK MODAL (added) -->
+
+<div class="modal-overlay" id="editStockModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Ürünü Düzenle</h2>
+      <button class="modal-close" onclick="closeModal('editStockModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="editStockForm">
+        <input type="hidden" name="id">
+        <div class="form-grid">
+          <div class="form-group"><label>Ürün Adı *</label><input name="name" required></div>
+          <div class="form-group"><label>Kategori</label><input name="category"></div>
+          <div class="form-group"><label>Alış Fiyatı</label><input type="number" name="buy" step=".01" min="0"></div>
+          <div class="form-group"><label>Satış Fiyatı</label><input type="number" name="sell" step=".01" min="0"></div>
+          <div class="form-group"><label>Mevcut Stok</label><input type="number" name="stock" step="1" min="0"></div>
+          <div class="form-group"><label>Minimum Stok</label><input type="number" name="minimum" step="1" min="0"></div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('editStockModal')">İptal</button>
+          <button class="btn btn-primary">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- EDIT SALE MODAL (added) -->
+
+<div class="modal-overlay" id="editSaleModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2>Satışı Düzenle</h2>
+      <button class="modal-close" onclick="closeModal('editSaleModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <form id="editSaleForm">
+
+        <input type="hidden" name="id">
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label>Ürün</label>
+            <select name="product" id="editSaleProduct"></select>
+          </div>
+
+          <div class="form-group">
+            <label>Adet</label>
+            <input type="number" name="quantity" id="editSaleQty" min="1" step="1" value="1">
+          </div>
+
+          <div class="form-group">
+            <label>Birim Fiyat</label>
+            <input type="number" name="price" id="editSalePrice" step=".01">
+          </div>
+
+          <div class="form-group full">
+            <label>Ödeme</label>
+            <select name="payment" id="editSalePayment">
+              <option>Nakit</option>
+              <option>Kart</option>
+              <option>Havale</option>
+              <option>Diğer</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div style="margin-top:16px;padding:14px;background:#0c151c;border:1px solid var(--border);border-radius:8px">
+          Toplam:
+          <strong id="editSaleTotal" style="float:right;color:var(--primary);font-size:18px">₺0</strong>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn" onclick="closeModal('editSaleModal')">İptal</button>
+          <button class="btn btn-primary">Kaydet</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
 <!-- SALE MODAL -->
 
 <div class="modal-overlay" id="saleModal">
@@ -3265,14 +3915,20 @@ body.role-readonly .storage-status strong::after{
 
         <div class="form-grid">
 
-          <div class="form-group full">
+          <div class="form-group full" style="position:relative">
             <label>Ürün *</label>
-            <select name="product" id="saleProduct" required onchange="updateSalePrice()"></select>
+            <input type="text" id="saleProductSearch" autocomplete="off"
+                   placeholder="Ürün adı yazarak arayın...">
+            <div id="saleProductResults" class="search-results"></div>
+            <select name="product" id="saleProduct" onchange="updateSalePrice()" style="display:none"></select>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" style="position:relative">
             <label>Hasta</label>
-            <select name="patient" id="salePatient">
+            <input type="text" id="salePatientSearch" autocomplete="off"
+                   placeholder="Hasta adı yazarak arayın (opsiyonel)...">
+            <div id="salePatientResults" class="search-results"></div>
+            <select name="patient" id="salePatient" style="display:none">
               <option value="">— Hasta seçilmedi —</option>
             </select>
           </div>
@@ -3300,7 +3956,19 @@ body.role-readonly .storage-status strong::after{
 
         </div>
 
+        <div style="margin-top:12px;text-align:right">
+          <button type="button" class="btn" onclick="addSaleLine()">+ Listeye Ekle</button>
+        </div>
+
+        <div id="saleCartWrap" style="margin-top:12px;display:none">
+          <table>
+            <thead><tr><th>Ürün</th><th>Adet</th><th>Birim</th><th>Tutar</th><th></th></tr></thead>
+            <tbody id="saleCartBody"></tbody>
+          </table>
+        </div>
+
         <div style="margin-top:16px;padding:14px;background:#0c151c;border:1px solid var(--border);border-radius:8px">
+          <span id="saleCartLabel" class="muted" style="font-size:12px;margin-right:8px"></span>
           Toplam:
           <strong id="saleTotal" style="float:right;color:var(--primary);font-size:18px">₺0</strong>
         </div>
@@ -3317,6 +3985,30 @@ body.role-readonly .storage-status strong::after{
 </div>
 
 
+<!-- CALENDAR DAY MODAL (added — replaces the plain alert()) -->
+
+<div class="modal-overlay" id="dayModal">
+  <div class="modal">
+
+    <div class="modal-header">
+      <h2 id="dayModalTitle">Randevular</h2>
+      <button class="modal-close" onclick="closeModal('dayModal')">×</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="day-modal-list" id="dayModalList"></div>
+
+      <div class="actions" style="margin-top:0">
+        <button type="button" class="btn" onclick="closeModal('dayModal')">Kapat</button>
+        <button type="button" class="btn btn-primary" id="dayModalAddBtn">+ Randevu Ekle</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 <!-- IMPORT -->
 
 <input type="file" id="importFile" accept=".json" style="display:none">
@@ -3324,6 +4016,17 @@ body.role-readonly .storage-status strong::after{
 
 <div class="toast" id="toast"></div>
 
+
+<!-- SYNC LOCK (added): shown while the server cannot be reached -->
+<div id="syncLock" class="sync-lock" role="alert" aria-live="assertive">
+  <div class="sync-lock-box">
+    <div class="sync-lock-spinner"></div>
+    <h2>Sunucu bağlantısı yok</h2>
+    <p id="syncLockSub">Bağlantı yeniden kuruluyor…</p>
+    <p class="sync-lock-note">Bağlantı gelene kadar işlem yapılamaz.</p>
+    <button type="button" class="btn btn-small" onclick="syncTick()">Şimdi dene</button>
+  </div>
+</div>
 
 <script>
 
@@ -3473,7 +4176,22 @@ const defaultDB = {
   sales: []
 };
 
+/* Sales: only the last 12 months are kept in the browser. Older months and
+   old sales of one patient are fetched on demand (see fetchOldSales). */
+let salesInfo = {from:"", olderTotal:0, months:[]};
+const oldLoaded = new Set();
+
+/* Stok / Satış Geçmişi: only the first LIST_PAGE rows are drawn; "Daha fazla göster" adds more. */
+const LIST_PAGE = 100;
+let invShown = LIST_PAGE, salesShown = LIST_PAGE;
+let _invLastQ = null, _salesLastQ = null;
+
+let localDirty = false;         /* set by saveDB: something may need sending */
+let localSeq = 0;               /* counts local saves */
+let lastFullCheck = 0;
+const baseStrCache = new WeakMap();
 let db = loadDB();
+if(!Array.isArray(db.payments)) db.payments = [];
 
 function loadDB(){
   try{
@@ -3488,7 +4206,12 @@ function loadDB(){
 }
 
 function saveDB(){
-  localStorage.setItem(DB_KEY, JSON.stringify(db));
+  try{
+    localStorage.setItem(DB_KEY, JSON.stringify(db));
+  }catch(e){
+    /* cache full (5 MB): the server is the source of truth, so just drop the stale cache */
+    try{ localStorage.removeItem(DB_KEY); }catch(_){}
+  }
   updateStorageStatus();
 }
 
@@ -3595,7 +4318,7 @@ function applyUserToUI(){
 }
 
 function signInAs(user){
-  currentUser = { name:user.name, role:user.role, greet:user.greet };
+  currentUser = { id:user.id, name:user.name, role:user.role, greet:user.greet };
   sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
   applyUserToUI();
 }
@@ -3634,10 +4357,15 @@ async function doLogin(userId,password){
       const res = await fetch(authUrl + "/api/login",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({user:userId,password:password})
+        body:JSON.stringify({user:userId,password:password,token:(typeof sessionToken !== "undefined" ? sessionToken : null)})
       });
 
       if(res.ok){
+        try{
+          const info = await res.json();
+          if(info && info.token) setSessionToken(info.token);
+        }catch(e){}
+
         signInAs(localUser);
 
         /* A successful server login also configures data sync,
@@ -3648,7 +4376,7 @@ async function doLogin(userId,password){
           const input = document.getElementById("serverUrlInput");
           if(input) input.value = authUrl;
           if(typeof startServerPolling === "function"){
-            serverConnected = true;
+            syncReady = false;
             startServerPolling();
           }
         }
@@ -3658,6 +4386,21 @@ async function doLogin(userId,password){
 
       if(res.status === 401){
         err.textContent = "Kullanıcı adı veya şifre hatalı.";
+        err.style.display = "block";
+        return;
+      }
+
+      if(res.status === 429){
+        let wait = 30;
+        try{ const info = await res.json(); if(info && info.wait) wait = info.wait; }catch(e){}
+        err.textContent = "Çok fazla hatalı deneme. Lütfen " + wait + " saniye sonra tekrar deneyin.";
+        err.style.display = "block";
+        return;
+      }
+
+      if(res.status === 409){
+        err.textContent = "Bu hesap şu anda başka bir cihazda açık. O cihazdan çıkış yapın " +
+                          "(cihaz kapandıysa en geç birkaç dakika içinde otomatik serbest kalır).";
         err.style.display = "block";
         return;
       }
@@ -3683,6 +4426,9 @@ async function doLogin(userId,password){
 
 function doLogout(){
 
+  if(typeof releaseSession === "function") releaseSession(true);
+  if(typeof setSessionToken === "function") setSessionToken(null);
+
   currentUser = null;
   sessionStorage.removeItem(SESSION_KEY);
 
@@ -3702,14 +4448,18 @@ function requireEdit(){
 }
 
 const WRITE_FORM_IDS = new Set([
-  "patientForm","appointmentForm","timerForm","inventoryForm","saleForm",
-  "editPatientForm","clinicNoteForm","visitNoteForm"
+  "patientForm","appointmentForm","timerForm","inventoryForm",
+  "editPatientForm","clinicNoteForm","visitNoteForm","editSaleForm","editStockForm"
+  /* "saleForm" intentionally excluded — Ön Büro is allowed to record sales */
 ]);
 
 const READONLY_BLOCKED_PATTERNS = [
-  "openModal(", "adjustStock(", "toggleTimer(", "deleteTimer(",
-  "deletePatient(", "openVisitModal(", "importFile.click(",
-  "openEditPatientModal(", "openClinicNoteModal("
+  "openModal('patientModal')", "openModal('appointmentModal')",
+  "openModal('timerModal')", "openModal('inventoryModal')",
+  /* "openModal('saleModal')" intentionally excluded — Ön Büro is allowed to record sales */
+  "adjustStock(", "toggleTimer(", "deleteTimer(",
+  "deletePatient(", "openVisitModal(", "importFile.click(", "exportData(",
+  "openEditPatientModal(", "openClinicNoteModal(", "openEditSaleModal(", "deleteSale(", "addVaccineSeries(", "checkOutPatient("
 ];
 
 /* Capture-phase guards: intercept before the original handlers
@@ -3763,7 +4513,8 @@ const titles = {
   timers:"Tedavi Zamanlayıcıları",
   inventory:"Stok",
   sales:"Satışlar",
-  reports:"Raporlar"
+  reports:"Raporlar",
+  payments:"Ödemeler ve Borçlar"
 };
 
 document.querySelectorAll(".nav-btn").forEach(btn=>{
@@ -3791,6 +4542,9 @@ function showPage(page){
 
   document.getElementById("pageTitle").textContent =
     titles[page] || page;
+
+  if(page==="inventory") invShown = LIST_PAGE;   /* every visit starts light */
+  if(page==="sales") salesShown = LIST_PAGE;
 
   if(page==="dashboard") renderDashboard();
   if(page==="patients") renderPatients();
@@ -3868,15 +4622,15 @@ function renderAppointments(list){
       return `
         <div class="appointment">
           <div class="app-time">${esc(a.time)}</div>
-        <div class="profile-avatar">
-          ${
-            p.species === "Kedi" ? "🐈" :
-            p.species === "Köpek" ? "🐕" :
-            p.species === "Kuş" ? "🐦" :
-            p.species === "Tavşan" ? "🐇" :
-            "🐾"
-          }
-        </div>
+      <div class="profile-avatar">
+  ${
+    p.species === "Kedi" ? "🐈" :
+    p.species === "Köpek" ? "🐕" :
+    p.species === "Kuş" ? "🐦" :
+    p.species === "Tavşan" ? "🐇" :
+    "🐾"
+  }
+      </div>
           <div class="app-info">
             <strong>${esc(p?.name || "Bilinmeyen")}</strong>
             <span>${esc(a.type || "Muayene")} · ${esc(p?.owner || "")}</span>
@@ -3941,7 +4695,7 @@ function renderRecentSales(){
 
   const sales = [...db.sales]
     .sort((a,b)=>b.timestamp-a.timestamp)
-    .slice(0,5);
+    .slice(0,50);
 
   if(!sales.length){
     el.innerHTML = `<div class="muted">Henüz satış yok.</div>`;
@@ -3974,6 +4728,7 @@ function renderPatients(){
       p.name,
       p.owner,
       p.chip,
+      p.tc,
       p.phone,
       p.breed
     ].join(" ").toLocaleLowerCase("tr-TR").includes(query);
@@ -4006,6 +4761,8 @@ function renderPatients(){
 function selectPatient(id){
   selectedPatient=id;
   renderPatients();
+  const prof = document.getElementById("patientProfile");
+  if(prof) prof.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 function renderPatientProfile(){
@@ -4023,9 +4780,15 @@ function renderPatientProfile(){
 
         <div class="profile-head">
 
-          <div class="profile-avatar">
-            ${p.species==="Kedi"?"🐈":"🐕"}
-          </div>
+      <div class="profile-avatar">
+  ${
+    p.species === "Kedi" ? "🐈" :
+    p.species === "Köpek" ? "🐕" :
+    p.species === "Kuş" ? "🐦" :
+    p.species === "Tavşan" ? "🐇" :
+    "🐾"
+  }
+      </div>
 
           <div>
             <div class="profile-name">${esc(p.name)}</div>
@@ -4130,13 +4893,44 @@ function renderPatientProfile(){
   `;
 }
 
-function deletePatient(id){
+/* ---------- in-app confirm dialog (Promise<boolean>) ---------- */
+let _confirmResolve = null;
+
+function confirmDialog(opts){
+  return new Promise(resolve=>{
+    if(_confirmResolve) _confirmResolve(false);
+    _confirmResolve = resolve;
+    document.getElementById("confirmTitle").textContent = opts.title || "Onay";
+    document.getElementById("confirmMessage").textContent = opts.message || "";
+    const ok = document.getElementById("confirmOk");
+    ok.textContent = opts.confirmText || "Onayla";
+    ok.className = "btn " + (opts.danger ? "btn-danger" : "btn-primary");
+    document.getElementById("confirmModal").classList.add("open");
+  });
+}
+
+function resolveConfirm(value){
+  document.getElementById("confirmModal").classList.remove("open");
+  const r = _confirmResolve;
+  _confirmResolve = null;
+  if(r) r(!!value);
+}
+
+async function deletePatient(id){
 
   const p = db.patients.find(x=>x.id===id);
 
   if(!p) return;
 
-  if(!confirm(`${p.name} adlı hasta silinsin mi?`)) return;
+  if(!(await confirmDialog({
+    title:"Hastayı Sil",
+    message:p.name+" adlı hasta silinsin mi?\n\nHastanın randevuları ve zamanlayıcıları da silinir.",
+    confirmText:"Sil",
+    danger:true
+  }))) return;
+
+  /* the patient may have been changed by someone else while the dialog was open */
+  if(!db.patients.some(x=>x.id===id)) return;
 
   db.patients = db.patients.filter(x=>x.id!==id);
   db.appointments = db.appointments.filter(x=>x.patient!==id);
@@ -4170,6 +4964,7 @@ document.getElementById("patientForm").addEventListener("submit",e=>{
     gender:f.get("gender"),
     birth:f.get("birth"),
     chip:f.get("chip"),
+    tc:f.get("tc"),
     owner:f.get("owner"),
     phone:f.get("phone"),
     email:f.get("email"),
@@ -4408,6 +5203,7 @@ document.getElementById("timerForm")
     original:seconds,
     completed:false,
     running:true,
+    endsAt:serverNow()+seconds*1000,
     created:Date.now()
   });
 
@@ -4522,7 +5318,18 @@ function toggleTimer(id){
 
   if(!t) return;
 
-  t.running=!t.running;
+  if(t.running){
+    /* pause: freeze what is left */
+    if(t.endsAt){
+      t.remaining=Math.max(0,Math.ceil((t.endsAt-serverNow())/1000));
+    }
+    t.running=false;
+    delete t.endsAt;
+  }else{
+    /* resume: new end time */
+    t.running=true;
+    t.endsAt=serverNow()+Math.max(0,t.remaining||0)*1000;
+  }
 
   saveDB();
   renderTimers();
@@ -4537,29 +5344,56 @@ function deleteTimer(id){
   renderDashboard();
 }
 
-setInterval(()=>{
+/* Timers are derived from their end time (endsAt, server clock), so
+   the countdown is local and nothing is saved every second. Only
+   start / pause / resume / finish are saved and synced. */
+let serverClockOffset = 0;
 
-  let changed=false;
+function serverNow(){
+  return Date.now() + serverClockOffset;
+}
+
+function tickTimers(){
+
+  let running=false;
+  let expired=false;
+  const now=serverNow();
 
   db.timers.forEach(t=>{
 
-    if(t.running && !t.completed && t.remaining>0){
+    if(!t.running || t.completed) return;
 
-      t.remaining--;
-      changed=true;
+    if(!t.endsAt){
+      /* older timer without an end time */
+      t.endsAt = now + Math.max(0,t.remaining||0)*1000;
+    }
 
-      if(t.remaining<=0){
-        t.remaining=0;
-        t.running=false;
-        t.completed=true;
+    const rem=Math.ceil((t.endsAt-now)/1000);
 
-        toast(`${t.name} tedavisi tamamlandı.`);
-      }
+    if(rem<=0){
+      t.remaining=0;
+      t.running=false;
+      t.completed=true;
+      expired=true;
+      toast(`${t.name} tedavisi tamamlandı.`);
+    }else{
+      t.remaining=rem;
+      running=true;
     }
   });
 
-  if(changed){
+  return {running:running, expired:expired};
+}
+
+setInterval(()=>{
+
+  const r=tickTimers();
+
+  if(r.expired){
     saveDB();
+  }
+
+  if(r.running || r.expired){
 
     if(document.getElementById("page-timers").classList.contains("active")){
       renderTimers();
@@ -4602,6 +5436,18 @@ document.getElementById("inventoryForm")
   toast("Ürün kaydedildi.");
 });
 
+function renderListMore(id,total,shown,fn){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = total > shown
+    ? '<span class="muted">' + total + ' sonuçtan ' + shown + ' gösteriliyor</span> ' +
+      '<button type="button" class="btn btn-small" onclick="' + fn + '">Daha fazla göster</button>'
+    : (total > LIST_PAGE ? '<span class="muted">' + total + ' sonucun tamamı gösteriliyor</span>' : "");
+}
+
+function showMoreInventory(){ invShown += LIST_PAGE; renderInventory(); }
+function showMoreSales(){ salesShown += LIST_PAGE; renderSales(); }
+
 function renderInventory(){
 
   const query=
@@ -4612,7 +5458,10 @@ function renderInventory(){
     `${i.name} ${i.category}`
       .toLocaleLowerCase("tr-TR")
       .includes(query)
-  );
+  ).sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"tr"));
+
+  if(query !== _invLastQ){ invShown = LIST_PAGE; _invLastQ = query; }   /* new search -> back to the first rows */
+  const invVisible = items.slice(0,invShown);
 
   document.getElementById("stockProducts").textContent =
     db.inventory.length;
@@ -4627,7 +5476,7 @@ function renderInventory(){
     money(db.inventory.reduce((a,i)=>a+(i.stock*i.buy),0));
 
   document.getElementById("inventoryTable").innerHTML =
-    items.map(i=>{
+    invVisible.map(i=>{
 
       const low=i.stock<=i.minimum;
 
@@ -4659,20 +5508,33 @@ function renderInventory(){
           </td>
 
           <td>
-            <button class="btn btn-small"
-                    onclick="adjustStock('${i.id}',1)">
-              + Alış
-            </button>
+            <div class="stock-actions">
+              <button class="btn btn-small" title="1 adet artır"
+                      onclick="adjustStock('${i.id}',1)">▲ 1</button>
 
-            <button class="btn btn-small"
-                    onclick="adjustStock('${i.id}',-1)">
-              −
-            </button>
+              <button class="btn btn-small" title="1 adet azalt"
+                      onclick="adjustStock('${i.id}',-1)">▼ 1</button>
+
+              <input type="number" min="1" step="1" placeholder="Adet"
+                     class="stock-qty" id="stockQty_${i.id}"
+                     onkeydown="if(event.key==='Enter'){adjustStockCustom('${i.id}')}">
+
+              <button class="btn btn-small" title="Girilen adet kadar alış ekle"
+                      onclick="adjustStockCustom('${i.id}')">+ Alış</button>
+
+              <button class="btn btn-small" title="Ürün adı, fiyatlar ve stok sayısını düzenle"
+                      onclick="openEditStockModal('${i.id}')">Düzenle</button>
+
+              <button class="btn btn-small btn-danger" title="Girilen adet kadar stoktan düş (yanlış girişi düzeltmek için)"
+                      onclick="adjustStockRemoveCustom('${i.id}')">Stoktan Sil</button>
+            </div>
           </td>
 
         </tr>
       `;
     }).join("");
+
+  renderListMore("inventoryMore",items.length,invVisible.length,"showMoreInventory()");
 }
 
 function adjustStock(id,amount){
@@ -4691,6 +5553,56 @@ function adjustStock(id,amount){
   saveDB();
   renderInventory();
   renderDashboard();
+}
+
+/* Custom-amount purchase (Alış): reads the number typed in the
+   row and goes through adjustStock() so history, "last adjusted
+   by" and the dashboard all behave exactly like the +1 button. */
+function adjustStockCustom(id){
+  if(!requireEdit()) return;
+
+  const input=document.getElementById("stockQty_"+id);
+  const qty=Math.floor(Number(input && input.value));
+
+  if(!qty || qty<1){
+    toast("Geçerli bir adet girin.");
+    if(input) input.focus();
+    return;
+  }
+
+  adjustStock(id,qty);
+  toast(qty+" adet alış eklendi.");
+}
+
+/* "Stoktan Sil": removes the typed amount from stock — meant for
+   fixing a mistyped Alış. Refuses to go below 0 instead of
+   silently clamping, and is logged in Stok Hareket Geçmişi. */
+function adjustStockRemoveCustom(id){
+  if(!requireEdit()) return;
+
+  const item=db.inventory.find(i=>i.id===id);
+  if(!item) return;
+
+  const input=document.getElementById("stockQty_"+id);
+  const qty=Math.floor(Number(input && input.value));
+
+  if(!qty || qty<1){
+    toast("Silinecek adedi girin.");
+    if(input) input.focus();
+    return;
+  }
+
+  if(qty>item.stock){
+    toast("Stokta yalnızca "+item.stock+" adet var.");
+    if(input) input.focus();
+    return;
+  }
+
+  stockActionLabel="Stoktan Sil";
+  try{ adjustStock(id,-qty); }
+  finally{ stockActionLabel=null; }
+
+  toast(qty+" adet stoktan silindi.");
 }
 
 
@@ -4724,7 +5636,7 @@ function updateSalePrice(){
     Number(document.getElementById("saleQuantity").value)||1;
 
   document.getElementById("saleTotal").textContent =
-    money(item.sell*quantity);
+    money(saleCartTotal()+item.sell*quantity);
 }
 
 document.getElementById("saleQuantity")
@@ -4740,60 +5652,141 @@ document.getElementById("salePrice")
     Number(document.getElementById("saleQuantity").value)||1;
 
   document.getElementById("saleTotal").textContent =
-    money(price*quantity);
+    money(saleCartTotal()+price*quantity);
 });
+
+/* ---- Multi-item sale basket ---- */
+let saleCart = [];
+
+function saleCartTotal(){
+  return saleCart.reduce((a,l)=>a+l.price*l.quantity,0);
+}
+
+function renderSaleCart(){
+  const wrap=document.getElementById("saleCartWrap");
+  const body=document.getElementById("saleCartBody");
+  const label=document.getElementById("saleCartLabel");
+  wrap.style.display=saleCart.length?"block":"none";
+  body.innerHTML=saleCart.map((l,i)=>`
+    <tr>
+      <td>${esc(l.name)}</td>
+      <td>${l.quantity}</td>
+      <td>${money(l.price)}</td>
+      <td>${money(l.price*l.quantity)}</td>
+      <td><button type="button" class="btn btn-danger btn-small" onclick="removeSaleLine(${i})">×</button></td>
+    </tr>`).join("");
+  label.textContent=saleCart.length?saleCart.length+" kalem":"";
+  if(saleCart.length){
+    document.getElementById("saleTotal").textContent=money(saleCartTotal());
+  }
+}
+
+function resetSaleEntry(){
+  document.getElementById("saleProduct").value="";
+  document.getElementById("saleProductSearch").value="";
+  document.getElementById("saleProductResults").classList.remove("open");
+  document.getElementById("salePrice").value="";
+  document.getElementById("saleQuantity").value=1;
+  if(!saleCart.length) document.getElementById("saleTotal").textContent="₺0";
+}
+
+function clearSaleCart(){
+  saleCart=[];
+  renderSaleCart();
+}
+
+/* Returns true if a line was added from the current entry fields. */
+function addSaleLine(silent){
+  const id=document.getElementById("saleProduct").value;
+  const item=db.inventory.find(i=>i.id===id);
+  if(!item){
+    if(!silent) toast("Lütfen bir ürün seçin.");
+    return false;
+  }
+  const quantity=Math.max(1,Number(document.getElementById("saleQuantity").value)||1);
+  const price=Number(document.getElementById("salePrice").value)||0;
+
+  const already=saleCart.filter(l=>l.productId===id).reduce((a,l)=>a+l.quantity,0);
+  if(already+quantity>item.stock){
+    toast("Yetersiz stok: "+item.name+" (Stok: "+item.stock+")");
+    return false;
+  }
+
+  const existing=saleCart.find(l=>l.productId===id && l.price===price);
+  if(existing) existing.quantity+=quantity;
+  else saleCart.push({productId:id,name:item.name,quantity,price});
+
+  resetSaleEntry();
+  renderSaleCart();
+  return true;
+}
+
+function removeSaleLine(i){
+  saleCart.splice(i,1);
+  renderSaleCart();
+}
 
 document.getElementById("saleForm")
 .addEventListener("submit",e=>{
 
   e.preventDefault();
 
-  const f=new FormData(e.target);
+  /* a filled-in but not yet added line is included automatically */
+  if(document.getElementById("saleProduct").value){
+    if(!addSaleLine(true)) return;
+  }
 
-  const productId=f.get("product");
-  const item=db.inventory.find(i=>i.id===productId);
-
-  if(!item) return;
-
-  const quantity=Number(f.get("quantity"))||1;
-
-  if(quantity>item.stock){
-
-    toast("Yetersiz stok.");
-
+  if(!saleCart.length){
+    toast("Lütfen en az bir ürün ekleyin.");
     return;
   }
 
-  const price=Number(f.get("price"))||0;
-
+  const f=new FormData(e.target);
   const patientId=f.get("patient");
+  const payment=f.get("payment");
 
-  const sale={
-    id:uid("s"),
-    timestamp:Date.now(),
-    date:todayISO(),
-    productId,
-    productName:item.name,
-    patient:patientId,
-    quantity,
-    price,
-    total:price*quantity,
-    payment:f.get("payment")
-  };
+  /* final stock check across all lines */
+  for(const l of saleCart){
+    const item=db.inventory.find(i=>i.id===l.productId);
+    const need=saleCart.filter(x=>x.productId===l.productId).reduce((a,x)=>a+x.quantity,0);
+    if(!item || need>item.stock){
+      toast("Yetersiz stok: "+l.name);
+      return;
+    }
+  }
 
-  db.sales.push(sale);
+  const ts=Date.now();
+  saleCart.forEach((l,idx)=>{
+    const item=db.inventory.find(i=>i.id===l.productId);
+    db.sales.push({
+      id:uid("s"),
+      timestamp:ts+idx,
+      date:todayISO(),
+      productId:l.productId,
+      productName:item.name,
+      patient:patientId,
+      quantity:l.quantity,
+      price:l.price,
+      total:l.price*l.quantity,
+      payment
+    });
+    item.stock-=l.quantity;
+    logStockHistory(item.name,"Satış",-l.quantity,item.stock,item.id);
+  });
 
-  item.stock-=quantity;
+  const count=saleCart.length;
+  window._lastSaleCount=count;   /* used by the soldBy stamping handler */
 
   saveDB();
   closeModal("saleModal");
   e.target.reset();
+  clearSaleCart();
 
   renderSales();
   renderInventory();
   renderDashboard();
 
-  toast("Satış kaydedildi.");
+  toast(count>1 ? count+" kalem satış kaydedildi." : "Satış kaydedildi.");
 });
 
 function renderSales(){
@@ -4809,20 +5802,34 @@ function renderSales(){
     .filter(s=>s.date.startsWith(month))
     .reduce((a,s)=>a+s.total,0);
 
-  const allTotal=db.sales
-    .reduce((a,s)=>a+s.total,0);
+  const allTotal = salesInfo.from
+    ? salesInfo.olderTotal + db.sales.filter(s=>s.date>=salesInfo.from).reduce((a,s)=>a+s.total,0)
+    : db.sales.reduce((a,s)=>a+s.total,0);
 
   document.getElementById("todaySales").textContent=money(todayTotal);
   document.getElementById("monthSales").textContent=money(monthTotal);
   document.getElementById("allSales").textContent=money(allTotal);
 
+  const salesQuery=
+    (document.getElementById("salesSearch")?.value||"")
+      .toLocaleLowerCase("tr-TR").trim();
+
   const rows=[...db.sales]
+    .filter(s=>!salesQuery ||
+      String(s.productName||"").toLocaleLowerCase("tr-TR").includes(salesQuery))
     .sort((a,b)=>b.timestamp-a.timestamp);
 
+  if(salesQuery !== _salesLastQ){ salesShown = LIST_PAGE; _salesLastQ = salesQuery; }
+  const salesVisible = rows.slice(0,salesShown);
+
   document.getElementById("salesTable").innerHTML =
-    rows.map(s=>{
+    salesVisible.map(s=>{
 
       const p=db.patients.find(x=>x.id===s.patient);
+      const inv=db.inventory.find(x=>x.id===s.productId);
+      const left=inv
+        ? `<span class="${inv.stock<=inv.minimum?"red":""}">${inv.stock}</span>`
+        : `<span class="muted">—</span>`;
 
       return `
         <tr>
@@ -4830,13 +5837,16 @@ function renderSales(){
           <td><strong>${esc(s.productName)}</strong></td>
           <td>${esc(p?.name||"—")}</td>
           <td>${s.quantity}</td>
+          <td>${left}</td>
           <td>${money(s.price)}</td>
           <td class="green"><strong>${money(s.total)}</strong></td>
           <td><span class="badge">${esc(s.payment)}</span></td>
         </tr>
       `;
     }).join("") ||
-    `<tr><td colspan="7" class="muted">Henüz satış yok.</td></tr>`;
+    `<tr><td colspan="8" class="muted">${salesQuery?"Sonuç bulunamadı.":"Henüz satış yok."}</td></tr>`;
+
+  renderListMore("salesMore",rows.length,salesVisible.length,"showMoreSales()");
 }
 
 
@@ -4958,6 +5968,8 @@ function renderReports(){
 
 function openModal(id){
 
+  if(id==="saleModal") clearSaleCart();
+
   populatePatientSelects();
   populateProducts();
 
@@ -4969,6 +5981,7 @@ function openModal(id){
 }
 
 function closeModal(id){
+  if(id==="saleModal") clearSaleCart();
   document.getElementById(id).classList.remove("open");
 }
 
@@ -5031,9 +6044,16 @@ importFile.addEventListener("change",async e=>{
       throw new Error("Geçersiz veri");
     }
 
-    if(confirm("Mevcut verilerin üzerine içe aktarılsın mı?")){
+    if(await confirmDialog({
+      title:"Veri İçe Aktar",
+      message:"Mevcut verilerin üzerine içe aktarılsın mı?\n\nDosyadaki veriler mevcut verilerin yerine geçer; dosyada olmayan kayıtlar silinir.",
+      confirmText:"İçe Aktar",
+      danger:true
+    })){
 
+      const keepPayments = Array.isArray(imported.payments) ? null : (db.payments || []);   /* old backup without payments: keep current debts */
       db=imported;
+      if(keepPayments) db.payments = keepPayments;
 
       saveDB();
 
@@ -5044,7 +6064,7 @@ importFile.addEventListener("change",async e=>{
 
   }catch(err){
 
-    alert("Dosya okunamadı veya geçersiz.");
+    toast("Dosya okunamadı veya geçersiz.");
   }
 
   e.target.value="";
@@ -5158,13 +6178,20 @@ document.getElementById("inventoryForm").addEventListener("submit", function(){
   stampLast(db.inventory,"addedBy");
 
   const item = db.inventory[db.inventory.length-1];
-  if(item) logStockHistory(item.name,"Yeni ürün",item.stock,item.stock);
+  if(item) logStockHistory(item.name,"Yeni ürün",item.stock,item.stock,item.id);
 
   saveDB();
+
+  /* the main handler already re-rendered before this entry existed,
+     so refresh the history list now */
+  renderStockHistory();
 });
 
 document.getElementById("saleForm").addEventListener("submit", function(){
-  stampLast(db.sales,"soldBy");
+  const n=window._lastSaleCount||0;
+  window._lastSaleCount=0;
+  if(!n || !currentUser) return;
+  db.sales.slice(-n).forEach(x=>{ x.soldBy=currentUser.name; });
   saveDB();
 });
 
@@ -5232,6 +6259,7 @@ function openEditPatientModal(patientId){
   form.querySelector("[name=gender]").value = p.gender || "Dişi";
   form.querySelector("[name=birth]").value = p.birth || "";
   form.querySelector("[name=chip]").value = p.chip || "";
+  form.querySelector("[name=tc]").value = p.tc || "";
   form.querySelector("[name=owner]").value = p.owner || "";
   form.querySelector("[name=phone]").value = p.phone || "";
   form.querySelector("[name=email]").value = p.email || "";
@@ -5256,6 +6284,7 @@ document.getElementById("editPatientForm").addEventListener("submit", function(e
   p.gender = f.get("gender");
   p.birth = f.get("birth");
   p.chip = f.get("chip");
+  p.tc = f.get("tc");
   p.owner = f.get("owner");
   p.phone = f.get("phone");
   p.email = f.get("email");
@@ -5314,17 +6343,20 @@ function ensureStockHistory(){
   if(!Array.isArray(db.stockHistory)) db.stockHistory = [];
 }
 
-function logStockHistory(productName,action,change,resultingStock){
+function logStockHistory(productName,action,change,resultingStock,pid){
   ensureStockHistory();
 
-  db.stockHistory.push({
+  const entry = {
     date: new Intl.DateTimeFormat("tr-TR",{dateStyle:"short",timeStyle:"short"}).format(new Date()),
     product: productName,
     action: action,
     change: change,
     resultingStock: resultingStock,
     by: currentUser ? currentUser.name : ""
-  });
+  };
+  if(pid) entry.pid = pid;   /* lets the server match the product exactly */
+
+  db.stockHistory.push(entry);
 
   if(db.stockHistory.length > 200){
     db.stockHistory = db.stockHistory.slice(-200);
@@ -5337,7 +6369,7 @@ function renderStockHistory(){
   const el = document.getElementById("stockHistoryTable");
   if(!el) return;
 
-  const rows = [...db.stockHistory].reverse().slice(0,50);
+  const rows = [...db.stockHistory].reverse();
 
   el.innerHTML = rows.map(h=>`
     <tr>
@@ -5351,6 +6383,9 @@ function renderStockHistory(){
   `).join("") ||
   `<tr><td colspan="6" class="muted">Henüz stok hareketi yok.</td></tr>`;
 }
+
+/* optional label for the next history entry (e.g. "Stoktan Sil") */
+let stockActionLabel = null;
 
 /* Stock adjustments: note who last adjusted an item, and log it. */
 const _adjustStock = adjustStock;
@@ -5367,7 +6402,7 @@ adjustStock = function(id,amount){
     if(currentUser) item.lastAdjustedBy = currentUser.name;
 
     if(beforeStock !== null && item.stock !== beforeStock){
-      logStockHistory(item.name, amount>0 ? "Alış" : "Düşüm", item.stock-beforeStock, item.stock);
+      logStockHistory(item.name, stockActionLabel || (amount>0 ? "Alış" : "Düşüm"), item.stock-beforeStock, item.stock, item.id);
     }
 
     saveDB();
@@ -5393,7 +6428,7 @@ renderAppointments = function(list){
     if(!info) return;
 
     const tag = document.createElement("div");
-    tag.style.cssText = "font-size:9px;color:#5f9ea8;margin-top:3px";
+    tag.style.cssText = "font-size:9px;color:var(--muted-accent);margin-top:3px";
     tag.textContent = "Randevuyu alan: " + a.createdBy;
     info.appendChild(tag);
   });
@@ -5430,7 +6465,7 @@ renderTimers = function(){
     if(!patientEl) return;
 
     const tag = document.createElement("div");
-    tag.style.cssText = "text-align:center;font-size:9px;color:#5f9ea8;margin-top:4px";
+    tag.style.cssText = "text-align:center;font-size:9px;color:var(--muted-accent);margin-top:4px";
     tag.textContent = "İşlemi başlatan: " + t.startedBy;
     patientEl.insertAdjacentElement("afterend",tag);
   });
@@ -5452,7 +6487,7 @@ renderSales = function(){
     if(!last) return;
 
     const tag = document.createElement("div");
-    tag.style.cssText = "font-size:9px;color:#5f9ea8;margin-top:3px";
+    tag.style.cssText = "font-size:9px;color:var(--muted-accent);margin-top:3px";
     tag.textContent = s.soldBy;
     last.appendChild(tag);
   });
@@ -5477,7 +6512,7 @@ renderInventory = function(){
     if(!firstCell) return;
 
     const tag = document.createElement("div");
-    tag.style.cssText = "font-size:9px;color:#5f9ea8;margin-top:3px";
+    tag.style.cssText = "font-size:9px;color:var(--muted-accent);margin-top:3px";
     tag.textContent = (item.lastAdjustedBy ? "Son işlem: " : "Ekleyen: ") + note;
     firstCell.appendChild(tag);
   });
@@ -5524,7 +6559,9 @@ function buildClinicNoteBlock(p){
    Fatura (PDF invoice) button. */
 function buildProceduresSection(p){
   const sales = db.sales.filter(s=>s.patient===p.id).sort((a,b)=>a.timestamp-b.timestamp);
-  const total = sales.reduce((sum,s)=>sum+s.total,0);
+  /* checked-out (eski hizmet) sales are not part of the running total */
+  const total = sales.filter(s=>!s.checkedOut).reduce((sum,s)=>sum+s.total,0);
+  const hasOld = sales.some(s=>s.checkedOut);
 
   const box = document.createElement("div");
   box.style.marginTop = "25px";
@@ -5537,12 +6574,24 @@ function buildProceduresSection(p){
   h3.textContent = "İşlemler / Satın Alınan Ürünler";
   header.appendChild(h3);
 
+  const btnWrap = document.createElement("div");
+  btnWrap.style.cssText = "display:flex;gap:8px";
+
+  const saleBtn = document.createElement("button");
+  saleBtn.type = "button";
+  saleBtn.className = "btn btn-small btn-primary";
+  saleBtn.textContent = "+ Satış";
+  saleBtn.setAttribute("onclick","openPatientSale('"+p.id+"')");
+  btnWrap.appendChild(saleBtn);
+
   const invoiceBtn = document.createElement("button");
   invoiceBtn.type = "button";
   invoiceBtn.className = "btn btn-small";
   invoiceBtn.textContent = "Fatura (PDF)";
   invoiceBtn.onclick = function(){ generateInvoice(p.id); };
-  header.appendChild(invoiceBtn);
+  btnWrap.appendChild(invoiceBtn);
+
+  header.appendChild(btnWrap);
 
   box.appendChild(header);
 
@@ -5554,17 +6603,24 @@ function buildProceduresSection(p){
   }else{
     sales.forEach(s=>{
       const row = document.createElement("div");
-      row.className = "procedure-row";
+      const old = !!s.checkedOut;
+      row.className = "procedure-row" + (old ? " procedure-old" : "");
       row.innerHTML =
         "<span>"+esc(s.productName)+
-        ' <span class="muted" style="font-size:10px">('+esc(s.date)+", x"+s.quantity+")</span></span>"+
-        "<strong>"+money(s.total)+"</strong>";
+        ' <span class="muted" style="font-size:10px">('+esc(s.date)+", x"+s.quantity+")</span>"+
+        (old ? ' <span class="badge" title="Check out yapıldı">🕘 Eski hizmet</span>' : "")+
+        "</span>"+
+        '<span style="display:flex;align-items:center;gap:10px"><strong>'+money(s.total)+"</strong>"+
+        (old ? "" :
+          '<button type="button" class="btn btn-small" onclick="openEditSaleModal(\''+s.id+'\')">Düzenle</button>'+
+          '<button type="button" class="btn btn-danger btn-small" onclick="deleteSale(\''+s.id+'\')">Sil</button>')+
+        "</span>";
       box.appendChild(row);
     });
 
     const totalRow = document.createElement("div");
     totalRow.className = "procedure-total";
-    totalRow.innerHTML = "<span>Toplam</span><span class=\"green\">"+money(total)+"</span>";
+    totalRow.innerHTML = "<span>"+(hasOld?"Güncel Toplam":"Toplam")+"</span><span class=\"green\">"+money(total)+"</span>";
     box.appendChild(totalRow);
   }
 
@@ -5578,7 +6634,7 @@ function generateInvoice(patientId){
   const p = db.patients.find(x=>x.id===patientId);
   if(!p) return;
 
-  const sales = db.sales.filter(s=>s.patient===patientId).sort((a,b)=>a.timestamp-b.timestamp);
+  const sales = db.sales.filter(s=>s.patient===patientId && !s.checkedOut).sort((a,b)=>a.timestamp-b.timestamp);
   const total = sales.reduce((sum,s)=>sum+s.total,0);
 
   const rowsHtml = sales.length
@@ -5653,6 +6709,13 @@ const _renderPatientProfile = renderPatientProfile;
 renderPatientProfile = function(){
   _renderPatientProfile();
 
+  const pid = selectedPatient;
+  if(pid && salesInfo.from && !oldLoaded.has("p:" + pid)){
+    fetchOldSales("patient=" + encodeURIComponent(pid), "p:" + pid).then(ok=>{
+      if(ok && selectedPatient === pid) renderPatientProfile();
+    });
+  }
+
   const p = db.patients.find(x=>x.id===selectedPatient);
   if(!p) return;
 
@@ -5676,6 +6739,14 @@ renderPatientProfile = function(){
   });
 
   if(grid){
+    const quick = document.createElement("div");
+    quick.className = "patient-quick";
+    quick.innerHTML =
+      '<button type="button" class="btn" onclick="addVaccineSeries(\''+p.id+'\',\'monthly\')">💉 Aylık Aşı</button>'+
+      '<button type="button" class="btn" onclick="addVaccineSeries(\''+p.id+'\',\'yearly\')">💉 Yıllık Aşı</button>'+
+      '<button type="button" class="btn" onclick="checkOutPatient(\''+p.id+'\')">✅ Taburcu</button>';
+    grid.insertAdjacentElement("beforebegin", quick);
+
     grid.insertAdjacentElement("afterend", buildProceduresSection(p));
     grid.insertAdjacentElement("afterend", buildClinicNoteBlock(p));
   }
@@ -5727,6 +6798,12 @@ function jumpToReportMonth(m){
 const _renderReports = renderReports;
 renderReports = function(){
   _renderReports();
+  renderStaffReportOnPage();
+
+  const wantMonth = document.getElementById("reportMonth").value;
+  if(wantMonth && salesInfo.from && wantMonth < salesInfo.from.slice(0,7) && !oldLoaded.has(wantMonth)){
+    fetchOldSales("month=" + encodeURIComponent(wantMonth), wantMonth).then(ok=>{ if(ok) renderReports(); });
+  }
 
   const container = document.getElementById("reportHistoryRow");
   if(!container) return;
@@ -5734,6 +6811,7 @@ renderReports = function(){
   const months = new Set();
 
   db.sales.forEach(s=>{ if(s.date) months.add(s.date.slice(0,7)); });
+  (salesInfo.months || []).forEach(m=>months.add(m));
   db.patients.forEach(p=>{
     (p.visits||[]).forEach(v=>{ if(v.date) months.add(v.date.slice(0,7)); });
     if(p.created) months.add(p.created.slice(0,7));
@@ -5751,19 +6829,159 @@ renderReports = function(){
 
 
 /* =========================================================
-   PYTHON SERVER SYNC (added)
-   Talks to server.py (running on the network, e.g. the XP VM)
-   over plain HTTP so multiple computers share one data.sqlite
-   file. This only wraps saveDB — nothing above this point is
-   edited.
+   PYTHON SERVER SYNC v2 (added)
+   - Sends only CHANGES (records / field edits / stock deltas) to
+     server.py, which applies them to its latest data. Two computers
+     working at once no longer overwrite each other.
+   - Polls only the tiny /api/version every second and downloads
+     the data when the version changed.
+   - If the server cannot be reached the whole app is covered by a
+     "disconnected" screen until the connection is back.
    ========================================================= */
 
 const SERVER_URL_KEY = "vetclinic_server_url";
+const LOCAL_BACKUP_KEY = "vetclinic_local_backup_before_sync";
+const SYNC_COLS = ["patients","appointments","inventory","sales","timers","payments"];
 
 let serverUrl = localStorage.getItem(SERVER_URL_KEY) || "";
-let serverConnected = false;
-let serverSyncing = false;
-let lastServerJSON = null;
+let serverConnected = false;     /* true while live or waiting for first upload */
+let syncReady = false;           /* true once server data was loaded/uploaded   */
+let syncMode = "off";            /* off | connecting | awaitUpload | live | lost */
+let knownVersion = null;
+let baseDB = null;               /* last state known to be on the server        */
+let flushing = false;
+let pollBusy = false;
+let startingSync = false;
+let failCount = 0;
+let pendingRefresh = false;
+let loadedToastShown = false;
+
+
+
+/* ---------- small helpers ---------- */
+
+function clone(v){ return JSON.parse(JSON.stringify(v)); }
+
+/* ---------- one device per account ---------- */
+
+const SESSION_TOKEN_KEY = "vetclinic_session_token";
+let sessionToken = null;
+try{ sessionToken = sessionStorage.getItem(SESSION_TOKEN_KEY); }catch(e){}
+let sessionLostHandled = false;
+let sessionClaiming = false;
+
+function setSessionToken(t){
+  sessionToken = t || null;
+  try{
+    if(t) sessionStorage.setItem(SESSION_TOKEN_KEY,t);
+    else sessionStorage.removeItem(SESSION_TOKEN_KEY);
+  }catch(e){}
+}
+
+function sessionUserId(){
+  if(typeof currentUser === "undefined" || !currentUser) return "";
+  if(currentUser.id) return currentUser.id;
+  const u = USERS.find(x=>x.name === currentUser.name);
+  return u ? u.id : "";
+}
+
+function sessionQuery(){
+  const u = sessionUserId();
+  if(!u || !sessionToken) return "";
+  return "u=" + encodeURIComponent(u) + "&t=" + encodeURIComponent(sessionToken);
+}
+
+/* Tell the server this account is free again (logout / tab closed). */
+function releaseSession(revoke){
+  const u = sessionUserId();
+  if(!u || !sessionToken || !serverUrl) return;
+  const body = JSON.stringify({user:u, token:sessionToken, revoke:revoke===true});
+  try{
+    /* text/plain keeps it a "simple" request: no CORS preflight */
+    if(!(navigator.sendBeacon && navigator.sendBeacon(serverUrl + "/api/logout", new Blob([body],{type:"text/plain"})))){
+      fetch(serverUrl + "/api/logout",{method:"POST",body:body,keepalive:true});
+    }
+  }catch(e){}
+}
+
+/* Another device took this account (or the server says our session is
+   gone): log out here, forget unsent edits (kept as a local backup the
+   next time data is loaded). */
+function onSessionLost(){
+  if(sessionLostHandled) return;
+  if(typeof currentUser === "undefined" || !currentUser) return;
+  sessionLostHandled = true;
+
+  setSessionToken(null);
+  syncReady = false;
+  baseDB = null;
+  knownVersion = null;
+
+  doLogout();
+
+  const err = document.getElementById("loginError");
+  if(err){
+    err.textContent = "Oturumunuz sona erdi veya hesap başka bir cihazda açıldı. Lütfen yeniden giriş yapın.";
+    err.style.display = "block";
+  }
+
+  setTimeout(()=>{ sessionLostHandled = false; },1000);
+}
+
+async function claimSession(){
+  if(sessionClaiming) return;
+  sessionClaiming = true;
+  try{
+    const res = await srvFetch("/api/session",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user:sessionUserId(), token:sessionToken})
+    },3000);
+
+    if(res.status === 409){ onSessionLost(); return; }
+    if(!res.ok) throw new Error("HTTP " + res.status);
+
+    const info = await res.json();
+    if(info && info.token) setSessionToken(info.token);
+  }finally{
+    sessionClaiming = false;
+  }
+}
+
+window.addEventListener("pagehide",function(){releaseSession(false);});
+
+function sortKeys(v){
+  if(Array.isArray(v)) return v.map(sortKeys);
+  if(v && typeof v === "object"){
+    const o = {};
+    Object.keys(v).sort().forEach(k=>{ o[k] = sortKeys(v[k]); });
+    return o;
+  }
+  return v;
+}
+
+function canon(v){ return JSON.stringify(sortKeys(v)); }
+
+/* A running timer's "remaining" is derived from endsAt on every
+   computer, so it is never synced and never compared. */
+function stripVolatile(col,rec){
+  if(col === "timers" && rec.running && rec.endsAt){
+    const c = Object.assign({},rec);
+    delete c.remaining;
+    return c;
+  }
+  return rec;
+}
+
+function syncCanon(data){
+  const c = clone(data);
+  (c.timers || []).forEach(t=>{ if(t.running && t.endsAt) delete t.remaining; });
+  return canon(c);
+}
+
+function normalizeServerUrl(url){
+  return (url || "").trim().replace(/\/+$/,"");
+}
 
 function setServerStatus(text,ok){
   const el = document.getElementById("serverSyncStatus");
@@ -5773,9 +6991,532 @@ function setServerStatus(text,ok){
   }
 }
 
-function normalizeServerUrl(url){
-  return (url || "").trim().replace(/\/+$/,"");
+async function srvFetch(path,opts,timeoutMs){
+  const q = sessionQuery();
+  if(q) path += (path.indexOf("?") >= 0 ? "&" : "?") + q;
+
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), timeoutMs || 2500);
+  try{
+    const res = await fetch(serverUrl + path, Object.assign({cache:"no-store", signal:ctrl.signal}, opts || {}));
+    if(res.status === 401){
+      onSessionLost();
+      throw new Error("session");
+    }
+    return res;
+  }finally{
+    clearTimeout(timer);
+  }
 }
+
+function isSessionError(err){ return !!err && err.message === "session"; }
+
+function noteServerTime(ms){
+  if(typeof ms === "number") serverClockOffset = ms - Date.now();
+}
+
+function anyModalOpen(){
+  return !!document.querySelector(".modal-overlay.open");
+}
+
+function scheduleRefresh(){
+  if(anyModalOpen()){ pendingRefresh = true; return; }
+  pendingRefresh = false;
+  refreshAll();
+}
+
+/* ---------- what changed? (local data vs. last server state) ---------- */
+
+function newItems(oldArr,newArr){
+  const count = {};
+  oldArr.forEach(x=>{ const k = canon(x); count[k] = (count[k] || 0) + 1; });
+  const out = [];
+  newArr.forEach(x=>{
+    const k = canon(x);
+    if(count[k] > 0) count[k]--;
+    else out.push(x);
+  });
+  return out;
+}
+
+function diffDB(base,cur){
+  const ops = [];
+
+  SYNC_COLS.forEach(col=>{
+    const b = new Map((base[col] || []).map(r=>[r.id,r]));
+    const c = new Map((cur[col] || []).map(r=>[r.id,r]));
+
+    c.forEach((rec,id)=>{
+
+      if(!b.has(id)){
+        ops.push({op:"put", col:col, rec:clone(rec)});
+        return;
+      }
+
+      const bRec = b.get(id);
+      let bStr = baseStrCache.get(bRec);
+      if(bStr === undefined){ bStr = JSON.stringify(bRec); baseStrCache.set(bRec,bStr); }
+      if(bStr === JSON.stringify(rec)) return;   /* identical: nothing to send */
+
+      const o = stripVolatile(col,bRec);
+      const n = stripVolatile(col,rec);
+      const keys = new Set(Object.keys(o).concat(Object.keys(n)));
+      const f = {};
+      const u = [];
+      let inc = 0;
+      let visitsAdd = null;
+
+      keys.forEach(k=>{
+        if(k === "id") return;
+        if(!(k in n)){ u.push(k); return; }
+        if(canon(o[k]) === canon(n[k])) return;
+
+        if(col === "patients" && k === "visits" && Array.isArray(n[k])){
+          visitsAdd = newItems(Array.isArray(o[k]) ? o[k] : [], n[k]);
+          return;
+        }
+        if(col === "inventory" && k === "stock" &&
+           typeof o[k] === "number" && typeof n[k] === "number"){
+          inc = n[k] - o[k];
+          return;
+        }
+        f[k] = n[k];
+      });
+
+      if(Object.keys(f).length || u.length) ops.push({op:"set", col:col, id:id, f:f, u:u});
+      if(inc) ops.push({op:"inc", col:col, id:id, field:"stock", by:inc});
+      if(visitsAdd && visitsAdd.length) ops.push({op:"visits", id:id, add:visitsAdd});
+    });
+
+    b.forEach((rec,id)=>{
+      if(!c.has(id)) ops.push({op:"del", col:col, id:id});
+    });
+  });
+
+  const hist = newItems(base.stockHistory || [], cur.stockHistory || []);
+  if(hist.length) ops.push({op:"hist", add:hist});
+
+  return ops;
+}
+
+function hasPending(){
+  if(!baseDB) return false;
+  /* full comparison only after a local save (and as a safety net every 20 s) */
+  if(!localDirty && Date.now() - lastFullCheck < 20000) return false;
+  lastFullCheck = Date.now();
+  localDirty = diffDB(baseDB,db).length > 0;
+  return localDirty;
+}
+
+/* ---------- applying only what changed on the server ---------- */
+
+function mergeCol(arr,recs,delIds){
+  const idx = new Map();
+  arr.forEach((r,i)=>idx.set(String(r.id),i));
+  recs.forEach(rec=>{
+    const i = idx.get(String(rec.id));
+    if(i === undefined){ idx.set(String(rec.id),arr.length); arr.push(rec); }
+    else arr[i] = rec;
+  });
+  if(delIds.length){
+    const gone = new Set(delIds.map(String));
+    return arr.filter(r=>!gone.has(String(r.id)));
+  }
+  return arr;
+}
+
+/* Merges a /api/changes (or /api/ops) result into db and baseDB.
+   Returns true when the visible data really changed. */
+function applyDelta(d,ownKeys){
+  const ch = d.changes || {}, del = d.deleted || {}, hist = d.hist || [];
+  const cols = Object.keys(ch).concat(Object.keys(del).filter(c=>!(c in ch)));
+  let changed = false;
+
+  [db,baseDB].forEach((t,ti)=>{
+    if(!t) return;
+    cols.forEach(col=>{
+      const recs = ch[col] || [];
+      const arr = t[col] || (t[col] = []);
+      if(ti === 0){
+        const cur = new Map(arr.map(r=>[String(r.id),r]));
+        recs.forEach(r=>{
+          const o = cur.get(String(r.id));
+          if(!o || canon(stripVolatile(col,o)) !== canon(stripVolatile(col,r))) changed = true;
+        });
+        if((del[col] || []).some(id=>cur.has(String(id)))) changed = true;
+      }
+      t[col] = mergeCol(arr, recs.map(r=>ti ? clone(r) : r), del[col] || []);
+    });
+
+    if(hist.length){
+      if(!Array.isArray(t.stockHistory)) t.stockHistory = [];
+      const have = new Set(t.stockHistory.slice(-400).map(canon));
+      hist.forEach(e=>{
+        const k = canon(e);
+        if(have.has(k)) return;
+        t.stockHistory.push(ti ? clone(e) : e);
+        if(ti === 0 && !(ownKeys && ownKeys.has(k))) changed = true;
+      });
+      if(t.stockHistory.length > 200) t.stockHistory = t.stockHistory.slice(-200);
+    }
+  });
+  return changed;
+}
+
+/* ---------- older sales on demand ---------- */
+
+function addOldSales(recs){
+  const have = new Set(db.sales.map(x=>String(x.id)));
+  const fresh = recs.filter(r=>!have.has(String(r.id)));
+  if(!fresh.length) return false;
+  db.sales = fresh.concat(db.sales);
+  if(baseDB) baseDB.sales = fresh.map(clone).concat(baseDB.sales || []);
+  return true;
+}
+
+/* resolves true only when new sales were added (caller should re-render) */
+async function fetchOldSales(query,key){
+  if(!serverUrl || !syncReady || oldLoaded.has(key)) return false;
+  try{
+    const res = await srvFetch("/api/sales?" + query,{},8000);
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const d = await res.json();
+    oldLoaded.add(key);
+    return addOldSales(d.sales || []);
+  }catch(e){
+    return false;
+  }
+}
+
+const _closeModalBase = closeModal;
+closeModal = function(id){
+  if(id === "confirmModal" && _confirmResolve){ resolveConfirm(false); return; }
+  _closeModalBase(id);
+};
+
+/* ---------- archived patients (5+ years without activity) ---------- */
+
+let archiveTimer = null;
+
+function searchArchive(){
+  clearTimeout(archiveTimer);
+  archiveTimer = setTimeout(runArchiveSearch,300);
+}
+
+async function runArchiveSearch(){
+  const box = document.getElementById("archiveResults");
+  if(!box) return;
+  const q = (document.getElementById("archiveSearch").value || "").trim();
+  if(q.length < 2 || !serverUrl || !syncReady){ box.innerHTML = ""; return; }
+  try{
+    const res = await srvFetch("/api/patients/archived?q=" + encodeURIComponent(q),{},5000);
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    const list = (await res.json()).patients || [];
+    box.innerHTML = list.length ? list.map(p=>
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0">' +
+      '<span>' + esc(p.name) + ' · ' + esc(p.owner) + (p.species ? ' · ' + esc(p.species) : '') + '</span>' +
+      '<button type="button" class="btn" onclick="restorePatient(\'' + esc(p.id) + '\')">Geri Yükle</button></div>'
+    ).join("") : '<div class="muted">Arşivde sonuç yok.</div>';
+  }catch(e){
+    if(!isSessionError(e)) box.innerHTML = '<div class="muted">Arşiv aranamadı.</div>';
+  }
+}
+
+async function restorePatient(id){
+  try{
+    const res = await srvFetch("/api/restore",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({id:id})
+    },5000);
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    document.getElementById("archiveSearch").value = "";
+    document.getElementById("archiveResults").innerHTML = "";
+    toast("Hasta arşivden geri yüklendi.");
+    syncTick();   /* the restored patient arrives with the next change pull */
+  }catch(e){
+    if(!isSessionError(e)) toast("Geri yükleme başarısız.");
+  }
+}
+
+/* ---------- disconnected screen ---------- */
+
+function updateSyncLock(){
+  const el = document.getElementById("syncLock");
+  if(!el) return;
+
+  const needLock =
+    !!serverUrl &&
+    typeof currentUser !== "undefined" && !!currentUser &&
+    syncMode !== "live" && syncMode !== "awaitUpload" && syncMode !== "off";
+
+  el.classList.toggle("show", needLock);
+
+  const sub = document.getElementById("syncLockSub");
+  if(sub && needLock){
+    sub.textContent = syncMode === "lost"
+      ? "Bağlantı yeniden kuruluyor… Son yaptığınız değişiklik bağlantı gelince otomatik gönderilir."
+      : "Sunucuya bağlanılıyor… (" + serverUrl + ")";
+  }
+}
+
+function markDisconnected(){
+  syncMode = syncReady ? "lost" : "connecting";
+  serverConnected = false;
+  setServerStatus("Bağlantı yok",false);
+  updateSyncLock();
+}
+
+function markConnected(){
+  const wasLost = syncMode === "lost";
+  syncMode = "live";
+  serverConnected = true;
+  failCount = 0;
+  setServerStatus("Bağlı: " + serverUrl + " · v" + knownVersion,true);
+  updateSyncLock();
+  if(wasLost) toast("Bağlantı yeniden kuruldu.");
+}
+
+/* ---------- loading from the server ---------- */
+
+function applyServerData(data,version){
+  oldLoaded.clear();
+  db = data;
+  if(!Array.isArray(db.payments)) db.payments = [];
+  knownVersion = version;
+  baseDB = clone(data);
+  tickTimers();
+  _saveDB();
+  scheduleRefresh();
+}
+
+async function loadFromServer(){
+  const res = await srvFetch("/api/state",{},4000);
+  if(!res.ok) throw new Error("HTTP " + res.status);
+
+  const st = await res.json();
+  noteServerTime(st.now);
+
+  if(st.salesInfo) salesInfo = st.salesInfo;
+  const data = st.data;
+  const hasData = SYNC_COLS.some(c=>(data[c] || []).length);
+
+  if(!hasData){
+    knownVersion = st.version;
+    return "empty";
+  }
+
+  /* Keep a copy of what this computer had, in case it differed. */
+  try{
+    if(syncCanon(db) !== syncCanon(data)){
+      localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify({
+        savedAt:new Date().toISOString(), db:db
+      }));
+    }
+  }catch(e){}
+
+  applyServerData(data,st.version);
+  return "ok";
+}
+
+async function trySyncStart(manual){
+  if(startingSync) return;
+  startingSync = true;
+
+  try{
+    const r = await loadFromServer();
+
+    if(r === "ok"){
+      syncReady = true;
+      markConnected();
+      if(!loadedToastShown || manual){
+        toast("Sunucudaki veriler yüklendi.");
+        loadedToastShown = true;
+      }
+    }else{
+      syncReady = false;
+      syncMode = "awaitUpload";
+      serverConnected = true;
+      setServerStatus("Sunucu boş — 'Yükle' ile gönderin",false);
+      updateSyncLock();
+      if(manual) toast("Sunucu boş — mevcut verinizi göndermek için 'Yükle' butonuna basın.");
+    }
+
+  }catch(err){
+    if(isSessionError(err)) return;
+    failCount++;
+    if(manual || failCount >= 2) markDisconnected();
+    if(manual) toast("Sunucuya bağlanılamadı. IP adresini ve sunucunun çalıştığını kontrol edin.");
+  }finally{
+    startingSync = false;
+  }
+}
+
+async function pullLatest(){
+  const res = await srvFetch("/api/changes?since=" + encodeURIComponent(knownVersion),{},4000);
+  if(!res.ok) throw new Error("HTTP " + res.status);
+
+  const d = await res.json();
+  noteServerTime(d.now);
+
+  /* local edits made meanwhile win: they get sent first */
+  if(flushing || hasPending()) return;
+
+  if(d.reset) return pullFull();
+
+  knownVersion = d.version;
+  if(applyDelta(d)){
+    tickTimers();
+    _saveDB();
+    scheduleRefresh();
+  }
+}
+
+async function pullFull(){
+  const res = await srvFetch("/api/state",{},4000);
+  if(!res.ok) throw new Error("HTTP " + res.status);
+
+  const st = await res.json();
+  noteServerTime(st.now);
+
+  /* local edits made meanwhile win: they get sent first */
+  if(flushing || hasPending()) return;
+
+  if(st.salesInfo) salesInfo = st.salesInfo;
+  const changed = syncCanon(st.data) !== syncCanon(db);
+  if(changed) oldLoaded.clear();
+  knownVersion = st.version;
+  baseDB = clone(st.data);
+
+  if(changed){
+    db = st.data;
+    tickTimers();
+    _saveDB();
+    scheduleRefresh();
+  }
+}
+
+/* ---------- sending changes ---------- */
+
+async function flush(){
+  if(!syncReady || !serverUrl || !baseDB) return false;
+  if(!sessionUserId() || !sessionToken) return false;   /* only a logged-in, claimed session may write */
+  if(flushing) return false;
+  flushing = true;
+
+  try{
+    for(let round = 0; round < 5; round++){
+
+      const seqAtSend = localSeq;
+      const sent = clone(db);
+      const ops = diffDB(baseDB,sent);
+      if(!ops.length){ localDirty = false; break; }
+
+      const res = await srvFetch("/api/ops",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({base:knownVersion, ops:ops})
+      },5000);
+
+      if(!res.ok) throw new Error("HTTP " + res.status);
+
+      const r = await res.json();
+      knownVersion = r.version;
+
+      if(localSeq === seqAtSend){
+        /* nothing new typed while sending: take over what the server merged */
+        if(r.reset){
+          baseDB = sent;
+          knownVersion = null;   /* next heartbeat does a full reload */
+        }else{
+          const own = new Set(newItems(baseDB.stockHistory || [], sent.stockHistory || []).map(canon));
+          if(own.size) db.stockHistory = (db.stockHistory || []).filter(e=>!own.has(canon(e)));
+          if(applyDelta(r,own)){
+            tickTimers();
+            _saveDB();
+            scheduleRefresh();
+          }
+        }
+        localDirty = false;
+        break;
+      }
+
+      /* edits arrived while sending: send those next round */
+      baseDB = sent;
+    }
+
+    failCount = 0;
+    markConnected();
+    return true;
+
+  }catch(err){
+    if(isSessionError(err)) return false;
+    markDisconnected();   /* a failed save shows the lock screen at once */
+    return false;
+  }finally{
+    flushing = false;
+  }
+}
+
+/* ---------- 1-second heartbeat ---------- */
+
+async function syncTick(){
+
+  updateSyncLock();
+
+  /* Data is only fetched after a login: the server refuses data requests without a session. */
+  if(!sessionUserId()) return;
+
+  if(!serverUrl || pollBusy || flushing || startingSync) return;
+  pollBusy = true;
+
+  try{
+    /* logged in locally (e.g. offline demo login) but no session yet: claim it */
+    if(sessionUserId() && !sessionToken){
+      await claimSession();
+      if(!sessionToken) return;
+    }
+
+    if(!syncReady){
+      await trySyncStart(false);
+      return;
+    }
+
+    const res = await srvFetch("/api/version",{},2000);
+    if(!res.ok) throw new Error("HTTP " + res.status);
+
+    const v = await res.json();
+    noteServerTime(v.now);
+    markConnected();
+
+    if(hasPending()){
+      await flush();
+    }else if(v.version !== knownVersion){
+      await pullLatest();
+    }
+
+    if(pendingRefresh && !anyModalOpen()){
+      pendingRefresh = false;
+      refreshAll();
+    }
+
+  }catch(err){
+    if(isSessionError(err)) return;
+    failCount++;
+    if(failCount >= 2) markDisconnected();
+  }finally{
+    pollBusy = false;
+  }
+}
+
+function startServerPolling(){
+  if(!syncReady) syncMode = "connecting";
+  clearInterval(window.__serverPoll);
+  window.__serverPoll = setInterval(syncTick,1000);
+  syncTick();
+}
+
+/* ---------- sidebar buttons ---------- */
 
 async function connectToServer(){
 
@@ -5783,45 +7524,21 @@ async function connectToServer(){
   const url = normalizeServerUrl(input.value || serverUrl);
 
   if(!url){
-    toast("Sunucu adresini girin (örn: http://192.168.1.50:8765).");
+    toast("Sunucu adresini girin (örn: http://192.168.1.50:8000).");
     return;
   }
 
-  try{
-    const res = await fetch(url + "/api/db");
-    if(!res.ok) throw new Error("HTTP " + res.status);
+  serverUrl = url;
+  localStorage.setItem(SERVER_URL_KEY,url);
+  input.value = url;
 
-    const serverDB = await res.json();
+  syncReady = false;
+  syncMode = "connecting";
+  failCount = 0;
+  setServerStatus("Bağlanılıyor…",false);
 
-    serverUrl = url;
-    localStorage.setItem(SERVER_URL_KEY,url);
-    input.value = url;
-
-    const hasServerData =
-      (serverDB.patients && serverDB.patients.length) ||
-      (serverDB.appointments && serverDB.appointments.length) ||
-      (serverDB.inventory && serverDB.inventory.length) ||
-      (serverDB.sales && serverDB.sales.length);
-
-    if(hasServerData){
-      db = serverDB;
-      lastServerJSON = JSON.stringify(serverDB);
-      _saveDB();
-      refreshAll();
-      toast("Sunucudaki veriler yüklendi.");
-    }else{
-      toast("Sunucu boş — mevcut verinizi göndermek için 'Yükle' butonuna basın.");
-    }
-
-    serverConnected = true;
-    setServerStatus("Bağlı: " + url,true);
-    startServerPolling();
-
-  }catch(err){
-    serverConnected = false;
-    setServerStatus("Bağlantı başarısız",false);
-    toast("Sunucuya bağlanılamadı. IP adresini ve sunucunun çalıştığını kontrol edin.");
-  }
+  await trySyncStart(true);
+  startServerPolling();
 }
 
 async function pushLocalToServer(){
@@ -5834,124 +7551,1527 @@ async function pushLocalToServer(){
     return;
   }
 
-  try{
-    const json = JSON.stringify(db);
+  serverUrl = url;
 
-    const res = await fetch(url + "/api/db",{
+  try{
+    const body = JSON.stringify(db);
+    const post = force => srvFetch("/api/db" + (force ? "?force=1" : ""),{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:json
-    });
+      body:body
+    },6000);
 
-    if(!res.ok) throw new Error("HTTP " + res.status);
+    let res = await post(false);
 
-    serverUrl = url;
+    if(res.status === 409){
+      if(!(await confirmDialog({
+        title:"Sunucudaki Veri Değiştirilsin mi?",
+        message:"Sunucuda zaten veri var.\n\nBu cihazdaki veri sunucudakinin TAMAMEN yerine geçecek (öncesinde sunucu yedek alır).",
+        confirmText:"Sunucunun Yerine Geçir",
+        danger:true
+      }))){
+        return;
+      }
+      res = await post(true);
+    }
+
+    if(!res.ok){
+      let msg = "HTTP " + res.status;
+      try{ msg = (await res.json()).error || msg; }catch(e){}
+      throw new Error(msg);
+    }
+
+    const r = await res.json();
+
     localStorage.setItem(SERVER_URL_KEY,url);
-    lastServerJSON = json;
-    serverConnected = true;
-
-    setServerStatus("Bağlı: " + url,true);
+    knownVersion = r.version;
+    baseDB = clone(db);
+    syncReady = true;
+    markConnected();
     startServerPolling();
 
     toast("Mevcut veriler sunucuya yüklendi.");
 
   }catch(err){
-    toast("Sunucuya yükleme başarısız. Adresi ve sunucuyu kontrol edin.");
+    if(isSessionError(err)) return;
+    toast("Sunucuya yükleme başarısız: " + (err.message || "adresi ve sunucuyu kontrol edin."));
   }
 }
 
-async function pushToServerIfChanged(){
+/* Keep appointments from growing forever: anything older than
+   12 months is dropped automatically. This runs quietly on
+   every save, so old appointments never need manual cleanup. */
+function pruneOldAppointments(){
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - 12);
 
-  if(!serverConnected || !serverUrl) return;
+  const cutoffISO =
+    cutoff.getFullYear() + "-" +
+    String(cutoff.getMonth()+1).padStart(2,"0") + "-" +
+    String(cutoff.getDate()).padStart(2,"0");
 
-  const json = JSON.stringify(db);
-  if(json === lastServerJSON) return;
-
-  try{
-    const res = await fetch(serverUrl + "/api/db",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:json
-    });
-
-    if(res.ok){
-      lastServerJSON = json;
-      setServerStatus("Bağlı: " + serverUrl,true);
-    }
-
-  }catch(err){
-    setServerStatus("Bağlantı koptu — yeniden deneniyor",false);
-  }
+  db.appointments = db.appointments.filter(a => a.date >= cutoffISO);
 }
 
-async function pullFromServer(){
-
-  if(!serverConnected || !serverUrl || serverSyncing) return;
-
-  try{
-    serverSyncing = true;
-
-    const res = await fetch(serverUrl + "/api/db");
-    if(!res.ok) throw new Error("HTTP " + res.status);
-
-    const text = await res.text();
-
-    if(text && text !== lastServerJSON){
-      lastServerJSON = text;
-      db = JSON.parse(text);
-      _saveDB();
-      refreshAll();
-    }
-
-    setServerStatus("Bağlı: " + serverUrl,true);
-
-  }catch(err){
-    setServerStatus("Bağlantı koptu — yeniden deneniyor",false);
-  }finally{
-    serverSyncing = false;
-  }
+/* Every normal save also prunes old appointments and sends the
+   resulting changes to the server (if connected). */
+/* All changes made by one click/submit (stock + history + sale stamp...)
+   are collected and sent together in one request. */
+let flushScheduled = false;
+function flushSoon(){
+  if(flushScheduled) return;
+  flushScheduled = true;
+  setTimeout(()=>{ flushScheduled = false; flush(); },0);
 }
 
-function startServerPolling(){
-  clearInterval(window.__serverPoll);
-  window.__serverPoll = setInterval(pullFromServer,3000);
-}
-
-/* Every normal save now also pushes to the server, if connected. */
 const _saveDB = saveDB;
 saveDB = function(){
+  localDirty = true;
+  localSeq++;
+  pruneOldAppointments();
   _saveDB();
-  pushToServerIfChanged();
+  flushSoon();
 };
 
 (function initServerSync(){
   const input = document.getElementById("serverUrlInput");
   if(input) input.value = serverUrl;
 
-  if(serverUrl) connectToServer();
+  if(serverUrl) startServerPolling();
+})();
+
+/* While the disconnected screen is up, nothing underneath can be
+   clicked or submitted (also blocks keyboard Enter/Tab+Enter). */
+function syncLocked(){
+  const el = document.getElementById("syncLock");
+  return !!el && el.classList.contains("show");
+}
+
+document.addEventListener("submit",function(e){
+  if(syncLocked()){ e.preventDefault(); e.stopImmediatePropagation(); }
+},true);
+
+document.addEventListener("click",function(e){
+  if(syncLocked() && !e.target.closest("#syncLock")){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+},true);
+
+
+
+/* =========================================================
+   SEARCH-AS-YOU-TYPE COMBO (added)
+   Used by the Yeni Satış modal's Ürün / Hasta fields. Each
+   still drives a hidden <select> with the original name/id, so
+   updateSalePrice() and the original saleForm submit handler
+   keep working completely unchanged.
+   ========================================================= */
+
+function setupSearchableSelect(searchInputId,resultsId,hiddenSelectId,getItemsFn,onSelectExtra){
+
+  const input = document.getElementById(searchInputId);
+  const results = document.getElementById(resultsId);
+  const hidden = document.getElementById(hiddenSelectId);
+
+  if(!input || !results || !hidden) return;
+
+  function renderList(filterText){
+    const items = getItemsFn(filterText || "");
+
+    if(!items.length){
+      results.innerHTML = '<div class="search-result-empty">Sonuç bulunamadı.</div>';
+      results.classList.add("open");
+      return;
+    }
+
+    results.innerHTML = items.slice(0,30).map(it=>
+      '<div class="search-result-item" data-id="'+esc(it.id)+'">'+
+        esc(it.label)+
+        (it.sub ? '<small>'+esc(it.sub)+'</small>' : "")+
+      "</div>"
+    ).join("");
+
+    results.classList.add("open");
+  }
+
+  input.addEventListener("focus", function(){
+    renderList(input.value);
+  });
+
+  input.addEventListener("input", function(){
+    hidden.value = "";
+    renderList(input.value);
+  });
+
+  results.addEventListener("click", function(e){
+    const row = e.target.closest(".search-result-item");
+    if(!row) return;
+
+    const id = row.getAttribute("data-id");
+    const match = getItemsFn("").find(it=>it.id===id);
+
+    hidden.value = id;
+    input.value = match ? match.label : "";
+    results.classList.remove("open");
+
+    hidden.dispatchEvent(new Event("change"));
+
+    if(onSelectExtra) onSelectExtra(match);
+  });
+
+  document.addEventListener("click", function(e){
+    if(e.target !== input && !results.contains(e.target)){
+      results.classList.remove("open");
+    }
+  });
+}
+
+function getProductSearchItems(filterText){
+  const q = filterText.toLocaleLowerCase("tr-TR");
+  return db.inventory
+    .filter(i=>i.name.toLocaleLowerCase("tr-TR").includes(q))
+    .map(i=>({ id:i.id, label:i.name, sub: money(i.sell)+" · Stok: "+i.stock }));
+}
+
+function getPatientSearchItemsForSale(filterText){
+  const q = filterText.toLocaleLowerCase("tr-TR");
+  return db.patients
+    .filter(p=>(p.name+" "+p.owner).toLocaleLowerCase("tr-TR").includes(q))
+    .map(p=>({ id:p.id, label:p.name, sub:"Sahip: "+p.owner }));
+}
+
+setupSearchableSelect("saleProductSearch","saleProductResults","saleProduct",getProductSearchItems);
+setupSearchableSelect("salePatientSearch","salePatientResults","salePatient",getPatientSearchItemsForSale);
+setupSearchableSelect("appointmentPatientSearch","appointmentPatientResults","appointmentPatient",getPatientSearchItemsForSale);
+setupSearchableSelect("timerPatientSearch","timerPatientResults","timerPatient",getPatientSearchItemsForSale);
+
+/* Nothing pre-selected when the Yeni Satış modal opens: clear
+   the hidden selects and the visible search boxes every time,
+   instead of the browser's default "select the first option". */
+const _populateProducts = populateProducts;
+populateProducts = function(){
+  _populateProducts();
+
+  document.getElementById("saleProduct").value = "";
+
+  const input = document.getElementById("saleProductSearch");
+  if(input) input.value = "";
+
+  const results = document.getElementById("saleProductResults");
+  if(results) results.classList.remove("open");
+
+  document.getElementById("salePrice").value = "";
+  document.getElementById("saleTotal").textContent =
+    (typeof saleCart!=="undefined" && saleCart.length) ? money(saleCartTotal()) : "₺0";
+};
+
+const _populatePatientSelects = populatePatientSelects;
+populatePatientSelects = function(){
+  _populatePatientSelects();
+
+  document.getElementById("salePatient").value = "";
+
+  const saleInput = document.getElementById("salePatientSearch");
+  if(saleInput) saleInput.value = "";
+
+  const saleResults = document.getElementById("salePatientResults");
+  if(saleResults) saleResults.classList.remove("open");
+
+  document.getElementById("appointmentPatient").value = "";
+
+  const apptInput = document.getElementById("appointmentPatientSearch");
+  if(apptInput) apptInput.value = "";
+
+  const apptResults = document.getElementById("appointmentPatientResults");
+  if(apptResults) apptResults.classList.remove("open");
+
+  document.getElementById("timerPatient").value = "";
+
+  const timerInput = document.getElementById("timerPatientSearch");
+  if(timerInput) timerInput.value = "";
+
+  const timerResults = document.getElementById("timerPatientResults");
+  if(timerResults) timerResults.classList.remove("open");
+};
+
+/* Since the product/patient <select>s are no longer visibly
+   focusable, their native "required" validation can't show a
+   bubble — so this checks explicitly before the original
+   handler runs. */
+document.getElementById("saleForm").addEventListener("submit", function(e){
+  if(!document.getElementById("saleProduct").value && !saleCart.length){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    toast("Lütfen bir ürün seçin.");
+  }
+}, true);
+
+document.getElementById("appointmentForm").addEventListener("submit", function(e){
+  if(!document.getElementById("appointmentPatient").value){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    toast("Lütfen bir hasta seçin.");
+  }
+}, true);
+
+document.getElementById("timerForm").addEventListener("submit", function(e){
+  if(!document.getElementById("timerPatient").value){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    toast("Lütfen bir hasta seçin.");
+  }
+}, true);
+
+
+/* =========================================================
+   CALENDAR DAY MODAL (added)
+   Replaces the plain alert() with a styled modal, and adds a
+   quick "+ Randevu Ekle" shortcut pre-filled with that date.
+   ========================================================= */
+
+function openModalWithDate(id,date){
+  if(!requireEdit()) return;
+
+  closeModal("dayModal");
+  openModal(id);
+
+  if(id==="appointmentModal"){
+    document.querySelector("#appointmentForm [name=date]").value = date;
+  }
+}
+
+calendarDayClick = function(date){
+
+  const events = db.appointments.filter(a=>a.date===date);
+
+  const dateLabel = new Intl.DateTimeFormat("tr-TR",{
+    weekday:"long",day:"numeric",month:"long",year:"numeric"
+  }).format(new Date(date+"T00:00:00"));
+
+  document.getElementById("dayModalTitle").textContent = dateLabel;
+
+  const listEl = document.getElementById("dayModalList");
+
+  listEl.innerHTML = events.length
+    ? events.sort((a,b)=>a.time.localeCompare(b.time)).map(e=>{
+        const p = db.patients.find(x=>x.id===e.patient);
+        return (
+          '<div class="day-modal-item">'+
+            '<div class="day-modal-time">'+esc(e.time)+'</div>'+
+            '<div class="day-modal-info">'+
+              "<strong>"+esc(p?p.name:"Bilinmeyen")+"</strong>"+
+              "<span>"+esc(e.type||"Muayene")+(p&&p.owner?" · "+esc(p.owner):"")+"</span>"+
+            "</div>"+
+          "</div>"
+        );
+      }).join("")
+    : '<div class="muted" style="text-align:center;padding:30px 10px">Bu günde randevu yok.</div>';
+
+  const addBtn = document.getElementById("dayModalAddBtn");
+  addBtn.setAttribute("onclick","openModalWithDate('appointmentModal','"+date+"')");
+
+  document.getElementById("dayModal").classList.add("open");
+};
+
+
+
+/* =========================================================
+   DROPDOWN DATE PICKER (added)
+   A small popover on the Takvim page. It is a shortcut only:
+   picking a date moves the main calendar to that month and
+   opens the same day window as clicking the day in the grid,
+   so the existing calendar keeps working unchanged.
+   ========================================================= */
+
+let datePickView = new Date();          /* month being browsed */
+let datePickSelected = null;            /* ISO of last picked date */
+
+function dpISO(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+function datePickInit(){
+  const mSel=document.getElementById("datePickMonth");
+  const ySel=document.getElementById("datePickYear");
+  if(!mSel || !ySel || mSel.options.length) return;
+
+  mSel.innerHTML=months.map((m,i)=>'<option value="'+i+'">'+m+'</option>').join("");
+
+  const thisYear=new Date().getFullYear();
+  let yHtml="";
+  for(let y=thisYear-5;y<=thisYear+5;y++) yHtml+='<option value="'+y+'">'+y+'</option>';
+  ySel.innerHTML=yHtml;
+}
+
+function renderDatePick(){
+  datePickInit();
+
+  const year=datePickView.getFullYear();
+  const month=datePickView.getMonth();
+
+  const mSel=document.getElementById("datePickMonth");
+  const ySel=document.getElementById("datePickYear");
+
+  /* make sure the year exists in the list (e.g. after stepping far) */
+  if(!ySel.querySelector('option[value="'+year+'"]')){
+    const o=document.createElement("option");
+    o.value=year; o.textContent=year;
+    ySel.appendChild(o);
+    [...ySel.options].sort((a,b)=>a.value-b.value).forEach(x=>ySel.appendChild(x));
+  }
+
+  mSel.value=month;
+  ySel.value=year;
+
+  let start=new Date(year,month,1).getDay();
+  start=start===0?6:start-1;
+
+  const today=todayISO();
+  const booked=new Set(db.appointments.map(a=>a.date));
+
+  let html="";
+  for(let i=0;i<42;i++){
+    const d=new Date(year,month,i-start+1);
+    const iso=dpISO(d);
+    const cls=["datepick-day"];
+    if(d.getMonth()!==month) cls.push("other");
+    if(iso===today) cls.push("today");
+    if(iso===datePickSelected) cls.push("selected");
+    if(booked.has(iso)) cls.push("has");
+    html+='<div class="'+cls.join(" ")+'" onclick="datePickPick(\''+iso+'\')">'+d.getDate()+'</div>';
+  }
+  document.getElementById("datePickGrid").innerHTML=html;
+}
+
+function toggleDatePick(e){
+  if(e) e.stopPropagation();
+  const pop=document.getElementById("datePickPop");
+  if(pop.classList.contains("open")){ pop.classList.remove("open"); return; }
+
+  datePickView=new Date(calendarDate.getFullYear(),calendarDate.getMonth(),1);
+  renderDatePick();
+  pop.classList.add("open");
+}
+
+function closeDatePick(){
+  const pop=document.getElementById("datePickPop");
+  if(pop) pop.classList.remove("open");
+}
+
+function datePickStep(n){
+  datePickView=new Date(datePickView.getFullYear(),datePickView.getMonth()+n,1);
+  renderDatePick();
+}
+
+function datePickJump(){
+  const m=Number(document.getElementById("datePickMonth").value);
+  const y=Number(document.getElementById("datePickYear").value);
+  datePickView=new Date(y,m,1);
+  renderDatePick();
+}
+
+function datePickPick(iso){
+  datePickSelected=iso;
+  const d=new Date(iso+"T00:00:00");
+
+  /* move the main calendar to that month */
+  calendarDate=new Date(d.getFullYear(),d.getMonth(),1);
+  renderCalendar();
+
+  closeDatePick();
+  calendarDayClick(iso);          /* same day window as clicking the grid */
+}
+
+function datePickTyped(v){
+  if(!v) return;
+  datePickPick(v);
+  document.getElementById("datePickInput").value="";
+}
+
+function datePickToday(){
+  datePickPick(todayISO());
+}
+
+document.addEventListener("click",function(e){
+  const wrap=document.getElementById("datePick");
+  if(wrap && !wrap.contains(e.target)) closeDatePick();
+});
+
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape") closeDatePick();
+});
+
+
+/* =========================================================
+   PATIENT SALES: add + edit from the patient profile (added)
+   ========================================================= */
+
+/* "+ Satış" on a patient: opens the normal Yeni Satış window
+   with that patient already chosen. */
+function openPatientSale(patientId){
+  const p = db.patients.find(x=>x.id===patientId);
+  if(!p) return;
+
+  openModal("saleModal");
+
+  document.getElementById("salePatient").value = p.id;
+  document.getElementById("salePatientSearch").value = p.name;
+}
+
+/* refresh the open patient profile after any sale is saved */
+document.getElementById("saleForm").addEventListener("submit", function(){
+  if(selectedPatient) renderPatientProfile();
+});
+
+function editSaleRefreshTotal(){
+  const q = Math.max(0,Math.floor(Number(document.getElementById("editSaleQty").value))||0);
+  const pr = Number(document.getElementById("editSalePrice").value)||0;
+  document.getElementById("editSaleTotal").textContent = money(q*pr);
+}
+
+document.getElementById("editSaleQty").addEventListener("input", editSaleRefreshTotal);
+document.getElementById("editSalePrice").addEventListener("input", editSaleRefreshTotal);
+
+function openEditSaleModal(saleId){
+  if(!requireEdit()) return;
+
+  const sale = db.sales.find(x=>x.id===saleId);
+  if(!sale) return;
+
+  if(sale.checkedOut){
+    toast("Bu satış kapatıldı (eski hizmet), düzenlenemez.");
+    return;
+  }
+
+  const form = document.getElementById("editSaleForm");
+  form.reset();
+
+  openModal("editSaleModal");
+
+  form.querySelector("[name=id]").value = sale.id;
+
+  const sel = document.getElementById("editSaleProduct");
+  let opts = db.inventory.map(i=>
+    '<option value="'+esc(i.id)+'">'+esc(i.name)+' — Stok: '+i.stock+'</option>'
+  ).join("");
+
+  /* product was deleted from Stok: keep it selectable so the
+     sale can still be edited without being forced onto another item */
+  if(!db.inventory.find(i=>i.id===sale.productId)){
+    opts = '<option value="'+esc(sale.productId)+'">'+esc(sale.productName)+' (stokta yok)</option>' + opts;
+  }
+
+  sel.innerHTML = opts;
+  sel.value = sale.productId;
+
+  document.getElementById("editSaleQty").value = sale.quantity;
+  document.getElementById("editSalePrice").value = sale.price;
+  document.getElementById("editSalePayment").value = sale.payment || "Nakit";
+
+  editSaleRefreshTotal();
+}
+
+document.getElementById("editSaleForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  if(!requireEdit()) return;
+
+  const f = new FormData(e.target);
+  const sale = db.sales.find(x=>x.id===f.get("id"));
+  if(!sale) return;
+
+  if(sale.checkedOut){
+    toast("Bu satış kapatıldı (eski hizmet), düzenlenemez.");
+    return;
+  }
+
+  const newProductId = f.get("product");
+  const newQty = Math.floor(Number(f.get("quantity")));
+  const newPrice = Number(f.get("price")) || 0;
+
+  if(!newQty || newQty < 1){
+    toast("Geçerli bir adet girin.");
+    return;
+  }
+
+  const oldItem = db.inventory.find(i=>i.id===sale.productId);
+  const newItem = db.inventory.find(i=>i.id===newProductId);
+
+  /* product no longer in Stok and unchanged: edit money/qty only */
+  if(!newItem && newProductId !== sale.productId){
+    toast("Ürün bulunamadı.");
+    return;
+  }
+
+  if(newItem){
+    /* stock available to this sale = what is on the shelf, plus
+       what this same sale had already taken from it */
+    const available = newItem.stock + (sale.productId === newProductId ? sale.quantity : 0);
+
+    if(newQty > available){
+      toast("Yetersiz stok (en fazla "+available+" adet).");
+      return;
+    }
+  }
+
+  /* put the old quantity back, take the new quantity out */
+  const oldQty = sale.quantity;
+  const oldBefore = oldItem ? oldItem.stock : 0;
+
+  if(oldItem) oldItem.stock += sale.quantity;
+  if(newItem) newItem.stock -= newQty;
+
+  /* stock history: one net line when the product is the same,
+     otherwise a return line and a new sale line */
+  if(oldItem && newItem && oldItem.id === newItem.id){
+    const net = oldItem.stock - oldBefore;
+    if(net) logStockHistory(oldItem.name,"Satış düzenleme",net,oldItem.stock,oldItem.id);
+  }else{
+    if(oldItem) logStockHistory(oldItem.name,"Satış düzenleme (iade)",oldQty,oldItem.stock,oldItem.id);
+    if(newItem) logStockHistory(newItem.name,"Satış düzenleme",-newQty,newItem.stock,newItem.id);
+  }
+
+  if(newItem) sale.productName = newItem.name;
+  sale.productId = newProductId;
+  sale.quantity = newQty;
+  sale.price = newPrice;
+  sale.total = newPrice * newQty;
+  sale.payment = f.get("payment");
+  if(currentUser) sale.editedBy = currentUser.name;
+
+  saveDB();
+  closeModal("editSaleModal");
+
+  renderSales();
+  renderInventory();
+  renderDashboard();
+  if(selectedPatient) renderPatientProfile();
+
+  toast("Satış güncellendi.");
+});
+
+
+/* =========================================================
+   DELETE SALE, VACCINE SERIES, CHECK OUT (added)
+   ========================================================= */
+
+/* One red "Sil" button on each current sale in the patient card.
+   The sold quantity goes back into stock. Checked-out sales
+   (eski hizmet) cannot be deleted. */
+async function deleteSale(saleId){
+  if(!requireEdit()) return;
+
+  const sale = db.sales.find(x=>x.id===saleId);
+  if(!sale) return;
+
+  if(sale.checkedOut){
+    toast("Bu satış kapatıldı (eski hizmet), silinemez.");
+    return;
+  }
+
+  if(!(await confirmDialog({
+    title:"Satışı Sil",
+    message:sale.productName+" (x"+sale.quantity+") satışı silinsin mi?\n\nAdet stoğa geri eklenecek.",
+    confirmText:"Sil",
+    danger:true
+  }))) return;
+
+  /* the sale may have been changed or closed meanwhile (dialog was open) */
+  if(!db.sales.some(x=>x.id===saleId) || sale.checkedOut) return;
+
+  const item = db.inventory.find(i=>i.id===sale.productId);
+  if(item){
+    item.stock += sale.quantity;
+    logStockHistory(item.name,"Satış iptali",sale.quantity,item.stock,item.id);
+  }
+
+  db.sales = db.sales.filter(x=>x.id!==saleId);
+
+  saveDB();
+
+  renderSales();
+  renderInventory();
+  renderDashboard();
+  if(selectedPatient) renderPatientProfile();
+
+  toast("Satış silindi.");
+}
+
+/* same day-of-month n months ahead; 31st -> last day of a shorter month */
+function vaccineDateAfterMonths(base,n){
+  const target = new Date(base.getFullYear(), base.getMonth()+n, 1);
+  const last = new Date(target.getFullYear(), target.getMonth()+1, 0).getDate();
+  const day = Math.min(base.getDate(), last);
+
+  return target.getFullYear()+"-"+
+    String(target.getMonth()+1).padStart(2,"0")+"-"+
+    String(day).padStart(2,"0");
+}
+
+/* Aylık Aşı  -> the same day in each of the next 3 months
+   Yıllık Aşı -> the same day in each of the next 3 years
+   Created as normal calendar appointments (10:00). Dates that
+   already have the same entry for this patient are skipped. */
+function addVaccineSeries(patientId,kind){
+  if(!requireEdit()) return;
+
+  const p = db.patients.find(x=>x.id===patientId);
+  if(!p) return;
+
+  const monthly = kind==="monthly";
+  const label = monthly ? "Aylık Aşı" : "Yıllık Aşı";
+  const steps = monthly ? [1,2,3] : [12,24,36];
+
+  const now = new Date();
+  const base = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+
+  let created = 0;
+
+  steps.forEach(n=>{
+    const iso = vaccineDateAfterMonths(base,n);
+
+    const exists = db.appointments.some(a=>
+      a.patient===p.id && a.date===iso && a.type===label);
+
+    if(exists) return;
+
+    db.appointments.push({
+      id:uid("a"),
+      date:iso,
+      time:"10:00",
+      patient:p.id,
+      type:label,
+      notes:"Otomatik oluşturuldu",
+      createdBy: currentUser ? currentUser.name : ""
+    });
+
+    created++;
+  });
+
+  if(!created){
+    toast(label+" randevuları zaten takvimde.");
+    return;
+  }
+
+  saveDB();
+  renderCalendar();
+  renderDashboard();
+
+  toast(p.name+": "+created+" adet "+label+" randevusu takvime eklendi.");
+}
+
+/* Check Out: every current sale of this patient becomes "eski
+   hizmet" — dimmed, left off new invoices, and locked against
+   edit/delete. */
+async function checkOutPatient(patientId){
+  if(!requireEdit()) return;
+
+  const p = db.patients.find(x=>x.id===patientId);
+  if(!p) return;
+
+  const open = db.sales.filter(s=>s.patient===patientId && !s.checkedOut);
+
+  if(!open.length){
+    toast("Taburcu edilecek güncel satış yok.");
+    return;
+  }
+
+  if(!(await confirmDialog({
+    title:"Taburcu",
+    message:p.name+" için "+open.length+" satış 'eski hizmet' olarak kapatılacak.\n\n"+
+      "Bu satışlar yeni faturada görünmez ve artık düzenlenemez / silinemez.",
+    confirmText:"Taburcu Et"
+  }))) return;
+
+  const ts = Date.now();
+  const by = currentUser ? currentUser.name : "";
+
+  open.forEach(s=>{
+    s.checkedOut = true;
+    s.checkedOutAt = ts;
+    s.checkedOutBy = by;
+  });
+
+  saveDB();
+  renderPatientProfile();
+
+  toast("Taburcu tamamlandı ("+open.length+" satış).");
+}
+
+
+/* =========================================================
+   ROW LIMITS (added): Stok list shows 50 rows, Stok Hareket
+   Geçmişi shows 10 rows; the rest scroll inside the card.
+   (On small screens the normal 55vh limit applies instead.)
+   ========================================================= */
+
+function applyRowLimits(){
+  document.querySelectorAll(".table-wrap[data-rows]").forEach(function(w){
+
+    if(window.innerWidth<=900){ w.style.maxHeight=""; return; }
+
+    const n=Number(w.dataset.rows)||10;
+    const rows=w.querySelectorAll("tbody tr");
+
+    if(rows.length<=n){ w.style.maxHeight=""; return; }
+
+    const head=w.querySelector("thead");
+    const headH=head ? head.offsetHeight : 0;
+
+    let h=0;
+    for(let i=0;i<n;i++) h+=rows[i].offsetHeight;
+
+    /* page hidden (display:none) -> nothing measurable yet */
+    if(!h) return;
+
+    w.style.maxHeight=(headH+h+2)+"px";
+  });
+}
+
+const _renderInventoryRL = renderInventory;
+renderInventory = function(){
+  _renderInventoryRL.apply(this,arguments);
+  applyRowLimits();
+};
+
+const _renderStockHistoryRL = renderStockHistory;
+renderStockHistory = function(){
+  _renderStockHistoryRL.apply(this,arguments);
+  applyRowLimits();
+};
+
+const _showPageRL = showPage;
+showPage = function(page){
+  _showPageRL(page);
+  document.body.dataset.page = page;     /* drives "theme buttons only on Ana Menü" */
+  requestAnimationFrame(applyRowLimits);
+};
+
+/* initial state before any navigation */
+(function(){
+  const active = document.querySelector(".page.active");
+  document.body.dataset.page = active ? active.id.replace("page-","") : "dashboard";
+})();
+
+window.addEventListener("resize",applyRowLimits);
+
+/* =========================================================
+   BACKGROUND THEME SWITCHER (added)
+   Three photos; the choice is NOT saved — every reload goes
+   back to background 1. To change a photo later, edit the URL
+   in BACKGROUND_THEMES (and the matching thumbnail in the
+   #themeSwitch buttons at the top of the page).
+   ========================================================= */
+
+const BACKGROUND_THEMES = [
+  "https://images.unsplash.com/photo-1787319581297-3f5cd491abf7?q=100&w=1600",
+  "https://images.unsplash.com/photo-1571857336441-71a76e96d7ef?q=100&w=1600&h=900&fit=crop&crop=top",
+  "https://images.unsplash.com/photo-1640793202113-93eb9a57915c?q=100&w=1600&h=900&fit=crop&crop=middle"
+];
+
+function setBackgroundTheme(i){
+  const url = BACKGROUND_THEMES[i];
+  if(!url) return;
+
+  document.documentElement.style.setProperty("--main-photo","url('"+url+"')");
+  document.documentElement.setAttribute("data-accent", ["green","sky","orange"][i] || "green");
+
+  document.querySelectorAll("#themeSwitch .theme-dot").forEach(function(b){
+    b.classList.toggle("active", Number(b.dataset.theme)===i);
+  });
+}
+
+/* thumbnails always come from BACKGROUND_THEMES (single source of truth) */
+(function syncThemeThumbs(){
+  document.querySelectorAll("#themeSwitch .theme-dot").forEach(function(b){
+    const u = BACKGROUND_THEMES[Number(b.dataset.theme)];
+    if(!u) return;
+    b.style.backgroundImage = "url('"+u.replace("q=80&w=1600","q=60&w=120&h=120&fit=crop")+"')";
+  });
+})();
+
+let _themesPreloaded = false;
+function preloadThemes(){
+  if(_themesPreloaded) return;
+  _themesPreloaded = true;
+  BACKGROUND_THEMES.forEach(function(u){ const im=new Image(); im.src=u; });
+}
+
+/* =========================================================
+   STAFF PERFORMANCE — EXCEL (CSV) EXPORT (added)
+   A .csv opens directly in Excel (double-click) with no extra
+   software or internet connection needed. Only reachable from
+   the Raporlar page, which is already doctor-only.
+   ========================================================= */
+
+function csvEscape(value){
+  const s = String(value ?? "");
+  if(/[",\n;]/.test(s)) return '"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
+
+/* One source for both the Excel export and the on-page report. */
+function staffReportData(month){
+  const monthSales = db.sales.filter(s=>s.date.startsWith(month));
+
+  const staffList = USERS.map(u=>u.name);
+
+  const summaryRows = staffList.map(name=>{
+    const sales = monthSales.filter(s=>s.soldBy===name);
+    const revenue = sales.reduce((sum,s)=>sum+s.total,0);
+    const patients = new Set(sales.filter(s=>s.patient).map(s=>s.patient));
+    return { name, count:sales.length, revenue, patientCount:patients.size };
+  });
+
+  const totalRevenue = summaryRows.reduce((sum,r)=>sum+r.revenue,0);
+  const totalCount = summaryRows.reduce((sum,r)=>sum+r.count,0);
+
+  const detailMap = {};
+  monthSales.forEach(s=>{
+    const key = (s.soldBy||"Bilinmeyen")+"|||"+s.productName;
+    if(!detailMap[key]) detailMap[key] = { by:s.soldBy||"Bilinmeyen", product:s.productName, qty:0, total:0 };
+    detailMap[key].qty += s.quantity;
+    detailMap[key].total += s.total;
+  });
+
+  const detailRows = Object.values(detailMap).sort((a,b)=>
+    a.by.localeCompare(b.by,"tr") || String(a.product).localeCompare(String(b.product),"tr")
+  );
+
+  return {summaryRows,totalRevenue,totalCount,detailRows};
+}
+
+function renderStaffReportOnPage(){
+  const t1 = document.getElementById("reportStaffTable");
+  const t2 = document.getElementById("reportDetailTable");
+  if(!t1 || !t2) return;
+
+  const month = document.getElementById("reportMonth").value || currentMonth();
+  const {summaryRows,totalRevenue,totalCount,detailRows} = staffReportData(month);
+
+  t1.innerHTML = summaryRows.map(r=>
+    "<tr><td>"+esc(r.name)+"</td><td>"+r.count+"</td><td>"+r.patientCount+"</td><td>"+money(r.revenue)+"</td></tr>"
+  ).join("") +
+    "<tr><td><strong>TOPLAM (Klinik Geneli)</strong></td><td><strong>"+totalCount+"</strong></td><td></td><td><strong>"+money(totalRevenue)+"</strong></td></tr>";
+
+  t2.innerHTML = detailRows.length
+    ? detailRows.map(r=>
+        "<tr><td>"+esc(r.by)+"</td><td>"+esc(r.product)+"</td><td>"+r.qty+"</td><td>"+money(r.total)+"</td></tr>"
+      ).join("")
+    : '<tr><td colspan="4" class="muted">Bu ay için satış kaydı yok.</td></tr>';
+}
+
+function exportStaffReportCSV(){
+
+  const month = document.getElementById("reportMonth").value || currentMonth();
+  const {summaryRows,totalRevenue,totalCount,detailRows} = staffReportData(month);
+
+  const lines = [];
+
+  lines.push(["Personel Bazlı Aylık Rapor — "+formatMonthLabel(month)].map(csvEscape).join(";"));
+  lines.push([]);
+
+  lines.push(["Kişi","Toplam Satış Adedi","Tedavi Edilen Hasta Sayısı","Toplam Ciro (TL)"].map(csvEscape).join(";"));
+  summaryRows.forEach(r=>{
+    lines.push([r.name,r.count,r.patientCount,r.revenue.toFixed(2)].map(csvEscape).join(";"));
+  });
+  lines.push(["TOPLAM (Klinik Geneli)",totalCount,"",totalRevenue.toFixed(2)].map(csvEscape).join(";"));
+
+  lines.push([]);
+  lines.push(["Ürün Bazlı Satış Detayı (Kişiye Göre)"].map(csvEscape).join(";"));
+  lines.push(["Kişi","Ürün","Adet","Toplam Tutar (TL)"].map(csvEscape).join(";"));
+
+  if(detailRows.length){
+    detailRows.forEach(r=>{
+      lines.push([r.by,r.product,r.qty,r.total.toFixed(2)].map(csvEscape).join(";"));
+    });
+  }else{
+    lines.push(["Bu ay için satış kaydı yok.","","",""].map(csvEscape).join(";"));
+  }
+
+  const csvContent = "\uFEFF" + lines.join("\r\n");
+
+  const blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "vetclinic-personel-raporu-"+month+".csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  toast("Excel raporu indirildi.");
+}
+
+</script>
+
+<script>
+/* =========================================================
+   ÖDEMELER VE BORÇLAR (added) — debts/payments, WhatsApp vaccine
+   reminders, printable vaccine card + discharge report, extra
+   reports and a PETVET-ready table. Only ADDS; nothing above is
+   changed except showPage/refreshAll being wrapped.
+   ========================================================= */
+(function(){
+  const CLINIC_KEY = "vetclinic_clinic_settings";
+  let tab = "debts", debtQ = "", debtShown = LIST_PAGE, petQ = "", petShown = LIST_PAGE;
+  let printQ = "", repMonth = todayISO().slice(0,7), vaccDays = 30;
+
+  const TABS = [["debts","Borçlar ve Ödemeler"],["vacc","Aşı Hatırlatma"],["print","Yazdır"],["rep","Raporlar"],["petvet","PETVET Tablosu"]];
+
+  function ensure(){ if(!Array.isArray(db.payments)) db.payments = []; }
+  function hasAsi(s){ return String(s||"").toLocaleLowerCase("tr-TR").includes("aşı"); }   /* works for AŞI, Aşı, aşı */
+  function clinic(){
+    try{ return Object.assign({name:"",phone:"",address:"",license:"",
+      msg:"Merhaba {sahip}, {hasta} için {aşı} tarihi {tarih} günüdür. Randevu için bize ulaşabilirsiniz. {klinik} {telefon}"},
+      JSON.parse(localStorage.getItem(CLINIC_KEY)||"{}")); }catch(e){ return {name:"",phone:"",address:"",license:"",msg:""}; }
+  }
+  function saveClinic(){
+    const c = {};
+    ["name","phone","address","license","msg"].forEach(k=>{ c[k]=document.getElementById("cl_"+k).value; });
+    try{ localStorage.setItem(CLINIC_KEY, JSON.stringify(c)); }catch(e){}
+    toast("Klinik bilgileri kaydedildi.");
+    renderPay();
+  }
+  function digits(s){ return String(s||"").replace(/\D/g,""); }
+  function ownerKey(name,phone){
+    const d = digits(phone);
+    return d.length>=10 ? "t"+d.slice(-10) : "n"+String(name||"").trim().toLocaleLowerCase("tr-TR");
+  }
+  function waNumber(phone){
+    let d = digits(phone);
+    if(!d) return "";
+    if(d.startsWith("00")) d = d.slice(2);
+    if(d.length===11 && d.startsWith("0")) d = "90"+d.slice(1);
+    else if(d.length===10) d = "90"+d;
+    return (d.length>=11 && d.length<=15) ? d : "";   /* too short/long = not a usable number */
+  }
+  function download(name,rows){
+    const txt = "﻿"+rows.map(r=>r.map(csvEscape).join(";")).join("\r\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([txt],{type:"text/csv;charset=utf-8"}));
+    a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
+  }
+  function fmtDate(iso){ const p=String(iso||"").split("-"); return p.length===3? p[2]+"."+p[1]+"."+p[0] : (iso||""); }
+  function addDays(iso,n){ const d=new Date(iso+"T12:00:00"); d.setDate(d.getDate()+n);
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  const mth = ["Nakit","Kart","Havale","Diğer"];
+
+  /* ---------- owners / balances ---------- */
+  function owners(){
+    ensure();
+    const map = new Map();
+    function get(name,phone){
+      const k = ownerKey(name,phone);
+      if(!map.has(k)) map.set(k,{key:k,keys:new Set([k]),name:name||"",phone:phone||"",debt:0,paid:0,last:""});
+      const o = map.get(k);
+      if(!o.name && name) o.name = name;
+      if(!o.phone && phone) o.phone = phone;
+      return o;
+    }
+    db.patients.forEach(p=>{ if(p.owner||p.phone) get(p.owner,p.phone); });
+    db.payments.forEach(x=>{
+      const o = get(x.ownerName,x.phone);
+      if(x.type==="borc") o.debt += Number(x.amount)||0; else o.paid += Number(x.amount)||0;
+      if((x.date||"")>o.last) o.last = x.date;
+    });
+    /* a payment made under an old phone number / spelling: if its name matches exactly one
+       customer that comes from the patient list, count it for that customer */
+    const fromP = new Map();
+    db.patients.forEach(p=>{ if(p.owner||p.phone){ const k=ownerKey(p.owner,p.phone); fromP.set(k,true); } });
+    const byName = new Map();
+    map.forEach((o,k)=>{ if(fromP.has(k)){ const n=String(o.name||"").trim().toLocaleLowerCase("tr-TR"); if(n){ if(!byName.has(n)) byName.set(n,[]); byName.get(n).push(o); } } });
+    [...map.entries()].forEach(([k,o])=>{
+      if(fromP.has(k)) return;
+      const n=String(o.name||"").trim().toLocaleLowerCase("tr-TR");
+      const c=byName.get(n);
+      if(c && c.length===1){ c[0].debt+=o.debt; c[0].paid+=o.paid; o.keys.forEach(x=>c[0].keys.add(x)); if(o.last>c[0].last) c[0].last=o.last; map.delete(k); }
+    });
+    return [...map.values()].map(o=>(o.bal=o.debt-o.paid,o));
+  }
+
+  /* ---------- tab: debts ---------- */
+  function tabDebts(){
+    const all = owners();
+    const open = all.filter(o=>o.bal>0.004);
+    const total = open.reduce((s,o)=>s+o.bal,0);
+    const today = todayISO();
+    const tahsil = db.payments.filter(x=>x.type==="odeme" && x.date===today).reduce((s,x)=>s+(Number(x.amount)||0),0);
+    const q = debtQ.trim().toLocaleLowerCase("tr-TR");
+    let list = all.filter(o=>!q || (o.name||"").toLocaleLowerCase("tr-TR").includes(q) || digits(o.phone).includes(digits(q)||"\u0000"));
+    list.sort((a,b)=>(b.bal>0.004)-(a.bal>0.004) || b.bal-a.bal || (a.name||"").localeCompare(b.name||"","tr"));
+    const shown = list.slice(0,debtShown);
+
+    const cash = {}; mth.forEach(m=>cash[m]={s:0,d:0});
+    db.sales.filter(s=>s.date===today).forEach(s=>{ const m=mth.includes(s.payment)?s.payment:"Diğer"; cash[m].s += Number(s.total)||0; });
+    db.payments.filter(x=>x.type==="odeme" && x.date===today).forEach(x=>{ const m=mth.includes(x.method)?x.method:"Diğer"; cash[m].d += Number(x.amount)||0; });
+    let gs=0,gd=0;
+    const cashRows = mth.map(m=>{ gs+=cash[m].s; gd+=cash[m].d;
+      return "<tr><td>"+m+"</td><td style='text-align:right'>"+money(cash[m].s)+"</td><td style='text-align:right'>"+money(cash[m].d)+"</td><td style='text-align:right'><b>"+money(cash[m].s+cash[m].d)+"</b></td></tr>"; }).join("");
+
+    return "<div class='stats' style='display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px'>"+
+      "<div class='card' style='padding:14px'><div style='opacity:.7;font-size:13px'>Toplam alacak</div><div style='font-size:24px;font-weight:700'>"+money(total)+"</div></div>"+
+      "<div class='card' style='padding:14px'><div style='opacity:.7;font-size:13px'>Borçlu müşteri</div><div style='font-size:24px;font-weight:700'>"+open.length+"</div></div>"+
+      "<div class='card' style='padding:14px'><div style='opacity:.7;font-size:13px'>Bugünkü tahsilat</div><div style='font-size:24px;font-weight:700'>"+money(tahsil)+"</div></div></div>"+
+      "<div class='card' style='margin-bottom:14px'><div class='card-header'><h3>Bugünkü kasa ("+fmtDate(today)+")</h3></div><div class='table-wrap'><table><thead><tr><th>Ödeme şekli</th><th style='text-align:right'>Satışlar</th><th style='text-align:right'>Borç tahsilatı</th><th style='text-align:right'>Toplam</th></tr></thead><tbody>"+cashRows+
+      "<tr><td><b>Toplam</b></td><td style='text-align:right'><b>"+money(gs)+"</b></td><td style='text-align:right'><b>"+money(gd)+"</b></td><td style='text-align:right'><b>"+money(gs+gd)+"</b></td></tr></tbody></table></div></div>"+
+      "<div class='card'><div class='card-header' style='display:flex;gap:10px;flex-wrap:wrap;align-items:center'><h3 style='margin:0'>Müşteriler</h3>"+
+      "<input id='debtSearch' placeholder='Ad veya telefon ara…' value='"+esc(debtQ)+"' style='flex:1;min-width:180px'>"+
+      "<button class='btn' onclick='payExportMoves()'>Hareketleri Excel'e aktar</button></div>"+
+      "<div class='table-wrap'><table><thead><tr><th>Müşteri</th><th>Telefon</th><th style='text-align:right'>Bakiye</th><th></th></tr></thead><tbody>"+
+      (shown.map(o=>"<tr data-ok='"+esc(o.key)+"'><td>"+esc(o.name||"—")+"</td><td>"+esc(o.phone||"")+"</td><td style='text-align:right'>"+
+        (o.bal>0.004?"<span class='badge' style='background:#fee2e2;color:#991b1b'>"+money(o.bal)+"</span>":(o.bal<-0.004?"<span class='badge'>Alacaklı "+money(-o.bal)+"</span>":"<span style='opacity:.6'>—</span>"))+"</td><td style='text-align:right;white-space:nowrap'>"+
+        "<button class='btn btn-primary' onclick=\"payOpen('"+esc(o.key)+"','odeme')\">Ödeme Al</button> "+
+        "<button class='btn' onclick=\"payOpen('"+esc(o.key)+"','borc')\">Borç Ekle</button> "+
+        "<button class='btn' onclick=\"payHistory('"+esc(o.key)+"')\">Hareketler</button></td></tr>").join("")||"<tr><td colspan='4' style='text-align:center;opacity:.6'>Kayıt yok</td></tr>")+
+      "</tbody></table></div>"+
+      (list.length>debtShown?"<div style='text-align:center;padding:10px'><button class='btn' onclick='payMore(\"debt\")'>Daha fazla göster ("+(list.length-debtShown)+" kayıt daha)</button></div>":"")+"</div>";
+  }
+
+  function modal(html){
+    let m = document.getElementById("payModal");
+    if(!m){
+      m = document.createElement("div"); m.id="payModal"; m.className="modal-overlay"; m.style.zIndex="90";   /* below the confirm box (100) */
+      m.innerHTML = "<div class='modal' style='max-width:560px;width:94%'><div style='display:flex;justify-content:flex-end;padding:8px 12px 0'><button class='modal-close' type='button' onclick='closePayModal()'>×</button></div><div class='modal-body' id='payModalBody' style='padding-top:0'></div></div>";
+      m.addEventListener("click",e=>{ if(e.target===m) m.classList.remove("open"); });
+      document.body.appendChild(m);
+    }
+    document.getElementById("payModalBody").innerHTML = html;
+    m.classList.add("open");
+  }
+  function closePay(){ const m=document.getElementById("payModal"); if(m) m.classList.remove("open"); }
+  const byKey = k => owners().find(o=>o.key===k);
+
+  window.payOpen = function(key,type){
+    if(!requireEdit()) return;
+    const o = byKey(key); if(!o) return;
+    const amt = type==="odeme" && o.bal>0 ? o.bal : "";
+    modal("<h2 style='margin-top:0'>"+(type==="odeme"?"Ödeme Al":"Borç Ekle")+" — "+esc(o.name)+"</h2>"+
+      "<p style='opacity:.7'>Mevcut bakiye: <b>"+money(o.bal)+"</b></p>"+
+      "<label>Tutar (₺)</label><input id='pm_amount' type='number' step='0.01' min='0' value='"+amt+"' style='width:100%'>"+
+      (type==="odeme"?"<label>Ödeme şekli</label><select id='pm_method' style='width:100%'>"+mth.map(m=>"<option>"+m+"</option>").join("")+"</select>":"")+
+      "<label>Not</label><input id='pm_note' style='width:100%'>"+
+      "<div style='display:flex;gap:8px;justify-content:flex-end;margin-top:14px'><button class='btn' onclick='closePayModal()'>Vazgeç</button>"+
+      "<button class='btn btn-primary' id='pm_ok' onclick=\"paySave('"+esc(key)+"','"+type+"')\">Kaydet</button></div>");
+    setTimeout(()=>{ const i=document.getElementById("pm_amount"); if(i) i.focus(); },30);
+  };
+  window.closePayModal = closePay;
+  window.paySave = function(key,type){
+    if(!requireEdit()) return;
+    const o = byKey(key); if(!o) return;
+    const amount = Math.round(((parseFloat(document.getElementById("pm_amount").value)||0)+Number.EPSILON)*100+1e-7)/100;
+    if(amount<=0){ toast("Geçerli bir tutar girin."); return; }
+    const mEl = document.getElementById("pm_method");
+    ensure();
+    db.payments.push({id:uid("pay"),owner:o.key,ownerName:o.name,phone:o.phone||"",type:type,amount:amount,
+      method:mEl?mEl.value:"",date:todayISO(),ts:Date.now(),note:document.getElementById("pm_note").value.trim(),
+      by:currentUser?currentUser.name:""});
+    saveDB(); closePay(); renderPay();
+    toast(type==="odeme"?"Ödeme kaydedildi.":"Borç kaydedildi.");
+  };
+  window.payHistory = function(key){
+    const o = byKey(key); if(!o) return;
+    const rows = db.payments.filter(x=>o.keys.has(ownerKey(x.ownerName,x.phone))).sort((a,b)=>(b.ts||0)-(a.ts||0));
+    modal("<h2 style='margin-top:0'>Hareketler — "+esc(o.name)+"</h2><p>Bakiye: <b>"+money(o.bal)+"</b></p>"+
+      "<div class='table-wrap' style='max-height:50vh;overflow:auto'><table><thead><tr><th>Tarih</th><th>Tür</th><th style='text-align:right'>Tutar</th><th>Şekil</th><th>Not</th><th></th></tr></thead><tbody>"+
+      (rows.map(x=>"<tr><td>"+fmtDate(x.date)+"</td><td>"+(x.type==="borc"?"Borç":"Ödeme")+"</td><td style='text-align:right'>"+money(x.amount)+"</td><td>"+esc(x.method||"")+"</td><td>"+esc(x.note||"")+"</td><td><button class='btn btn-danger' onclick=\"payDelete('"+x.id+"','"+esc(key)+"')\">Sil</button></td></tr>").join("")||"<tr><td colspan='6' style='text-align:center;opacity:.6'>Hareket yok</td></tr>")+
+      "</tbody></table></div><div style='text-align:right;margin-top:12px'><button class='btn' onclick='closePayModal()'>Kapat</button></div>");
+  };
+  window.payDelete = async function(id,key){
+    if(!requireEdit()) return;
+    const ok = await confirmDialog({title:"Hareketi sil",message:"Bu hareket silinsin mi?",confirmText:"Sil",danger:true});
+    if(!ok) return;
+    db.payments = db.payments.filter(x=>x.id!==id);
+    saveDB(); renderPay(); payHistory(key);
+  };
+  window.payExportMoves = function(){
+    ensure();
+    const rows = [["Tarih","Müşteri","Telefon","Tür","Tutar","Ödeme şekli","Not","Kaydeden"]];
+    db.payments.slice().sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach(x=>rows.push([fmtDate(x.date),x.ownerName,x.phone,x.type==="borc"?"Borç":"Ödeme",String(x.amount).replace(".",","),x.method||"",x.note||"",x.by||""]));
+    download("borc-odeme-hareketleri.csv",rows);
+  };
+  window.payMore = function(w){ if(w==="debt") debtShown += LIST_PAGE; else petShown += LIST_PAGE; renderPay(); };
+
+  /* ---------- tab: vaccine reminders ---------- */
+  function vaccItems(){
+    const t = todayISO(), from = addDays(t,-14), to = addDays(t,vaccDays);
+    return db.appointments.filter(a=>hasAsi(a.type||"") && a.date>=from && a.date<=to)
+      .sort((a,b)=>a.date.localeCompare(b.date)).map(a=>({a:a,p:db.patients.find(p=>p.id===a.patient)})).filter(x=>x.p);
+  }
+  function vaccMsg(x){
+    const c = clinic();
+    return String(c.msg||"").replaceAll("{sahip}",x.p.owner||"").replaceAll("{hasta}",x.p.name||"")
+      .replaceAll("{aşı}",x.a.type||"Aşı").replaceAll("{tarih}",fmtDate(x.a.date))
+      .replaceAll("{klinik}",c.name||"").replaceAll("{telefon}",c.phone?("Tel: "+c.phone):"").trim();
+  }
+  function tabVacc(){
+    const c = clinic(), items = vaccItems();
+    const f = (k,l,v,ph)=>"<div><label>"+l+"</label><input id='cl_"+k+"' value='"+esc(v)+"' placeholder='"+(ph||"")+"' style='width:100%'></div>";
+    return "<div class='card' style='margin-bottom:14px'><div class='card-header'><h3>Klinik bilgileri (isteğe bağlı)</h3></div><div style='padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px'>"+
+      f("name","Klinik adı",c.name)+f("phone","Klinik telefonu (isteğe bağlı)",c.phone)+f("address","Adres",c.address)+f("license","Ruhsat no",c.license)+
+      "<div style='grid-column:1/-1'><label>Mesaj şablonu — {sahip} {hasta} {aşı} {tarih} {klinik} {telefon}</label><textarea id='cl_msg' rows='3' style='width:100%'>"+esc(c.msg)+"</textarea></div>"+
+      "<div><button class='btn btn-primary' onclick='paySaveClinic()'>Kaydet</button></div></div></div>"+
+      "<div class='card'><div class='card-header' style='display:flex;gap:10px;flex-wrap:wrap;align-items:center'><h3 style='margin:0'>Yaklaşan aşılar</h3>"+
+      "<select id='vaccDays'>"+[7,30,60].map(n=>"<option value='"+n+"'"+(n===vaccDays?" selected":"")+">Önümüzdeki "+n+" gün</option>").join("")+"</select>"+
+      "<button class='btn' onclick='payExportVacc()'>Excel'e aktar</button></div><div class='table-wrap'><table><thead><tr><th>Tarih</th><th>Hasta</th><th>Sahibi</th><th>Telefon</th><th>Aşı</th><th></th></tr></thead><tbody>"+
+      (items.map(x=>{ const n=waNumber(x.p.phone);
+        return "<tr><td>"+fmtDate(x.a.date)+(x.a.date<todayISO()?" <span class='badge' style='background:#fee2e2;color:#991b1b'>geçmiş</span>":"")+"</td><td>"+esc(x.p.name)+"</td><td>"+esc(x.p.owner||"")+"</td><td>"+esc(x.p.phone||"")+"</td><td>"+esc(x.a.type)+"</td><td>"+
+          (n?"<a class='btn btn-primary wa-link' target='_blank' rel='noopener' href='https://wa.me/"+n+"?text="+encodeURIComponent(vaccMsg(x))+"'>WhatsApp</a>":"<span style='opacity:.6'>telefon yok</span>")+"</td></tr>"; }).join("")||"<tr><td colspan='6' style='text-align:center;opacity:.6'>Bu aralıkta aşı randevusu yok</td></tr>")+
+      "</tbody></table></div></div>";
+  }
+  window.paySaveClinic = saveClinic;
+  window.payExportVacc = function(){
+    const rows=[["Tarih","Hasta","Sahibi","Telefon","Aşı"]];
+    vaccItems().forEach(x=>rows.push([fmtDate(x.a.date),x.p.name,x.p.owner||"",x.p.phone||"",x.a.type]));
+    download("asi-hatirlatma.csv",rows);
+  };
+
+  /* ---------- tab: print ---------- */
+  function tabPrint(){
+    const q = printQ.trim().toLocaleLowerCase("tr-TR");
+    const list = db.patients.filter(p=>!q||(p.name||"").toLocaleLowerCase("tr-TR").includes(q)||(p.owner||"").toLocaleLowerCase("tr-TR").includes(q)).slice(0,30);
+    return "<div class='card'><div class='card-header'><h3>Aşı karnesi ve taburcu raporu</h3></div><div style='padding:14px'><input id='printSearch' placeholder='Hasta veya sahip adı ara…' value='"+esc(printQ)+"' style='width:100%;margin-bottom:10px'></div>"+
+      "<div class='table-wrap'><table><thead><tr><th>Hasta</th><th>Sahibi</th><th></th></tr></thead><tbody>"+
+      (list.map(p=>"<tr><td>"+esc(p.name)+" <span style='opacity:.6'>"+esc(p.species||"")+"</span></td><td>"+esc(p.owner||"")+"</td><td style='text-align:right;white-space:nowrap'><button class='btn' onclick=\"payPrint('"+p.id+"','card')\">Aşı Karnesi</button> <button class='btn' onclick=\"payPrint('"+p.id+"','discharge')\">Taburcu Raporu</button></td></tr>").join("")||"<tr><td colspan='3' style='text-align:center;opacity:.6'>Sonuç yok</td></tr>")+
+      "</tbody></table></div>"+(db.patients.length>30&&!q?"<p style='padding:10px;opacity:.6'>İlk 30 hasta gösteriliyor — aramak için yazın.</p>":"")+"</div>";
+  }
+  function isVacc(s){
+    const it = db.inventory.find(i=>i.id===s.productId);
+    return (it && String(it.category||"").toLocaleLowerCase("tr-TR")==="aşı") || hasAsi(s.productName||"");
+  }
+  window.payPrint = function(pid,kind){
+    const p = db.patients.find(x=>x.id===pid); if(!p) return;
+    const c = clinic();
+    const sales = db.sales.filter(s=>s.patient===p.id || s.patient===p.name);
+    const planned = db.appointments.filter(a=>a.patient===p.id && hasAsi(a.type||"")).sort((a,b)=>a.date.localeCompare(b.date));
+    const head = "<div style='display:flex;justify-content:space-between;border-bottom:2px solid #333;padding-bottom:8px;margin-bottom:14px'><div><h1 style='margin:0'>"+esc(c.name||"Veteriner Kliniği")+"</h1><div>"+esc(c.address||"")+" "+esc(c.phone?("Tel: "+c.phone):"")+"</div>"+(c.license?"<div>Ruhsat no: "+esc(c.license)+"</div>":"")+"</div><div>"+fmtDate(todayISO())+"</div></div>";
+    const info = "<table class='i'><tr><td><b>Hasta</b></td><td>"+esc(p.name)+"</td><td><b>Tür / Irk</b></td><td>"+esc(p.species||"")+" "+esc(p.breed||"")+"</td></tr>"+
+      "<tr><td><b>Cinsiyet</b></td><td>"+esc(p.gender||"")+"</td><td><b>Doğum</b></td><td>"+esc(fmtDate(p.birth))+"</td></tr>"+
+      "<tr><td><b>Mikroçip</b></td><td>"+esc(p.chip||"")+"</td><td><b>Sahibi</b></td><td>"+esc(p.owner||"")+" "+esc(p.phone||"")+"</td></tr></table>";
+    let body;
+    if(kind==="card"){
+      const done = sales.filter(isVacc).sort((a,b)=>a.date.localeCompare(b.date));
+      body = "<h2>AŞI KARNESİ</h2>"+info+"<h3>Yapılan aşılar</h3><table class='g'><thead><tr><th>Tarih</th><th>Aşı</th><th>Veteriner</th><th>Kaşe / İmza</th></tr></thead><tbody>"+
+        (done.map(s=>"<tr><td>"+fmtDate(s.date)+"</td><td>"+esc(s.productName)+"</td><td>"+esc(s.soldBy||"")+"</td><td></td></tr>").join("")||"<tr><td colspan='4'>Kayıt yok</td></tr>")+"</tbody></table>"+
+        "<h3>Planlanan aşılar</h3><table class='g'><thead><tr><th>Tarih</th><th>Aşı</th></tr></thead><tbody>"+
+        (planned.map(a=>"<tr><td>"+fmtDate(a.date)+"</td><td>"+esc(a.type)+"</td></tr>").join("")||"<tr><td colspan='2'>Planlı aşı yok</td></tr>")+"</tbody></table>";
+    }else{
+      const last = (p.visits||[]).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).pop();
+      const from = addDays(todayISO(),-30);
+      const recent = sales.filter(s=>s.date>=from).sort((a,b)=>a.date.localeCompare(b.date));
+      body = "<h2>TABURCU RAPORU</h2>"+info+"<p><b>Alerjiler:</b> "+esc(p.allergies||"Bilinmiyor")+"</p>"+
+        "<h3>Son muayene</h3><p>"+(last?fmtDate(last.date)+" — "+esc(last.reason||"")+"<br>"+esc(last.note||""):"Kayıt yok")+"</p>"+
+        "<h3>Son 30 gün işlemleri</h3><table class='g'><thead><tr><th>Tarih</th><th>İşlem / Ürün</th><th>Adet</th></tr></thead><tbody>"+
+        (recent.map(s=>"<tr><td>"+fmtDate(s.date)+"</td><td>"+esc(s.productName)+"</td><td>"+esc(s.quantity)+"</td></tr>").join("")||"<tr><td colspan='3'>Kayıt yok</td></tr>")+"</tbody></table>"+
+        "<h3>Evde bakım önerileri</h3><div style='height:110px;border:1px solid #999'></div>"+
+        "<div style='margin-top:40px;display:flex;justify-content:space-between'><div>Veteriner hekim: "+esc(currentUser?currentUser.name:"")+"<br><br>İmza: ____________</div><div>Hasta sahibi imzası<br><br>____________</div></div>";
+    }
+    const w = window.open("","_blank");
+    if(!w){ toast("Pencere açılamadı — pop-up engelleyiciyi kontrol edin."); return; }
+    w.document.write("<!doctype html><html><head><meta charset='utf-8'><title>"+(kind==="card"?"Aşı Karnesi":"Taburcu Raporu")+" — "+esc(p.name)+"</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#111}table{border-collapse:collapse;width:100%;margin:6px 0 14px}.g th,.g td{border:1px solid #888;padding:6px;text-align:left}.i td{padding:3px 8px}h2{text-align:center;letter-spacing:2px}</style></head><body>"+head+body+"</body></html>");
+    w.document.close(); w.focus();
+    setTimeout(()=>{ try{ w.print(); }catch(e){} },300);
+  };
+
+  /* ---------- tab: reports ---------- */
+  function catOf(s){
+    const it = db.inventory.find(i=>i.id===s.productId);
+    if(it && it.category) return it.category;
+    return hasAsi(s.productName||"")?"Aşı":"Diğer";
+  }
+  function repData(){
+    const cats = {};
+    db.sales.filter(s=>(s.date||"").startsWith(repMonth)).forEach(s=>{
+      const c = catOf(s), it = db.inventory.find(i=>i.id===s.productId);
+      const o = cats[c] || (cats[c]={n:0,rev:0,cost:0});
+      o.n += Number(s.quantity)||0; o.rev += Number(s.total)||0;
+      o.cost += it ? (Number(it.buy)||0)*(Number(s.quantity)||0) : 0;
+    });
+    const stock = {};
+    db.inventory.forEach(i=>{
+      const c = i.category||"Diğer"; const o = stock[c]||(stock[c]={n:0,buy:0,sell:0});
+      const st = Math.max(0,Number(i.stock)||0);
+      o.n += st; o.buy += st*(Number(i.buy)||0); o.sell += st*(Number(i.sell)||0);
+    });
+    return {cats:cats,stock:stock};
+  }
+  const oldTried = new Set();
+  function tabRep(){
+    /* months older than the 12 loaded at login: fetch them on demand (same as Satış Geçmişi) */
+    let loadingOld = false;
+    if(salesInfo && salesInfo.from && repMonth < salesInfo.from.slice(0,7) && !oldLoaded.has(repMonth)){
+      if(!oldTried.has(repMonth)){
+        oldTried.add(repMonth); loadingOld = true;
+        const mm = repMonth;
+        fetchOldSales("month="+encodeURIComponent(mm),mm).then(()=>{ if(tab==="rep" && repMonth===mm) renderPay(); });
+      }
+    }
+    const d = repData();
+    const cr = Object.entries(d.cats).sort((a,b)=>b[1].rev-a[1].rev);
+    const sr = Object.entries(d.stock).sort((a,b)=>b[1].buy-a[1].buy);
+    const tr = cr.reduce((s,[,o])=>s+o.rev,0), tc = cr.reduce((s,[,o])=>s+o.cost,0);
+    const tb = sr.reduce((s,[,o])=>s+o.buy,0), ts = sr.reduce((s,[,o])=>s+o.sell,0);
+    return "<div class='card' style='margin-bottom:14px'><div class='card-header' style='display:flex;gap:10px;flex-wrap:wrap;align-items:center'><h3 style='margin:0'>Hizmet türüne göre gelir</h3><input id='repMonth' type='month' value='"+repMonth+"'>"+
+      "<button class='btn' onclick=\"payCsv('income')\">Excel'e aktar</button></div><div class='table-wrap'><table><thead><tr><th>Kategori</th><th style='text-align:right'>Adet</th><th style='text-align:right'>Gelir</th><th style='text-align:right'>Tahmini kâr</th></tr></thead><tbody>"+
+      (loadingOld?"<tr><td colspan='4' style='text-align:center;opacity:.7'>Eski ay yükleniyor…</td></tr>":cr.map(([k,o])=>"<tr><td>"+esc(k)+"</td><td style='text-align:right'>"+o.n+"</td><td style='text-align:right'>"+money(o.rev)+"</td><td style='text-align:right'>"+money(o.rev-o.cost)+"</td></tr>").join("")||"<tr><td colspan='4' style='text-align:center;opacity:.6'>Bu ayda satış yok</td></tr>")+
+      "<tr><td><b>Toplam</b></td><td></td><td style='text-align:right'><b>"+money(tr)+"</b></td><td style='text-align:right'><b>"+money(tr-tc)+"</b></td></tr></tbody></table></div><p style='padding:0 14px;opacity:.6;font-size:13px'>Kâr, ürünün şu anki alış fiyatına göre tahminidir.</p></div>"+
+      "<div class='card' style='margin-bottom:14px'><div class='card-header' style='display:flex;gap:10px;align-items:center'><h3 style='margin:0'>Stok değeri ve marj</h3><button class='btn' onclick=\"payCsv('stock')\">Excel'e aktar</button></div><div class='table-wrap'><table><thead><tr><th>Kategori</th><th style='text-align:right'>Adet</th><th style='text-align:right'>Alış değeri</th><th style='text-align:right'>Satış değeri</th><th style='text-align:right'>Marj</th></tr></thead><tbody>"+
+      sr.map(([k,o])=>"<tr><td>"+esc(k)+"</td><td style='text-align:right'>"+o.n+"</td><td style='text-align:right'>"+money(o.buy)+"</td><td style='text-align:right'>"+money(o.sell)+"</td><td style='text-align:right'>"+(o.sell?Math.round((o.sell-o.buy)/o.sell*100)+"%":"—")+"</td></tr>").join("")+
+      "<tr><td><b>Toplam</b></td><td></td><td style='text-align:right'><b>"+money(tb)+"</b></td><td style='text-align:right'><b>"+money(ts)+"</b></td><td style='text-align:right'><b>"+(ts?Math.round((ts-tb)/ts*100)+"%":"—")+"</b></td></tr></tbody></table></div></div>"+
+      "<div class='card'><div class='card-header'><h3>Diğer Excel dosyaları</h3></div><div style='padding:14px;display:flex;gap:8px;flex-wrap:wrap'><button class='btn' onclick=\"payCsv('patients')\">Hastalar</button><button class='btn' onclick=\"payCsv('sales')\">Satışlar (seçili ay)</button><button class='btn' onclick=\"payCsv('stockall')\">Stok listesi</button></div></div>";
+  }
+  window.payCsv = function(what){
+    const n = v=>String(v??"").replace(".",",");
+    if(what==="income"){ const d=repData(); const r=[["Kategori","Adet","Gelir","Tahmini kâr"]]; Object.entries(d.cats).forEach(([k,o])=>r.push([k,o.n,n(o.rev),n(o.rev-o.cost)])); download("gelir-"+repMonth+".csv",r); }
+    else if(what==="stock"){ const d=repData(); const r=[["Kategori","Adet","Alış değeri","Satış değeri"]]; Object.entries(d.stock).forEach(([k,o])=>r.push([k,o.n,n(o.buy),n(o.sell)])); download("stok-degeri.csv",r); }
+    else if(what==="patients"){ const r=[["Adı","Türü","Irkı","Cinsiyet","Doğum","Mikroçip","Sahibi","Telefon","E-posta"]]; db.patients.forEach(p=>r.push([p.name,p.species,p.breed,p.gender,fmtDate(p.birth),p.chip,p.owner,p.phone,p.email])); download("hastalar.csv",r); }
+    else if(what==="sales"){ const r=[["Tarih","Hasta","Ürün/Hizmet","Adet","Birim fiyat","Toplam","Ödeme","Satan"]]; db.sales.filter(s=>(s.date||"").startsWith(repMonth)).forEach(s=>r.push([fmtDate(s.date),s.patient,s.productName,s.quantity,n(s.price),n(s.total),s.payment,s.soldBy])); download("satislar-"+repMonth+".csv",r); }
+    else if(what==="stockall"){ const r=[["Ürün","Kategori","Alış","Satış","Stok","Minimum"]]; db.inventory.forEach(i=>r.push([i.name,i.category,n(i.buy),n(i.sell),i.stock,i.minimum])); download("stok-listesi.csv",r); }
+  };
+
+  /* ---------- tab: PETVET ---------- */
+  function lastVacc(p){
+    const v = db.sales.filter(s=>(s.patient===p.id||s.patient===p.name)&&isVacc(s)).map(s=>s.date).sort().pop();
+    return v?fmtDate(v):"";
+  }
+  function petList(){
+    const q = petQ.trim().toLocaleLowerCase("tr-TR");
+    return db.patients.filter(p=>!q||[p.name,p.owner,p.chip,p.phone].some(v=>String(v||"").toLocaleLowerCase("tr-TR").includes(q)))
+      .sort((a,b)=>(a.name||"").localeCompare(b.name||"","tr"));
+  }
+  function tabPet(){
+    const list = petList(), shown = list.slice(0,petShown);
+    const inp = (p,f)=>"<input class='pv' data-pid='"+p.id+"' data-f='"+f+"' value='"+esc(p[f]||"")+"' style='width:130px'>";
+    return "<div class='card'><div class='card-header' style='display:flex;gap:10px;flex-wrap:wrap;align-items:center'><h3 style='margin:0'>PETVET hazır tablo</h3><input id='petSearch' placeholder='Ara…' value='"+esc(petQ)+"' style='flex:1;min-width:160px'>"+
+      "<button class='btn btn-primary' onclick='payPetCsv()'>Excel'e aktar (tümü)</button></div>"+
+      "<p style='padding:0 14px;opacity:.7;font-size:13px'>* işaretli alanları buradan doldurabilirsiniz; hastaya kaydedilir. Tablo elle kopyalama / Excel içindir.</p>"+
+      "<div class='table-wrap'><table><thead><tr><th>Mikroçip no</th><th>Pasaport no*</th><th>Adı</th><th>Türü</th><th>Irkı</th><th>Cinsiyeti</th><th>Rengi*</th><th>Doğum</th><th>Sahibi</th><th>Telefon</th><th>Adres / il-ilçe*</th><th>Son aşı</th></tr></thead><tbody>"+
+      shown.map(p=>"<tr><td>"+esc(p.chip||"")+"</td><td>"+inp(p,"passport")+"</td><td>"+esc(p.name)+"</td><td>"+esc(p.species||"")+"</td><td>"+esc(p.breed||"")+"</td><td>"+esc(p.gender||"")+"</td><td>"+inp(p,"color")+"</td><td>"+esc(fmtDate(p.birth))+"</td><td>"+esc(p.owner||"")+"</td><td>"+esc(p.phone||"")+"</td><td>"+inp(p,"address")+"</td><td>"+esc(lastVacc(p))+"</td></tr>").join("")+
+      "</tbody></table></div>"+(list.length>petShown?"<div style='text-align:center;padding:10px'><button class='btn' onclick='payMore(\"pet\")'>Daha fazla göster ("+(list.length-petShown)+" kayıt daha)</button></div>":"")+"</div>";
+  }
+  window.payPetCsv = function(){
+    const r=[["Mikroçip no","Pasaport no","Adı","Türü","Irkı","Cinsiyeti","Rengi","Doğum tarihi","Sahibi","Telefon","Adres/il-ilçe","Son aşı"]];
+    petList().forEach(p=>r.push([p.chip||"",p.passport||"",p.name||"",p.species||"",p.breed||"",p.gender||"",p.color||"",fmtDate(p.birth),p.owner||"",p.phone||"",p.address||"",lastVacc(p)]));
+    download("petvet-tablo.csv",r);
+  };
+
+  /* ---------- render ---------- */
+  function renderPay(){
+    const body = document.getElementById("payBody"), tabs = document.getElementById("payTabs");
+    if(!body||!tabs) return;
+    ensure();
+    tabs.innerHTML = TABS.map(([k,l])=>"<button class='btn"+(k===tab?" btn-primary":"")+"' data-paytab='"+k+"'>"+l+"</button>").join("");
+    body.innerHTML = tab==="debts"?tabDebts():tab==="vacc"?tabVacc():tab==="print"?tabPrint():tab==="rep"?tabRep():tabPet();
+  }
+  document.addEventListener("click",e=>{
+    const b = e.target.closest && e.target.closest("[data-paytab]");
+    if(b){ tab=b.dataset.paytab; renderPay(); }
+  });
+  function keepFocus(id,fn){
+    const el = document.getElementById(id); if(!el) return;
+    el.focus(); const v=el.value; el.value=""; el.value=v;
+  }
+  document.addEventListener("input",e=>{
+    const t = e.target;
+    if(t.id==="debtSearch"){ debtQ=t.value; debtShown=LIST_PAGE; renderPay(); keepFocus("debtSearch"); }
+    else if(t.id==="petSearch"){ petQ=t.value; petShown=LIST_PAGE; renderPay(); keepFocus("petSearch"); }
+    else if(t.id==="printSearch"){ printQ=t.value; renderPay(); keepFocus("printSearch"); }
+  });
+  document.addEventListener("change",e=>{
+    const t = e.target;
+    if(t.id==="vaccDays"){ vaccDays=parseInt(t.value,10)||30; renderPay(); }
+    else if(t.id==="repMonth"){ if(t.value){ repMonth=t.value; renderPay(); } }
+    else if(t.classList && t.classList.contains("pv")){
+      if(!requireEdit()){ renderPay(); return; }
+      const p = db.patients.find(x=>x.id===t.dataset.pid); if(!p) return;
+      p[t.dataset.f] = t.value.trim(); saveDB(); toast("Kaydedildi.");
+    }
+  });
+
+  const _sp = showPage;
+  showPage = function(page){
+    if(page!=="payments"){ _sp(page); return; }
+    _sp(page); debtQ=""; petQ=""; printQ=""; debtShown=petShown=LIST_PAGE; renderPay();
+  };
+  const _ra = refreshAll;
+  refreshAll = function(){
+    _ra();
+    const pg = document.getElementById("page-payments");
+    if(!pg || !pg.classList.contains("active")) return;
+    const ae = document.activeElement;
+    if(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && pg.contains(ae)) return;
+    const m = document.getElementById("payModal");
+    if(m && m.classList.contains("open")) return;
+    renderPay();
+  };
 })();
 
 </script>
-  // full version link
-    <button onclick="window.location.href='https://inevitabledays.github.io/images/vc.gif'"
-        style="
-          position: fixed;
-          top: 19px;               
-          left: 17%;              
-          transform: translateX(-50%);  /* adjust exact center */
-          width: 32px;
-          height: 32px;
-          padding: 0;
-          border: none;
-          background: transparent;
-          cursor: pointer;
-          z-index: 9999;">
-  <img src="home.png" title="FULL VERSION PREVIEW" alt="Home" width="32" height="32" style="display:block;">
-<style>
-/* Hover effect for all buttons that contain home.png */
-button img[src="home.png"] {
-  transition: transform 0.2s ease, filter 0.2s ease;
-}
 
+<script>
+/* Ürünü Düzenle (added): edit name, category, prices, stock and
+   minimum of an existing product. A changed stock count is logged
+   in Stok Hareket Geçmişi as "Düzenleme". */
+function openEditStockModal(id){
+  if(!requireEdit()) return;
+  const it = db.inventory.find(x=>x.id===id);
+  if(!it) return;
+  const f = document.getElementById("editStockForm");
+  f.querySelector("[name=id]").value = it.id;
+  f.querySelector("[name=name]").value = it.name || "";
+  f.querySelector("[name=category]").value = it.category || "";
+  f.querySelector("[name=buy]").value = it.buy ?? 0;
+  f.querySelector("[name=sell]").value = it.sell ?? 0;
+  f.querySelector("[name=stock]").value = it.stock ?? 0;
+  f.querySelector("[name=minimum]").value = it.minimum ?? 0;
+  openModal("editStockModal");
+}
+document.getElementById("editStockForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  if(!requireEdit()) return;
+  const f = e.target;
+  const it = db.inventory.find(x=>x.id===f.querySelector("[name=id]").value);
+  if(!it){ closeModal("editStockModal"); return; }
+  const name = f.querySelector("[name=name]").value.trim();
+  if(!name){ toast("Ürün adı boş olamaz."); return; }
+  const num = (n,int)=>{ let v = Number(f.querySelector("[name="+n+"]").value)||0; if(v<0) v=0; return int?Math.floor(v):Math.round(v*100)/100; };
+  const before = Number(it.stock)||0;
+  it.name = name;
+  it.category = f.querySelector("[name=category]").value.trim();
+  it.buy = num("buy"); it.sell = num("sell");
+  it.stock = num("stock",true); it.minimum = num("minimum",true);
+  if(it.stock !== before) logStockHistory(it.name,"Düzenleme",it.stock-before,it.stock,it.id);
+  saveDB();
+  closeModal("editStockModal");
+  renderInventory(); renderStockHistory(); renderDashboard();
+  toast("Ürün güncellendi.");
+});
+
+/* Search bars: move each one into a centered bar that stays in view, and focus it when its page opens. */
+(function(){
+  var MAP={patients:"patientSearch",inventory:"inventorySearch",sales:"salesSearch"};
+  Object.keys(MAP).forEach(function(page){
+    var input=document.getElementById(MAP[page]), sec=document.getElementById("page-"+page);
+    if(!input || !sec || !sec.firstElementChild) return;
+    var dock=document.createElement("div"); dock.className="search-dock";
+    var pill=document.createElement("div"); pill.className="search-pill";
+    pill.appendChild(input); dock.appendChild(pill);           // same element: ids and handlers keep working
+    var act=sec.querySelector(".page-heading > .btn-primary"); // + Yeni Hasta / + Ürün Ekle / + Yeni Satış
+    if(act) dock.appendChild(act);                             // moved, not copied: its click action stays
+    sec.firstElementChild.insertAdjacentElement("afterend",dock);
+  });
+  function setTop(){                                           // stay below the top bar if it is fixed/sticky
+    var tb=document.querySelector(".topbar"), top=0;
+    if(tb){ var p=getComputedStyle(tb).position; if(p==="sticky"||p==="fixed") top=tb.offsetHeight; }
+    document.documentElement.style.setProperty("--dock-top",top+"px");
+  }
+  setTop(); window.addEventListener("resize",setTop);
+  function focusSearch(page){
+    var el=document.getElementById(MAP[page]); if(!el) return;
+    setTimeout(function(){ try{ el.focus({preventScroll:true}); el.select(); }catch(e){} },60);
+  }
+  if(typeof showPage==="function"){
+    var _showPage=showPage;
+    showPage=function(page){
+      Object.keys(MAP).forEach(function(p){                    // leftover words must not stay behind
+        var el=document.getElementById(MAP[p]);
+        if(p!==page && el && el.value) el.value="";
+      });
+      if(page!=="patients"){
+        var a=document.getElementById("archiveSearch"), r2=document.getElementById("archiveResults");
+        if(a && a.value) a.value=""; if(r2) r2.innerHTML="";
+      }
+      var r=_showPage.apply(this,arguments); focusSearch(page); return r;
+    };
+  }
+})();
+</script>
+<script>
+/* Enter starts the search; the password box is focused on the login screen. */
+(function(){
+  ["patientSearch","inventorySearch","salesSearch"].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    el.addEventListener("keydown",function(e){
+      if(e.key==="Enter"){ e.preventDefault(); el.dispatchEvent(new Event("input",{bubbles:true})); }   // same action as typing "deletable"
+    });
+  });
+  var arch=document.getElementById("archiveSearch");
+  if(arch) arch.addEventListener("keydown",function(e){
+    if(e.key==="Enter"){ e.preventDefault(); if(typeof runArchiveSearch==="function") runArchiveSearch(); }
+  });
+
+  var ov=document.getElementById("loginOverlay"), pw=document.getElementById("loginPassword"),
+      usr=document.getElementById("loginUser"), err=document.getElementById("loginError");
+  function shown(){ if(!ov) return false; var s=getComputedStyle(ov); return s.display!=="none" && s.visibility!=="hidden"; }
+  function focusPw(sel){
+    if(!pw || !shown()) return;
+    setTimeout(function(){ try{ pw.focus(); if(sel) pw.select(); }catch(e){} },50);
+  }
+  if(ov) new MutationObserver(function(){ if(shown()) focusPw(false); }).observe(ov,{attributes:true,attributeFilter:["class","style"]});
+  if(usr) usr.addEventListener("change",function(){ focusPw(false); });                 // after choosing the account
+  if(err) new MutationObserver(function(){ if(err.textContent.trim()) focusPw(true); })  // wrong password: ready to retype
+            .observe(err,{childList:true,characterData:true,subtree:true,attributes:true});
+  focusPw(false);                                                                         // first page load
+  [150,400,900,1800].forEach(function(t){                                                  // slow starts: keep trying until it sticks
+    setTimeout(function(){ if(shown() && document.activeElement!==pw && document.activeElement!==usr) focusPw(false); },t);
+  });
+  window.addEventListener("load",function(){ focusPw(false); });
+  window.addEventListener("pageshow",function(){ focusPw(false); });
+  /* Fallbacks for browsers that refuse focus-on-load (e.g. address bar keeps focus):
+     first key press or mouse move over the login screen puts the cursor in the password box. */
+  if(ov){
+    ov.addEventListener("keydown",function(e){
+      if(e.ctrlKey||e.metaKey||e.altKey||e.key==="Tab"||e.key==="Enter"||e.key==="Escape") return;
+      if(document.activeElement!==pw && document.activeElement!==usr && shown()) focusPw(false);
+    },true);
+    document.addEventListener("keydown",function(e){
+      if(!shown()||e.ctrlKey||e.metaKey||e.altKey||e.key.length!==1) return;
+      if(document.activeElement!==pw && document.activeElement!==usr){ try{ pw.focus(); }catch(_){} }
+    },true);
+    ov.addEventListener("mousemove",function(){
+      if(shown() && document.activeElement!==pw && document.activeElement!==usr) focusPw(false);
+    },{once:false,passive:true});
+  }
+})();
+</script>
+
+<script>
+/* Chosen background theme sticks for the whole login (also across page reloads);
+   logging out resets it to the default. */
+(function(){
+  var KEY="vetclinic_theme_session";
+  var _set=setBackgroundTheme;
+  setBackgroundTheme=function(i){
+    _set(i);
+    try{ sessionStorage.setItem(KEY,String(i)); }catch(e){}
+  };
+  if(typeof doLogout==="function"){
+    var _out=doLogout;
+    doLogout=function(){
+      try{ sessionStorage.removeItem(KEY); }catch(e){}
+      _out();
+      _set(0);
+    };
+  }
+  try{
+    var s=sessionStorage.getItem(KEY);
+    if(s!==null && s!=="0") _set(Number(s));
+  }catch(e){}
+})();
+</script>
+<style id="pay-css">
+#page-payments label,#payModal label{display:block;color:#91a1ad;font-size:11px;margin:0 0 5px}
+#page-payments .card-header select,#page-payments .card-header input[type=month]{width:auto;min-width:150px}
+#page-payments .card-header input[type=month]{min-width:140px}
+#page-payments input.pv{width:120px;padding:6px 8px;font-size:11px}
+#payModal input,#payModal select{margin-bottom:12px}
+#payModal h2{font-size:16px;margin:0 0 8px}
+#payModal .table-wrap table{min-width:0}
+#page-payments .pay-form{padding:16px 19px}
+#page-payments td .btn{margin-right:2px}
+</style>
 </body>
 </html>
