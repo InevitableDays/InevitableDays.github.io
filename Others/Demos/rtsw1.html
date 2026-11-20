@@ -47,8 +47,9 @@ kbd{font:500 10px var(--f-num);color:var(--muted);border:1px solid var(--line);b
 #toast{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:rgba(9,14,18,.92);border:1px solid var(--warn);color:var(--warn);padding:5px 12px;border-radius:4px;font-weight:500;pointer-events:none;opacity:0;transition:opacity .2s;max-width:90%;text-align:center}
 #toast.show{opacity:1}
 #fps{position:absolute;right:8px;top:24px;z-index:5;padding:1px 7px;border-radius:3px;background:rgba(6,10,8,.55);font:600 11px var(--f-num);color:var(--good);pointer-events:none;text-shadow:0 1px 2px #000}
-#intro{position:absolute;left:10px;bottom:10px;max-width:340px;background:rgba(9,14,18,.9);border:1px solid var(--line);border-radius:4px;padding:10px 12px;font-size:12px;color:var(--muted);pointer-events:none}
+#intro{position:absolute;z-index:10;left:10px;bottom:10px;max-width:340px;background:rgba(9,14,18,.9);border:1px solid var(--line);border-radius:4px;padding:10px 12px;font-size:12px;color:var(--muted);pointer-events:none}
 #intro b{color:var(--fg);font-weight:600}
+@media (min-width:901px){#intro{bottom:106px}}   /* the dashboard overlaps the bottom of the map: lift the box clear of it */
 #intro p{margin:0 0 4px}
 #over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;background:none;text-align:center;padding:64px 16px 16px;pointer-events:none;z-index:6}
 #over h2,#over p{text-shadow:0 2px 6px #000,0 0 14px rgba(0,0,0,.9)}
@@ -2446,7 +2447,7 @@ function queueTrain(b,type){
   const d=UD[type],tm=teams[b.team];
   if(!b.done||b.dead||b.queue.length>=5)return false;
   if(tm.minerals<d.cost){if(b.team===0)flash('Not enough minerals');return false;}
-  if(!d.give&&type!=='behemoth'&&aiTeams.includes(b.team)&&tm.used+d.supply>({easy:20,normal:30,hard:60})[opts.diff])return false;   // AI command point cap: Easy 20, Medium 30, Hard 60
+  if(!d.give&&type!=='behemoth'&&aiTeams.includes(b.team)&&tm.used+d.supply>({easy:15,normal:23,hard:60})[opts.diff])return false;   // AI command point cap: Easy 15, Normal 23, Hard 60
   if(!d.give&&tm.used+d.supply>tm.cap){if(b.team===0)flash(raceOf(b.team)==='draugar'?'Supply blocked. Train a Floater.':'Supply blocked. Build a Port.');return false;}
   tm.minerals-=d.cost;tm.used+=d.supply;b.queue.push({type,t:d.time});return true;
 }
@@ -2640,7 +2641,7 @@ function aiRun(t){
   if(!foe)return;
   const gx=foe.tx+foe.size/2,gy=foe.ty+foe.size/2;
   const need=Math.max(3,cp(A.wave));
-  if(!A.attacking&&army.length>=need&&time>=A.after){
+  if(!A.attacking&&army.length>=need&&time>=A.after&&(hardM||time>=480)){   // Easy/Normal AI never attack before 8:00
     A.attacking=true;A.go=new Set(army.map(u=>u.id));
     if(sd)note('Enemy wave is crossing','warn');else note('Your ally is moving out','good');
   }
@@ -2742,7 +2743,7 @@ function newGame(){
       startHarvest(u,patches[(i*2)%patches.length]);
     }
   }
-  for(const t of aiTeams)ai[t]={attacking:false,wave:raceOf(t)==='eirian'?6:8,after:240+(t===3?40:t===2?30:0)};
+  for(const t of aiTeams)ai[t]={attacking:false,wave:raceOf(t)==='eirian'?6:8,after:(opts.diff==='hard'?240:480)+(t===3?40:t===2?30:0)};
   for(const [ex,ey] of EXPANSIONS)for(let k=0;k<8;k++){
     const rad=(110+k*20)*Math.PI/180,mx=Math.floor(ex+5.5*Math.cos(rad)),my=Math.floor(ey+5.5*Math.sin(rad));   // same half-ring shape as the base crystals
     if(occ[my*W+mx]!==3)addResource(mx,my);
@@ -5938,6 +5939,24 @@ function renderMini(t){
   mfc.globalCompositeOperation='destination-in';mfc.drawImage(fm,0,0,s,s);
   mctx.drawImage(mfog,0,0);
   for(const p of pings){mctx.strokeStyle=C.bad;mctx.lineWidth=1.5;mctx.globalAlpha=clamp(p.t/2,0,1);mctx.beginPath();mctx.arc(p.x*k,p.y*k,3+(2-p.t)*6,0,7);mctx.stroke();mctx.globalAlpha=1;}
+  {/* static red targets: one per enemy base (two in 2v2), each with three dots pointing at it from your own base */
+    const mb=buildings.find(b=>b.team===0&&b.type==='central'&&!b.dead)||buildings.find(b=>b.team===0&&!b.dead),r=Math.max(2.5,s/90),seenT=new Set();
+    for(const eb0 of buildings){
+      if(side(eb0.team)!==1||eb0.dead||seenT.has(eb0.team))continue;
+      const eb=buildings.find(b=>b.team===eb0.team&&b.type==='central'&&!b.dead)||eb0;seenT.add(eb0.team);
+      const ex=(eb.tx+eb.size/2)*k,ey=(eb.ty+eb.size/2)*k;
+      if(mb){
+        const mx=(mb.tx+mb.size/2)*k,my=(mb.ty+mb.size/2)*k,dx=ex-mx,dy=ey-my,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,gap=r*5.5;
+        mctx.fillStyle='#ff3b30';
+        for(let i=3;i>=1;i--){const px=ex-ux*(gap+i*r*2.6),py=ey-uy*(gap+i*r*2.6);mctx.globalAlpha=1-(i-1)*.25;mctx.beginPath();mctx.arc(px,py,r*.6,0,7);mctx.fill();}
+        mctx.globalAlpha=1;
+      }
+      mctx.strokeStyle='#ff3b30';mctx.lineWidth=Math.max(1,r*.45);
+      mctx.beginPath();mctx.arc(ex,ey,r*2.2,0,7);mctx.stroke();
+      mctx.fillStyle='#ff3b30';mctx.beginPath();mctx.arc(ex,ey,r,0,7);mctx.fill();
+      mctx.strokeStyle='rgba(0,0,0,.7)';mctx.lineWidth=1;mctx.beginPath();mctx.arc(ex,ey,r,0,7);mctx.stroke();
+    }
+  }
   mctx.strokeStyle='#fff';mctx.lineWidth=1;
   mctx.strokeRect(cam.x/T*k+.5,cam.y/T*k+.5,vw/cam.z/T*k,vh/cam.z/K/T*k);
 }
@@ -7242,8 +7261,8 @@ function setMap(id){
 }
 function drawPickMap(){const c=$('pickMap');if(c.width!==384)c.width=c.height=384;c.getContext('2d').drawImage(mapThumbs[opts.map],0,0,384,384);}
 const DIFFS=[
-  {id:'easy',name:'Easy',pips:1,desc:'Every AI (enemies and your ally) fields a quarter of the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings',cl:'easy'},
-  {id:'normal',name:'Normal',pips:2,desc:'Every AI (enemies and your ally) fields half the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings',cl:'norm'},
+  {id:'easy',name:'Easy',pips:1,desc:'Every AI (enemies and your ally) fields a quarter of the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings. Command point cap 15. No attacks before 8 minutes',cl:'easy'},
+  {id:'normal',name:'Normal',pips:2,desc:'Every AI (enemies and your ally) fields half the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings. Command point cap 23. No attacks before 8 minutes',cl:'norm'},
   {id:'hard',name:'Hard',pips:4,desc:'Full-strength AI, exactly as it plays mostly unrestricted: armies and attack waves keep growing. Plans Defense and Dynamic Strike Timings',cl:'hard'}];
 const RICON={syndicate:'<svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 8v8M8 10.5l8 3M16 10.5l-8 3"/></svg>',
              eirian:'<svg viewBox="0 0 24 24"><path d="M12 2l6 10-6 10-6-10z"/><path d="M6 12h12M12 2v20"/></svg>',
@@ -7715,13 +7734,13 @@ window.addEventListener('pointermove',e=>{
 },true);
 document.documentElement.addEventListener('mouseleave',hide);window.addEventListener('blur',hide);
 })();
-let lastDraw=0,FPS_CAP=60,fpsN=0,fpsT=0,hovT=0,hovC=null;const fpsEl=$('fps');
+let lastDraw=0,FPS_CAP=30,fpsN=0,fpsT=0,hovT=0,hovC=null;const fpsEl=$('fps');
 function frame(ts){
   const FI=1000/FPS_CAP;
   if(lastDraw&&ts-lastDraw<FI-2){requestAnimationFrame(frame);return;}
   lastDraw=ts;
   fpsN++;if(!fpsT)fpsT=ts;
-  if(ts-fpsT>=500){const f=fpsN*1000/(ts-fpsT);fpsEl.textContent=Math.round(f)+' FPS';fpsEl.style.color=f>=FPS_CAP*.9?'#6fe3a0':f>=FPS_CAP*.6?'#f2a93b':'#f2645a';fpsN=0;fpsT=ts;}
+  if(ts-fpsT>=500){const f=fpsN*1000/(ts-fpsT);fpsEl.textContent=Math.round(f)+' FPS';fpsEl.style.color=f>=20?'#6fe3a0':f>=15?'#f2a93b':'#f2645a';fpsN=0;fpsT=ts;}
   const dtR=Math.min(.1,Math.max(0,(ts-last)/1000||0));last=ts;
   if(!paused&&!over&&started){
     acc+=dtR*speed;
