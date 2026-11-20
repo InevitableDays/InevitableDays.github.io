@@ -2446,6 +2446,7 @@ function separate(){
 function queueTrain(b,type){
   const d=UD[type],tm=teams[b.team];
   if(!b.done||b.dead||b.queue.length>=5)return false;
+  if(b.research){if(b.team===0)flash('Researching: this building cannot train until it finishes');return false;}
   if(tm.minerals<d.cost){if(b.team===0)flash('Not enough minerals');return false;}
   if(!d.give&&type!=='behemoth'&&aiTeams.includes(b.team)&&tm.used+d.supply>({easy:15,normal:23,hard:60})[opts.diff])return false;   // AI command point cap: Easy 15, Normal 23, Hard 60
   if(!d.give&&tm.used+d.supply>tm.cap){if(b.team===0)flash(raceOf(b.team)==='draugar'?'Supply blocked. Train a Floater.':'Supply blocked. Build a Port.');return false;}
@@ -2533,8 +2534,24 @@ function updateBuilding(b,dt){
     }
     return;
   }
+  if(b.research){   // a building that is researching produces nothing else until the research is done
+    b.research.t-=dt;
+    if(b.research.t<=0){finishResearch(b);b.research=null;hudDirty=true;if(sel.includes(b))hud.lastSel='';}
+    return;
+  }
   const q=b.queue[0];
   if(q){q.t-=dt;if(q.t<=0){b.queue.shift();spawnUnit(b,q.type);}}
+}
+const RES_T=40;   // every upgrade takes 40 seconds to research
+const RES_INFO={ahp:{ic:'defup',cost:300},adm:{ic:'dmgup',cost:300},laser:{ic:'laser',cost:500},hp:{ic:'defup',cost:600}};
+const resName=(id,t)=>id==='ahp'?'Unit HP +'+(raceOf(t)==='draugar'?50:25):id==='adm'?'Unit Damage +7':id==='laser'?'Laser Guns':'Defense Up';
+const resBusy=(team,id)=>buildings.some(b=>b.team===team&&!b.dead&&b.research&&b.research.id===id);
+function finishResearch(b){
+  const id=b.research.id,tm=teams[b.team],mineT=b.team===0;
+  if(id==='ahp'){tm.upHp=true;const hu=raceOf(b.team)==='draugar'?50:25;for(const u of units)if(u&&!u.dead&&u.team===b.team){u.maxhp+=hu;u.hp+=hu;}if(mineT)flash('Unit HP +'+hu+' researched');}
+  else if(id==='adm'){tm.upDm=true;if(mineT)flash('Unit damage +7 researched');}
+  else if(id==='laser'){b.laser=true;b.lcd=0;if(mineT)flash('Laser Guns installed: this Central now defends itself');}
+  else if(id==='hp'){b.defUp=true;b.maxhp+=2000;b.hp+=2000;if(mineT)flash('Central defense upgraded: +2000 hp');}
 }
 function supply(){
   for(let t=0;t<4;t++){
@@ -2858,25 +2875,27 @@ function runCmd(id){
   if(id==='upgrade:ahp'||id==='upgrade:adm'){
     const ab=sel[0];
     if(!ab||ab.kind!=='b'||ab.type!=='arsenal'||ab.team!==0||!ab.done)return;
-    const isHp=id==='upgrade:ahp',tm=teams[0];
+    const isHp=id==='upgrade:ahp',tm=teams[0],rid=isHp?'ahp':'adm';
     if(isHp?tm.upHp:tm.upDm)return;
+    if(ab.research){flash('Already researching');return;}
+    if(resBusy(0,rid)){flash('Already being researched');return;}
     if(tm.minerals<300){flash('Not enough minerals');return;}
-    tm.minerals-=300;
-    if(isHp){tm.upHp=true;const hu=raceOf(0)==='draugar'?50:25;for(const u of units)if(u&&!u.dead&&u.team===0){u.maxhp+=hu;u.hp+=hu;}flash('Unit HP +'+hu+' researched');}
-    else{tm.upDm=true;flash('Unit damage +7 researched');}
+    tm.minerals-=300;ab.research={id:rid,t:RES_T,tot:RES_T,cost:300};flash('Researching '+resName(rid,0)+' (40s)');
     return;
   }
   if(id==='upgrade:laser'){
     const nx=sel[0];
     if(!nx||nx.kind!=='b'||nx.type!=='central'||nx.team!==0||!nx.done||nx.laser)return;
+    if(nx.research){flash('Already researching');return;}
     if(teams[0].minerals<500){flash('Not enough minerals');return;}
-    teams[0].minerals-=500;nx.laser=true;nx.lcd=0;flash('Laser Guns installed: this Central now defends itself');return;
+    teams[0].minerals-=500;nx.research={id:'laser',t:RES_T,tot:RES_T,cost:500};flash('Researching Laser Guns (40s)');return;
   }
   if(id==='upgrade:hp'){
     const nx=sel[0];
-    if(!nx||nx.kind!=='b'||nx.type!=='central'||nx.team!==0||!nx.done||false)return;
+    if(!nx||nx.kind!=='b'||nx.type!=='central'||nx.team!==0||!nx.done||nx.defUp)return;   // once per Central
+    if(nx.research){flash('Already researching');return;}
     if(teams[0].minerals<600){flash('Not enough minerals');return;}
-    teams[0].minerals-=600;nx.maxhp+=2000;nx.hp+=2000;flash('Central defense upgraded: +2000 hp');return;
+    teams[0].minerals-=600;nx.research={id:'hp',t:RES_T,tot:RES_T,cost:600};flash('Researching Defense Up (40s)');return;
   }
   if(a==='train'){sel.filter(e=>e.kind==='b'&&e.team===0&&e.done).forEach(bb=>queueTrain(bb,b));}
   else if(a==='build'){
@@ -6818,6 +6837,7 @@ function infoHTML(e){
         k('Trains','Worker · 50');k('Queue',e.queue.length+' / 5');
       }
     }
+    if(mine&&e.research)k('Researching',resName(e.research.id,0)+' · '+Math.ceil(e.research.t)+'s',1);
     if(e.type==='arsenal')k('Research','Unit HP +'+(raceOf(e.team)==='draugar'?50:25)+' · Unit damage +7');
     if(e.type==='barracks'){k('Trains',RACES[raceOf(e.team)].bar.map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
     if(e.type==='ironnest'){k('Trains',RACES[raceOf(e.team)].fac.concat(raceOf(e.team)==='eirian'?['mothership']:raceOf(e.team)==='draugar'?['behemoth']:[]).map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
@@ -6857,13 +6877,14 @@ function selInner(){
     else if(!e.done)h+='<span>Building <b>'+Math.floor(e.prog*100)+'%</b></span>';
     else h+='<span>'+(foe?'Hostile':'Online')+'</span>';
     h+='</div>'+infoHTML(e);
-    if(e.kind==='b'&&e.done&&e.team===0&&(e.type==='central'||e.type==='barracks'||e.type==='ironnest')){
-      if(e.queue.length)h+='<div class="qrow">';
+    if(e.kind==='b'&&e.done&&e.team===0&&(e.type==='central'||e.type==='barracks'||e.type==='ironnest'||e.type==='arsenal')){
+      if(e.queue.length||e.research)h+='<div class="qrow">';
+      if(e.research){const rr=e.research;h+='<button class="q" type="button" data-q="r" title="'+resName(rr.id,0)+' - researching. Click to cancel and refund">'+svg(RES_INFO[rr.id].ic,28)+'<i style="width:'+Math.round(clamp(1-rr.t/rr.tot,0,1)*100)+'%;background:#f2a93b"></i><span style="position:absolute;right:2px;top:1px;font:700 9px var(--f-num);color:#fff;text-shadow:0 0 3px #000">'+Math.ceil(rr.t)+'s</span></button>';}
       for(let i=0;i<5;i++){
         const q=e.queue[i];
         if(q){const tot=UD[q.type].time;h+='<button class="q" type="button" data-q="'+i+'" title="Cancel and refund">'+miniAv(q.type,0,32)+(i===0?'<i style="width:'+Math.round((1-q.t/tot)*100)+'%"></i>':'')+'</button>';}
       }
-      if(e.queue.length)h+='</div>';
+      if(e.queue.length||e.research)h+='</div>';
     }
     return h;
   }
@@ -6887,13 +6908,14 @@ function cmdHTML(){
   for(const el of $('cmd').querySelectorAll('.cmd')){
     const id=el.dataset.c,[a,b]=id.split(':');
     let dis=false;
-    if(id==='upgrade:hp')dis=t0.minerals<600;
-    else if(id==='upgrade:laser')dis=t0.minerals<500||!!(sel[0]&&sel[0].laser);
-    else if(id==='upgrade:ahp')dis=t0.minerals<300||!!t0.upHp;
-    else if(id==='upgrade:adm')dis=t0.minerals<300||!!t0.upDm;
-    else if(a==='train'||a==='build'){const cost=(a==='train'?UD:BD)[b].cost;dis=t0.minerals<cost;if(a==='train'&&t0.used+1>t0.cap&&!UD[b].give)dis=true;}
+    const rs=!!(sel[0]&&sel[0].research);   // researching: no other research and no training in this building
+    if(id==='upgrade:hp')dis=t0.minerals<600||rs||!!(sel[0]&&sel[0].defUp);
+    else if(id==='upgrade:laser')dis=t0.minerals<500||rs||!!(sel[0]&&sel[0].laser);
+    else if(id==='upgrade:ahp')dis=t0.minerals<300||!!t0.upHp||rs||resBusy(0,'ahp');
+    else if(id==='upgrade:adm')dis=t0.minerals<300||!!t0.upDm||rs||resBusy(0,'adm');
+    else if(a==='train'||a==='build'){const cost=(a==='train'?UD:BD)[b].cost;dis=t0.minerals<cost;if(a==='train'&&t0.used+1>t0.cap&&!UD[b].give)dis=true;if(a==='train'&&rs)dis=true;}
     el.disabled=dis||!!over;
-    el.classList.toggle('on',(id==='upgrade:laser'&&!!(sel[0]&&sel[0].laser))||(id==='upgrade:ahp'&&!!t0.upHp)||(id==='upgrade:adm'&&!!t0.upDm)||(id==='amove'&&aMode)||(id==='rally'&&rallyMode)||(a==='build'&&place&&place.type===b));
+    el.classList.toggle('on',(id==='upgrade:laser'&&!!(sel[0]&&sel[0].laser))||(id==='upgrade:hp'&&!!(sel[0]&&sel[0].defUp))||(id==='upgrade:ahp'&&!!t0.upHp)||(id==='upgrade:adm'&&!!t0.upDm)||(id==='amove'&&aMode)||(id==='rally'&&rallyMode)||(a==='build'&&place&&place.type===b));
   }
 }
 function drawSpark(){
@@ -7078,17 +7100,17 @@ const TD2={draugar:{
   arsenal:'Research: +25 hp and +7 damage for all your units, 300 minerals each.'}};
 const tdesc=(ty,t)=>(TD2[raceOf(t)]||{})[ty]||TDESC[ty];
 const ODESC={
-  'upgrade:ahp':['Unit HP +25','All your units gain +25 max hp, current and future. One-time research.<small>300 minerals</small>'],
-  'upgrade:adm':['Unit Damage +7','All your units deal +7 damage per attack. One-time research.<small>300 minerals</small>'],
-  'upgrade:laser':['Laser Guns','This Central fires a single-target laser at the nearest enemy unit within its sight range: 30 damage, +15 vs armoured, every 2.1s. No splash. Only the selected Central is upgraded.<small>500 minerals · once per Central</small>'],
-  'upgrade:hp':['Defense Up','Reinforces this Central, +2000 max hit points and repairs the same amount. Only the selected Central is upgraded.<small>600 minerals · one upgrade per Central</small>'],
+  'upgrade:ahp':['Unit HP +25','All your units gain +25 max hp, current and future. One-time research, takes 40 seconds.<small>300 minerals · 40s</small>'],
+  'upgrade:adm':['Unit Damage +7','All your units deal +7 damage per attack. One-time research, takes 40 seconds.<small>300 minerals · 40s</small>'],
+  'upgrade:laser':['Laser Guns','This Central fires a single-target laser at the nearest enemy unit within its sight range: 30 damage, +15 vs armoured, every 2.1s. No splash. Only the selected Central is upgraded.<small>500 minerals · 40s · once per Central</small>'],
+  'upgrade:hp':['Defense Up','Reinforces this Central, +2000 max hit points and repairs the same amount. Only the selected Central is upgraded.<small>600 minerals · 40s · once per Central</small>'],
   rally:['Rally point','New units from this building walk to the spot you click.'],
   stop:['Stop','Cancel the current order and hold position.'],
   amove:['Attack-move','Move to a spot and attack any enemy met on the way.']
 };
 function cmdTipHTML(id){
   const [a,b]=id.split(':');
-  if(id==='upgrade:ahp'&&raceOf(0)==='draugar')return '<b>Unit HP +50</b>All your units gain +50 max hp, current and future. One-time research.<small>300 minerals</small>';
+  if(id==='upgrade:ahp'&&raceOf(0)==='draugar')return '<b>Unit HP +50</b>All your units gain +50 max hp, current and future. One-time research, takes 40 seconds.<small>300 minerals · 40s</small>';
   if(a==='build'||a==='train'){
     const d=(a==='train'?UD:BD)[b];
     let meta=d.cost+' minerals · '+d.time+'s';
@@ -7124,7 +7146,9 @@ $('sel').addEventListener('pointerdown',e=>{
   }
   const q=e.target.closest('.q[data-q]');
   if(!q||sel.length!==1||sel[0].kind!=='b'||sel[0].team!==0)return;
-  const b=sel[0],i=+q.dataset.q,it=b.queue[i];
+  const b=sel[0];
+  if(q.dataset.q==='r'){if(b.research){teams[0].minerals+=b.research.cost;b.research=null;hud.lastSel='';hudDirty=true;flash('Research cancelled, minerals refunded');}return;}
+  const i=+q.dataset.q,it=b.queue[i];
   if(!it)return;
   teams[0].minerals+=UD[it.type].cost;b.queue.splice(i,1);hud.lastSel='';hudDirty=true;
 });
@@ -7638,7 +7662,7 @@ let musicOn=true,ytReady=false,ytLoading=false,curId=null,curStart=0,musicWarned
 const players={};
 /* race themes: override the generic tracks above for the race you play. States a race does not list keep the generic track; "hurt" follows the race's attack track. */
 const RTRACKS={
-  draugar:{calm:{id:'oksW2ND4W2Y',vol:45},seen:{id:'sgfIzBtFB7k',vol:45},bldg:{id:'Ss4kX2_D5TE',vol:45}},
+  draugar:{calm:{id:'jc4IXkztUmQ',vol:45},seen:{id:'sgfIzBtFB7k',vol:45},bldg:{id:'Ss4kX2_D5TE',vol:45}},
   eirian:{calm:{id:'1PE4Shh4LKQ',vol:45}},
   syndicate:{seen:{id:'tJxcKpWdTkg',vol:45}}
 };
