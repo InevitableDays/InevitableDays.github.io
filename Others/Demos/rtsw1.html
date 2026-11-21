@@ -343,6 +343,7 @@ table.vs td{border-top-color:rgba(255,225,170,.18)}
 #pickInfo{margin:0;color:var(--muted);font-size:15px;line-height:1.45;text-align:center}
 .pk.sel{box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(61,184,242,.6),0 0 18px rgba(255,255,255,.55);transform:translate(-50%,-50%) scale(1.15)}
 .mDiff{display:flex;flex-direction:column;gap:8px}
+
 .mDiff .mCard{flex-direction:row;align-items:center;gap:12px}
 .mDiff .mCard>div{display:flex;flex-direction:column;gap:3px}
 .mDiff .mCard.on{border-color:var(--good);box-shadow:0 0 0 1px var(--good),0 0 22px rgba(111,227,160,.25);background:rgba(111,227,160,.07)}
@@ -667,7 +668,7 @@ body.eirian #hud{background:linear-gradient(180deg,#0e0b07,#050403)}
 
     <div>
         <b style="color:var(--fg)">Draugar</b>
-        swarm with cheap, fast Hounds, acid-spitting Vexors. Floaters, balloon monsters you can fly around, provide supply. Build an economy, scout through the smoke and destroy every enemy building.
+        swarm with cheap, fast Hounds, acid-spitting Vexors. Every Draugar unit regenerates 33 hp a second after 15 seconds without being attacked. Floaters, balloon monsters you can fly around, provide supply. Build an economy, scout through the smoke and destroy every enemy building.
     </div>
 
 </div>
@@ -675,6 +676,8 @@ body.eirian #hud{background:linear-gradient(180deg,#0e0b07,#050403)}
           <section class="mPanel" aria-label="Difficulty">
             <h3>3 &middot; Difficulty</h3>
             <div class="mDiff" id="diffList"></div>
+            <div class="mLbl">Frame rate cap</div><div class="mCards cmp" id="fpsList"></div>
+            <div class="mLbl">Screen movement speed</div><div class="mCards cmp" id="scrollList"></div>
             <div class="mSum" id="mSum"></div>
             <button class="mPlay" id="bPlay" type="button">Play</button>
           </section>
@@ -782,9 +785,9 @@ Object.assign(UD,{
   valkrie:{name:'Valkrie',cost:300,time:24,supply:6,hp:220,sh:150,speed:2.1,range:10.5,dmg:16,bonus:6,bt:'light',cd:1.07,splash:1.6,armored:true,noair:true,info:'Towering walker, 16 area damage, +6 vs light units (headhunters, unit02s, workers), range 10.5. Cannot hit air',vis:14}
 });
 UD.tank.noair=true;
-UD.mecha={name:'Mecha',cost:450,time:26,supply:4,hp:400,speed:2,range:10,dmg:6,cd:.12,armored:true,noair:true,info:'Heavy walker. Gatling cannon (6 damage every 0.12s, range 10, ground units and buildings only) plus a shoulder rocket pod (4 rockets, 20 area damage each, every 5s, range 10) that also hits flying units. Trained at the Ironnest',vis:13};
-UD.mothership={name:'Mothership',cost:600,time:45,supply:8,hp:600,sh:500,speed:1.4,range:12,dmg:14,cd:1.1,beams:5,info:'Eirian capital ship. Fires blue pulse beams at up to 5 targets per volley, 14 damage each, range 12. Hits ground and air. Trained at the Cybergrid',vis:15,air:true};
-UD.behemoth={name:'Behemoth',cost:360,time:30,supply:6,hp:600,speed:2.8,range:2.4,dmg:35,cd:1.1,splash:1.5,armored:true,noair:true,spikes:5,spikeDmg:14,spikeRange:10,spikeCd:4,info:'Draugar siege beast. Kaiser blades sweep a 1.5 tile area for 35 damage every 1.1s (ground only, reach 2.4). Back spines also throw a barrage of 5 spikes every 4s at up to 5 targets, 14 damage each, range 10, ground and air. Armoured. Trained at the Monolith',vis:13};
+UD.mecha={name:'Mecha',cost:450,time:26,supply:10,hp:400,sh:1000,speed:2,range:10,dmg:6,cd:.12,armored:true,info:'Super unit: 1000 energy shield that regenerates 33/s after 15s without being attacked, only one per player and it can only be trained again once it is dead. Heavy walker. Gatling cannon (6 damage every 0.12s, range 10, hits ground, air and buildings) plus a shoulder rocket pod (4 rockets, 20 area damage each, every 5s, range 10) that also hits flying units. Trained at the Ironnest',vis:13};
+UD.mothership={name:'Mothership',cost:600,time:45,supply:10,hp:1600,sh:500,speed:1.4,range:12,dmg:14,cd:1.1,beams:5,info:'Super unit: only one per player, it can only be trained again once it is dead. Eirian capital ship. Fires blue pulse beams at up to 5 targets per volley, 14 damage each, range 12. Hits ground and air. Trained at the Cybergrid',vis:15,air:true};
+UD.behemoth={name:'Behemoth',cost:360,time:30,supply:10,hp:1600,speed:2.8,range:2.4,dmg:35,cd:1.1,splash:1.5,armored:true,noair:true,spikes:5,spikeDmg:14,spikeRange:10,spikeCd:4,info:'Super unit: only one per player, it can only be trained again once it is dead. Draugar siege beast. Kaiser blades sweep a 1.5 tile area for 35 damage every 1.1s (ground only, reach 2.4). Back spines also throw a barrage of 5 spikes every 4s at up to 5 targets, 14 damage each, range 10, ground and air. Armoured. Trained at the Monolith',vis:13};
 Object.assign(UD,{
   dog:{name:'Hound',cost:50,time:5,supply:1,hp:100,speed:3.5,range:1,dmg:18,cd:.86,aggro:true,info:'Scorpion-tailed melee biter, 18 damage per bite. Half a Unit-02, no shield, very cheap and quick to spawn. Cannot hit air',vis:11},
   vexor:{name:'Vexor',cost:100,time:11,supply:2,hp:200,speed:2.25,range:10,dmg:30,bonus:15,cd:2.1,armored:true,info:'Rhino-shaped mutant that spits acid, 30 damage (+15 vs armoured), range 10. Hits ground and air. Cheaper than a Tank and uses less supply',vis:13},
@@ -792,6 +795,7 @@ Object.assign(UD,{
   ptero:{name:'Pterodactyl',cost:300,time:18,supply:3,hp:170,speed:4,range:9,dmg:16,cd:1.3,splash:1.7,info:'Dark flying mutant, red beams deal 16 area damage, range 9. Hits ground and air. Trained at the Kairos',vis:13,air:true},
   overlord:{name:'Floater',cost:100,time:12,supply:0,give:8,hp:200,speed:1.875,range:0,dmg:0,cd:99,noatk:true,info:'Flying balloon monster. Gives +8 supply. Cannot attack, but you can fly it anywhere. Trained at the Kairos',vis:12,air:true}
 });
+for(const k in UD)UD[k].cost=Math.round(UD[k].cost*1.6);   // all unit costs +60%
 /* ---------- factions: each side picks one; building types are shared, units and names differ ---------- */
 const RACES={
   syndicate:{name:'Syndicate',bar:['headhunters','rocket'],fac:['tank','heli','mecha'],worker:'Worker',bn:{barracks:'Barracks',ironnest:'Ironnest',turret:'Turret',arsenal:'Arsenal'}},
@@ -805,7 +809,7 @@ const nameOf=e=>e.kind==='u'?(e.type==='worker'?RACES[raceOf(e.team)].worker:UD[
 const BD={
   central:{name:'Central',size:4,cost:400,time:40,hp:2200,supply:15,vis:14.3},
   barracks:{name:'Barracks',size:3,cost:150,time:20,hp:1100,supply:0,vis:10.4},
-  port:{name:'Port',size:2,cost:100,time:12,hp:550,supply:8,vis:9.1},
+  port:{name:'Port',size:2,cost:100,time:12,hp:550,supply:15,vis:9.1},
   ironnest:{name:'Ironnest',size:3,cost:200,time:28,hp:1400,supply:0,vis:10.4},
   arsenal:{name:'Arsenal',size:3,cost:200,time:24,hp:1000,supply:0,vis:10.4},
   turret:{name:'Turret',size:2,cost:150,time:16,hp:700,supply:0,vis:12,range:12,dmg:40,cd:.9,info:'Auto turret. Fires automatically at any enemy ground or air unit in range, 40 damage per shot. Range 12 and vision 12'}
@@ -1607,7 +1611,7 @@ function drawSmoke(t){
 }
 /* ---------- state ---------- */
 let units,buildings,resources,teams,effects,floats,pings,log,sel,groups,nid,time,over,acc,aiT,ai;
-let opts={map:'twobanks',slot:0,ally:true,myRace:'syndicate',foeRace:'eirian',allyRace:'me',foe2Race:'foe',diff:'normal'},started=false,aiTeams=[],seenAt=new Map(),lastAlert=-99,alertPos=null,alertT=0,mHurt=-999,mBldg=-999,mEnemy=-999;
+let opts={map:'twobanks',slot:0,ally:true,myRace:'syndicate',foeRace:'eirian',allyRace:'me',foe2Race:'foe',diff:'normal',fps:30,scroll:1},started=false,aiTeams=[],seenAt=new Map(),lastAlert=-99,alertPos=null,alertT=0,mHurt=-999,mBldg=-999,mEnemy=-999;
 let speed=1,paused=false,place=null,aMode=false,rallyMode=false,idleIdx=0,lastClick={id:0,t:0};
 const cam={x:0,y:0,z:1};const K=0.58; // camera pitch: ground is squashed vertically, units stand upright
 let dprCap=1,emaDt=16,lastAdj=0,prevTs=0;let vw=800,vh=600,dpr=1,mouse={sx:0,sy:0,inside:false,type:'mouse'},drag=null,rpan=null;
@@ -1794,7 +1798,7 @@ function moveBy0(u,dx,dy){
 }
 function followPath(u,dt,sp){
   if(!u.path||u.pi>=u.path.length)return false;
-  const p=u.path[u.pi],dx=p.x-u.x,dy=p.y-u.y,d=Math.hypot(dx,dy),step=sp*dt,ox=u.x,oy=u.y;
+  const p=u.path[u.pi],dx=p.x-u.x,dy=p.y-u.y,d=Math.hypot(dx,dy),step=sp*dt*(u.bsT>time?2:1),ox=u.x,oy=u.y;   // Behemoth hidden charge (u.bsT) doubles its speed
   if(d<=step+.02){moveBy(u,dx,dy);u.pi++;}
   else{moveBy(u,dx/d*step,dy/d*step);u.face=Math.atan2(dy,dx);}
   if(Math.hypot(u.x-ox,u.y-oy)<step*.15)u.stk+=dt;else u.stk=0;
@@ -1815,7 +1819,7 @@ function addBuilding(type,team,tx,ty,done){
 }
 function addUnit(type,team,x,y){
   const d=UD[type];
-  const u={id:nid++,kind:'u',type,team,x,y,hp:d.hp,maxhp:d.hp,sh:d.sh||0,maxsh:d.sh||0,shT:-99,order:{type:'idle'},path:null,pi:0,cd:0,rp:0,acq:0,carry:0,face:side(team)?Math.PI:0,dead:false,stk:0,hit:0};
+  const u={id:nid++,kind:'u',type,team,x,y,hp:d.hp,maxhp:d.hp,sh:d.sh||0,maxsh:d.sh||0,shT:-99,dmgT:-99,order:{type:'idle'},path:null,pi:0,cd:0,rp:0,acq:0,carry:0,face:side(team)?Math.PI:0,dead:false,stk:0,hit:0};
   if(teams[team]&&teams[team].upHp){const hu=raceOf(team)==='draugar'?50:25;u.maxhp+=hu;u.hp+=hu;}
   units.push(u);return u;
 }
@@ -1901,8 +1905,18 @@ const dmgVs=(d,tg,base)=>{const b0=base===undefined?d.dmg:base;if(!d.bonus||tg.k
 function damage(e,amt,by){
   if(e.dead)return;
   if(e.team===0&&side(by)===1)mHurt=time;
-  if(e.maxsh){e.shT=time;if(e.sh>0){const a=Math.min(e.sh,amt);e.sh-=a;amt-=a;}}
-  e.hp-=amt;e.hit=.12;
+  e.dmgT=time;   // last time this entity was attacked (drives Draugar hp regen and Mecha shield regen)
+  if(e.maxsh){
+    e.shT=time;
+    if(e.sh>0){
+      if(e.kind==='u'&&time-(e.bsT||0)>.25&&effects.length<500&&visAt(e.x,e.y)){   // bright blue shield smoke: 2 soft puffs, at most 4 a second per unit
+        e.bsT=time;
+        for(let i=0;i<2;i++)effects.push({k:'bs',x:e.x+(Math.random()-.5)*.5,y:e.y+(Math.random()-.5)*.3,z:12+Math.random()*28,vx:(Math.random()-.5)*.5,vy:0,vz:14+Math.random()*16,t:.65,T:.65,r:4+Math.random()*3,a:.55});
+      }
+      const a=Math.min(e.sh,amt);e.sh-=a;amt-=a;
+    }
+  }
+  e.hp-=amt;if(!e.maxsh||amt>0)e.hit=.12;   // no white hit flash while a shield soaks the whole hit (blue smoke covers that)
   if(e.team===0&&time-teams[0].warn>10){
     teams[0].warn=time;
     const cx=e.kind==='b'?e.tx+e.size/2:e.x,cy=e.kind==='b'?e.ty+e.size/2:e.y;
@@ -2009,7 +2023,7 @@ function fire(u,tg,d){
   damage(tg,Math.round(dmgVs(d,tg)+dUp(u.team)),u.team);
   if(u.type==='tank'&&u.sieged)tankSplash(u,tg,tx,ty,d);
 }
-/* Mecha: gatling cannon (6 damage every 0.12s, range 9) plus a 4-rocket shoulder pod (20 area damage each, every 5s, range 10). Ground only. */
+/* Mecha: gatling cannon (6 damage every 0.12s, range 9) plus a 4-rocket shoulder pod (20 area damage each, every 5s, range 10). Hits ground and air. */
 /* Mecha steam and dust: while it walks, smoke climbs from the two backpack stacks and every footfall kicks up a little dust.
    Spawned only for mechas that are on screen and visible; drawn as 'ms' / 'md' effects from two prebaked soft sprites (glowSprite cache), so no extra paths per puff. */
 function mechaPuffs(u,dt){
@@ -2032,7 +2046,7 @@ function mechaPuffs(u,dt){
     pl[i]=fz;
   }
 }
-/* nearest enemy flyer in range, for the rocket pod (the gatling stays ground-only) */
+/* nearest enemy flyer in range, for the rocket pod's own auto-fire (the gatling hits ground, air and buildings) */
 function mechaAirTarget(u,r){
   let best=null,bd=r;
   const us=side(u.team),fr=isFriend(u.team),ux=u.x,uy=u.y;
@@ -2149,6 +2163,13 @@ function ultraPuffs(u,dt){
 function ultraTick(u,dt){
   const d=UD.behemoth;
   ultraPuffs(u,dt);
+  {   // hidden passive: ordered to attack and within 5 of the target -> double speed for 2 s, then 50 s cooldown (nothing is shown anywhere)
+    const o=u.order,tg=o&&o.type==='attack'?o.target:null;
+    if(tg&&!tg.dead&&time>=(u.bsCd||0)){
+      const dd=tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y)-.3;
+      if(dd<=5){u.bsT=time+2;u.bsCd=time+50;}
+    }
+  }
   u.scd=(u.scd===undefined?1:u.scd)-dt;
   if(u.vol>0){
     u.vT-=dt;
@@ -2262,7 +2283,7 @@ function updateHarvest(u,dt){
     u.face+=dt*0;
     if(o.t<=0){
       const r=o.res;
-      u.carry=Math.min(8,Math.max(0,r.amount));r.amount-=8;
+      u.carry=Math.min(8,Math.max(0,r.amount));r.amount-=u.carry;   // workers carry 8 minerals per trip
       if(r.miner===u)r.miner=null;
       if(r.amount<=0){r.dead=true;occ[r.ty*W+r.tx]=0;}
       o.st='toBase';u.path=null;
@@ -2319,7 +2340,11 @@ function updateBuild(u,dt){
 function updateUnit(u,dt){
   if(u.dead)return;
   u.cd-=dt;u.rp-=dt;u.acq-=dt;u.hit-=dt;
-  if(u.maxsh&&u.sh<u.maxsh&&time-u.shT>8)u.sh=Math.min(u.maxsh,u.sh+2*dt);
+  if(u.maxsh&&u.sh<u.maxsh){
+    if(u.type==='mecha'){if(time-u.dmgT>15)u.sh=Math.min(u.maxsh,u.sh+33*dt);}   // Mecha: shield regenerates 33/s after 15s without being attacked
+    else if(time-u.shT>8)u.sh=Math.min(u.maxsh,u.sh+2*dt);
+  }
+  if(u.hp<u.maxhp&&teams[u.team]&&teams[u.team].race==='draugar'&&time-u.dmgT>15)u.hp=Math.min(u.maxhp,u.hp+33*dt);   // Draugar: every unit regenerates 33 hp/s after 15s without being attacked
   const d=UD[u.type],o=u.order;
   if(u.type==='mecha')mechaTick(u,dt);
   if(u.type==='behemoth')ultraTick(u,dt);
@@ -2345,9 +2370,13 @@ function updateUnit(u,dt){
       break;
     case 'move':
       /* special weapons fire on their own while walking: mecha rocket pod and mothership beam volley (behemoth spikes already do, see ultraTick) */
-      if(u.type==='mecha'&&(u.rcd||0)<=0&&!(u.salvo>0)&&u.acq<=0){
-        u.acq=.35;const t=findTarget(u,10);
-        if(t){u.salvo=4;u.salvoT=0;u.salvoTg=t;u.rcd=5;}
+      if(u.type==='mecha'){
+        if(u.acq<=0){u.acq=.35;u.mvT=findTarget(u,10);}
+        const t=u.mvT;
+        if(t&&!t.dead&&(t.kind==='b'?distRect(u.x,u.y,t.tx,t.ty,t.size):Math.hypot(t.x-u.x,t.y-u.y)-.3)<=10){
+          if(u.cd<=0){const f0=u.face;fire(u,t,d);u.cd=d.cd;u.mAim=u.face;u.face=f0;}   // gatling (and rocket pod) fire on the move
+          u.mAimT=time;
+        }else u.mvT=null;
       }
       if(u.type==='mothership'&&u.cd<=0&&u.acq<=0){
         u.acq=.35;const t=findTarget(u,d.range);
@@ -2355,6 +2384,7 @@ function updateUnit(u,dt){
       }
       if(!u.path){if(!pathOK(u))break;if(!setPath(u,o.x,o.y)){u.order={type:'idle'};break;}}
       if(!followPath(u,dt,d.speed))u.order={type:'idle'};
+      if(u.type==='mecha'&&u.mvT&&!u.mvT.dead){const t=u.mvT;u.face=Math.atan2((t.kind==='b'?t.ty+t.size/2:t.y)-u.y,(t.kind==='b'?t.tx+t.size/2:t.x)-u.x);}   // keep the torso on the target
       break;
     case 'amove':
       if((d.range>1.5||d.aggro)&&u.acq<=0){
@@ -2370,6 +2400,30 @@ function updateUnit(u,dt){
       if(!tg||tg.dead||(tg.kind==='u'&&UD[tg.type].air&&noAir(u))||(tg.kind==='b'&&u.type==='heli')){u.order=o.then||{type:'idle'};u.path=null;break;}
       if(isFriend(u.team)&&tg.kind==='u'&&!visAt(tg.x,tg.y)){u.order={type:'amove',x:tg.x,y:tg.y};u.path=null;break;}
       const dist=tg.kind==='b'?distRect(u.x,u.y,tg.tx,tg.ty,tg.size):Math.hypot(tg.x-u.x,tg.y-u.y)-.3;
+      if(u.type==='mecha'){   // Mecha: floats toward the target and keeps the gatling firing the whole time, no stop-and-go
+        const gx=tg.kind==='b'?tg.tx+tg.size/2:tg.x,gy=tg.kind==='b'?tg.ty+tg.size/2:tg.y,aim=Math.atan2(gy-u.y,gx-u.x);
+        const stopD=d.range*.85;   // hold position once comfortably inside gun range; only start moving again when the target drifts almost out of range
+        if(dist<=stopD)u.mStop=true;else if(dist>d.range*.97)u.mStop=false;
+        if(dist<=d.range&&u.cd<=0){fire(u,tg,d);u.cd=d.cd;}
+        if(u.mStop&&dist<=d.range){u.path=null;u.face=aim;break;}
+        if(dist>d.range&&o.leash&&o.home&&Math.hypot(u.x-o.home.x,u.y-o.home.y)>o.leash){u.order={type:'idle'};u.path=null;break;}
+        if(!u.pg)u.pg={x:0,y:0};
+        const needP=!u.path||u.pi>=u.path.length;
+        if((needP||u.rp<=0)&&time>=(u.np||0)){
+          if(needP||Math.abs(gx-u.pg.x)+Math.abs(gy-u.pg.y)>1){
+            if(pathOK(u)){
+              u.rp=.35+Math.random()*.15;
+              if(tg.kind==='b'){const a=approach(tg.tx,tg.ty,tg.size,u.x,u.y);setPath(u,a.x,a.y);}
+              else setPath(u,tg.x,tg.y);
+              u.pg.x=gx;u.pg.y=gy;
+              if(!u.path)u.np=time+.8;
+            }
+          }else u.rp=.35;
+        }
+        if(u.path&&!followPath(u,dt,d.speed))u.path=null;
+        if(dist<=d.range)u.face=aim;   // torso keeps aiming at the target while the hips follow the walking direction
+        break;
+      }
       if(dist<=d.range){
         u.path=null;
         if(u.cd<=0){fire(u,tg,d);u.cd=d.cd;}
@@ -2443,16 +2497,40 @@ function separate(){
 }
 
 /* ---------- production ---------- */
+/* Super units (Mecha, Mothership, Behemoth): one per player. Alive or already in a training queue counts; a new one can only be bought once the old one is dead. */
+const SUPER={mecha:1,mothership:1,behemoth:1};
+function superCnt(team,type){
+  let n=0;
+  for(const u of units)if(u&&u.team===team&&u.type===type&&!u.dead)n++;
+  for(const b of buildings)if(b.team===team&&!b.dead)for(const q of b.queue)if(q.type===type)n++;
+  return n;
+}
+/* (no longer used by the AI cap: super units now count towards it) */
+const superSup=team=>{let n=0;for(const ty in SUPER)n+=superCnt(team,ty)*UD[ty].supply;return n;};   // supply held by this team's super units (used so the AI supply cap ignores them)
 function queueTrain(b,type){
   const d=UD[type],tm=teams[b.team];
+  if(SUPER[type]&&superCnt(b.team,type)>0){if(b.team===0)flash('Only one '+d.name+' at a time: train another once it is dead');return false;}
   if(!b.done||b.dead||b.queue.length>=5)return false;
-  if(b.research){if(b.team===0)flash('Researching: this building cannot train until it finishes');return false;}
   if(tm.minerals<d.cost){if(b.team===0)flash('Not enough minerals');return false;}
-  if(!d.give&&type!=='behemoth'&&aiTeams.includes(b.team)&&tm.used+d.supply>({easy:15,normal:23,hard:60})[opts.diff])return false;   // AI command point cap: Easy 15, Normal 23, Hard 60
+  if(!d.give&&!(SUPER[type]&&opts.diff!=='easy')&&aiTeams.includes(b.team)&&tm.used+d.supply>({easy:20,normal:40,hard:100})[opts.diff])return false;   // AI command point cap: Easy 20, Medium 40, Hard 100 (super units count 10 each; on Medium/Hard the super itself may exceed the cap, Easy never goes over it)
   if(!d.give&&tm.used+d.supply>tm.cap){if(b.team===0)flash(raceOf(b.team)==='draugar'?'Supply blocked. Train a Floater.':'Supply blocked. Build a Port.');return false;}
-  tm.minerals-=d.cost;tm.used+=d.supply;b.queue.push({type,t:d.time});return true;
+  tm.minerals-=d.cost;tm.used+=d.supply;b.queue.push({type,t:d.time});
+  if(SUPER[type]&&ai[b.team])ai[b.team].supEver=true;   // AI: its first super unit has been bought (later ones need 10 army supply first)
+  return true;
 }
 const onScreen=(x,y)=>{const sx=(x*T-cam.x)*cam.z,sy=(y*T-cam.y)*K*cam.z;return sx>=0&&sx<=vw&&sy>=0&&sy<=vh;};
+/* upgrades share the training queue with units (max 5 items per building, first in first out) */
+function queueResearch(b,id,cost){
+  const tm=teams[b.team];
+  if(!b.done||b.dead)return false;
+  if(b.queue.length>=5){if(b.team===0)flash('Queue is full');return false;}
+  if((id==='ahp'&&tm.upHp)||(id==='adm'&&tm.upDm)||(id==='laser'&&b.laser)||(id==='hp'&&b.defUp))return false;
+  if((id==='ahp'||id==='adm')?resBusy(b.team,id):b.queue.some(q=>q.res===id)){if(b.team===0)flash('Already queued');return false;}
+  if(tm.minerals<cost){if(b.team===0)flash('Not enough minerals');return false;}
+  tm.minerals-=cost;b.queue.push({res:id,t:RES_T,tot:RES_T,cost});
+  if(b.team===0)flash(resName(id,0)+' queued ('+RES_T+'s)');
+  return true;
+}
 function spawnUnit(b,type){
   const from=b.rally?{x:b.rally.x,y:b.rally.y}:{x:W/2,y:H/2};
   const p=approach(b.tx,b.ty,b.size,from.x,from.y);
@@ -2534,20 +2612,15 @@ function updateBuilding(b,dt){
     }
     return;
   }
-  if(b.research){   // a building that is researching produces nothing else until the research is done
-    b.research.t-=dt;
-    if(b.research.t<=0){finishResearch(b);b.research=null;hudDirty=true;if(sel.includes(b))hud.lastSel='';}
-    return;
-  }
   const q=b.queue[0];
-  if(q){q.t-=dt;if(q.t<=0){b.queue.shift();spawnUnit(b,q.type);}}
+  if(q){q.t-=dt;if(q.t<=0){b.queue.shift();if(q.res){finishResearch(b,q.res);hudDirty=true;if(sel.includes(b))hud.lastSel='';}else spawnUnit(b,q.type);}}
 }
 const RES_T=40;   // every upgrade takes 40 seconds to research
 const RES_INFO={ahp:{ic:'defup',cost:300},adm:{ic:'dmgup',cost:300},laser:{ic:'laser',cost:500},hp:{ic:'defup',cost:600}};
 const resName=(id,t)=>id==='ahp'?'Unit HP +'+(raceOf(t)==='draugar'?50:25):id==='adm'?'Unit Damage +7':id==='laser'?'Laser Guns':'Defense Up';
-const resBusy=(team,id)=>buildings.some(b=>b.team===team&&!b.dead&&b.research&&b.research.id===id);
-function finishResearch(b){
-  const id=b.research.id,tm=teams[b.team],mineT=b.team===0;
+const resBusy=(team,id)=>buildings.some(b=>b.team===team&&!b.dead&&b.queue.some(q=>q.res===id));   // queued or researching anywhere on the team
+function finishResearch(b,id){
+  const tm=teams[b.team],mineT=b.team===0;
   if(id==='ahp'){tm.upHp=true;const hu=raceOf(b.team)==='draugar'?50:25;for(const u of units)if(u&&!u.dead&&u.team===b.team){u.maxhp+=hu;u.hp+=hu;}if(mineT)flash('Unit HP +'+hu+' researched');}
   else if(id==='adm'){tm.upDm=true;if(mineT)flash('Unit damage +7 researched');}
   else if(id==='laser'){b.laser=true;b.lcd=0;if(mineT)flash('Laser Guns installed: this Central now defends itself');}
@@ -2556,8 +2629,8 @@ function finishResearch(b){
 function supply(){
   for(let t=0;t<4;t++){
     let cap=0,used=0;
-    for(const b of buildings)if(b.team===t&&!b.dead){if(b.done)cap+=BD[b.type].supply;used+=b.queue.filter(q=>!UD[q.type].give).length;}
-    for(const u of units)if(u.team===t){const g=UD[u.type].give;if(g)cap+=g;else used++;}
+    for(const b of buildings)if(b.team===t&&!b.dead){if(b.done)cap+=BD[b.type].supply;for(const q of b.queue)if(!q.res&&!UD[q.type].give)used+=UD[q.type].supply;}
+    for(const u of units)if(u.team===t){const g=UD[u.type].give;if(g)cap+=g;else used+=UD[u.type].supply;}
     teams[t].cap=Math.min(200,cap);teams[t].used=used;
   }
 }
@@ -2569,6 +2642,62 @@ function income(t){
 }
 
 /* ---------- opponent ---------- */
+/* mineral clusters still holding crystals (single-link grouping, 7 tiles) */
+function mineralClusters(){
+  const rs=resources.filter(r=>!r.dead),par=rs.map((_,i)=>i),fd=i=>{while(par[i]!==i){par[i]=par[par[i]];i=par[i];}return i;};
+  for(let i=0;i<rs.length;i++)for(let j=i+1;j<rs.length;j++)if(Math.hypot(rs[i].tx-rs[j].tx,rs[i].ty-rs[j].ty)<=7)par[fd(i)]=fd(j);
+  const m=new Map();
+  for(let i=0;i<rs.length;i++){const k=fd(i);let c=m.get(k);if(!c){c={x:0,y:0,n:0,rs:[]};m.set(k,c);}c.x+=rs[i].tx+.5;c.y+=rs[i].ty+.5;c.n++;c.rs.push(rs[i]);}
+  const out=[...m.values()];for(const c of out){c.x/=c.n;c.y/=c.n;}
+  return out;
+}
+/* free building spot: score(dx,dy,dist) lowest wins, 1 tile clear margin */
+function findSite(cx,cy,s,dmin,dmax,score){
+  let best=null,bs=1e9;
+  for(let dy=-dmax;dy<=dmax;dy++)for(let dx=-dmax;dx<=dmax;dx++){
+    const dist=Math.hypot(dx,dy);if(dist<dmin||dist>dmax)continue;
+    const tx=Math.round(cx+dx-s/2),ty=Math.round(cy+dy-s/2);
+    let ok=true;
+    for(let y=ty-1;y<=ty+s&&ok;y++)for(let x=tx-1;x<=tx+s;x++){if(x<0||y<0||x>=W||y>=H||occ[y*W+x]!==0){ok=false;break;}}
+    if(!ok)continue;
+    const v=score(tx+s/2,ty+s/2,dist);
+    if(v<bs){bs=v;best={tx,ty};}
+  }
+  return best;
+}
+/* all AIs: once only 3 mineral clusters are left, expand onto the closest cluster (new Central) and put 2 turrets beside it */
+function aiExpand(t,A,nex,wk,pickBuilder,hold){
+  if(hold||!wk.length)return;
+  const cl=mineralClusters();
+  if(cl.length>3&&!A.expOn)return;
+  A.expOn=true;
+  const tm=teams[t],ncx=nex.tx+nex.size/2,ncy=nex.ty+nex.size/2;
+  const own=buildings.filter(b=>b.team===t&&b.type==='central'&&!b.dead);
+  if(!A.expC||(A.expC.dead)){
+    A.expC=null;
+    if(A.expT&&time-A.expT<30)return;   // an order is on its way
+    const free=cl.filter(c=>!own.some(b=>Math.hypot(b.tx+b.size/2-c.x,b.ty+b.size/2-c.y)<13)).sort((p,q)=>Math.hypot(p.x-ncx,p.y-ncy)-Math.hypot(q.x-ncx,q.y-ncy));
+    const c=free[0];
+    if(!c){return;}   // every remaining cluster already has one of our Centrals
+    A.expDone=false;
+    if(tm.minerals<BD.central.cost)return;
+    const site=findSite(c.x,c.y,4,3,12,(x,y)=>c.rs.reduce((a,r)=>a+Math.hypot(r.tx+.5-x,r.ty+.5-y),0)/c.n);
+    const w=pickBuilder();if(!site||!w){A.expT=time-20;return;}
+    orderBuild(w,'central',site.tx,site.ty);A.expT=time;A.expW=w;A.expSite=site;
+    return;
+  }
+}
+function aiExpandTurrets(t,A,wk,pickBuilder){
+  /* after the expansion Central is placed: 2 turrets close to it, on the side facing the middle of the map */
+  const tm=teams[t],ne=buildings.find(b=>b.team===t&&b.type==='central'&&!b.dead&&A.expSite&&b.tx===A.expSite.tx&&b.ty===A.expSite.ty);
+  if(!ne)return;
+  const ecx=ne.tx+ne.size/2,ecy=ne.ty+ne.size/2;
+  const tur=buildings.filter(b=>b.team===t&&b.type==='turret'&&!b.dead&&Math.hypot(b.tx-ecx,b.ty-ecy)<13);
+  if(tur.length>=2||tm.minerals<BD.turret.cost)return;
+  if(wk.some(w=>w.order.type==='build'&&w.order.btype==='turret'&&Math.hypot(w.order.tx-ecx,w.order.ty-ecy)<14))return;
+  const site=findSite(ecx,ecy,2,4,9,(x,y)=>Math.hypot(x-HALF,y-HALF)+(tur.some(b=>Math.hypot(b.tx+1-x,b.ty+1-y)<6)?60:0));
+  const w=pickBuilder();if(site&&w)orderBuild(w,'turret',site.tx,site.ty);
+}
 function buildNear(unit,type,home){
   const s=BD[type].size,cx=home.tx+home.size/2,cy=home.ty+home.size/2,cands=[];
   for(let dy=-24;dy<=24;dy++)for(let dx=-24;dx<=24;dx++){
@@ -2596,8 +2725,21 @@ function aiRun(t){
   const grow=hardM?time:Math.min(time,240);   // Easy/Normal: army caps stop growing with time after the 4-minute mark
   const mine=units.filter(u=>u.team===t),wk=mine.filter(u=>u.type==='worker'),mar=mine.filter(u=>u.type==='headhunters'),rkt=mine.filter(u=>u.type==='rocket'),tnk=mine.filter(u=>u.type==='tank'),hel=mine.filter(u=>u.type==='heli'),army=mine.filter(u=>u.type!=='worker'&&u.type!=='overlord'),pro=raceOf(t)==='eirian',zea=mine.filter(u=>u.type==='unit02'),stk=mine.filter(u=>u.type==='axiom'),imm=mine.filter(u=>u.type==='zorions'),col=mine.filter(u=>u.type==='valkrie');
   const zrg=raceOf(t)==='draugar',zdg=mine.filter(u=>u.type==='dog'),zrv=mine.filter(u=>u.type==='vexor'),ztr=mine.filter(u=>u.type==='tree'),zpt=mine.filter(u=>u.type==='ptero');
-  const ulN=mine.filter(u=>u.type==='behemoth').length+buildings.reduce((n,b)=>n+(b.team===t&&!b.dead&&b.type==='ironnest'?b.queue.filter(q=>q.type==='behemoth').length:0),0);   // alive + in training
-  const wantUl=zrg&&zrv.length>=3&&ulN<Math.floor(zrv.length/3)&&buildings.some(b=>b.team===t&&b.type==='ironnest'&&b.done&&!b.dead);   // an Behemoth is due: hold back hounds/pterodactyls and keep spare supply until it is bought
+  const SUP=zrg?'behemoth':pro?'mothership':'mecha',supCnt=()=>superCnt(t,SUP);   // this team's super unit: alive + in training
+  const ulN=superCnt(t,'behemoth');
+  /* Super units (Medium/Hard AI): the FIRST one is bought before anything else (no other army, turrets or extra buildings until it is in training).
+     Every LATER one (after the old one died) is bought as soon as the AI has 10 supply of army units alive or in training; from then on it saves up for it.
+     Easy AI never prioritises them. */
+  const nonEasy=opts.diff!=='easy';
+  let armySup=0;
+  for(const u of mine)if(u.type!=='worker'&&!UD[u.type].give&&!SUPER[u.type])armySup+=UD[u.type].supply;
+  for(const b of buildings)if(b.team===t&&!b.dead)for(const q of b.queue)if(!q.res&&q.type!=='worker'&&!UD[q.type].give&&!SUPER[q.type])armySup+=UD[q.type].supply;
+  const supDue=nonEasy&&!!A&&supCnt()<1&&(!A.supEver||armySup>=10);
+  const hold=supDue&&!A.supEver;   // first time: everything else waits
+  const hasIron=buildings.some(b=>b.team===t&&b.type==='ironnest'&&b.done&&!b.dead);
+  const wantUl=zrg&&supDue&&hasIron;
+  const saveSup=supDue&&hasIron;   // keeps 10 free supply for it: ports/floaters are built earlier
+  const blockArmy=saveSup;         // other army units wait until it is bought (minerals are saved for it)
   const nex=buildings.find(b=>b.team===t&&b.type==='central'&&b.done&&!b.dead);
   if(!nex||!A)return;
   for(const w of wk)if(w.order.type==='idle'){
@@ -2606,37 +2748,43 @@ function aiRun(t){
     else{const r=freeRes(w.x,w.y)||nearestRes(w.x,w.y);if(r)startHarvest(w,r);}
   }
   if(wk.length<12&&nex.queue.length<2)queueTrain(nex,'worker');
-  if(zrg&&nex.queue.length<1&&zrv.length>=2&&time>200&&!wantUl&&zpt.length<cp(Math.min(10,2+Math.floor(grow/90))))queueTrain(nex,'ptero');
+  if(zrg&&nex.queue.length<1&&zrv.length>=2&&time>200&&!wantUl&&zpt.length<cp(Math.min(10,2+Math.floor(grow/90)))&&!supDue)queueTrain(nex,'ptero');
   const builders=wk.filter(w=>w.order.type==='build');
   const pending=type=>builders.some(w=>w.order.btype===type)||buildings.some(b=>b.team===t&&b.type===type&&!b.done&&!b.dead);
   const pickBuilder=()=>wk.find(w=>w.order.type==='harvest'&&w.carry===0&&w.order.st!=='mining')||wk.find(w=>w.order.type==='harvest');
   const bars=buildings.filter(b=>b.team===t&&b.type==='barracks'&&!b.dead);
-  if(zrg&&tm.cap-tm.used<=(wantUl?6:3)&&tm.minerals>=100&&!nex.queue.some(q=>q.type==='overlord'))queueTrain(nex,'overlord');
-  else if(!zrg&&!pending('port')&&tm.cap-tm.used<=3&&tm.minerals>=100){const w=pickBuilder();if(w)buildNear(w,'port',nex);}
-  else if(!pending('barracks')&&tm.minerals>=150&&((bars.length<1&&wk.length>=7)||(bars.length<2&&wk.length>=10&&time>300))){const w=pickBuilder();if(w)buildNear(w,'barracks',nex);}
+  if(zrg&&tm.cap-tm.used<=((hold||saveSup)?10:3)&&tm.minerals>=100&&!nex.queue.some(q=>q.type==='overlord'))queueTrain(nex,'overlord');
+  else if(!zrg&&!pending('port')&&tm.cap-tm.used<=((hold||saveSup)?10:3)&&tm.minerals>=100){const w=pickBuilder();if(w)buildNear(w,'port',nex);}
+  else if(!supDue&&!pending('barracks')&&tm.minerals>=150&&((bars.length<1&&wk.length>=7)||(bars.length<2&&wk.length>=10&&time>300))){const w=pickBuilder();if(w)buildNear(w,'barracks',nex);}
   const facs=buildings.filter(b=>b.team===t&&b.type==='ironnest'&&!b.dead);
-  if(!pending('port')&&!pending('barracks')&&!pending('ironnest')&&tm.minerals>=200&&bars.some(b=>b.done)&&((facs.length<1&&wk.length>=8&&time>100)||(facs.length<2&&wk.length>=11&&time>420))){const w=pickBuilder();if(w)buildNear(w,'ironnest',nex);}
+  if(!pending('port')&&!pending('barracks')&&!pending('ironnest')&&tm.minerals>=200&&(bars.some(b=>b.done)||hold)&&((facs.length<1&&wk.length>=8&&(time>100||hold))||(facs.length<2&&wk.length>=11&&time>420&&!supDue))){const w=pickBuilder();if(w)buildNear(w,'ironnest',nex);}
   const tur=buildings.filter(b=>b.team===t&&b.type==='turret'&&!b.dead);
-  if(!pending('port')&&!pending('barracks')&&!pending('ironnest')&&!pending('turret')&&tm.minerals>=200&&bars.some(b=>b.done)&&time>150&&tur.length<Math.min(6,2+Math.floor(time/240))){const w=pickBuilder();if(w)buildNear(w,'turret',nex);}
+  if(!pending('port')&&!pending('barracks')&&!pending('ironnest')&&!pending('turret')&&tm.minerals>=200&&!supDue&&bars.some(b=>b.done)&&time>150&&tur.length<(opts.diff==='easy'?1:Math.min(6,2+Math.floor(time/240)))){const w=pickBuilder();if(w)buildNear(w,'turret',nex);}   // Easy AI builds only 1 turret
+  aiExpand(t,A,nex,wk,pickBuilder,hold);aiExpandTurrets(t,A,wk,pickBuilder);
   const rally={x:clamp(nex.tx+nex.size/2+(nex.tx<HALF?12:-12),2,W-2),y:nex.ty+nex.size/2};
   for(const f of facs){
     if(!f.rally)f.rally=rally;
     if(zrg){
       if(f.done&&f.queue.length<1){
-        if(zrv.length>=3&&ulN<Math.floor(zrv.length/3))queueTrain(f,'behemoth');   // super unit unlocked by 3 vexors on the field
-        else if(zrv.length<cp(12))queueTrain(f,'vexor');
+        if(supDue)queueTrain(f,'behemoth');   // Medium/Hard: prioritised (saves up for it)
+        else if(!nonEasy&&supCnt()<1&&zrv.length>=3&&queueTrain(f,'behemoth')){}   // Easy: only when 3 vexors are on the field and it is affordable, never prioritised
+        else if(!blockArmy){if(zrv.length<cp(12))queueTrain(f,'vexor');}
       }
     }
     else if(pro&&f.done&&f.queue.length<1){
       /* zorions first, then a valkrie for every two zorions */
-      if(imm.length>=5&&mine.filter(u=>u.type==='mothership').length<Math.floor(imm.length/5)&&tm.minerals>=UD.mothership.cost&&queueTrain(f,'mothership')){}   // super unit unlocked by 5 zorions on the field; only bought when affordable right now, otherwise normal production carries on (no waiting)
+      if(supDue)queueTrain(f,'mothership');   // Medium/Hard: prioritised (saves up for it)
+      else if(!nonEasy&&imm.length>=5&&supCnt()<1&&tm.minerals>=UD.mothership.cost&&queueTrain(f,'mothership')){}   // Easy: only when 5 zorions are on the field and it is affordable right now, never prioritised
+      else if(blockArmy){}
       else if(imm.length>=2&&col.length<Math.min(6,Math.ceil(imm.length/2))&&time>200)queueTrain(f,'valkrie');
       else if(imm.length<cp(10))queueTrain(f,'zorions');
     }
     else if(f.done&&f.queue.length<1){
       /* mix: tanks first, then a copter for every two tanks, never starving either */
       const wantHeli=tnk.length>=2&&hel.length<Math.min(10,Math.ceil(tnk.length/2))&&time>200;
-      if(tnk.length>=3&&mine.filter(u=>u.type==='mecha').length<Math.floor(tnk.length/3))queueTrain(f,'mecha');   // super unit unlocked by 3 tanks on the field
+      if(supDue)queueTrain(f,'mecha');   // Medium/Hard: prioritised (saves up for it)
+      else if(!nonEasy&&supCnt()<1&&tnk.length>=3&&queueTrain(f,'mecha')){}   // Easy: only when 3 tanks are on the field and it is affordable, never prioritised
+      else if(blockArmy){}
       else if(wantHeli)queueTrain(f,'heli');
       else if(tnk.length<cp(14))queueTrain(f,'tank');
     }
@@ -2644,30 +2792,79 @@ function aiRun(t){
   for(const b of bars){
     if(!b.rally)b.rally=rally;
     if(zrg){
-      if(b.done&&b.queue.length<1&&!wantUl&&zdg.length<cp(Math.min(60,6+Math.floor(grow/24))))queueTrain(b,'dog');
+      if(b.done&&b.queue.length<1&&!supDue&&zdg.length<cp(Math.min(60,6+Math.floor(grow/24))))queueTrain(b,'dog');
     }
     else if(pro){
-      if(b.done&&b.queue.length<1&&zea.length+stk.length<cp(Math.min(40,4+Math.floor(grow/36))))queueTrain(b,zea.length<=stk.length?'unit02':'axiom');
+      if(b.done&&b.queue.length<1&&!supDue&&zea.length+stk.length<cp(Math.min(40,4+Math.floor(grow/36))))queueTrain(b,zea.length<=stk.length?'unit02':'axiom');
     }
-    else if(b.done&&b.queue.length<1&&mar.length+rkt.length<cp(Math.min(46,4+Math.floor(grow/30)))){
+    else if(b.done&&b.queue.length<1&&!supDue&&mar.length+rkt.length<cp(Math.min(46,4+Math.floor(grow/30)))){
       /* one rocket soldier for every two headhunters (from the second headhunters onward) */
       queueTrain(b,mar.length>=2&&rkt.length<Math.ceil(mar.length/2)?'rocket':'headhunters');
+    }
+  }
+  /* ---- protect super units: retreat to the base when low on shield+hp, fight on once healed or calm.
+     EXCEPTION: while an enemy is attacking this team's base (any enemy within 18 tiles of one of its buildings, the same test the base defence below uses),
+     super units never retreat: they stay and defend even at low hp. ---- */
+  let baseUnderAttack=false;
+  for(const e of units){
+    if(e.dead||side(e.team)===sd)continue;
+    for(const b of buildings){if(b.team===t&&!b.dead&&distRect(e.x,e.y,b.tx,b.ty,b.size)<18){baseUnderAttack=true;break;}}
+    if(baseUnderAttack)break;
+  }
+  for(const s of mine){
+    if(!SUPER[s.type]||s.dead)continue;
+    if(baseUnderAttack){   // defend the base: cancel any retreat in progress and let the base-defence orders below take over
+      if(s.flee){s.flee=false;if(s.order.type==='move')setOrder(s,{type:'idle'});}
+      continue;
+    }
+    const fr=(s.hp+(s.sh||0))/(s.maxhp+(s.maxsh||0));
+    if(!s.flee&&fr<.4){s.flee=true;s.fleeCalm=time;}
+    if(!s.flee)continue;
+    let threat=false;
+    for(const e of units){if(e.dead||side(e.team)===sd)continue;if(Math.hypot(e.x-s.x,e.y-s.y)<16){threat=true;break;}}
+    if(threat)s.fleeCalm=time;
+    const home=Math.hypot(s.x-rally.x,s.y-rally.y)<6;
+    if(fr>=.7||(home&&time-s.fleeCalm>15)){s.flee=false;continue;}
+    if(!home){if(s.order.type!=='move')setOrder(s,{type:'move',x:rally.x,y:rally.y});}   // fall back (special weapons still fire while it moves)
+    else if(s.order.type==='move')setOrder(s,{type:'idle'});
+  }
+  /* ---- base defence: any enemy near one of our buildings pulls every free army unit onto it ---- */
+  {
+    let tgt=null,bd=1e9;
+    for(const e of units){
+      if(e.dead||side(e.team)===sd)continue;
+      for(const b of buildings){
+        if(b.team!==t||b.dead)continue;
+        const d=distRect(e.x,e.y,b.tx,b.ty,b.size);
+        if(d<18&&d<bd){bd=d;tgt=e;}
+      }
+    }
+    if(tgt){
+      for(const m of army){
+        if(m.flee)continue;
+        const busy=m.order.type==='attack'&&m.order.target&&!m.order.target.dead;
+        const away=A.attacking&&A.go&&A.go.has(m.id);   // units already marching out on a wave keep going
+        if(busy||away||m.order.type==='build')continue;
+        if(m.order.type==='amove'&&m.order.def)continue;
+        setOrder(m,{type:'amove',x:tgt.x,y:tgt.y,def:true});m.mcap=0;
+      }
     }
   }
   const foe=buildings.filter(b=>side(b.team)!==sd&&!b.dead).sort((p,q)=>Math.hypot(p.tx-nex.tx,p.ty-nex.ty)-Math.hypot(q.tx-nex.tx,q.ty-nex.ty))[0];
   if(!foe)return;
   const gx=foe.tx+foe.size/2,gy=foe.ty+foe.size/2;
   const need=Math.max(3,cp(A.wave));
-  if(!A.attacking&&army.length>=need&&time>=A.after&&(hardM||time>=480)){   // Easy/Normal AI never attack before 8:00
-    A.attacking=true;A.go=new Set(army.map(u=>u.id));
+  const medM=opts.diff==='normal',fresh=medM?army.filter(u=>!(A.go&&A.go.has(u.id))):army;
+  if(medM?(time>=A.after&&fresh.length>=2):(!A.attacking&&army.length>=need&&time>=A.after&&(hardM||time>=480))){   // Easy AI never attacks before 8:00. Medium: first attack at 6:00, then a new batch every 2 minutes
+    A.attacking=true;if(medM){if(!A.go)A.go=new Set();for(const u of fresh)A.go.add(u.id);A.after=time+120;}else A.go=new Set(army.map(u=>u.id));
     if(sd)note('Enemy wave is crossing','warn');else note('Your ally is moving out','good');
   }
   if(A.attacking){
     /* AI waves (all races) move out together: only the units that were in the wave at launch are sent (new recruits wait at the rally point for the next wave), and the march keeps the pace of the slowest unit */
     const go=army.filter(m=>A.go&&A.go.has(m.id));
     let pace=99;for(const m of go)pace=Math.min(pace,UD[m.type].speed);
-    for(const m of go){m.mcap=pace;if(m.order.type==='idle')setOrder(m,{type:'amove',x:gx,y:gy});}
-    if(go.length<=Math.min(2,need-1)){A.attacking=false;A.go=null;for(const m of army)m.mcap=0;if(hardM)A.wave+=pro?2:3;A.after=time+60;}
+    for(const m of go){if(m.flee)continue;m.mcap=pace;if(m.order.type==='idle')setOrder(m,{type:'amove',x:gx,y:gy});}
+    if(go.length<=Math.min(2,need-1)){A.attacking=false;A.go=null;for(const m of army)m.mcap=0;if(hardM)A.wave+=pro?2:3;if(!medM)A.after=time+60;}
   }
 }
 
@@ -2690,7 +2887,7 @@ function sim(dt){
     if(e.d>0){e.d-=dt;continue;}
     e.t-=dt;
     if(e.k==='p'){e.x+=e.vx*dt;e.y+=e.vy*dt;}
-    else if(e.k==='sm'||e.k==='ms'||e.k==='md'){e.x+=e.vx*dt;e.y+=e.vy*dt;e.z+=e.vz*dt;}
+    else if(e.k==='sm'||e.k==='ms'||e.k==='md'||e.k==='bs'){e.x+=e.vx*dt;e.y+=e.vy*dt;e.z+=e.vz*dt;}
     else if(e.k==='sp'){const f=clamp(1-e.t/e.T,0,1);e.x=e.sx+(e.ex-e.sx)*f;e.y=e.sy+(e.ey-e.sy)*f;}
     else if(e.k==='m'){
       const f=clamp(1-e.t/e.T,0,1);
@@ -2760,7 +2957,7 @@ function newGame(){
       startHarvest(u,patches[(i*2)%patches.length]);
     }
   }
-  for(const t of aiTeams)ai[t]={attacking:false,wave:raceOf(t)==='eirian'?6:8,after:(opts.diff==='hard'?240:480)+(t===3?40:t===2?30:0)};
+  for(const t of aiTeams)ai[t]={attacking:false,wave:raceOf(t)==='eirian'?6:8,after:(opts.diff==='hard'?240:opts.diff==='normal'?360:480)+(t===3?40:t===2?30:0)};
   for(const [ex,ey] of EXPANSIONS)for(let k=0;k<8;k++){
     const rad=(110+k*20)*Math.PI/180,mx=Math.floor(ex+5.5*Math.cos(rad)),my=Math.floor(ey+5.5*Math.sin(rad));   // same half-ring shape as the base crystals
     if(occ[my*W+mx]!==3)addResource(mx,my);
@@ -2875,27 +3072,14 @@ function runCmd(id){
   if(id==='upgrade:ahp'||id==='upgrade:adm'){
     const ab=sel[0];
     if(!ab||ab.kind!=='b'||ab.type!=='arsenal'||ab.team!==0||!ab.done)return;
-    const isHp=id==='upgrade:ahp',tm=teams[0],rid=isHp?'ahp':'adm';
-    if(isHp?tm.upHp:tm.upDm)return;
-    if(ab.research){flash('Already researching');return;}
-    if(resBusy(0,rid)){flash('Already being researched');return;}
-    if(tm.minerals<300){flash('Not enough minerals');return;}
-    tm.minerals-=300;ab.research={id:rid,t:RES_T,tot:RES_T,cost:300};flash('Researching '+resName(rid,0)+' (40s)');
+    queueResearch(ab,id==='upgrade:ahp'?'ahp':'adm',300);
     return;
   }
-  if(id==='upgrade:laser'){
+  if(id==='upgrade:laser'||id==='upgrade:hp'){
     const nx=sel[0];
-    if(!nx||nx.kind!=='b'||nx.type!=='central'||nx.team!==0||!nx.done||nx.laser)return;
-    if(nx.research){flash('Already researching');return;}
-    if(teams[0].minerals<500){flash('Not enough minerals');return;}
-    teams[0].minerals-=500;nx.research={id:'laser',t:RES_T,tot:RES_T,cost:500};flash('Researching Laser Guns (40s)');return;
-  }
-  if(id==='upgrade:hp'){
-    const nx=sel[0];
-    if(!nx||nx.kind!=='b'||nx.type!=='central'||nx.team!==0||!nx.done||nx.defUp)return;   // once per Central
-    if(nx.research){flash('Already researching');return;}
-    if(teams[0].minerals<600){flash('Not enough minerals');return;}
-    teams[0].minerals-=600;nx.research={id:'hp',t:RES_T,tot:RES_T,cost:600};flash('Researching Defense Up (40s)');return;
+    if(!nx||nx.kind!=='b'||nx.type!=='central'||nx.team!==0||!nx.done)return;
+    if(id==='upgrade:laser')queueResearch(nx,'laser',500);else queueResearch(nx,'hp',600);
+    return;
   }
   if(a==='train'){sel.filter(e=>e.kind==='b'&&e.team===0&&e.done).forEach(bb=>queueTrain(bb,b));}
   else if(a==='build'){
@@ -3169,7 +3353,7 @@ ALB.syndicate.port={
   live(b,cx,cy,w,col,colD,f,run){
     const p=.5+.5*Math.sin(f*_TAU);soft(cx,cy-64,28+6*p,col,.4+.4*p);
     ctx.strokeStyle=rgba(col,.35+.4*p);ctx.lineWidth=1.3;ctx.beginPath();ctx.ellipse(cx,cy-60,17,17*K,0,0,_TAU);ctx.stroke();
-    const y=cy-48-(f*BLD_N%BLD_N)*3;ctx.fillStyle=rgba('#ffffff',(1-(f*BLD_N%BLD_N)/BLD_N)*.7);ctx.beginPath();ctx.arc(cx+Math.sin(f*_TAU*2)*3,cy-48-(f*BLD_N%BLD_N)*3.2,1.4,0,_TAU);ctx.fill();
+    if(run){const y=cy-48-(f*BLD_N%BLD_N)*3;ctx.fillStyle=rgba('#ffffff',(1-(f*BLD_N%BLD_N)/BLD_N)*.7);ctx.beginPath();ctx.arc(cx+Math.sin(f*_TAU*2)*3,cy-48-(f*BLD_N%BLD_N)*3.2,1.4,0,_TAU);ctx.fill();}
   }};
 ALB.syndicate.ironnest=(()=>{
   const Hh=w=>[[6,w*.36],[30,w*.36],[40,w*.33],[48,w*.26],[54,w*.17]],ST=[[40,9],[66,7],[72,9.5],[77,9.5]];
@@ -3202,7 +3386,7 @@ ALB.syndicate.ironnest=(()=>{
     soft(cx,fy-12,30,TH.amb,fl*.8);soft(cx,fy-6,16,'#ffd27a',fl*.5);
     for(const [sx2,sy2] of stacks(cx,cy)){const g=ctx.globalAlpha;
       soft(sx2,sy2-77,9,TH.amb,.35+.35*p);
-      for(let i=0;i<4;i++){const u=((f*BLD_N/ (run?7:14))+i/4)%1;ctx.globalAlpha=g*(1-u)*(run?.6:.3);ctx.fillStyle='#aeb6bf';ctx.beginPath();ctx.arc(sx2+u*9+Math.sin(u*6+i)*2,sy2-80-u*34,3+u*7,0,_TAU);ctx.fill();}
+      if(run)for(let i=0;i<4;i++){const u=((f*BLD_N/ (run?7:14))+i/4)%1;ctx.globalAlpha=g*(1-u)*(run?.6:.3);ctx.fillStyle='#aeb6bf';ctx.beginPath();ctx.arc(sx2+u*9+Math.sin(u*6+i)*2,sy2-80-u*34,3+u*7,0,_TAU);ctx.fill();}
       ctx.globalAlpha=g;}
   }};
 })();
@@ -3311,7 +3495,7 @@ ALB.eirian.barracks=(()=>({
     const p=.5+.5*Math.sin(f*_TAU),q=run?1.6:1;
     soft(cx,cy-36,40,col,Math.min(1,(.3+.3*p)*q));
     ctx.save();ctx.beginPath();ctx.ellipse(cx,cy-36,20,31,0,0,_TAU);ctx.clip();
-    for(let i=0;i<4;i++){const ph=(f*(run?2:1)+i/4)%1;ctx.strokeStyle=rgba('#ffffff',(1-ph)*.65);ctx.lineWidth=1.6;ctx.beginPath();ctx.ellipse(cx,cy-36,3+ph*20,5+ph*34,0,0,_TAU);ctx.stroke();}
+    if(run)for(let i=0;i<4;i++){const ph=(f*(run?2:1)+i/4)%1;ctx.strokeStyle=rgba('#ffffff',(1-ph)*.65);ctx.lineWidth=1.6;ctx.beginPath();ctx.ellipse(cx,cy-36,3+ph*20,5+ph*34,0,0,_TAU);ctx.stroke();}
     ctx.restore();soft(cx,cy-82,12,'#ffd98a',.4+.4*p);
   }}))();
 ALB.eirian.port={
@@ -3435,7 +3619,7 @@ ALB.draugar.central=(()=>{
     soft(cx,cy-110,30+6*p,H.ac,.32+.3*p);soft(cx,cy-110,18,'#ff7a9a',.25+.3*p);
     for(const [a,z,r] of BOILS){const s=Math.sin(a);if(s<0)continue;soft(cx+Math.cos(a)*rAt(mp,z),cy+s*rAt(mp,z)*K-z,r*2.2,H.ac,.15+.4*(.5+.5*Math.sin(f*_TAU+a)));}
     soft(cx,cy+rAt(mp,22)*K-22,24,H.ac,.25+.3*p);
-    for(let i=0;i<5;i++){const u=(f*2+i/5)%1;ctx.fillStyle=rgba(H.ac,(1-u)*.8);ctx.beginPath();ctx.arc(cx+Math.sin(i*2.3+u*3)*12,cy-118-u*34,1.2+(1-u),0,_TAU);ctx.fill();}
+    if(run)for(let i=0;i<5;i++){const u=(f*2+i/5)%1;ctx.fillStyle=rgba(H.ac,(1-u)*.8);ctx.beginPath();ctx.arc(cx+Math.sin(i*2.3+u*3)*12,cy-118-u*34,1.2+(1-u),0,_TAU);ctx.fill();}
     for(let i=0;i<5;i++){const pp=.5+.5*Math.sin(f*_TAU-i*1.3);vein(cx,cy,mp,.4+i*1.25,10,88,.5,i*1.7,'#ff6a8a',.9,.1+.55*pp);}
   }};
 })();
@@ -3460,7 +3644,7 @@ ALB.draugar.barracks=(()=>{const RM=w=>[[0,w*.38],[4,w*.4],[9,w*.37],[13,w*.31]]
   },
   live(b,cx,cy,w,col,colD,f,run){
     const H=ZH,p=.5+.5*Math.sin(f*_TAU*(run?2:1)),py=cy-13;soft(cx,py,w*.34,H.ac,(.3+.3*p)*(run?1.4:1));
-    for(let i=0;i<6;i++){const u=(f*(run?3:2)+i/6)%1;ctx.fillStyle=rgba('#e8ffa0',(1-u)*.8);ctx.beginPath();ctx.arc(cx+Math.sin(i*2.1)*w*.18,py-u*30,1.2+(1-u)*1.6,0,_TAU);ctx.fill();}
+    if(run)for(let i=0;i<6;i++){const u=(f*(run?3:2)+i/6)%1;ctx.fillStyle=rgba('#e8ffa0',(1-u)*.8);ctx.beginPath();ctx.arc(cx+Math.sin(i*2.1)*w*.18,py-u*30,1.2+(1-u)*1.6,0,_TAU);ctx.fill();}
   }};})();
 ALB.draugar.port={
   body(b,cx,cy,w,col,colD,v){
@@ -3497,7 +3681,7 @@ ALB.draugar.ironnest=(()=>{const D=w=>domeP(8,w*.36,50,12,2.1);return{
   },
   live(b,cx,cy,w,col,colD,f,run){
     const H=ZH,d=D(w),p=.5+.5*Math.sin(f*_TAU*(run?2:1));soft(cx,cy+rAt(d,8)*K-15,28,H.ac,(.25+.3*p)*(run?1.6:1));
-    for(const sx of [-1,1]){const x=cx+sx*w*.2,y=cy-64;soft(x,y,6,H.ac,.4+.3*p);for(let i=0;i<4;i++){const u=(f*(run?3:1.5)+i/4+(sx>0?.3:0))%1;ctx.fillStyle=rgba('#c8e8a0',(1-u)*(run?.55:.3));ctx.beginPath();ctx.arc(x+u*6*sx+Math.sin(u*5+i)*2,y-u*30,2+u*6,0,_TAU);ctx.fill();}}
+    for(const sx of [-1,1]){const x=cx+sx*w*.2,y=cy-64;soft(x,y,6,H.ac,.4+.3*p);if(run)for(let i=0;i<4;i++){const u=(f*(run?3:1.5)+i/4+(sx>0?.3:0))%1;ctx.fillStyle=rgba('#c8e8a0',(1-u)*(run?.55:.3));ctx.beginPath();ctx.arc(x+u*6*sx+Math.sin(u*5+i)*2,y-u*30,2+u*6,0,_TAU);ctx.fill();}}
     for(let i=0;i<4;i++){const pp=.5+.5*Math.sin(f*_TAU-i*1.5);vein(cx,cy,d,.5+i*1.5,12,46,.4,i,'#c8ff4a',.8,.1+.45*pp,1.3);}
   }};})();
 ALB.draugar.arsenal=(()=>{const SK=w=>[[0,w*.42],[5,w*.43],[10,w*.38],[16,w*.32]];return{
@@ -4089,10 +4273,7 @@ function aValkrieG(u,t,x,y,col,fc,fs,mv,rec,sl){
 
 const PGOLD='#cdb872',PGOLD2='#9a8645',PGLOW='#8fe9ff';
 function pShield(u,x,y,rx,h){
-  if(!u.maxsh||u.sh<=0)return;
-  const a=time-u.shT;if(a>.3)return;
-  ctx.strokeStyle='rgba(143,233,255,'+(.85*(1-a/.3)).toFixed(2)+')';ctx.lineWidth=2;
-  ctx.beginPath();ctx.ellipse(x,y-h/2,rx,h/2+3,0,0,7);ctx.stroke();
+  return;   // the white-blue hit ring is gone: shield hits now puff bright blue smoke instead (see damage())
 }
 /* ===== EIRIAN UNITS v2: ivory and gold alien warriors built from the same parts as the Eirian buildings
    (lathe-turned armour, faceted team-colour crystals, tapered shaded limbs, golden trim, cyan psi light).
@@ -4637,7 +4818,7 @@ function spriteUnit(u,t,cls){
   const hit=u.hit>0?1:0,carry=u.carry>0?1:0,idv=u.id&3,sl=(u.slN||0)&1;
   const ob=(o.type==='build'&&o.st==='building')?1:0,om=(o.type==='harvest'&&o.st==='mining')?1:0,oi=o.type==='idle'?1:0;
   const z8=cam.z>=.8?1:0,rc=({syndicate:0,eirian:1,draugar:2})[raceOf(u.team)]||0,atk=o.type==='attack'?1:0;
-  let shb=0;if(u.maxsh&&u.sh>0){const a=time-u.shT;if(a<=.3)shb=1+Math.min(2,(a/.1)|0);}   // shield flash stage
+  let shb=0;   // shield flash stage
   let k=u.team;k=k<<5|fq;k=k<<1|mv;k=k<<4|sb;k=k<<1|idle;k=k<<1|hit;k=k<<1|carry;k=k<<1|ob;k=k<<1|om;k=k<<1|oi;k=k<<2|idv;k=k<<1|z8;k=k<<3|shb;k=k<<1|sl;k=k<<2|rc;k=k<<1|atk;
   const tb=Math.floor(t*SPR_TB+idv*.25),key=(tb*16+SPR_TYPE[u.type])*1073741824+k;   // idv (id&3) is already part of the key, so same-key units share a phase: re-bakes now roll over on 4 staggered frames instead of all at once   // k is 30 bits, the unit type sits above it
   let v=SPR.get(key);
@@ -4739,16 +4920,16 @@ function zWraith(Z){   // hooded ghost: tattered cloak streaming behind, glowing
   shadow(x,y+3,7.5);
   const Q=[];
   Q.push([-60,()=>{const g=P(-2,0,1);zGlow(g[0],g[1],10,'#a9b4bd',.14);zGlow(g[0]+2,g[1],6,'#a9b4bd',.1);}]);
-  Q.push([-18*fs,()=>{   // flowing, torn cloak: three ragged sheets and a handful of thin threads
-    for(let j=2;j>=0;j--){
-      const w=7.5-j*1.3,pts=[P(0,-w,26+b),P(0,w,26+b)],ex=-(5+12*sp+j*3);
-      for(let k=6;k>=0;k--){const f=k/6,sw=Math.sin(ph*.7+k*1.7+j*2.1);pts.push(P(ex-sw*2.5-(k&1)*2,(f*2-1)*w*(1.15+.5*sp)+sw*1.5,2+b+(k&1)*3.5));}
-      zGP(pts,zGr(P(0,0,26+b),P(ex,0,2+b),[[0,'rgba(74,78,85,.95)'],[.5,'rgba(36,38,43,.95)'],[1,'rgba(12,13,15,.8)']]),'rgba(8,8,10,.8)');
-    }
-    for(let i=0;i<14;i++){
-      const ly=(i/13-.5)*12,sw=Math.sin(ph*.8+i*1.3)*2.2;
-      zLine([P(0,ly,24+b-(i%3)),P(-6-6*sp,ly*1.3+sw,12+b),P(-12-16*sp-(i%4)*2,ly*1.8+sw*1.6,3+b+(i%3))],i%4===0?1.3:.8,i%3?'rgba(150,154,162,.55)':'rgba(20,21,24,.85)');
-    }
+  Q.push([-18*fs,()=>{   // long, whole cloak: one smooth sheet down to the ground, no rips, no threads, no per-frame wobble (cheap to bake)
+    const w=8.2,ex=-(8+13*sp),lo=1.5+b*.3,pts=[P(0,-w,26+b),P(0,w,26+b)];
+    for(let k=0;k<=8;k++){const f=k/8,sd=f*2-1;pts.push(P(ex*(1-.18*sd*sd),sd*w*(1.25+.55*sp),lo));}   // gently curved, unbroken hem
+    zGP(pts,zGr(P(0,0,26+b),P(ex,0,lo),[[0,'rgba(78,82,90,.98)'],[.5,'rgba(38,40,46,.98)'],[1,'rgba(14,15,18,.95)']]),'rgba(8,8,10,.8)');
+    for(const s2 of [-.55,0,.55])zLine([P(0,s2*w,25+b),P(ex*.5,s2*w*1.5,12+b),P(ex*.9,s2*w*1.9,lo+1)],.9,s2?'rgba(150,154,162,.35)':'rgba(10,11,13,.6)');   // three soft fold lines
+  }]);
+  Q.push([-18*fs+.5,()=>{   // long hair: one smooth silver-black sheet from under the hood down the back, with two strand lines
+    const sw=mv?1.5:0.5,top=[P(-3,-4.6,33+b),P(-3,4.6,33+b)],pts=top.concat([P(-6-3*sp,6.5,18+b),P(-8-5*sp,5.5+sw,6+b),P(-9-6*sp,1,2.5+b),P(-8-5*sp,-5.5-sw,6+b),P(-6-3*sp,-6.5,18+b)]);
+    zGP(pts,zGr(P(-3,0,33+b),P(-9-6*sp,0,2.5+b),[[0,'#a7adb7'],[.45,'#555b66'],[1,'#1b1e25']]),'rgba(8,8,10,.7)');
+    for(const s2 of [-2.2,2.2])zLine([P(-3.5,s2,32+b),P(-6.5-3*sp,s2*1.9,16+b),P(-8.5-5*sp,s2*2.2,5+b)],.8,'rgba(210,214,222,.4)');
   }]);
   const arm=(s,far)=>()=>{   // sleeve and a skeletal hand; the near arm reaches forward, the far one is tucked in
     const dip=mining?6+Math.sin(t*14)*3:0,ex=far?3:7,ey=far?7.5:8,ez=far?19:22-dip*.3,hx=far?5:14,hy=far?5:7.5,hz=far?16:22-dip;
@@ -4763,7 +4944,6 @@ function zWraith(Z){   // hooded ghost: tattered cloak streaming behind, glowing
   Q.push([0,()=>{
     zTb(P(1,0,25+b),P(-1,0,6+b),6.2,8.4,ZCL);   // robe
     zLine([P(1,-2,24+b),P(-1,-3,8+b)],.8,'rgba(170,174,182,.4)');zLine([P(1,2.5,24+b),P(-1,3.5,8+b)],.8,'rgba(6,6,8,.6)');
-    for(let k=-3;k<=3;k++)zGP([P(-1,k*2.4-1.2,6+b),P(-1.5,k*2.4+1.2,6+b),P(-1.5,k*2.4,b+(k&1)*2)],'#1b1c20');   // ragged hem
     const o=P(1,0,19+b);zGlow(o[0],o[1],4.5,col,.25);zGlow(o[0],o[1],2,col,.85);   // team-coloured soul light in the chest
   }]);
   Q.push([.3,()=>{   // pointed hood, black face and two yellow eyes
@@ -5085,7 +5265,6 @@ function drawMothership(u,t){
   ctx.save();ctx.globalAlpha=.55+.4*pulse;E(cx,cyy+4*S,34*S,8*S,null,col,2);ctx.restore();
   // hit flash and shield flash
   if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.35)';ctx.beginPath();ctx.ellipse(cx,y0,R,R*K,0,0,7);ctx.fill();}
-  if(u.maxsh&&u.sh>0){const a=time-u.shT;if(a<=.3){ctx.strokeStyle='rgba(143,233,255,'+(.85*(1-a/.3)).toFixed(2)+')';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cx,y0-12*S,R*1.06,R*K*1.06+34*S,0,0,7);ctx.stroke();}}
   ctx.restore();
 }
 
@@ -5883,6 +6062,10 @@ function render(t){
       const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f*1.4);
       ctx.globalAlpha=e.a*(1-f);ctx.drawImage(glowSprite('mstk',[[0,'rgba(138,144,150,1)'],[.72,'rgba(138,144,150,1)'],[1,'rgba(138,144,150,0)']]),e.x*T-r,e.y*T*K-e.z-r,r*2,r*2);ctx.globalAlpha=1;
     }
+    else if(e.k==='bs'){   // shield-hit smoke: cached bright blue disc, grows and fades as it drifts up
+      const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f*1.6);
+      ctx.globalAlpha=e.a*(1-f);ctx.drawImage(glowSprite('bsmk',[[0,'rgba(150,215,255,1)'],[.45,'rgba(60,160,255,.9)'],[1,'rgba(30,110,255,0)']]),e.x*T-r,e.y*T*K-e.z-r,r*2,r*2);ctx.globalAlpha=1;
+    }
     else if(e.k==='md'){   // mecha footfall dust: cached tan disc, flattened to the ground plane
       const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f);
       ctx.globalAlpha=.4*(1-f);ctx.drawImage(glowSprite('mdst',[[0,'rgba(167,155,134,1)'],[.72,'rgba(167,155,134,1)'],[1,'rgba(167,155,134,0)']]),e.x*T-r,e.y*T*K-e.z-r*K,r*2,r*2*K);ctx.globalAlpha=1;
@@ -5926,7 +6109,13 @@ function render(t){
   if(place&&mouse.inside){
     const s=BD[place.type].size,w=toWorld(mouse.sx,mouse.sy),tx=Math.round(w.x-s/2),ty=Math.round(w.y-s/2);
     const ok=canPlace(place.type,tx,ty)&&teams[0].minerals>=BD[place.type].cost;
-    ctx.fillStyle=ok?'rgba(111,227,160,.25)':'rgba(242,100,90,.3)';ctx.strokeStyle=ok?C.good:C.bad;ctx.lineWidth=2;
+    {   // transparent copy of the real building under the cursor (same art as the finished one, drawn in building space)
+      const m=ctx.getTransform(),gb={id:0,kind:'b',type:place.type,team:0,tx,ty,size:s,done:false,prog:.2,hp:1,maxhp:1,queue:[],cd:0,aim:undefined};
+      ctx.save();ctx.setTransform(m.a,0,0,m.a,m.e,m.f);
+      try{if(SPRITE_CACHE&&sprSc)spriteBuilding(gb,t);else drawBuildingRaw(gb,t);}catch(e){}
+      ctx.restore();
+    }
+    ctx.fillStyle=ok?'rgba(111,227,160,.2)':'rgba(242,100,90,.3)';ctx.strokeStyle=ok?C.good:C.bad;ctx.lineWidth=2;
     ctx.fillRect(tx*T,ty*T,s*T,s*T);ctx.strokeRect(tx*T,ty*T,s*T,s*T);
   }
   ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -6837,7 +7026,7 @@ function infoHTML(e){
         k('Trains','Worker · 50');k('Queue',e.queue.length+' / 5');
       }
     }
-    if(mine&&e.research)k('Researching',resName(e.research.id,0)+' · '+Math.ceil(e.research.t)+'s',1);
+    if(mine&&e.queue&&e.queue[0]&&e.queue[0].res)k('Researching',resName(e.queue[0].res,0)+' · '+Math.ceil(e.queue[0].t)+'s',1);
     if(e.type==='arsenal')k('Research','Unit HP +'+(raceOf(e.team)==='draugar'?50:25)+' · Unit damage +7');
     if(e.type==='barracks'){k('Trains',RACES[raceOf(e.team)].bar.map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
     if(e.type==='ironnest'){k('Trains',RACES[raceOf(e.team)].fac.concat(raceOf(e.team)==='eirian'?['mothership']:raceOf(e.team)==='draugar'?['behemoth']:[]).map(ty=>UD[ty].name+' · '+UD[ty].cost).join(', '));if(mine&&e.done)k('Queue',e.queue.length+' / 5');}
@@ -6878,13 +7067,14 @@ function selInner(){
     else h+='<span>'+(foe?'Hostile':'Online')+'</span>';
     h+='</div>'+infoHTML(e);
     if(e.kind==='b'&&e.done&&e.team===0&&(e.type==='central'||e.type==='barracks'||e.type==='ironnest'||e.type==='arsenal')){
-      if(e.queue.length||e.research)h+='<div class="qrow">';
-      if(e.research){const rr=e.research;h+='<button class="q" type="button" data-q="r" title="'+resName(rr.id,0)+' - researching. Click to cancel and refund">'+svg(RES_INFO[rr.id].ic,28)+'<i style="width:'+Math.round(clamp(1-rr.t/rr.tot,0,1)*100)+'%;background:#f2a93b"></i><span style="position:absolute;right:2px;top:1px;font:700 9px var(--f-num);color:#fff;text-shadow:0 0 3px #000">'+Math.ceil(rr.t)+'s</span></button>';}
+      if(e.queue.length)h+='<div class=\"qrow\">';
       for(let i=0;i<5;i++){
         const q=e.queue[i];
-        if(q){const tot=UD[q.type].time;h+='<button class="q" type="button" data-q="'+i+'" title="Cancel and refund">'+miniAv(q.type,0,32)+(i===0?'<i style="width:'+Math.round((1-q.t/tot)*100)+'%"></i>':'')+'</button>';}
+        if(!q)continue;
+        if(q.res){h+='<button class=\"q\" type=\"button\" data-q=\"'+i+'\" title=\"'+resName(q.res,0)+(i===0?' - researching':' - queued')+'. Click to cancel and refund\">'+svg(RES_INFO[q.res].ic,28)+(i===0?'<i style=\"width:'+Math.round(clamp(1-q.t/q.tot,0,1)*100)+'%;background:#f2a93b\"></i><span style=\"position:absolute;right:2px;top:1px;font:700 9px var(--f-num);color:#fff;text-shadow:0 0 3px #000\">'+Math.ceil(q.t)+'s</span>':'')+'</button>';continue;}
+        const tot=UD[q.type].time;h+='<button class=\"q\" type=\"button\" data-q=\"'+i+'\" title=\"Cancel and refund\">'+miniAv(q.type,0,32)+(i===0?'<i style=\"width:'+Math.round((1-q.t/tot)*100)+'%\"></i>':'')+'</button>';
       }
-      if(e.queue.length||e.research)h+='</div>';
+      if(e.queue.length)h+='</div>';
     }
     return h;
   }
@@ -6908,12 +7098,12 @@ function cmdHTML(){
   for(const el of $('cmd').querySelectorAll('.cmd')){
     const id=el.dataset.c,[a,b]=id.split(':');
     let dis=false;
-    const rs=!!(sel[0]&&sel[0].research);   // researching: no other research and no training in this building
-    if(id==='upgrade:hp')dis=t0.minerals<600||rs||!!(sel[0]&&sel[0].defUp);
-    else if(id==='upgrade:laser')dis=t0.minerals<500||rs||!!(sel[0]&&sel[0].laser);
-    else if(id==='upgrade:ahp')dis=t0.minerals<300||!!t0.upHp||rs||resBusy(0,'ahp');
-    else if(id==='upgrade:adm')dis=t0.minerals<300||!!t0.upDm||rs||resBusy(0,'adm');
-    else if(a==='train'||a==='build'){const cost=(a==='train'?UD:BD)[b].cost;dis=t0.minerals<cost;if(a==='train'&&t0.used+1>t0.cap&&!UD[b].give)dis=true;if(a==='train'&&rs)dis=true;}
+    const qf=!!(sel[0]&&sel[0].queue&&sel[0].queue.length>=5),qh=rid=>!!(sel[0]&&sel[0].queue&&sel[0].queue.some(q=>q.res===rid));   // queue full / this upgrade already queued here
+    if(id==='upgrade:hp')dis=t0.minerals<600||qf||qh('hp')||!!(sel[0]&&sel[0].defUp);
+    else if(id==='upgrade:laser')dis=t0.minerals<500||qf||qh('laser')||!!(sel[0]&&sel[0].laser);
+    else if(id==='upgrade:ahp')dis=t0.minerals<300||!!t0.upHp||qf||resBusy(0,'ahp');
+    else if(id==='upgrade:adm')dis=t0.minerals<300||!!t0.upDm||qf||resBusy(0,'adm');
+    else if(a==='train'||a==='build'){const cost=(a==='train'?UD:BD)[b].cost;dis=t0.minerals<cost;if(a==='train'&&t0.used+UD[b].supply>t0.cap&&!UD[b].give)dis=true;if(a==='train'&&SUPER[b]&&superCnt(0,b)>0)dis=true;}
     el.disabled=dis||!!over;
     el.classList.toggle('on',(id==='upgrade:laser'&&!!(sel[0]&&sel[0].laser))||(id==='upgrade:hp'&&!!(sel[0]&&sel[0].defUp))||(id==='upgrade:ahp'&&!!t0.upHp)||(id==='upgrade:adm'&&!!t0.upDm)||(id==='amove'&&aMode)||(id==='rally'&&rallyMode)||(a==='build'&&place&&place.type===b));
   }
@@ -7065,7 +7255,7 @@ const TDESC={
   headhunters:'Cheap, fast rifle infantry. Hits ground and air units.',
   rocket:'Armoured anti-tank trooper with area damage. Bonus damage vs tanks. Can hit air units.',
   tank:'Heavy siege cannon with long range, bonus damage vs armoured. Cannot hit air units.',
-  mecha:'Heavy walker with a gatling cannon and a shoulder rocket pod. The gatling hits ground units and buildings only; the rockets also hit air.',
+  mecha:'Heavy walker with a gatling cannon and a shoulder rocket pod. Both hit ground units, buildings and air.',
   heli:'Fast armored gunship that flies over terrain. Attacks units, not buildings.',
   unit02:'Melee psi-blade warrior with a plasma shield. Strong vs headhunters and workers. Cannot hit air.',
   axiom:'Long-range shielded skirmisher. Bonus vs armoured. Hits ground and air, the Eirian answer to copters.',
@@ -7073,7 +7263,7 @@ const TDESC={
   valkrie:'Giant walker with twin lances: area damage, bonus vs light infantry. Cannot hit air.',
   central:'Command center. Drop-off point for minerals; trains workers.',
   arsenal:'Research: +25 hp and +7 damage for all your units, 300 minerals each.',
-  port:'Raises your command points (supply cap) by 8 so you can train more units.',
+  port:'Raises your command points (supply cap) by 15 so you can train more units.',
   barracks:'Trains headhunters and rocket soldiers.',
   ironnest:'Trains tanks and copters.',
   turret:'Defence tower. Automatically shoots any enemy ground or air unit in range.'
@@ -7147,10 +7337,9 @@ $('sel').addEventListener('pointerdown',e=>{
   const q=e.target.closest('.q[data-q]');
   if(!q||sel.length!==1||sel[0].kind!=='b'||sel[0].team!==0)return;
   const b=sel[0];
-  if(q.dataset.q==='r'){if(b.research){teams[0].minerals+=b.research.cost;b.research=null;hud.lastSel='';hudDirty=true;flash('Research cancelled, minerals refunded');}return;}
   const i=+q.dataset.q,it=b.queue[i];
   if(!it)return;
-  teams[0].minerals+=UD[it.type].cost;b.queue.splice(i,1);hud.lastSel='';hudDirty=true;
+  teams[0].minerals+=it.res?it.cost:UD[it.type].cost;b.queue.splice(i,1);hud.lastSel='';hudDirty=true;
 });
 $('log').addEventListener('click',e=>{const li=e.target.closest('li[data-x]');if(li)centerOn(+li.dataset.x,+li.dataset.y);});
 document.querySelectorAll('#spd .btn').forEach(b=>b.addEventListener('click',()=>{
@@ -7285,9 +7474,9 @@ function setMap(id){
 }
 function drawPickMap(){const c=$('pickMap');if(c.width!==384)c.width=c.height=384;c.getContext('2d').drawImage(mapThumbs[opts.map],0,0,384,384);}
 const DIFFS=[
-  {id:'easy',name:'Easy',pips:1,desc:'Every AI (enemies and your ally) fields a quarter of the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings. Command point cap 15. No attacks before 8 minutes',cl:'easy'},
-  {id:'normal',name:'Normal',pips:2,desc:'Every AI (enemies and your ally) fields half the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings. Command point cap 23. No attacks before 8 minutes',cl:'norm'},
-  {id:'hard',name:'Hard',pips:4,desc:'Full-strength AI, exactly as it plays mostly unrestricted: armies and attack waves keep growing. Plans Defense and Dynamic Strike Timings',cl:'hard'}];
+  {id:'easy',name:'Easy',pips:1,desc:'Every AI (enemies and your ally) fields a quarter of the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings. Command point cap 20. Builds only 1 turret and does not prioritise super units. First attack at 6 minutes, then a new batch every 2 minutes',cl:'easy'},
+  {id:'normal',name:'Normal',pips:2,desc:'Every AI (enemies and your ally) fields half the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings. Command point cap 40. First attack at 6 minutes, then a new batch every 2 minutes',cl:'norm'},
+  {id:'hard',name:'Hard',pips:4,desc:'Full-strength AI, exactly as it plays mostly unrestricted: armies and attack waves keep growing. Command point cap 100. Plans Defense and Dynamic Strike Timings',cl:'hard'}];
 const RICON={syndicate:'<svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 8v8M8 10.5l8 3M16 10.5l-8 3"/></svg>',
              eirian:'<svg viewBox="0 0 24 24"><path d="M12 2l6 10-6 10-6-10z"/><path d="M6 12h12M12 2v20"/></svg>',
              draugar:'<svg viewBox="0 0 24 24"><path d="M3 15c0-5 4-8 9-8s9 3 9 8"/><path d="M6 15l-1 5M10 15l-.5 5M14 15l.5 5M18 15l1 5"/><path d="M8 9l-2-5M12 7V2M16 9l2-5"/></svg>'};
@@ -7302,7 +7491,7 @@ function paintPick(sl){
 }
 function menuSummary(){
   const d=DIFFS.find(x=>x.id===opts.diff);
-  $('mSum').innerHTML=(()=>{const r=menuRaces(),n=i=>'<b>'+RACES[r[i]].name+'</b>';return $('optAlly').checked?n(0)+' + '+n(2)+' (ally) vs '+n(1)+' + '+n(3):n(0)+' vs '+n(1);})()+' &middot; '+($('optAlly').checked?'2v2 with teammate AI':'1v1')+'<br>Map: <b>'+MAPSET.find(m=>m.id===opts.map).name+'</b> &middot; Spawn <b>'+(opts.slot+1)+'</b><br>Difficulty: <b>'+d.name+'</b>';
+  $('mSum').innerHTML=(()=>{const r=menuRaces(),n=i=>'<b>'+RACES[r[i]].name+'</b>';return $('optAlly').checked?n(0)+' + '+n(2)+' (ally) vs '+n(1)+' + '+n(3):n(0)+' vs '+n(1);})()+' &middot; '+($('optAlly').checked?'2v2 with teammate AI':'1v1')+'<br>Map: <b>'+MAPSET.find(m=>m.id===opts.map).name+'</b> &middot; Spawn <b>'+(opts.slot+1)+'</b><br>Difficulty: <b>'+d.name+'</b><br>Frame cap: <b>'+opts.fps+' FPS</b> &middot; Scroll speed: <b>'+(opts.scroll===1?'Normal':'Fast +50%')+'</b>';
   paintPick(opts.slot);
 }
 function raceCards(host,sel,foe,same){
@@ -7335,6 +7524,8 @@ function syncMenu(){
   ['lblAlly','cardsAlly','lblFoe2','cardsFoe2'].forEach(id=>{$(id).style.display=$('optAlly').checked?'':'none';});
   document.querySelectorAll('#segMode button').forEach(b=>b.classList.toggle('on',(b.dataset.v==='2')===$('optAlly').checked));
   document.querySelectorAll('#diffList .mCard').forEach(c=>c.classList.toggle('on',c.dataset.d===opts.diff));
+  document.querySelectorAll('#fpsList .mCard').forEach(c=>c.classList.toggle('on',+c.dataset.v===opts.fps));
+  document.querySelectorAll('#scrollList .mCard').forEach(c=>c.classList.toggle('on',+c.dataset.v===opts.scroll));
   document.querySelectorAll('#mapList .mMap').forEach(b=>b.classList.toggle('on',b.dataset.id===opts.map));
   if(mapThumbs[opts.map])drawPickMap();
   paintVs();menuSummary();
@@ -7357,6 +7548,11 @@ function buildPick(){
   $('mapList').querySelectorAll('.mMap').forEach(b=>b.addEventListener('click',()=>{opts.map=b.dataset.id;syncMenu();}));
   $('diffList').innerHTML=DIFFS.map(d=>'<button type="button" class="mCard '+d.cl+'" data-d="'+d.id+'"><div><b>'+d.name+'</b><small>'+d.desc+'</small></div><span class="pips" style="color:'+(d.id==='hard'?'var(--warn)':'var(--good)')+'">'+[0,1,2,3].map(k=>'<i class="'+(k<d.pips?'f':'')+'"></i>').join('')+'</span></button>').join('');
   $('diffList').querySelectorAll('.mCard').forEach(c=>c.addEventListener('click',()=>{opts.diff=c.dataset.d;syncMenu();}));
+  const OPT_FPS=[{v:30,n:'30 FPS',d:'Default. Lighter on the computer'},{v:60,n:'60 FPS',d:'Smoother, uses more power'}],OPT_SCR=[{v:1,n:'Normal',d:'Original speed'},{v:1.5,n:'Fast +50%',d:'Keyboard and edge scrolling 50% faster'}];
+  $('fpsList').innerHTML=OPT_FPS.map(o=>'<button type="button" class="mCard" data-v="'+o.v+'"><div><b>'+o.n+'</b><small>'+o.d+'</small></div></button>').join('');
+  $('scrollList').innerHTML=OPT_SCR.map(o=>'<button type="button" class="mCard" data-v="'+o.v+'"><div><b>'+o.n+'</b><small>'+o.d+'</small></div></button>').join('');
+  $('fpsList').querySelectorAll('.mCard').forEach(c=>c.addEventListener('click',()=>{opts.fps=+c.dataset.v;FPS_CAP=opts.fps;syncMenu();}));
+  $('scrollList').querySelectorAll('.mCard').forEach(c=>c.addEventListener('click',()=>{opts.scroll=+c.dataset.v;scrollMul=opts.scroll;syncMenu();}));
   $('bPlay').addEventListener('click',()=>pickSlot(opts.slot));
 }
 function showPick(){
@@ -7367,7 +7563,7 @@ function showPick(){
   syncMenu();$('pick').hidden=false;
 }
 function pickSlot(sl){
-  opts.slot=sl;opts.ally=$('optAlly').checked;opts.myRace=$('optMy').value;opts.foeRace=$('optFoe').value;opts.allyRace=$('optAllyR').value;opts.foe2Race=$('optFoe2').value;document.body.classList.toggle('eirian',opts.myRace==='eirian');document.body.classList.toggle('draugar',opts.myRace==='draugar');
+  FPS_CAP=opts.fps;scrollMul=opts.scroll;opts.slot=sl;opts.ally=$('optAlly').checked;opts.myRace=$('optMy').value;opts.foeRace=$('optFoe').value;opts.allyRace=$('optAllyR').value;opts.foe2Race=$('optFoe2').value;document.body.classList.toggle('eirian',opts.myRace==='eirian');document.body.classList.toggle('draugar',opts.myRace==='draugar');
   if(loadingMap)return;loadingMap=true;$('pick').hidden=true;showLoader();
   setTimeout(()=>{mapReady=false;curMap=null;newGame();preloadMap(()=>{hideLoader();started=true;loadingMap=false;musicReset();});},60);
 }
@@ -7758,7 +7954,7 @@ window.addEventListener('pointermove',e=>{
 },true);
 document.documentElement.addEventListener('mouseleave',hide);window.addEventListener('blur',hide);
 })();
-let lastDraw=0,FPS_CAP=30,fpsN=0,fpsT=0,hovT=0,hovC=null;const fpsEl=$('fps');
+let lastDraw=0,FPS_CAP=30,scrollMul=1,fpsN=0,fpsT=0,hovT=0,hovC=null;const fpsEl=$('fps');
 function frame(ts){
   const FI=1000/FPS_CAP;
   if(lastDraw&&ts-lastDraw<FI-2){requestAnimationFrame(frame);return;}
@@ -7772,11 +7968,11 @@ function frame(ts){
     while(acc>=STEP&&n<12){sim(STEP);acc-=STEP;n++;}
     if(n>=12)acc=0;
   }else if(over){sim(0);}
-  const pan=1300*dtR/cam.z;
+  const pan=1300*dtR/cam.z*scrollMul;
   if(keys.ArrowLeft)cam.x-=pan;if(keys.ArrowRight)cam.x+=pan;if(keys.ArrowUp)cam.y-=pan;if(keys.ArrowDown)cam.y+=pan;
   if(edge.on&&!drag&&!rpan&&!mmDrag){
     // Window-edge scrolling: starts 30px from the screen border and ramps to full speed at the border.
-    const Z=30,sw=document.documentElement.clientWidth,sh=document.documentElement.clientHeight,v=2200*dtR/cam.z;
+    const Z=30,sw=document.documentElement.clientWidth,sh=document.documentElement.clientHeight,v=2200*dtR/cam.z*scrollMul;
     const ramp=d=>.35+.65*clamp(1-d/Z,0,1);   // d<=0 (pointer outside the window) = full speed
     if(edge.x<Z)cam.x-=v*ramp(edge.x);
     if(edge.x>sw-Z)cam.x+=v*ramp(sw-edge.x);
