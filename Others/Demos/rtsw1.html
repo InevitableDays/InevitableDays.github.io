@@ -785,8 +785,8 @@ Object.assign(UD,{
   valkrie:{name:'Valkrie',cost:300,time:24,supply:6,hp:220,sh:150,speed:2.1,range:10.5,dmg:16,bonus:6,bt:'light',cd:1.07,splash:1.6,armored:true,noair:true,info:'Towering walker, 16 area damage, +6 vs light units (headhunters, unit02s, workers), range 10.5. Cannot hit air',vis:14}
 });
 UD.tank.noair=true;
-UD.mecha={name:'Mecha',cost:450,time:26,supply:10,hp:400,sh:1000,speed:2,range:10,dmg:6,cd:.12,armored:true,info:'Super unit: 1000 energy shield that regenerates 33/s after 15s without being attacked, only one per player and it can only be trained again once it is dead. Heavy walker. Gatling cannon (6 damage every 0.12s, range 10, hits ground, air and buildings) plus a shoulder rocket pod (4 rockets, 20 area damage each, every 5s, range 10) that also hits flying units. Trained at the Ironnest',vis:13};
-UD.mothership={name:'Mothership',cost:600,time:45,supply:10,hp:1600,sh:500,speed:1.4,range:12,dmg:14,cd:1.1,beams:5,info:'Super unit: only one per player, it can only be trained again once it is dead. Eirian capital ship. Fires blue pulse beams at up to 5 targets per volley, 14 damage each, range 12. Hits ground and air. Trained at the Cybergrid',vis:15,air:true};
+UD.mecha={name:'Mecha',cost:450,time:26,supply:10,hp:400,sh:1000,speed:2,range:10,dmg:6,cd:.12,armored:true,info:'Super unit: 1000 energy shield that regenerates 33/s after 15s without being attacked, only one per player and it can only be trained again once it is dead. Heavy walker. Gatling cannon (6 damage every 0.12s, range 10, hits ground, air and buildings) plus a shoulder rocket pod (4 rockets, 20 area damage each, every 5s, range 10) that also hits flying units. With 3+ enemies close it also sends out an EMP pulse blast (shockwave, every 20s). Trained at the Ironnest',vis:13};
+UD.mothership={name:'Mothership',cost:450,time:45,supply:10,hp:1600,sh:500,speed:1.4,range:12,dmg:14,cd:1.1,beams:5,info:'Super unit: only one per player, it can only be trained again once it is dead. Eirian capital ship. Fires blue pulse beams at up to 5 targets per volley, 14 damage each, range 12. Hits ground and air. Every 4th volley with 2+ targets, the beams turn red and converge on one target (same damage per beam). Trained at the Cybergrid',vis:15,air:true};
 UD.behemoth={name:'Behemoth',cost:360,time:30,supply:10,hp:1600,speed:2.8,range:2.4,dmg:35,cd:1.1,splash:1.5,armored:true,noair:true,spikes:5,spikeDmg:14,spikeRange:10,spikeCd:4,info:'Super unit: only one per player, it can only be trained again once it is dead. Draugar siege beast. Kaiser blades sweep a 1.5 tile area for 35 damage every 1.1s (ground only, reach 2.4). Back spines also throw a barrage of 5 spikes every 4s at up to 5 targets, 14 damage each, range 10, ground and air. Armoured. Trained at the Monolith',vis:13};
 Object.assign(UD,{
   dog:{name:'Hound',cost:50,time:5,supply:1,hp:100,speed:3.5,range:1,dmg:18,cd:.86,aggro:true,info:'Scorpion-tailed melee biter, 18 damage per bite. Half a Unit-02, no shield, very cheap and quick to spawn. Cannot hit air',vis:11},
@@ -1928,6 +1928,7 @@ function kill(e,by){
   if(e.dead)return;
   sfxDeath(e);
   e.dead=true;teams[e.team].losses++;teams[by].kills++;
+  if(e.kind==='u'&&GHOST_LIFE[e.type])spawnGhost(e);   // mecha / behemoth / mothership: a short visual wreck plays where it fell
   const cx=e.kind==='b'?e.tx+e.size/2:e.x,cy=e.kind==='b'?e.ty+e.size/2:e.y;
   const n=e.kind==='b'?26:9;
   for(let i=0;i<n;i++){const a=Math.random()*6.283,s=1+Math.random()*(e.kind==='b'?4:2.5);effects.push({k:'p',x:cx,y:cy,vx:Math.cos(a)*s,vy:Math.sin(a)*s,t:.5+Math.random()*.4,c:tcol(e.team)});}
@@ -1967,13 +1968,13 @@ function fire(u,tg,d){
   if(u.type==='mothership'){mothershipVolley(u,tg,d);return;}
   if(u.type==='behemoth'){ultraBlade(u,tg,d);return;}
   if(u.type==='tank'){
-    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.16,w:1.2,c:'#ffb347',z:30,z1:tg.kind==='u'&&UD[tg.type].air?36:12});
+    effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.16,w:1.2,c:'#ffb347',z:30,z1:tg.kind==='u'&&UD[tg.type].air?70:12});
     effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ffb347'});
-    boom(tx,ty,tg.kind==='b'?26:UD[tg.type].air?36:10,tg.kind==='b'?44:26,0,tg.kind==='b'?5:2);
+    boom(tx,ty,tg.kind==='b'?26:UD[tg.type].air?70:10,tg.kind==='b'?44:26,0,tg.kind==='b'?5:2);
     for(let i=0;i<7;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.3+Math.random()*.3,c:i%2?'#ffd27a':'#ff8a3d'});}
   }
   else if(u.type==='rocket'){
-    const zi=tg.kind==='u'&&UD[tg.type].air?36:tg.kind==='b'?24:10;
+    const zi=tg.kind==='u'&&UD[tg.type].air?70:tg.kind==='b'?24:10;
     /* a visible rocket flies to the target leaving a trail of smoke; the blast lands when it arrives */
     effects.push({k:'m',sx:u.x,sy:u.y,ex:tx,ey:ty,x:u.x,y:u.y,z0:24,z1:zi,z:24,t:.3,T:.3});
     effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ff8a3d',d:.3});effects.push({k:'r',x:tx,y:ty,t:.35,c:'#ffd27a',d:.3});
@@ -1997,7 +1998,7 @@ function fire(u,tg,d){
     boom(tx,ty,tg.kind==='b'?14:9,tg.kind==='b'?26:16,0,1);
   }
   else if(u.type==='vexor'){
-    const az=tg.kind==='u'&&UD[tg.type].air?36:tg.kind==='b'?14:10;
+    const az=tg.kind==='u'&&UD[tg.type].air?70:tg.kind==='b'?14:10;
     effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.2,w:1.2,c:'#a6e83c',z:24,z1:az});
     effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.12,w:1.2,c:'#eaffb0',z:24,z1:az});
     effects.push({k:'r',x:tx,y:ty,t:.45,c:'#a6e83c'});
@@ -2008,7 +2009,7 @@ function fire(u,tg,d){
     for(let i=0;i<8;i++){const a=Math.random()*6.283,sp=1+Math.random()*2.4;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.25+Math.random()*.3,c:i%2?'#8a643c':'#4a3824'});}
   }
   else if(u.type==='ptero'){
-    const az=tg.kind==='u'&&UD[tg.type].air?36:tg.kind==='b'?14:10;
+    const az=tg.kind==='u'&&UD[tg.type].air?70:tg.kind==='b'?14:10;
     effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.22,w:1.2,c:'#ff2a2a',z:34,z1:az});
     effects.push({k:'l',x:u.x,y:u.y,x1:tx,y1:ty,t:.14,w:1.2,c:'#ffd0d0',z:34,z1:az});
     effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ff4040'});effects.push({k:'r',x:tx,y:ty,t:.35,c:'#ff9a9a',d:.05});
@@ -2016,7 +2017,7 @@ function fire(u,tg,d){
     if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
     splashHit(u,tg,tx,ty,d);return;
   }
-  else if(d.range>1.5)effects.push({k:'l',x:u.x,y:u.y,x1:tx+(Math.random()-.5)*.4,y1:ty+(Math.random()-.5)*.4,t:.1,w:1.2,c:d.air?'#ffe08a':u.team===0?'#bfeaff':tcol(u.team),z:d.air?36:undefined,z1:tg.kind==='u'&&UD[tg.type].air?36:undefined});
+  else if(d.range>1.5)effects.push({k:'l',x:u.x,y:u.y,x1:tx+(Math.random()-.5)*.4,y1:ty+(Math.random()-.5)*.4,t:.1,w:1.2,c:d.air?'#ffe08a':u.team===0?'#bfeaff':tcol(u.team),z:d.air?70:undefined,z1:tg.kind==='u'&&UD[tg.type].air?70:undefined});
   else effects.push({k:'p',x:tx,y:ty,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,t:.2,c:'#fff'});
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
   if(u.type==='unit02'){splashHit(u,tg,tx,ty,d);return;}   // psi-blade sweeps hit nearby enemies too
@@ -2065,6 +2066,7 @@ function mechaAirTarget(u,r){
 function mechaTick(u,dt){
   u.rcd=(u.rcd||0)-dt;
   mechaPuffs(u,dt);
+  mechaPulse(u,dt);
   if(u.rcd<=0&&!(u.salvo>0)){   // rocket pod also fires on its own at flying units (only when it is not busy attacking a ground target)
     u.acqA=(u.acqA||0)-dt;
     if(u.acqA<=0&&!(u.order.type==='attack'&&u.order.target&&!u.order.target.dead)){
@@ -2084,7 +2086,7 @@ function mechaTick(u,dt){
 }
 function mechaRocket(u,tg,idx){
   const tx=tg.kind==='b'?tg.tx+tg.size/2:tg.x+(Math.random()-.5)*.5,ty=tg.kind==='b'?tg.ty+tg.size/2:tg.y+(Math.random()-.5)*.3;
-  const zi=tg.kind==='b'?24:UD[tg.type].air?36:10,sx=u.x+Math.cos(u.face)*.15,sy=u.y+Math.sin(u.face)*.15;
+  const zi=tg.kind==='b'?24:UD[tg.type].air?70:10,sx=u.x+Math.cos(u.face)*.15,sy=u.y+Math.sin(u.face)*.15;
   u.rfired=idx+1;u.rIdx=idx;u.rft=time;
   effects.push({k:'m',sx,sy,ex:tx,ey:ty,x:sx,y:sy,z0:64,z1:zi,z:64,t:.42,T:.42});
   effects.push({k:'r',x:tx,y:ty,t:.5,c:'#ff8a3d',d:.42});effects.push({k:'r',x:tx,y:ty,t:.35,c:'#ffd27a',d:.42});
@@ -2103,6 +2105,58 @@ function mechaFire(u,tg,d){
   if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
   damage(tg,d.dmg,u.team);
 }
+/* ---------- Super unit abilities. The numbers of the three super units are unchanged; these only add behaviour. ----------
+   Mothership FOCUS STRIKE: every 4th volley that has 2 or more targets, the beams turn red, converge on the primary target and hit it together: the same beams at the same damage per beam, just all on one target.
+   Mecha PULSE BLAST: with 3 or more enemies close it charges for 0.5s and sends out an EMP shockwave (every 20s). Visual only unless PULSE.disrupt is set to a number of seconds, which delays every enemy it reaches by that long before its next shot.
+   Behemoth: roars when it throws the spike barrage; the spikes regrow. All three leave a short visual wreck when they die (see spawnGhost). */
+const FOCUS={every:4,conv:.45,hold:1.1,fade:.35};
+const PULSE={cd:20,range:6,minFoes:3,charge:.5,fire:1.1,disrupt:0};
+function mothershipFocus(u,tg,list,d){
+  const ux=u.x*T,uy=u.y*T,cx=e=>(e.kind==='b'?e.tx+e.size/2:e.x)*T,cy=e=>(e.kind==='b'?e.ty+e.size/2:e.y)*T;
+  const sdf=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b)),ta=Math.atan2(cy(tg)-uy,cx(tg)-ux),n=list.length;
+  const ports=[0,1,2,3,4,5].map(i=>i*Math.PI/3).sort((a,b)=>Math.abs(sdf(a,ta))-Math.abs(sdf(b,ta))).slice(0,n).sort((a,b)=>sdf(a,ta)-sdf(b,ta));
+  const starts=list.map(e=>({x:cx(e),y:cy(e)})).sort((a,b)=>sdf(Math.atan2(a.y-uy,a.x-ux),ta)-sdf(Math.atan2(b.y-uy,b.x-ux),ta));
+  const T0=FOCUS.conv+FOCUS.hold+FOCUS.fade,air=tg.kind==='u'&&UD[tg.type].air;
+  u.fcsEnd=time+T0;u.focus={at:time+FOCUS.conv,tg,n,d};
+  effects.push({k:'fk',u,tg,team:u.team,x:tg.kind==='b'?tg.tx+tg.size/2:tg.x,y:tg.kind==='b'?tg.ty+tg.size/2:tg.y,tz:air?70:tg.kind==='b'?14:12,ports,starts,t:T0,T:T0});
+}
+function mothershipTick(u,dt){
+  const f=u.focus;
+  if(f&&time>=f.at){
+    u.focus=null;const tg=f.tg;
+    if(tg&&!tg.dead){
+      if(u.team===0&&tg.kind==='b'&&side(tg.team)===1)mBldg=time;
+      damage(tg,f.n*Math.round(dmgVs(f.d,tg)+dUp(u.team)),u.team);
+    }
+  }
+}
+function mechaPulse(u,dt){
+  const p=u.pls;
+  if(p){
+    const age=time-p.t0;
+    if(age>=PULSE.charge){   // the ring reaching an enemy flashes it (and delays its next shot when PULSE.disrupt is set)
+      const k=clamp((age-PULSE.charge)/PULSE.fire,0,1),R=(10+150*(1-(1-k)*(1-k)))*1.25/T;
+      for(const e of units){
+        if(e.dead||side(e.team)===side(u.team)||p.hit.has(e))continue;
+        if(Math.hypot(e.x-u.x,e.y-u.y)<=R){p.hit.add(e);e.hit=.12;if(PULSE.disrupt>0)e.cd=Math.max(e.cd,0)+PULSE.disrupt;}
+      }
+    }
+    if(age>=PULSE.charge+PULSE.fire)u.pls=null;
+    return;
+  }
+  u.pcd=(u.pcd===undefined?PULSE.cd*.5:u.pcd)-dt;
+  if(u.pcd>0)return;
+  u.pacq=(u.pacq||0)-dt;if(u.pacq>0)return;u.pacq=.5;
+  const fr=isFriend(u.team);let n=0;
+  for(const e of units){
+    if(e.dead||side(e.team)===side(u.team))continue;
+    if(fr&&!visAt(e.x,e.y))continue;
+    if(Math.hypot(e.x-u.x,e.y-u.y)<=PULSE.range&&++n>=PULSE.minFoes)break;
+  }
+  if(n<PULSE.minFoes)return;
+  u.pcd=PULSE.cd;u.pls={t0:time,hit:new Set()};
+  effects.push({k:'pls',u,team:u.team,x:u.x,y:u.y,t:PULSE.charge+PULSE.fire,T:PULSE.charge+PULSE.fire});
+}
 /* Mothership: every volley hits the chosen target plus up to 4 more enemies in range (5 targets in total), ground or air */
 function mothershipVolley(u,tg,d){
   const fr=isFriend(u.team),list=[tg],cand=[];
@@ -2120,10 +2174,12 @@ function mothershipVolley(u,tg,d){
   }
   cand.sort((a,b)=>a[1]-b[1]);
   for(const c of cand){if(list.length>=d.beams)break;list.push(c[0]);}
+  u.vc=(u.vc||0)+1;
+  if(u.vc>=FOCUS.every&&list.length>=2&&!u.focus){u.vc=0;mothershipFocus(u,tg,list,d);return;}   // every 4th volley with 2+ targets: all beams on the primary target
   for(const e of list){
     if(e.dead)continue;
     const tx=e.kind==='b'?e.tx+e.size/2:e.x,ty=e.kind==='b'?e.ty+e.size/2:e.y;
-    const z1=e.kind==='u'&&UD[e.type].air?36:e.kind==='b'?14:10;
+    const z1=e.kind==='u'&&UD[e.type].air?70:e.kind==='b'?14:10;
     /* the beam leaves whichever of the six emitter ports under the rim faces the target */
     const pa=Math.round(Math.atan2(ty-u.y,tx-u.x)/(Math.PI/3))*(Math.PI/3),sx=u.x+Math.cos(pa)*MS_PORT/T,sy=u.y+Math.sin(pa)*MS_PORT/T,sz=MS_HV-22*MS_S;
     effects.push({k:'l',x:sx,y:sy,x1:tx,y1:ty,t:.34,w:1.2,c:'rgba(61,184,242,.35)',z:sz,z1});
@@ -2205,10 +2261,10 @@ function ultraSpike(u,tg,idx){
   const tx=tg.kind==='b'?tg.tx+tg.size/2+(Math.random()-.5)*.6:tg.x+(Math.random()-.5)*.4,ty=tg.kind==='b'?tg.ty+tg.size/2+(Math.random()-.5)*.6:tg.y+(Math.random()-.5)*.3;
   const hh=u.us?u.us.hh:u.face,c=Math.cos(hh),sn=Math.sin(hh),lx=ULTRA_SPX[idx],ly=ULTRA_SPY[idx];
   const sx=u.x+(c*lx-sn*ly)/T,sy=u.y+(sn*lx+c*ly)/T;
-  const zi=air?36:tg.kind==='b'?16:10,z0=ULTRA_SPZ[idx]+17,dist=Math.hypot(tx-sx,ty-sy),Tf=clamp(dist*T/760,.34,.8);
+  const zi=air?70:tg.kind==='b'?16:10,z0=ULTRA_SPZ[idx]+17,dist=Math.hypot(tx-sx,ty-sy),Tf=clamp(dist*T/760,.34,.8);
   effects.push({k:'sp',sx,sy,ex:tx,ey:ty,x:sx,y:sy,z0,z1:zi,z:z0,arc:40+dist*2,t:Tf,T:Tf});
-  effects.push({k:'r',x:tx,y:ty,t:.45,c:'#a6e83c',d:Tf});
-  for(let i=0;i<7;i++){const a=Math.random()*6.283,sp=1+Math.random()*2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.25+Math.random()*.3,c:i%2?'#a6e83c':'#d8ff8a',d:Tf});}
+  effects.push({k:'r',x:tx,y:ty,t:.45,c:'#5a82ff',d:Tf});
+  for(let i=0;i<7;i++){const a=Math.random()*6.283,sp=1+Math.random()*2;effects.push({k:'p',x:tx,y:ty,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.25+Math.random()*.3,c:i%2?'#5a82ff':'#d8ff8a',d:Tf});}
   if(!u.spT)u.spT=[-99,-99,-99,-99,-99];
   u.spT[idx]=time;u.lastSpk=time;
   if(sfxOn()){const m=vmix(u.x,u.y);if(m&&sfxOK('ultraS',.08))turretZap(bus(m.pan,m.v));}
@@ -2348,6 +2404,7 @@ function updateUnit(u,dt){
   const d=UD[u.type],o=u.order;
   if(u.type==='mecha')mechaTick(u,dt);
   if(u.type==='behemoth')ultraTick(u,dt);
+  if(u.type==='mothership')mothershipTick(u,dt);
   if(u.type==='tank'){
     if(u.sgp>0){u.sgp-=dt;u.path=null;return;}   // 0.4 s pause between siege and unsiege
     if(u.sieged){
@@ -2569,7 +2626,7 @@ function updateBuilding(b,dt){
         b.lcd=2.1;
         const air=!!UD[best.type].air;
         sfxTurret(cx,cy);
-        effects.push({k:'l',x:cx,y:cy,x1:best.x,y1:best.y,t:.2,c:'#ff5a5a',w:3.6,z:70,z1:air?36:12});
+        effects.push({k:'l',x:cx,y:cy,x1:best.x,y1:best.y,t:.2,c:'#ff5a5a',w:3.6,z:70,z1:air?70:12});
         effects.push({k:'r',x:best.x,y:best.y,t:.4,c:'#ff8a8a'});
         for(let i=0;i<5;i++){const a=Math.random()*6.283,sp=1+Math.random()*2;effects.push({k:'p',x:best.x,y:best.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,t:.25+Math.random()*.2,c:i%2?'#ffd0d0':'#ff4d4d'});}
         damage(best,Math.round(dmgVs({dmg:30,bonus:15},best)),b.team);
@@ -3938,7 +3995,7 @@ function drawTree(x,y){
 }
 function drawHeli(u,t){
   const x=u.x*T,y=u.y*T*K,col=tcol(u.team),colD=tcolD(u.team),fc=Math.cos(u.face),fs=Math.sin(u.face),S=1.45;
-  const mv=u.path&&u.pi<u.path.length,hv=32+Math.sin(t*3+u.id)*2+(mv?-3:0),sq=UD.heli,rec=u.cd>sq.cd-.07;
+  const mv=u.path&&u.pi<u.path.length,hv=62+Math.sin(t*3+u.id)*2+(mv?-3:0),sq=UD.heli,rec=u.cd>sq.cd-.07;
   const BK='#171b20',BK2='#232a31',BK3='#0d1014';
   shadow(x,y+3,13*S);
   ctx.save();ctx.translate(x,y-hv);ctx.scale(S,S);ctx.translate(-x,-(y-hv));
@@ -4753,10 +4810,10 @@ function drawEirian(u,t){
 const SPRITE_CACHE=true,SPR_TB=12,SPR_BTB=6,SPR_FACES=24,SPR_TAU=Math.PI*2;
 const SPR_CLS={worker:'s',headhunters:'s',rocket:'s',unit02:'s',axiom:'s',zorions:'m',tank:'m',valkrie:'l',dog:'s',vexor:'s',tree:'s',overlord:'s',ptero:'a'};   // draugar units are cached too (a = wide flyer)
 const SPR_TYPE={worker:0,headhunters:1,rocket:2,unit02:3,axiom:4,zorions:5,valkrie:6,tank:7,dog:8,vexor:9,tree:10,ptero:11,overlord:12};
-const SPR_DIM={s:{hw:44,up:84,dn:24},m:{hw:84,up:92,dn:38},l:{hw:100,up:160,dn:46},a:{hw:104,up:130,dn:40}};
+const SPR_DIM={s:{hw:44,up:84,dn:24},m:{hw:84,up:92,dn:38},l:{hw:100,up:160,dn:46},a:{hw:104,up:175,dn:40}};
 /* the three big hand-built units (mecha, mothership, behemoth) keep one private sprite each, re-baked at SPR_TB ticks per second (see spriteBig) */
 const SPR_BTB2=25;   // ticks per second for these three (the other cached units stay at SPR_TB)
-const SPR_BIG={mecha:{hw:84,up:156,dn:48},mothership:{hw:90,up:150,dn:48},behemoth:{hw:150,up:140,dn:84}};   // sprite bounds around the unit's ground point, px
+const SPR_BIG={mecha:{hw:84,up:156,dn:48},mothership:{hw:90,up:215,dn:48},behemoth:{hw:150,up:140,dn:84}};   // sprite bounds around the unit's ground point, px
 const SPR=new Map(),sprPool={s:[],m:[],l:[],a:[]};let sprSc=0,sprFrame=0;
 /* ---- sprite cache budget ----
    Everything baked into offscreen canvases (unit sprites, building bodies / animation frames / turret heads, the terrain chunks)
@@ -4889,7 +4946,7 @@ function drawDraugar(u,t){
   Object.assign(ZCOL,ZBLK);
   if(ty==='dog')zHound(Z);else if(ty==='vexor')zVexor(Z);else if(ty==='tree')zTree(Z);else if(ty==='ptero')zPtero(Z);else if(ty==='overlord')zFloater(Z);else zWraith(Z);
   Object.assign(ZCOL,ZBRN);
-  if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.ellipse(x,y-(d.air?38:11),d.air?16:13,d.air?12:10,0,0,7);ctx.fill();}
+  if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.ellipse(x,y-(d.air?(u.type==='ptero'?66:38):11),d.air?16:13,d.air?12:10,0,0,7);ctx.fill();}
 }
 /* ===== realistic Draugar unit models: Wraith = hooded ghost, Hound = lava scorpion, Vexor = twin-cannon steel mech =====
    Drawn through drawDraugar(), so they are baked by the normal unit sprite cache (24 facings, quantised pose, same bounds as before). Gradients are free here: they run once per baked sprite. */
@@ -5114,7 +5171,7 @@ function zPtero(Z){   // dragon-phoenix: scaled lizard body, long tail ending in
   const {u,t,x,y,fs,P,ang,mv,rec,col,near}=Z;
   const S=1.4;
   ctx.fillStyle='rgba(0,0,0,.26)';ctx.beginPath();ctx.ellipse(x+8,y+6,24,7.5,0,0,7);ctx.fill();
-  const flap=Math.sin(t*(mv?9:5.5)+u.id*1.3),z=40+Math.sin(t*2.3+u.id)*1.8;
+  const flap=Math.sin(t*(mv?9:5.5)+u.id*1.3),z=78+Math.sin(t*2.3+u.id)*1.8;
   const BODY='#0d0d10',DKB='#050506',EDGE='#000000',open=rec>=0&&rec<.3?1:0;
   const Q2=(lx,ly,zz)=>P(lx*S,ly*S,z+zz*S);
   const wing=s=>()=>{
@@ -5180,7 +5237,7 @@ function zFloater(Z){
 
 
 /* ===== MOTHERSHIP: golden capital ship hovering high above the ground ===== */
-const MS_S=.6,MS_HV=70,MS_PORT=52;   // model scale, hover height in px, radius of the emitter ring in px
+const MS_S=.6,MS_HV=110,MS_PORT=52;   // model scale, hover height in px, radius of the emitter ring in px
 function msGlow(x,y,r,col,a){
   const c=glowSprite('ms'+col,[[0,col],[1,'rgba(61,184,242,0)']]),g=ctx.globalAlpha;
   ctx.globalAlpha=g*a;ctx.drawImage(c,x-r,y-r,r*2,r*2);ctx.globalAlpha=g;
@@ -5218,8 +5275,8 @@ function drawMothership(u,t){
     const a=i/6*Math.PI*2;if(Math.sin(a)<-.2)continue;
     const ex=cx+Math.cos(a)*MS_PORT,ey=y0+Math.sin(a)*MS_PORT*K+22*S;
     E(ex,ey,7*S,4*S,'#2b3447','#0b0f16',1.2);
-    ctx.save();ctx.globalAlpha=.7+.3*pulse;E(ex,ey,3.6*S,2*S,BLUE);ctx.restore();
-    if(rec)msGlow(ex,ey,16*S,'rgba(200,245,255,1)',.8);
+    const fcs=u.fcsEnd>time;ctx.save();ctx.globalAlpha=.7+.3*pulse;E(ex,ey,3.6*S,2*S,fcs?'#ff4a2a':BLUE);ctx.restore();
+    if(fcs)msGlow(ex,ey,16*S,'rgba(255,110,70,1)',.8);else if(rec)msGlow(ex,ey,16*S,'rgba(200,245,255,1)',.8);
   }
   // upper deck disc
   const ug=ctx.createRadialGradient(cx-R*.3,y0-R*K*.4,R*.1,cx,y0,R);ug.addColorStop(0,'#f4e3a2');ug.addColorStop(.5,GOLD);ug.addColorStop(1,GOLD2);
@@ -5269,7 +5326,140 @@ function drawMothership(u,t){
 }
 
 const prismRaw=prism;
-/* ---------- Mecha: heavy walker (gunmetal with amber sensors, dark red trim) ---------- */
+/* ===== Super unit ability and death effects =====
+   Drawn straight onto the map (not into the unit sprites) because they reach far beyond a sprite: the focus strike beams, the pulse shockwave and the wrecks.
+   Every wreck is a pure function of the seconds since the unit died, so it pauses with the game. The unit itself is gone from the simulation the moment it dies. */
+const ghRnd=(i,k)=>{const v=Math.sin(i*127.1+k*311.7)*43758.5453;return v-Math.floor(v);};
+function fxGlow(x,y,r,rgb,a){const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba('+rgb+',1)');g.addColorStop(1,'rgba('+rgb+',0)');ctx.save();ctx.globalAlpha=a;ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.restore();}
+const msMix=f=>'rgb('+(61+(255-61)*f|0)+','+(184+(50-184)*f|0)+','+(242+(30-242)*f|0)+')';
+const GHOST_LIFE={mecha:3.4,behemoth:6.2,mothership:5.2};
+function spawnGhost(e){
+  const dur=GHOST_LIFE[e.type];
+  const g={type:e.type,team:e.team,x:e.x,y:e.y,face:e.face,id:e.id,cd:-5,hit:0,order:{type:'idle'},path:null,pi:0,maxsh:0,sh:0,shT:-99,rfired:0,dth:0,fcsEnd:0,spT:e.spT};
+  if(e.ms)g.ms=Object.assign({},e.ms);
+  if(e.us)g.us=Object.assign({},e.us);
+  effects.push({k:'dg',ty:e.type,g,x:e.x,y:e.y,team:e.team,t:dur,T:dur,k0:time});
+}
+function drawGhost(e,t){
+  const g=e.g,age=time-e.k0;
+  g.dth=t-age;   // the drawing code measures seconds since death against the render clock; this keeps it on the simulation clock
+  if(e.ty==='behemoth')drawBehemoth(g,t);
+  else if(e.ty==='mecha')drawMecha(g,t);
+  else drawMsDeath(g,age,t);
+}
+function msBoom(sx,sy,R,f){   // one fireball: orange glow, yellow core, white flash, shock ring
+  soft(sx,sy,R*(.5+.9*f),'#ff7a1c',.9*(1-f));soft(sx,sy,R*(.3+.6*f),'#ffd27a',1-f);soft(sx,sy,R*.35*(1-f*.5),'#ffffff',(1-f)*(1-f));
+  ctx.strokeStyle='rgba(255,200,120,'+(.8*(1-f))+')';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(sx,sy,R*(.4+1.1*f),R*(.4+1.1*f)*K,0,0,7);ctx.stroke();
+}
+/* Mothership death: 1.1 s of blasts inside the hull (beams red, hull flickering), then it blows apart in mid-air; twelve pieces fall, bounce once and vanish 1 s after landing */
+function drawMsDeath(g,age,t){
+  const DYm=1.1,G=320,LIFE=1,NP=12,ux=g.x*T,uy=g.y*T,hv=MS_HV;
+  if(age<DYm){
+    const k=age/DYm;g.fcsEnd=1e9;g.hit=Math.sin(t*45)>.25?1:0;
+    ctx.save();ctx.translate((Math.random()-.5)*4*k,(Math.random()-.5)*3*k);drawMothership(g,t);ctx.restore();
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    let ti=0,n=0;
+    while(ti<DYm&&n<24){
+      const d0=age-ti;
+      if(d0>=0&&d0<.4){const f=d0/.4,a=ghRnd(n,21)*6.283,r=ghRnd(n,22)*60;msBoom(ux+Math.cos(a)*r,(uy+Math.sin(a)*r)*K-(hv+4+ghRnd(n,24)*10),12+ghRnd(n,23)*10,f);}
+      ti+=.2-.13*(ti/DYm);n++;
+    }
+    ctx.restore();
+    return;
+  }
+  const ar=age-DYm;
+  ctx.save();ctx.globalCompositeOperation='lighter';
+  for(const [dx,dy,z,R,T0] of [[0,0,hv+8,110,.75],[14,6,hv+2,70,.55],[-16,-5,hv+14,60,.6]]){const f=ar/T0;if(f<1)msBoom(ux+dx,(uy+dy)*K-z,R,f);}
+  for(let i=0;i<36;i++){   // sparks
+    const life=.5+ghRnd(i,31)*.6;if(ar>=life)continue;
+    const a=ghRnd(i,32)*6.283,sp=60+ghRnd(i,33)*140,z=hv+8+ghRnd(i,34)*120*ar-60*ar*ar;
+    ctx.globalAlpha=clamp((life-ar)*3,0,1);ctx.fillStyle=i%2?'#ffd27a':'#ff4a2a';
+    ctx.beginPath();ctx.arc(ux+Math.cos(a)*sp*ar,(uy+Math.sin(a)*sp*.6*ar)*K-z,1.8,0,7);ctx.fill();
+  }
+  ctx.restore();
+  for(let i=0;i<8;i++){   // smoke
+    const life=1.1;if(ar>=life)continue;
+    soft(ux+(ghRnd(i,41)-.5)*50+(ghRnd(i,42)-.5)*30*ar,(uy+(ghRnd(i,43)-.5)*30)*K-(hv+(ghRnd(i,44)-.5)*20+(10+ghRnd(i,45)*30)*ar),8+ar/life*16,'#3a3a3a',.4*(1-ar/life));
+  }
+  const cols=[['#d9b658','#1c1405'],['#a98a36','#1c1405'],['#8a6f2a','#1c1405'],['#f4e3a2','#2a1f06'],['#4a3a12','#0b0803']];
+  for(let i=0;i<NP;i++){
+    const a=ghRnd(i,1)*6.283,sp=35+ghRnd(i,2)*90,vx=Math.cos(a)*sp,vy=Math.sin(a)*sp*.6,vz=40+ghRnd(i,3)*150,z0=hv+ghRnd(i,4)*16-4,x0=ux+Math.cos(a)*18,y0=uy+Math.sin(a)*12;
+    const t1=(vz+Math.sqrt(vz*vz+2*G*z0))/G,vi=G*t1-vz,bn=vi>70,v1=bn?vi*.28:0,t2=bn?2*v1/G:0,tl=t1+t2;
+    if(ar>=tl+LIFE)continue;
+    let z,al=1,gl=.55;
+    if(ar<t1)z=z0+vz*ar-.5*G*ar*ar;
+    else if(ar<tl){const q=ar-t1;z=v1*q-.5*G*q*q;}
+    else{z=0;const l2=ar-tl;al=l2>.7?1-(l2-.7)/.3:1;gl=.5*(1-l2);}
+    const a1=Math.min(ar,t1),a2=clamp(ar-t1,0,t2),px=x0+vx*a1+vx*.45*a2,py=y0+vy*a1+vy*.45*a2;
+    const r=i===1?17:6+ghRnd(i,5)*8,np=4+(ghRnd(i,6)*2|0),c=i===0?['#8fe9ff','#e8fbff']:cols[i%5];
+    const rot=ghRnd(i,7)*6.283+(ghRnd(i,8)-.5)*14*(a1+.4*a2),sx=px,sy=py*K-z;
+    ctx.save();ctx.globalAlpha=al;
+    ctx.fillStyle='rgba(0,0,0,'+(.3*clamp(1-z/160,.15,1))+')';ctx.beginPath();ctx.ellipse(px,py*K,r*.9,r*.9*K,0,0,7);ctx.fill();
+    if(gl>0){ctx.globalCompositeOperation='lighter';soft(sx,sy,r*2.4,'#ff7a1c',gl*al);ctx.globalCompositeOperation='source-over';}
+    ctx.translate(sx,sy);ctx.rotate(rot);ctx.beginPath();
+    for(let k=0;k<np;k++){const an=k/np*6.283+ghRnd(i,10+k)*.5,rr=r*(.6+ghRnd(i,20+k)*.6),X=Math.cos(an)*rr,Y=Math.sin(an)*rr*.8;k?ctx.lineTo(X,Y):ctx.moveTo(X,Y);}
+    ctx.closePath();ctx.fillStyle=c[0];ctx.fill();ctx.strokeStyle=c[1];ctx.lineWidth=1.4;ctx.lineJoin='round';ctx.stroke();
+    ctx.restore();
+  }
+}
+/* Mothership focus strike (effect 'fk'): the beams turn red, swing in from where each of them was aimed and fry the primary target together */
+function drawFocusFx(e){
+  const u=e.u,tg=e.tg,age=e.T-e.t,CV=FOCUS.conv,HO=FOCUS.hold,FD=FOCUS.fade;
+  if(age<0)return;
+  if(tg&&!tg.dead){e.x=tg.kind==='b'?tg.tx+tg.size/2:tg.x;e.y=tg.kind==='b'?tg.ty+tg.size/2:tg.y;}
+  const tx=e.x*T,ty=e.y*T,ux=u.x*T,uy=u.y*T,sz=MS_HV-22*MS_S,tz=e.tz;
+  const e0=clamp(age/CV,0,1),ee=e0*e0*(3-2*e0),fade=age>CV+HO?1-(age-CV-HO)/FD:1;
+  const k=clamp((age-CV)/HO,0,1),heat=age<CV?0:Math.min(1,k*1.8)*fade,f=age<CV?ee:1,col=msMix(f),wb=age<CV?1+1.4*ee:3.2+Math.sin(time*45)*.7;
+  ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=fade;ctx.lineCap='round';ctx.lineJoin='round';
+  e.ports.forEach((a,i)=>{
+    const s0=e.starts[i],ex=s0.x+(tx-s0.x)*ee,ey=s0.y+(ty-s0.y)*ee,ez=10+(tz-10)*ee;
+    const x0=ux+Math.cos(a)*MS_PORT,y0=(uy+Math.sin(a)*MS_PORT)*K-sz,x1=ex,y1=ey*K-ez;
+    const dx=x1-x0,dy=y1-y0,L=Math.hypot(dx,dy)||1,px=-dy/L,py=dx/L,amp=age<CV?1:2.6,pts=[];
+    for(let j=0;j<=10;j++){const q=j/10,jt=(j===0||j===10)?0:Math.sin(time*70+i*3.1+j*1.9)*amp;pts.push([x0+dx*q+px*jt,y0+dy*q+py*jt]);}
+    for(const [w,c] of [[wb*4.5,'rgba(255,50,20,.22)'],[wb*2.2,col],[wb*.8,'rgba(255,245,230,1)']]){ctx.strokeStyle=c;ctx.lineWidth=w;ctx.beginPath();pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();}
+    soft(x0,y0,12*(.5+.5*f),'#ff4a2a',.7*f);
+    if(age<CV)soft(x1,y1,8+6*ee,'#ff6a3a',.6*ee);
+  });
+  if(heat>0){
+    const gx=tx,gy=ty*K-tz-6;
+    soft(gx,gy,44+10*Math.sin(time*50),'#ff4a2a',.55*heat);soft(gx,gy,24,'#ffb347',.8*heat);soft(gx,gy,12,'#ffffff',heat);
+    for(let r=0;r<2;r++){const q=(time*1.6+r*.5)%1,R=8+34*q;ctx.strokeStyle='rgba(255,120,60,'+(.7*(1-q)*heat)+')';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(tx,ty*K,R,R*K,0,0,7);ctx.stroke();}
+    for(let n=0;n<6;n++){const q=(time*1.3+n/6)%1,sx=tx+Math.sin(n*7.1+Math.floor(time*1.3+n/6)*3.3)*9;ctx.globalAlpha=fade*(1-q)*heat;ctx.fillStyle=n%2?'#ffb347':'#ff4a2a';ctx.beginPath();ctx.arc(sx,ty*K-tz-q*36,1.7,0,7);ctx.fill();}
+  }
+  ctx.restore();
+}
+/* Mecha pulse blast (effect 'pls', Blackout-style EMP): 0.5 s of charge crackling round the right hand, then a beam and an expanding shockwave */
+function drawPulseFx(e,t){
+  const u=e.u,s=u.ms||{at:u.face,mv:0,bz:0},pt=e.T-e.t,PCH=PULSE.charge,PFT=PULSE.fire;
+  if(pt<0)return;
+  const tc=Math.cos(s.at),ts=Math.sin(s.at),zb=40+14*s.mv+s.bz;
+  const PT=(lx,ly,z)=>[tc*lx-ts*ly,(ts*lx+tc*ly)*K-z],gT=(lx,ly)=>[tc*lx-ts*ly,(ts*lx+tc*ly)*K];
+  ctx.save();ctx.translate(u.x*T,u.y*T*K);ctx.scale(1.25,1.25);ctx.globalCompositeOperation='lighter';
+  const mz=PT(7,17.4,zb-6),gc=gT(7,17.4);
+  if(pt<PCH){
+    const k=pt/PCH;
+    fxGlow(mz[0],mz[1],9+22*k,'110,200,255',.35+.5*k);fxGlow(mz[0],mz[1],3+9*k,'255,255,255',.4+.5*k);
+    ctx.strokeStyle='rgba(170,230,255,'+(.5+.4*k)+')';ctx.lineWidth=.8;
+    for(let i=0;i<4;i++){const a=t*37+i*1.57,r=9+20*k,mx=mz[0]+Math.cos(a)*r*.5+Math.sin(t*61+i)*2,my=mz[1]+Math.sin(a)*r*.5;ctx.beginPath();ctx.moveTo(mz[0],mz[1]);ctx.lineTo(mx,my);ctx.lineTo(mz[0]+Math.cos(a)*r,mz[1]+Math.sin(a)*r);ctx.stroke();}
+  }else{
+    const k=clamp((pt-PCH)/PFT,0,1),en=1-(1-k)*(1-k),fa=1-k;
+    fxGlow(mz[0],mz[1],16+55*(1-k),'190,235,255',Math.min(1,fa*1.3));
+    const far=PT(7+200*en,17.4,zb-6),bx=far[0]-mz[0],by=far[1]-mz[1],bl=Math.hypot(bx,by)||1,px=-by/bl,py=bx/bl;
+    for(const [w,c] of [[20,'rgba(60,140,255,'+(.35*fa)+')'],[10,'rgba(130,215,255,'+(.7*fa)+')'],[4,'rgba(255,255,255,'+fa+')']]){
+      ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(mz[0]+px*w*.4,mz[1]+py*w*.4);ctx.lineTo(far[0]+px*w*fa,far[1]+py*w*fa);ctx.lineTo(far[0]-px*w*fa,far[1]-py*w*fa);ctx.lineTo(mz[0]-px*w*.4,mz[1]-py*w*.4);ctx.closePath();ctx.fill();
+    }
+    ctx.strokeStyle='rgba(200,240,255,'+(.8*fa)+')';ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(mz[0],mz[1]);
+    for(let i=1;i<=8;i++){const q=i/8,j=Math.sin(t*90+i*5.3)*11*fa;ctx.lineTo(mz[0]+bx*q+px*j,mz[1]+by*q+py*j);}
+    ctx.stroke();
+    const cx=gc[0],cy=gc[1]-(zb-6);
+    for(const [sc,lw] of [[1,5.5],[.68,3]]){const R=(10+150*en)*sc;ctx.strokeStyle='rgba(140,220,255,'+(.85*fa)+')';ctx.lineWidth=lw*fa+.6;ctx.beginPath();ctx.ellipse(cx,cy,R,R*K,0,0,7);ctx.stroke();}
+    ctx.fillStyle='rgba(90,180,255,'+(.12*fa)+')';ctx.beginPath();ctx.ellipse(cx,cy,10+150*en,(10+150*en)*K,0,0,7);ctx.fill();
+  }
+  ctx.restore();
+}
+function drawSuperFx(e,t){if(e.k==='fk')drawFocusFx(e);else drawPulseFx(e,t);}
+
+/* ---------- Mecha: heavy walker (gunmetal with amber sensors, dark red trim, silver gauntlet) ---------- */
 const drawMecha=(()=>{
   const BK='#1b2025',BK2='#262d33',BK3='#10141a',STL='#323b42',STL2='#46515a',STL3='#39434a',AMB='#ffb347',GUN='#12171c';
   const MRED='#8a0303',MREDD='#4a0202';   // blood red
@@ -5277,6 +5467,8 @@ const drawMecha=(()=>{
   const BLINK_ON=1,BLINK_FADE=.15;   // chest light: 1 s on, 1 s off (seconds), fade time at each edge
   const HOV=14,SCL=1.25;   // test build: hovers 14 above the ground and is drawn 25% bigger
   const SIL='#c9cfd5',SIL2='#aab1b8',SIL3='#e6eaee',SILD='#8d959c';   // silver metallic arms
+  const DDY=1.0,ARM_G=300,ARM_ZR=4;   // death: seconds of overload before the blast, gravity of the falling arm, height of its centre when lying on the floor
+  const rnd=(i,k)=>{const x=Math.sin(i*127.1+k*311.7)*43758.5453;return x-Math.floor(x);};   // stable pseudo-random per piece, so effects are pure functions of time
   const angDiff=(a,b)=>{let d=(b-a)%(Math.PI*2);if(d>Math.PI)d-=Math.PI*2;if(d<-Math.PI)d+=Math.PI*2;return d;};
   const turnTo=(a,b,m)=>{const d=angDiff(a,b);return Math.abs(d)<=m?b:a+Math.sign(d)*m;};
   function glow(x,y,r,rgb,a){const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba('+rgb+',1)');g.addColorStop(1,'rgba('+rgb+',0)');ctx.save();ctx.globalAlpha=a;ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.restore();}
@@ -5293,7 +5485,7 @@ const drawMecha=(()=>{
     return {kx:hx+ux*al-uz*h,kz:hz+uz*al+ux*h,ax:hx+ux*dd,az:hz+uz*dd};
   }
   return function(u,t,mode){   // mode 1: only advance the animation state (every frame); mode 2: only draw (into the sprite cache); none: both
-    const D=UD.mecha,now=performance.now()/1000,gx0=u.x*T,gy0=u.y*T*K;
+    const D=UD.mecha,now=performance.now()/1000,gx0=u.x*T,gy0=u.y*T*K,dth=u.dth===undefined?-1:t-u.dth;   // dth: seconds since the mecha was destroyed (-1 = alive)
     /* animation state lives on the unit: hips follow the walking direction, torso follows the aim */
     let s=u.ms;if(!s)s=u.ms={ph:0,mv:0,bz:0,hh:u.face,at:u.face,lx:u.x,ly:u.y,lt:now,spin:0,spinV:0,rec:0,pitch:-.03};
     const dt=clamp(now-s.lt,0,.05);
@@ -5328,7 +5520,7 @@ const drawMecha=(()=>{
   const vis=k=>clamp(k*3,0,1);   // how much a front-facing detail is turned toward the camera
 
   ctx.save();ctx.translate(gx0,gy0);ctx.scale(SCL,SCL);
-  shadow(2,3,24);
+  if(!(dth>=DDY))shadow(2,3,24);
   {const lean=.123*M.mv;/* tan(7 degrees) */if(lean>.002)ctx.transform(1,0,-lean*hc,1-lean*hs*K,0,0);}   // lean forward along the heading
 
   /* ---------- legs ---------- */
@@ -5488,26 +5680,114 @@ const drawMecha=(()=>{
   });
 
   /* ---------- right arm: swings with the stride ---------- */
-  add(tc*17.5+ts*2,()=>{
+  let rightArm;
+  add(tc*17.5+ts*2,rightArm=()=>{
     const sw=0,sh=PT(0,14.8,zb+13),el=PT(1+sw*.5,17.8,zb+3),hd=PT(3+sw,17.4,zb-6);
     limb(sh,el,5.2,SIL);limb(el,hd,5.8,SIL2);
     const g=gT(3+sw,17.4);
-    prism(g[0],g[1],[[-3,-2.8],[3.2,-2.8],[3.2,2.8],[-3,2.8]],zb-11,zb-4,SILD,M.at);
+    const lp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+    limb(lp(el,hd,.2),lp(el,hd,.78),7.8,col,false);limb(lp(el,hd,.2),lp(el,hd,.3),8.2,colD,false);     // red vambrace on the forearm
+    // armored gauntlet, drawn bottom to top: fingertips, finger plates, thumb, knuckle guard, back-of-hand shell, wrist cuff
+    for(const oy of [-2.5,0,2.5]){
+      const f=gT(5.2,17.4+oy);
+      prism(f[0],f[1],rectPts(2.6,1.7),zb-16.2,zb-14.8,SIL2,M.at);                       // fingertip
+      prism(f[0],f[1],rectPts(3.2,1.9),zb-14.8,zb-11.6,BK3,M.at);                        // finger segment
+      prism(f[0],f[1],rectPts(3.3,2),zb-12.8,zb-11.4,STL2,M.at);                         // plate over it
+    }
+    const th=gT(2.6,17.4-4.3);
+    prism(th[0],th[1],rectPts(3.2,1.9),zb-11.6,zb-8.2,SILD,M.at);                        // thumb
+    prism(g[0],g[1],[[3.4,-3.6],[6.2,-2.8],[6.2,2.8],[3.4,3.6]],zb-11.8,zb-9.6,STL3,M.at);   // knuckle guard
+    prism(g[0],g[1],[[3.6,-3.3],[6,-2.5],[6,2.5],[3.6,3.3]],zb-9.6,zb-8.8,colD,M.at);
+    prism(g[0],g[1],[[-3.3,-3.6],[3.6,-3.2],[5,0],[3.6,3.2],[-3.3,3.6]],zb-9.2,zb-7,col,M.at);   // back-of-hand shell
+    prism(g[0],g[1],[[-2.4,-2.4],[3,-2],[4,0],[3,2],[-2.4,2.4]],zb-7,zb-6.2,STL2,M.at);       // raised ridge on the shell
+    prism(g[0],g[1],ngon(3.9,6,.5),zb-7,zb-4.6,SILD,M.at);                               // wrist cuff
+    prism(g[0],g[1],ngon(4.1,6,.5),zb-4.6,zb-3.6,colD,M.at);
     orb(el[0],el[1],3.2,SIL3);
   });
 
+  /* ---------- death: 1 s of EMP overload, then a blast that destroys the whole mecha except the right arm, which drops to the floor ---------- */
+  const armPose=ar=>{   // ballistic path of the severed arm (one bounce), a pure function of the seconds since the blast
+    const z0=zb-1,vz=95,vh=55,G=ARM_G;
+    const t1=(vz+Math.sqrt(vz*vz+2*G*(z0-ARM_ZR)))/G,v1=(G*t1-vz)*.3,t2=2*v1/G;
+    const a1=Math.min(ar,t1),a2=clamp(ar-t1,0,t2),wx=-ts+tc*.25,wy=tc+ts*.25;   // blown out towards the right side of the torso
+    let z;if(ar<t1)z=z0+vz*ar-.5*G*ar*ar;else if(ar<t1+t2){const q=ar-t1;z=ARM_ZR+v1*q-.5*G*q*q;}else z=ARM_ZR;
+    const ease=1-Math.pow(1-clamp(a1/t1,0,1),2),sg=wx>=0?-1:1;
+    const rot=sg*(Math.PI*2+Math.PI/2+.12)*ease+(ar>t1?Math.sin((ar-t1)*18)*.08*Math.exp(-(ar-t1)*5):0);   // tumbles once and lands lying down
+    return {dx:wx*vh*(a1+.4*a2),dy:wy*vh*(a1+.4*a2),z,rot,t1,landed:ar>=t1};
+  };
+  const drawArm=ar=>{
+    const p=armPose(ar),c=PT(2.5,17,zb-1),z0=zb-1,s0=ar-p.t1;
+    if(s0>=1)return;   // gone 1 s after it touches the floor
+    ctx.save();ctx.globalAlpha=s0>.7?1-(s0-.7)/.3:1;
+    for(let k=1;k<=6;k++){const a2=ar-k*.06;if(a2<0)break;const q=armPose(a2);if(q.landed)break;soft(c[0]+q.dx,c[1]+q.dy*K-(q.z-z0),4+k*1.6,'#4a4f55',.32*(1-k/7));}   // smoke trail
+    shadow(c[0]+p.dx,c[1]+z0+p.dy*K+1,13*(1-clamp(p.z/140,0,.55)));
+    ctx.save();ctx.translate(c[0]+p.dx,c[1]+p.dy*K-(p.z-z0));ctx.rotate(p.rot);ctx.translate(-c[0],-c[1]);rightArm();ctx.restore();
+    const sl=ar-p.t1;
+    if(sl>=0){
+      if(sl<.5)soft(c[0]+p.dx,c[1]+z0+p.dy*K,10+30*sl,'#8a8f94',.35*(1-sl/.5));   // dust where it lands
+      if(sl<1){   // the torn shoulder end crackles and smokes while it lies there
+        const k=1-sl,sp=PT(0,14.8,zb+13),co=Math.cos(p.rot),si=Math.sin(p.rot),ox=sp[0]-c[0],oy=sp[1]-c[1];
+        const X=c[0]+p.dx+co*ox-si*oy,Y=c[1]+p.dy*K-(p.z-z0)+si*ox+co*oy,w=(t*16)%16;
+        soft(X+Math.sin(t*3)*2,Y-w,5,'#555a60',.25*k*(1-w/16));
+        ctx.save();ctx.globalCompositeOperation='lighter';
+        soft(X,Y,9+4*Math.random(),'#6fd0ff',.5*k*(Math.random()<.7?1:.3));
+        if(Math.random()<.5*k){ctx.strokeStyle='rgba(200,240,255,'+(.9*k)+')';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(X,Y);ctx.lineTo(X+(Math.random()-.5)*16,Y+(Math.random()-.5)*12);ctx.lineTo(X+(Math.random()-.5)*22,Y+(Math.random()-.5)*16);ctx.stroke();}
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  };
+  const drawBlast=ar=>{
+    const c=PT(0,0,zb+14),cx=c[0],cy=c[1],gyc=c[1]+zb+14;
+    for(let i=0;i<7;i++){const a=rnd(i,1)*6.283,sp=8+rnd(i,2)*22,ag=ar-.05*i;if(ag<0||ag>1.3)continue;soft(cx+Math.cos(a)*sp*ag*1.6,cy+Math.sin(a)*sp*ag*.7-14*ag-4,10+ag*26,'#3a3a3a',.45*(1-ag/1.3));}   // smoke
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    if(ar<.7){const f=clamp(ar/.55,0,1);
+      soft(cx,cy,30+80*Math.min(1,ar/.25),'#ffffff',Math.max(0,1-ar/.25)*.9);
+      soft(cx,cy,26+54*f,'#ff7a1c',.9*(1-ar/.7));soft(cx,cy,16+30*f,'#ffd27a',1-ar/.7);}
+    const al=Math.max(0,1-ar/.9),e=1-Math.pow(1-clamp(ar/.9,0,1),2);
+    for(const [sc,lw] of [[1,5],[.66,3]]){const R=(8+120*e)*sc;ctx.strokeStyle='rgba(140,220,255,'+(.85*al)+')';ctx.lineWidth=lw*al+.6;ctx.beginPath();ctx.ellipse(cx,cy,R,R*K,0,0,7);ctx.stroke();}   // EMP shock rings
+    if(ar<.5){ctx.strokeStyle='rgba(200,240,255,'+(.9*(1-ar/.5))+')';ctx.lineWidth=1.6;
+      for(let i=0;i<8;i++){const a=rnd(i,4)*6.283,L=30+60*Math.min(1,ar/.3);ctx.beginPath();ctx.moveTo(cx,cy);
+        for(let j=1;j<=5;j++){const q=j/5,jj=Math.sin(t*80+i*7+j*3)*7;ctx.lineTo(cx+Math.cos(a)*L*q-Math.sin(a)*jj,cy+Math.sin(a)*L*q*.8+Math.cos(a)*jj*.8);}ctx.stroke();}}   // lightning
+    ctx.restore();
+    const cols=[BK2,STL,STL2,MRED,BK3,SIL];
+    for(let i=0;i<16;i++){   // body fragments: fly out, fall and are gone after 1 s
+      const r1=rnd(i,5),r2=rnd(i,6),r3=rnd(i,7),a=r1*6.283,sp=40+r2*110;if(ar>1)continue;
+      const z=Math.max(2,zb+14+(r3-.3)*10+(60+r3*100)*ar-.5*ARM_G*ar*ar),x=cx+Math.cos(a)*sp*ar,y=gyc+Math.sin(a)*sp*ar*.6-z,rr=3+r1*5,rot=r2*6+ar*(r3-.5)*20;
+      ctx.save();ctx.globalAlpha=ar>.7?1-(ar-.7)/.3:1;
+      if(ar<.4){ctx.globalCompositeOperation='lighter';soft(x,y,6,'#ff8a2a',.5*(1-ar/.4));ctx.globalCompositeOperation='source-over';}
+      ctx.translate(x,y);ctx.rotate(rot);ctx.beginPath();ctx.moveTo(-rr,-rr*.6);ctx.lineTo(rr,-rr*.4);ctx.lineTo(rr*.7,rr*.6);ctx.lineTo(-rr*.8,rr*.5);ctx.closePath();
+      ctx.fillStyle=cols[i%6];ctx.fill();ctx.strokeStyle='#0a0d10';ctx.lineWidth=1;ctx.stroke();ctx.restore();
+    }
+  };
+  if(dth>=0&&dth<DDY)add(998,()=>{   // overload: the chest charges up like a pulse blast
+    const k=dth/DDY,c=PT(2,0,zb+16);
+    ctx.save();ctx.globalCompositeOperation='lighter';
+    glow(c[0],c[1],14+34*k,'110,200,255',.3+.55*k);glow(c[0],c[1],6+14*k,'255,255,255',.3+.6*k);
+    ctx.strokeStyle='rgba(170,230,255,'+(.5+.4*k)+')';ctx.lineWidth=.9;
+    for(let i=0;i<7;i++){const a=t*41+i*.9,r=14+26*k,mx=c[0]+Math.cos(a)*r*.5+Math.sin(t*61+i)*3,my=c[1]+Math.sin(a)*r*.5;ctx.beginPath();ctx.moveTo(c[0],c[1]);ctx.lineTo(mx,my);ctx.lineTo(c[0]+Math.cos(a)*r,c[1]+Math.sin(a)*r);ctx.stroke();}
+    ctx.restore();
+  });
+  if(dth>=DDY){const ar=dth-DDY;parts.length=0;add(0,()=>drawArm(ar));add(999,()=>drawBlast(ar));}
+
   parts.sort((a,b)=>a[0]-b[0]);
+  ctx.save();if(dth>=0&&dth<DDY){const k=dth/DDY;ctx.translate((Math.random()-.5)*3.2*k,(Math.random()-.5)*2.4*k);}   // the body shakes while it overloads
   for(const p of parts)p[1]();
-    if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.ellipse(0,-34-HOV*M.mv,15,34,0,0,7);ctx.fill();}
+  ctx.restore();
+    if(u.hit>0&&!(dth>=DDY)){ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.ellipse(0,-34-HOV*M.mv,15,34,0,0,7);ctx.fill();}
     ctx.restore();
   };
 })();
 
-/* ---------- Behemoth: Draugar siege beast (slate carapace, bone Kaiser blades, ichor green, team colour on the plates) ---------- */
+/* ---------- Behemoth: Draugar siege beast (leather hide, black antlion jaws, five blue back spikes, bone Kaiser blades) ---------- */
 const drawBehemoth=(()=>{
-  const CAR='#3b3138',CAR2='#2a2229',CARL='#5c4a55',FLESH='#4d2f3c',FLESHD='#26171f',MOUTH='#8a2230';
+  const CAR='#5a3e2c',CAR2='#38261b',CARL='#7d5840',FLESH='#4a3022',FLESHD='#2a1a12',MOUTH='#8a2230';   // leather: worn brown hide, darker where it is shaded
   const BONE='#d9cfae',BONE2='#b3a982',BONED='#8a7f5a',EYE='#ff5a2a';
   const AMP=13,MELEE_T=.62,ROAR_T=.9;
+  const DT=2.0,DEATH_G=300,HEAD_LIFE=3,HV_Z=130,HV_H=55,H_ZR=17,H_Z0=31;   // death: seconds of smoking and bleeding before the blast, gravity, head launch speed up / sideways, centre height of the head when it lies on the floor, centre height of the living head
+  const H_T1=(HV_Z+Math.sqrt(HV_Z*HV_Z+2*DEATH_G*(H_Z0-H_ZR)))/DEATH_G;   // seconds from the blast until the head first touches the floor
+  const drn=(i,k)=>{const v=Math.sin(i*127.1+k*311.7)*43758.5453;return v-Math.floor(v);};   // stable pseudo-random per piece, so every effect is a pure function of time
+  const JAW='#16121a',JAW2='#3a3342';   // antlion jaws: black with a faint lighter ridge
   const SPX=ULTRA_SPX,SPY=ULTRA_SPY,SPZ=ULTRA_SPZ;
   const angDiff=(a,b)=>{let d=(b-a)%(Math.PI*2);if(d>Math.PI)d-=Math.PI*2;if(d<-Math.PI)d+=Math.PI*2;return d;};
   const turnTo=(a,b,m)=>{const d=angDiff(a,b);return Math.abs(d)<=m?b:a+Math.sign(d)*m;};
@@ -5534,7 +5814,7 @@ const drawBehemoth=(()=>{
   };
   const LEGS=[{hx:16,sd:-1,fr:1},{hx:16,sd:1,fr:1},{hx:-19,sd:-1,fr:0},{hx:-19,sd:1,fr:0}];
   return function(u,t,mode){   // mode 1: only advance the animation state (every frame); mode 2: only draw (into the sprite cache); none: both
-    const D=UD.behemoth,now=performance.now()/1000,x=u.x*T,y=u.y*T*K,col=tcol(u.team);
+    const D=UD.behemoth,now=performance.now()/1000,x=u.x*T,y=u.y*T*K,col=tcol(u.team),dth=u.dth===undefined?-1:t-u.dth;   // dth: seconds since it was destroyed (-1 = alive)
     /* animation state lives on the unit: hips follow the walking direction (or swing round to the aim when standing), the head follows the aim */
     let s=u.us;if(!s)s=u.us={ph:0,mv:0,bz:0,hh:u.face,at:u.face,ha:u.face,lx:u.x,ly:u.y,lt:now,jaw:.1};
     const dt=clamp(now-s.lt,0,.05);
@@ -5555,15 +5835,15 @@ const drawBehemoth=(()=>{
     if(sh>=0&&sh<MELEE_T-.27)sw=swingAmt(.27+sh);
     else if(u.cd>0&&u.cd<.22&&u.order.type==='attack')sw=swingAmt(.22-u.cd);
     /* roar when a spike volley starts */
-    const rt=time-(u.volT===undefined?-99:u.volT),roarE=(rt>=0&&rt<ROAR_T)?Math.sin(Math.PI*rt/ROAR_T):0;
-    const jawT=roarE>0?1:(sw>.2?.55:.1+.06*Math.sin(t*3.1));
+    const rt=time-(u.volT===undefined?-99:u.volT),roarE=dth>=0?(dth>1.25&&dth<DT?Math.sin(Math.PI*(dth-1.25)/(DT-1.25)):0):((rt>=0&&rt<ROAR_T)?Math.sin(Math.PI*rt/ROAR_T):0);
+    const jawT=dth>=DT?.85:roarE>0?1:(sw>.2?.55:.1+.06*Math.sin(t*3.1));
     if(mode!==2)s.jaw+=(jawT-s.jaw)*Math.min(1,dt*(roarE>0?9:6));
     if(mode===1)return;
     /* back spines regrow after they have been thrown */
     const spine=[0,1,2,3,4].map(i=>u.spT?clamp((time-u.spT[i])/3.2,0,1):1);
     const fl=(u.lastSpk!==undefined&&time-u.lastSpk<.22)?1-(time-u.lastSpk)/.22:0;
     const hc=Math.cos(s.hh),hs=Math.sin(s.hh),hhc=Math.cos(s.ha),hhs=Math.sin(s.ha);
-    const b=s.bz,mv=s.mv,breath=Math.sin(t*1.7);
+    const sag=dth>=0?4*Math.pow(clamp(dth/DT,0,1),2):0,b=(dth>=DT?0:s.bz)-sag,mv=s.mv,breath=dth>=DT?0:Math.sin(t*1.7);
     const phase=s.ph;
     const legPose=L=>{
       const p=phase+(L.fr?(L.sd>0?Math.PI:0):(L.sd>0?0:Math.PI)),m=clamp(mv*1.3,0,1);
@@ -5573,8 +5853,18 @@ const drawBehemoth=(()=>{
     const gH=(lx,ly)=>[hc*lx-hs*ly,(hs*lx+hc*ly)*K];           // ground anchors for prisms
     const parts=[],add=(d,f)=>parts.push([d,f]);
 
+    if(dth>=DT+H_T1+HEAD_LIFE)return;   // the head has vanished: nothing is left
+    const hr=dth-DT-H_T1,gf=hr>HEAD_LIFE-.4?clamp(1-(hr-(HEAD_LIFE-.4))/.4,0,1):1;   // gf: fade-out of everything that stays behind (last 0.4 s)
     ctx.save();ctx.translate(x,y);
-    shadow(0,4,40);
+    if(!(dth>=DT))shadow(0,4,40);
+    if(dth>=0){   // blood pool that spreads under the body and stays until the head is gone
+      const pr=3+31*clamp(dth/DT,0,1)+(dth>=DT?5:0);
+      ctx.save();ctx.globalAlpha=gf*clamp(dth/.3,0,1);
+      ctx.fillStyle='#2a0508';ctx.beginPath();ctx.ellipse(2,6,pr,pr*K,0,0,7);ctx.fill();
+      ctx.fillStyle='#4a0a0e';ctx.beginPath();ctx.ellipse(0,5,pr*.8,pr*.8*K,0,0,7);ctx.fill();
+      ctx.fillStyle='rgba(120,30,35,.3)';ctx.beginPath();ctx.ellipse(-pr*.2,4,pr*.35,pr*.35*K,0,0,7);ctx.fill();
+      ctx.restore();
+    }
 
     /* ---------- four legs: diagonal gait, knees high like an insect ---------- */
     for(const L of LEGS){
@@ -5582,19 +5872,18 @@ const drawBehemoth=(()=>{
       const r=ik(L.hx,hzL,lp.fx,lp.fz+4,17,17,flip);
       add(hs*lp.fx+hc*lp.fy,()=>{
         const hip=PH(L.hx,sd*13,hzL),kn=PH(r.kx,sd*19.5,r.kz),an=PH(r.ax,sd*(L.fr?20.5:21.5),r.az);
-        const hp=gH(L.hx,sd*14);prism(hp[0],hp[1],[[-6,-5],[7,-5],[7,5],[-6,5]],hzL-3,hzL+6,CAR2,s.hh);
-        limb(hip,kn,11,CAR);
+        const hp=gH(L.hx,sd*14);prism(hp[0],hp[1],[[-6,-5],[7,-5],[7,5],[-6,5]],hzL-3,hzL+6,JAW,s.hh);
+        limb(hip,kn,11,JAW);
         const a0=[hip[0]+(kn[0]-hip[0])*.18,hip[1]+(kn[1]-hip[1])*.18],a1=[hip[0]+(kn[0]-hip[0])*.62,hip[1]+(kn[1]-hip[1])*.62];
-        limb(a0,a1,12.4,CARL,false);
-        limb(kn,an,8.4,FLESHD);
+        limb(a0,a1,12.4,JAW2,false);
+        limb(kn,an,8.4,JAW);
         const s0=[kn[0]+(an[0]-kn[0])*.4,kn[1]+(an[1]-kn[1])*.4],s1=[kn[0]+(an[0]-kn[0])*.72,kn[1]+(an[1]-kn[1])*.72];
-        limb(s0,s1,9.2,FLESH,false);   // ankle band: same brown flesh tone as the rest of the body (was team colour)
-        orb(kn[0],kn[1],5,CARL);
-        limb([kn[0],kn[1]-1],[kn[0]+sd*3.5,kn[1]-11],3.6,BONE);
-        orb(an[0],an[1],3.2,CAR);
+        limb(s0,s1,9.2,JAW2,false);
+        orb(kn[0],kn[1],5,JAW2);
+        orb(an[0],an[1],3.2,JAW);
         const fg=gH(lp.fx,lp.fy);
-        prism(fg[0],fg[1],[[-5.5,-5.5],[8,-5.5],[12,-2],[12,2],[8,5.5],[-5.5,5.5]],lp.fz,lp.fz+4.2,FLESHD,s.hh);
-        for(const oy of [-3.6,0,3.6])prism(fg[0],fg[1],[[10,oy-1.5],[19,oy],[10,oy+1.5]],lp.fz+.2,lp.fz+3,BONE,s.hh);
+        prism(fg[0],fg[1],[[-5.5,-5.5],[8,-5.5],[12,-2],[12,2],[8,5.5],[-5.5,5.5]],lp.fz,lp.fz+4.2,JAW,s.hh);
+        for(const oy of [-3.6,0,3.6])prism(fg[0],fg[1],[[10,oy-1.5],[19,oy],[10,oy+1.5]],lp.fz+.2,lp.fz+3,JAW2,s.hh);
       });
     }
 
@@ -5621,21 +5910,56 @@ const drawBehemoth=(()=>{
         const g=gH(px,py);
         for(let k=0;k<3;k++){const w=2.2*(1-k*.3);prism(g[0],g[1],[[-w,-w],[w,-w],[w,w],[-w,w]],zt+k*2.6,zt+(k+1)*2.6,BONE2,s.hh);}
       }
+      /* leather: skin creases (dark line with a faint highlight under it) and stitched seams on the three top plates */
+      {
+        const rnd=i=>{const v=Math.sin(i*127.1+311.7)*43758.5453;return v-Math.floor(v);};
+        const plates=[[-32,-14,-6,6,38+b],[-9,10,-15,15,44+b],[11,20,-11,11,48.4+b+breath*.4]];   // x0,x1,y0,y1,top height
+        ctx.save();ctx.lineCap='round';
+        plates.forEach((pl,pi)=>{
+          for(let k=0;k<14;k++){
+            const r0=pi*60+k*4,lx=pl[0]+rnd(r0+1)*(pl[1]-pl[0]),ly=pl[2]+rnd(r0+2)*(pl[3]-pl[2]),a=rnd(r0+3)*3.14,L=2.4+rnd(r0)*3.6;
+            const A=PH(lx-Math.cos(a)*L,ly-Math.sin(a)*L,pl[4]),B=PH(lx+Math.cos(a)*L,ly+Math.sin(a)*L,pl[4]),C=PH(lx+Math.sin(a)*1.3,ly-Math.cos(a)*1.3,pl[4]);
+            ctx.strokeStyle='rgba(18,9,5,.5)';ctx.lineWidth=.9;ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.quadraticCurveTo(C[0],C[1],B[0],B[1]);ctx.stroke();
+            ctx.strokeStyle='rgba(205,160,115,.22)';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(A[0],A[1]+.9);ctx.quadraticCurveTo(C[0],C[1]+.9,B[0],B[1]+.9);ctx.stroke();
+          }
+          ctx.setLineDash([2.2,2]);ctx.strokeStyle='rgba(235,205,150,.6)';ctx.lineWidth=.8;ctx.beginPath();
+          [[pl[0],pl[2]],[pl[1],pl[2]],[pl[1],pl[3]],[pl[0],pl[3]]].forEach((q,i)=>{const P=PH(q[0],q[1],pl[4]+.1);i?ctx.lineTo(P[0],P[1]):ctx.moveTo(P[0],P[1]);});
+          ctx.closePath();ctx.stroke();ctx.setLineDash([]);
+        });
+        ctx.restore();
+      }
       const rel=angDiff(s.hh,s.at);
       for(let i=0;i<5;i++){
         const g=spine[i],bz=SPZ[i]+b,sy=SPY[i]>0?1:(SPY[i]<0?-1:0);
         const sock=gH(SPX[i],SPY[i]);
         prism(sock[0],sock[1],[[-3.2,-3.2],[3.2,-3.2],[3.2,3.2],[-3.2,3.2]],bz,bz+3,CAR2,s.hh);
-        const L=5+24*g;
+        const L=6+30*g;
         let dx=-.32,dy=sy*.28,dz=.92;
         if(fl>0){dx+=(Math.cos(rel)*.5+.32)*fl;dy+=(Math.sin(rel)*.5-sy*.28)*fl;}
         const n=Math.hypot(dx,dy,dz);dx/=n;dy/=n;dz/=n;
         const p0=PH(SPX[i],SPY[i],bz+3),pm=PH(SPX[i]+dx*L*.5,SPY[i]+dy*L*.5,bz+3+dz*L*.5),p1=PH(SPX[i]+dx*L,SPY[i]+dy*L,bz+3+dz*L);
-        limb(p0,pm,6,BONE2);limb(pm,p1,3.4,BONE);
-        limb([pm[0]+(p1[0]-pm[0])*.6,pm[1]+(p1[1]-pm[1])*.6],p1,1.8,BONED,false);
-        if(g>.9)glow(p0[0],p0[1]-1,5,'166,232,60',.22+.1*Math.sin(t*3+i));
-        if(fl>0)glow(p0[0],p0[1],9,'200,255,120',.7*fl);
+        {
+          const ex=p1[0]-p0[0],ey=p1[1]-p0[1],el=Math.hypot(ex,ey)||1,nx=-ey/el,ny=ex/el,bw=3.5*Math.min(1,.3+g),cx=pm[0]+nx*1.8,cy=pm[1]+ny*1.8;
+          orb(p0[0],p0[1],bw*.95,CAR);   // base collar
+          ctx.save();ctx.lineJoin='round';ctx.lineWidth=1;ctx.strokeStyle='#040816';
+          ctx.fillStyle='#16225a';ctx.beginPath();ctx.moveTo(p0[0]+nx*bw,p0[1]+ny*bw);ctx.quadraticCurveTo(cx+nx*bw*.4,cy+ny*bw*.4,p1[0],p1[1]);ctx.quadraticCurveTo(cx-nx*bw*.4,cy-ny*bw*.4,p0[0]-nx*bw,p0[1]-ny*bw);ctx.closePath();ctx.fill();ctx.stroke();
+          ctx.fillStyle='#2b449a';ctx.beginPath();ctx.moveTo(p0[0]-nx*bw,p0[1]-ny*bw);ctx.quadraticCurveTo(cx-nx*bw*.4,cy-ny*bw*.4,p1[0],p1[1]);ctx.lineTo(p0[0]+nx*bw*.1,p0[1]+ny*bw*.1);ctx.closePath();ctx.fill();   // lit facet
+          ctx.strokeStyle='rgba(150,180,255,.55)';ctx.lineWidth=.7;ctx.beginPath();ctx.moveTo(p0[0]-nx*bw*.5,p0[1]-ny*bw*.5);ctx.quadraticCurveTo(cx-nx*bw*.2,cy-ny*bw*.2,p1[0],p1[1]);ctx.stroke();
+          ctx.restore();
+        }
+        if(g>.9)glow(p0[0],p0[1]-1,5,'70,110,255',.2+.1*Math.sin(t*3+i));
+        if(fl>0)glow(p0[0],p0[1],9,'140,175,255',.7*fl);
       }
+    });
+
+    /* ---------- short tail: three tapering armoured segments that sway a little ---------- */
+    add(hs*-46,()=>{
+      const sy2=Math.sin(t*2)*2.2*(.5+mv),P=[PH(-31,0,20+b),PH(-42,sy2*.3,19+b),PH(-52,sy2*.8,17+b),PH(-60,sy2*1.4,15.5+b),PH(-66,sy2*2,15+b)],W=[12,9.4,7,4.6];
+      for(let i=0;i<4;i++){
+        limb(P[i],P[i+1],W[i],FLESHD);
+        limb([P[i][0]+(P[i+1][0]-P[i][0])*.1,P[i][1]+(P[i+1][1]-P[i][1])*.1],[P[i][0]+(P[i+1][0]-P[i][0])*.7,P[i][1]+(P[i+1][1]-P[i][1])*.7],W[i]*.8,i%2?CARL:CAR,false);
+      }
+      limb(P[3],P[4],2.6,CAR2);
     });
 
     /* ---------- head: neck, skull, jaw, eyes ---------- */
@@ -5659,14 +5983,14 @@ const drawBehemoth=(()=>{
         limb(HP(25,sd*6,headZ+3),HP(35,sd*3.4,headZ-5-j*5),3,BONE2);
       }
       for(const oy2 of [-3.6,0,3.6])prism(ox,oy,[[27,oy2-1],[32,oy2],[27,oy2+1]],headZ+.8,headZ+3.4,BONE,s.ha);
-      const vf=clamp(hhs*3,0,1);
+      const eyeK=dth>=DT?clamp(1-(dth-DT)/.6,0,1):1,vf=clamp(hhs*3,0,1)*eyeK;
       for(const sd of [-1,1]){
         if(vf>0){
           const e=HP(27,sd*4.4,headZ+8);
           ctx.save();ctx.globalAlpha=vf;glow(e[0],e[1],6.5,'255,90,40',.6);ctx.fillStyle=EYE;ctx.beginPath();
           [HP(27.4,sd*3,headZ+7.2),HP(27.4,sd*5.8,headZ+7.2),HP(27.4,sd*5.8,headZ+9),HP(27.4,sd*3,headZ+8.4)].forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();ctx.fill();ctx.restore();
         }
-        const vs=clamp(sd*hhc*3,0,1);
+        const vs=clamp(sd*hhc*3,0,1)*eyeK;
         if(vs>0){
           const e=HP(21,sd*9.4,headZ+8);
           ctx.save();ctx.globalAlpha=vs;glow(e[0],e[1],6,'255,90,40',.55);ctx.fillStyle=EYE;ctx.beginPath();
@@ -5677,29 +6001,123 @@ const drawBehemoth=(()=>{
     });
 
     /* ---------- kaiser blades: two curved scythe tusks that sweep in when it strikes ---------- */
-    const ls=1-.38*sw+.5*roarE,fx=9*sw;
-    const BLADE=[[26,9,5],[38,16,6],[52,21,3],[66,22,-4],[78,18,-12],[86,11,-20]];
-    const WID=[8.4,7.6,6.6,5.4,4,2.4];
+    const ls=1+.38*(sw<0?-sw:0)+.5*roarE+(dth>=DT?.3:0),fx=9*sw,cf=clamp(sw/1.5,0,1),KK=[0,0,.08,.25,.5,.85,1.15];   // ls: opens on wind-up/roar; cf: clamps shut on the strike (tips weigh most)
+    const BLADE=[[26,9,3],[36,16,2],[47,21,1],[58,21,0],[68,17,-1],[76,11,-2],[82,7,-2]];   // antlion jaw: bows out, then hooks in to a point
+    const WID=[10,8.6,7.2,5.8,4.4,3,1.6];
     for(const sd of [-1,1]){
       add(hs*24+hhs*52+hhc*sd*20*ls,()=>{
-        const pts=BLADE.map(q=>HP(q[0]+fx*(q[0]-20)/66,sd*q[1]*ls,headZ+q[2]));
+        const pts=BLADE.map((q,qi)=>HP(q[0]+fx*(q[0]-20)/66,sd*q[1]*ls*(1-cf*KK[qi]),headZ+q[2]));
         pts.unshift(HP(22,sd*7,headZ+4));
         for(let i=0;i<pts.length-1;i++){
           const w=WID[Math.min(i,WID.length-1)];
-          limb(pts[i],pts[i+1],w,BONE);
-          limb([pts[i][0]+w*.12,pts[i][1]+w*.2],[pts[i+1][0]+w*.12,pts[i+1][1]+w*.2],Math.max(1,w*.3),BONED,false);
+          limb(pts[i],pts[i+1],w,JAW);
+          limb([pts[i][0]+w*.12,pts[i][1]+w*.2],[pts[i+1][0]+w*.12,pts[i+1][1]+w*.2],Math.max(1,w*.3),JAW2,false);
           const q=pts[i+1];ctx.strokeStyle='rgba(60,50,30,.55)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(q[0]-w*.5,q[1]-w*.1);ctx.lineTo(q[0]+w*.5,q[1]+w*.1);ctx.stroke();
         }
+        for(let j=3;j<=6;j++){   // serrated inner edge: little teeth pointing at the centre line
+          const q=BLADE[j-1],xx=q[0]+fx*(q[0]-20)/66,yy=sd*q[1]*ls*(1-cf*KK[j-1]),zz=headZ+q[2],len=8-(j-3)*1.5,P0=pts[j],P1=pts[j+1];
+          const A=[P0[0]+(P1[0]-P0[0])*.05,P0[1]+(P1[1]-P0[1])*.05],B=[P0[0]+(P1[0]-P0[0])*.55,P0[1]+(P1[1]-P0[1])*.55],tp=HP(xx+6,yy-sd*len,zz);
+          ctx.save();ctx.lineJoin='round';ctx.fillStyle=JAW;ctx.strokeStyle='#4a4254';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(tp[0],tp[1]);ctx.lineTo(B[0],B[1]);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+        }
         const a=pts[pts.length-2],e=pts[pts.length-1];
-        limb([a[0]+(e[0]-a[0])*.45,a[1]+(e[1]-a[1])*.45],e,2.6,'#4a3b30',false);
+        limb([a[0]+(e[0]-a[0])*.45,a[1]+(e[1]-a[1])*.45],e,2.2,'#050407',false);
         orb(pts[0][0],pts[0][1],4.8,CAR2);
         if(sw>.5){glow(e[0],e[1],11,'220,255,150',.5*Math.min(1,sw));}
       });
     }
 
+    /* ---------- death: 2 s of smoking and bleeding, then it blows apart. Only the head with its jaws survives, drops to the floor and vanishes 3 s after it lands ---------- */
+    const headPose=ar=>{   // ballistic path of the head (one bounce, one forward tumble), a pure function of the seconds since the blast
+      const z0=headZ+4,vz=HV_Z,G=DEATH_G,vh=HV_H;
+      const t1=(vz+Math.sqrt(vz*vz+2*G*(z0-H_ZR)))/G,v1=(G*t1-vz)*.28,t2=2*v1/G,a1=Math.min(ar,t1),a2=clamp(ar-t1,0,t2);
+      const wx=hhc*.8-hhs*.25,wy=hhs*.8+hhc*.25;   // thrown forward along its heading
+      let z;if(ar<t1)z=z0+vz*ar-.5*G*ar*ar;else if(ar<t1+t2){const q=ar-t1;z=H_ZR+v1*q-.5*G*q*q;}else z=H_ZR;
+      const ease=1-Math.pow(1-clamp(a1/t1,0,1),2),sg=wx>=0?1:-1;
+      const rot=sg*(Math.PI*2+.16)*ease+(ar>t1?Math.sin((ar-t1)*16)*.07*Math.exp(-(ar-t1)*5):0);
+      return {dx:wx*vh*(a1+.4*a2),dy:wy*vh*(a1+.4*a2),z,rot,t1,z0,landed:ar>=t1};
+    };
+    const drawDeadHead=(ar,keep)=>{
+      const hp=headPose(ar),c=HP(35,0,headZ+4),z0=hp.z0;
+      for(let k=1;k<=7;k++){const a2=ar-k*.06;if(a2<0)break;const q=headPose(a2);if(q.landed)break;soft(c[0]+q.dx,c[1]+q.dy*K-(q.z-z0),6+k*2,'#2c2929',.4*(1-k/8));}   // smoke trail
+      const gxs=c[0]+hp.dx,gys=c[1]+z0+hp.dy*K,sl=ar-hp.t1;
+      ctx.save();ctx.globalAlpha=gf;
+      shadow(gxs,gys+1,30*(1-clamp(hp.z/150,0,.55)));
+      if(sl>=0){const pr=Math.min(15,sl*34);ctx.fillStyle='#34060a';ctx.beginPath();ctx.ellipse(gxs-6,gys+3,pr,pr*K,0,0,7);ctx.fill();}   // blood under the dead head
+      ctx.translate(gxs,gys-hp.z);ctx.rotate(hp.rot);ctx.translate(-c[0],-c[1]);   // the head's centre moves to the floor point minus its height, and it tumbles about that centre
+      for(const p of keep)p[1]();
+      ctx.restore();
+      if(sl>=0){   // the torn neck stump smokes, glows and drips while the head lies there
+        const k=gf*(1-sl/(HEAD_LIFE+.2)),sp=HP(-9,0,headZ+3),co=Math.cos(hp.rot),si=Math.sin(hp.rot),ox=sp[0]-c[0],oy=sp[1]-c[1];
+        const X=gxs+co*ox-si*oy,Yc=gys-hp.z+si*ox+co*oy,w=(t*14)%18,w2=(t*14+9)%18;
+        soft(X+Math.sin(t*3)*2,Yc-w,6,'#4a4545',.35*k*(1-w/18));soft(X+Math.sin(t*3+2)*2,Yc-w2,6,'#4a4545',.35*k*(1-w2/18));
+        ctx.save();ctx.globalCompositeOperation='lighter';soft(X,Yc,8,'#ff7a2a',.5*k*(Math.random()<.75?1:.3));ctx.restore();
+        const d=(t*1.2)%1;ctx.save();ctx.globalAlpha=(1-d)*k;ctx.fillStyle='#6e0c11';ctx.beginPath();ctx.ellipse(X,Yc+3+d*d*16,1.3,2.1,0,0,7);ctx.fill();ctx.restore();
+      }
+    };
+    const drawSplats=ar=>{   // gore that landed on the floor around the pool
+      const c=PH(0,0,40),cx=c[0],gyc=c[1]+40;
+      ctx.save();ctx.globalAlpha=gf;
+      for(let i=0;i<30;i++){
+        const a=drn(i,11)*6.283,sp=40+drn(i,12)*150,vz=40+drn(i,13)*140,tl=(vz+Math.sqrt(vz*vz+2*DEATH_G*38))/DEATH_G;
+        if(ar<tl)continue;
+        const r=2+drn(i,14)*3.2;ctx.fillStyle=i%3?'#3f070b':'#560a0f';ctx.beginPath();ctx.ellipse(cx+Math.cos(a)*sp*tl,gyc+Math.sin(a)*sp*tl*.6,r,r*K,0,0,7);ctx.fill();
+      }
+      ctx.restore();
+    };
+    const drawBodyBlast=ar=>{
+      const c=PH(0,0,40),cx=c[0],cy=c[1],gyc=c[1]+40;
+      for(let i=0;i<10;i++){const a=drn(i,1)*6.283,sp=6+drn(i,2)*26,ag=ar-.04*i;if(ag<0||ag>1.8)continue;soft(cx+Math.cos(a)*sp*ag*1.5,cy+Math.sin(a)*sp*ag*.6-10*ag-4,14+ag*30,'#1f1c1c',.55*(1-ag/1.8));}   // black smoke
+      ctx.save();ctx.globalCompositeOperation='lighter';
+      if(ar<.9){const f=clamp(ar/.6,0,1);
+        soft(cx,cy,40+120*Math.min(1,ar/.25),'#ffffff',Math.max(0,1-ar/.22)*.9);
+        soft(cx,cy,34+70*f,'#ff6a14',.95*(1-ar/.9));soft(cx,cy,20+36*f,'#ffd27a',Math.max(0,1-ar/.8));
+        for(let i=0;i<5;i++){const a=drn(i,3)*6.283,r=14+drn(i,4)*26;soft(cx+Math.cos(a)*r*f,cy+Math.sin(a)*r*f*.7,16+16*f,'#ff8a2a',.6*(1-ar/.9));}}
+      const al=Math.max(0,1-ar/.8),e=1-Math.pow(1-clamp(ar/.8,0,1),2);
+      ctx.strokeStyle='rgba(255,170,90,'+(.8*al)+')';ctx.lineWidth=4*al+.6;ctx.beginPath();ctx.ellipse(cx,cy+10,8+130*e,(8+130*e)*K,0,0,7);ctx.stroke();   // shock ring
+      ctx.restore();
+      const cols=[CAR,CAR2,FLESHD,JAW,BONE2,CARL,FLESH,'#2b449a'];
+      for(let i=0;i<22;i++){   // body chunks: fly out, fall and are gone after about a second
+        const r1=drn(i,5),r2=drn(i,6),r3=drn(i,7),a=r1*6.283,sp=30+r2*130,life=i<4?1.25:1.05;if(ar>life)continue;
+        const z=Math.max(2,38+(r3-.3)*14+(50+r3*130)*ar-.5*DEATH_G*ar*ar),px=cx+Math.cos(a)*sp*ar,py=gyc+Math.sin(a)*sp*ar*.6-z,rr=i<4?9+r1*5:3+r1*5,rot=r2*6+ar*(r3-.5)*18;
+        ctx.save();ctx.globalAlpha=ar>life-.3?1-(ar-(life-.3))/.3:1;
+        if(ar<.4){ctx.globalCompositeOperation='lighter';soft(px,py,rr*1.4,'#ff8a2a',.5*(1-ar/.4));ctx.globalCompositeOperation='source-over';}
+        ctx.translate(px,py);ctx.rotate(rot);ctx.beginPath();ctx.moveTo(-rr,-rr*.6);ctx.lineTo(rr*.2,-rr*.9);ctx.lineTo(rr,-rr*.3);ctx.lineTo(rr*.6,rr*.7);ctx.lineTo(-rr*.8,rr*.5);ctx.closePath();
+        ctx.fillStyle=cols[i%8];ctx.fill();ctx.strokeStyle='#0d070c';ctx.lineWidth=1.1;ctx.lineJoin='round';ctx.stroke();ctx.restore();
+      }
+      for(let i=0;i<30;i++){   // gore drops in flight
+        const a=drn(i,11)*6.283,sp=40+drn(i,12)*150,vz=40+drn(i,13)*140,tl=(vz+Math.sqrt(vz*vz+2*DEATH_G*38))/DEATH_G;
+        if(ar>=tl)continue;
+        const z=38+vz*ar-.5*DEATH_G*ar*ar;ctx.fillStyle=i%3?'#6b0b10':'#7a0e14';ctx.beginPath();ctx.ellipse(cx+Math.cos(a)*sp*ar,gyc+Math.sin(a)*sp*ar*.6-z,1.4,2.2,0,0,7);ctx.fill();
+      }
+    };
+    if(dth>=0&&dth<DT)add(900,()=>{   // smoking, bleeding wounds that heat up towards the blast
+      const k=dth/DT,bk=clamp(dth/.35,0,1);
+      [[-22,-9,38],[-6,14,44],[14,-12,48],[24,9,46],[-30,6,38],[4,-4,44]].forEach((w,wi)=>{
+        const p=PH(w[0],w[1],w[2]),g=gH(w[0],w[1]);
+        ctx.save();ctx.lineCap='round';
+        const len=Math.min(w[2],4+22*Math.min(1,dth/1.6));   // blood running down the hide
+        ctx.strokeStyle='#1a0204';ctx.lineWidth=3.2;ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(p[0]+Math.sin(wi*2)*1.5,p[1]+len*bk);ctx.stroke();
+        ctx.strokeStyle='#6b0b10';ctx.lineWidth=1.9;ctx.stroke();
+        ctx.fillStyle='#7a0d13';ctx.beginPath();ctx.arc(p[0],p[1],(2.4+k*1.6)*bk,0,7);ctx.fill();   // the open wound
+        for(let m=0;m<2;m++){   // drops falling to the floor
+          const q=(t*1.7+wi*.37+m*.5)%1,tau=q/1.7,z=w[2]-.5*DEATH_G*tau*tau;
+          if(z>0){ctx.globalAlpha=bk;ctx.fillStyle='#6e0c11';ctx.beginPath();ctx.ellipse(g[0],g[1]-z,1.2,2.1,0,0,7);ctx.fill();ctx.globalAlpha=1;}
+        }
+        ctx.restore();
+        for(let m=0;m<3;m++){   // smoke, darker the closer it gets to the end
+          const q=(t*.75+wi*.23+m*.34)%1;
+          soft(p[0]+Math.sin(t*2+wi+m*2)*3+q*(wi%2?6:-6),p[1]-6-q*36,4+q*12*(.6+k*.6),k>.6?'#1c1a1a':'#3a3636',.55*(1-q)*bk*(.5+.5*k));
+        }
+        glow(p[0],p[1],7+5*k,'255,110,40',(.08+.5*k*k)*(.75+.25*Math.sin(t*20+wi)));
+      });
+    });
+    if(dth>=DT){const ar=dth-DT,keep=parts.slice(-3).sort((a,b)=>a[0]-b[0]);parts.length=0;add(-5,()=>drawSplats(ar));add(0,()=>drawDeadHead(ar,keep));add(999,()=>drawBodyBlast(ar));}
+
     parts.sort((a,b)=>a[0]-b[0]);
+    ctx.save();if(dth>=0&&dth<DT){const k=dth/DT;ctx.translate((Math.random()-.5)*(.6+2*k),(Math.random()-.5)*(.4+1.2*k));}   // it trembles more and more
     for(const p of parts)p[1]();
-    if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.ellipse(0,-30,34,30,0,0,7);ctx.fill();}
+    ctx.restore();
+    if(u.hit>0&&!(dth>=DT)){ctx.fillStyle='rgba(255,255,255,.3)';ctx.beginPath();ctx.ellipse(0,-30,34,30,0,0,7);ctx.fill();}
     ctx.restore();
   };
 })();
@@ -5906,7 +6324,7 @@ function hpBar(x,y,w,e,h){
   ctx.fillStyle=f>.6?C.good:f>.3?'#f2a93b':C.bad;ctx.fillRect(x,y,w*f,h);
   if(e.maxsh){const sf=clamp(e.sh/e.maxsh,0,1);ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(x,y-gap,w,sh);ctx.fillStyle='#7fdcff';ctx.fillRect(x,y-gap,w*sf,sh);}
 }
-const BARS={mecha:[130,52],tank:[46,40],heli:[82,32],worker:[36,20],unit02:[40,24],axiom:[46,26],zorions:[52,34],valkrie:[92,56],dog:[30,24],vexor:[48,38],tree:[72,32],ptero:[66,30],overlord:[88,44],mothership:[150,100],behemoth:[80,56]};
+const BARS={mecha:[130,52],tank:[46,40],heli:[115,32],worker:[36,20],unit02:[40,24],axiom:[46,26],zorions:[52,34],valkrie:[92,56],dog:[30,24],vexor:[48,38],tree:[72,32],ptero:[105,30],overlord:[88,44],mothership:[190,100],behemoth:[80,56]};
 let hzG=null,hzH=0;
 /* ---------- rain ---------- */
 let wx='rain',wxT=80,rainK=0,sunK=0,rainLast=0,rainNext=9,rainFlash=0,rainG=null,rainSnd=null;
@@ -6013,8 +6431,9 @@ function render(t){
   for(const r of resources)if(!r.dead&&inV(r.tx+.5,r.ty+1,60,60,110))ents.push([r.ty+.6,{kind:'r2',r}]);
   for(const b of buildings)if((isFriend(b.team)||b.seen)&&bldgInV(b))ents.push([b.ty+b.size,b]);
   for(const u of units)if((isFriend(u.team)||visAt(u.x,u.y))&&inV(u.x,u.y,80,70,200))ents.push([u.y+(UD[u.type].air?6:.3),u]);
+  for(const e of effects)if(e.k==='dg'&&e.t>0&&(isFriend(e.team)||visAt(e.x,e.y))&&inV(e.x,e.y,260,260,300))ents.push([e.y+(e.ty==='mothership'?6:.3),e]);   // wrecks of the super units
   ents.sort((a,b)=>a[0]-b[0]);
-  for(const [,e] of ents){if(e.kind==='b')drawBuilding(e,t);else if(e.kind==='t')drawTree(e.x,e.y);else if(e.kind==='r2')drawResource(e.r);else drawUnit(e,t);}
+  for(const [,e] of ents){if(e.kind==='b')drawBuilding(e,t);else if(e.kind==='t')drawTree(e.x,e.y);else if(e.kind==='r2')drawResource(e.r);else if(e.k==='dg')drawGhost(e,t);else drawUnit(e,t);}
   // health bars above heads
   for(let pass=0;pass<2;pass++)for(const e of (pass?units:buildings)){
     if(e.kind==='b'?!bldgInV(e):!inV(e.x,e.y,80,100,200))continue;
@@ -6030,6 +6449,11 @@ function render(t){
   // effects
   for(const e of effects){
     if(e.d>0)continue;
+    if(e.k==='dg')continue;   // drawn with the units above
+    if(e.k==='fk'||e.k==='pls'){   // focus strike / pulse blast: wide margins, they reach far from the unit
+      if((inV(e.x,e.y,420,380,380)||inV(e.u.x,e.u.y,420,380,380))&&(isFriend(e.team)||visAt(e.x,e.y)||visAt(e.u.x,e.u.y)))drawSuperFx(e,t);
+      continue;
+    }
     if(e.k==='l'||e.k==='sc'){if(!inV(e.x,e.y,120,100,170)&&!inV(e.x1,e.y1,120,100,170))continue;}
     else if(!inV(e.x,e.y,120,100,170))continue;
     if(e.k!=='r'&&!(visAt(e.x,e.y)||((e.k==='l'||e.k==='sc')&&visAt(e.x1,e.y1))))continue;
@@ -6070,15 +6494,16 @@ function render(t){
       const f=clamp(1-e.t/e.T,0,1),r=e.r*(1+f);
       ctx.globalAlpha=.4*(1-f);ctx.drawImage(glowSprite('mdst',[[0,'rgba(167,155,134,1)'],[.72,'rgba(167,155,134,1)'],[1,'rgba(167,155,134,0)']]),e.x*T-r,e.y*T*K-e.z-r*K,r*2,r*2*K);ctx.globalAlpha=1;
     }
-    else if(e.k==='sp'){   // Behemoth spike: thrown in an arc, bone shaft with a dark tip
+    else if(e.k==='sp'){   // Behemoth spike: thrown in an arc, dark-blue crystal with a lit facet
       const f=clamp(1-e.t/e.T,0,.96),g=f+.04;
       const SP=q=>[(e.sx+(e.ex-e.sx)*q)*T,(e.sy+(e.ey-e.sy)*q)*T*K-(e.z0+(e.z1-e.z0)*q+e.arc*4*q*(1-q))];
       const a=SP(f),b=SP(g),an=Math.atan2(b[1]-a[1],b[0]-a[0]),c=Math.cos(an),s2=Math.sin(an);
       ctx.save();ctx.lineCap='round';
-      ctx.drawImage(glowSprite('ultrail',[[0,'rgba(166,232,60,.9)'],[1,'rgba(166,232,60,0)']]),a[0]-c*9-8,a[1]-s2*9-8,16,16);
-      ctx.strokeStyle='#0d070c';ctx.lineWidth=5.4;ctx.beginPath();ctx.moveTo(a[0]-c*13,a[1]-s2*13);ctx.lineTo(a[0]+c*7,a[1]+s2*7);ctx.stroke();
-      ctx.strokeStyle='#d9cfae';ctx.lineWidth=3.2;ctx.beginPath();ctx.moveTo(a[0]-c*12,a[1]-s2*12);ctx.lineTo(a[0]+c*5,a[1]+s2*5);ctx.stroke();
-      ctx.strokeStyle='#4a3b30';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a[0]+c*2,a[1]+s2*2);ctx.lineTo(a[0]+c*7,a[1]+s2*7);ctx.stroke();
+      ctx.drawImage(glowSprite('ultrailB',[[0,'rgba(80,120,255,.9)'],[1,'rgba(80,120,255,0)']]),a[0]-c*9-8,a[1]-s2*9-8,16,16);
+      const tx=a[0]+c*10,ty=a[1]+s2*10,bx=a[0]-c*13,by=a[1]-s2*13,pw=-s2*2.6,pn=c*2.6;
+      ctx.lineJoin='round';ctx.fillStyle='#16225a';ctx.strokeStyle='#040816';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(bx+pw,by+pn);ctx.lineTo(tx,ty);ctx.lineTo(bx-pw,by-pn);ctx.closePath();ctx.fill();ctx.stroke();
+      ctx.fillStyle='#2b449a';ctx.beginPath();ctx.moveTo(bx-pw,by-pn);ctx.lineTo(tx,ty);ctx.lineTo(bx,by);ctx.closePath();ctx.fill();
       ctx.restore();
     }
     else if(e.k==='m'){
@@ -7255,7 +7680,7 @@ const TDESC={
   headhunters:'Cheap, fast rifle infantry. Hits ground and air units.',
   rocket:'Armoured anti-tank trooper with area damage. Bonus damage vs tanks. Can hit air units.',
   tank:'Heavy siege cannon with long range, bonus damage vs armoured. Cannot hit air units.',
-  mecha:'Heavy walker with a gatling cannon and a shoulder rocket pod. Both hit ground units, buildings and air.',
+  mecha:'Heavy walker with a gatling cannon, a shoulder rocket pod and an EMP pulse blast when enemies crowd it. Weapons hit ground units, buildings and air.',
   heli:'Fast armored gunship that flies over terrain. Attacks units, not buildings.',
   unit02:'Melee psi-blade warrior with a plasma shield. Strong vs headhunters and workers. Cannot hit air.',
   axiom:'Long-range shielded skirmisher. Bonus vs armoured. Hits ground and air, the Eirian answer to copters.',
@@ -7275,7 +7700,7 @@ Object.assign(TDESC,{
   ptero:'Dark flying mutant. Red beams hit an area, ground and air. Trained at the Kairos.',
   overlord:'Flying balloon monster. Gives +8 supply. Cannot attack, but you can fly it anywhere. Trained at the Kairos.'});
 Object.assign(TDESC,{behemoth:'Draugar siege beast. Kaiser blades sweep an area (ground only) and five back spines throw spike barrages at up to 5 targets, ground and air. Armoured. Trained at the Monolith.'});
-Object.assign(TDESC,{mothership:'Eirian capital ship. Hovers high above the battlefield and fires blue pulse beams at up to 5 targets at once, ground and air. Trained at the Cybergrid.'});
+Object.assign(TDESC,{mothership:'Eirian capital ship. Hovers high above the battlefield and fires blue pulse beams at up to 5 targets at once, ground and air. Every 4th volley the beams turn red and fry one target together. Trained at the Cybergrid.'});
 const TD2={draugar:{
   worker:'Builds structures and mines minerals. Can fight in melee.',
   central:'Kairos. Drop-off point for minerals; trains wraiths, floaters (supply) and pterodactyls.',
