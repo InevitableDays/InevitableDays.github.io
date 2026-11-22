@@ -109,7 +109,7 @@ table.vs td:first-child{text-align:left;font:400 12px var(--f-ui);color:var(--mu
 #cmd .none{grid-column:1/-1;color:var(--muted);font-size:12px;display:flex;align-items:center}
 .cmd{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;cursor:var(--kn,pointer);color:var(--fg);padding:4px 2px;min-width:0}
 .cmd:hover:not(:disabled){border-color:var(--you);color:#fff}
-.cmd:disabled{opacity:.42;cursor:not-allowed}
+.cmd:disabled{opacity:.42;cursor:var(--kn,not-allowed)}   /* can't afford / no supply: keep the golden knife instead of the red 'not allowed' circle */
 .cmd.on{border-color:var(--warn);color:var(--warn)}
 .cmd .ic{color:var(--you);display:flex}
 .cmd .nm{font-size:11px;font-weight:500;line-height:1.1}
@@ -603,8 +603,8 @@ body.eirian #hud{background:linear-gradient(180deg,#0e0b07,#050403)}
       <div class="chip"><b id="vTime">0:00</b><small>time</small></div>
     </div>
     <div class="ctl">
-      <button class="btn" id="bIdle" type="button">Idle worker<kbd>.</kbd></button>
-      <button class="btn" id="bArmy" type="button">Army<kbd>,</kbd></button>
+      <button class="btn" id="bIdle" type="button">Idle worker<kbd>F1</kbd></button>
+      <button class="btn" id="bArmy" type="button">Army<kbd>F2</kbd></button>
       <div class="seg" id="spd"><button class="btn on" type="button" data-s="1">1x</button><button class="btn" type="button" data-s="2">2x</button><button class="btn" type="button" data-s="4">4x</button></div>
       <button class="btn" id="bMus" type="button">Music on<kbd>N</kbd></button>
       <button class="btn" id="bSnd" type="button">Sound on<kbd>M</kbd></button>
@@ -5225,13 +5225,22 @@ function clear(){for(const c of cache.values())c.width=c.height=0;cache.clear();
 return {FPS,DIRS,FR,DIM,sprite,live,jobs,clear,get size(){return cache.size;}};
 })();
 /* which Nyx sprite a unit uses right now: walking, striking (frame follows the time since the last strike, so the swing lines up with the damage) or idle */
-function nyxPose(u,t,M){   // shared by Nyx, Scorpion and Fairy; M = the unit's sprite module (default NYX)
+function nyxPose(u,t,M){   // shared by Nyx, Scorpion, Fairy and Android; M = the unit's sprite module (default NYX)
   M=M||NYX;
   const d=UD[u.type],mv=(u.path&&u.pi<u.path.length)||time-(u.lmv||-9)<.1,sh=d.cd-u.cd,ph=Math.floor(t*M.FPS+(u.id|0)*1.7);
   let ai,fi;
   if(mv){ai=1;fi=ph%6;}
   else if(sh>=0&&sh<d.cd){ai=2;const k=Math.floor(sh*M.FPS);fi=d.an?(k+(d.af|0))%d.an:Math.min(5,k);}   // af: the arrow leaves the bow exactly when the damage lands
-  else{ai=0;fi=ph%4;}
+  else{
+    ai=0;fi=ph%4;
+    /* idle fidget (Fairy, Android: modules that export FSEG: [seconds, pose] segments). Measured in game time since the unit last walked or fired:
+       the first one comes 40-100% of one period after it went idle (staggered per unit so a squad does not move in sync), then one every M.FPER seconds (Fairy 17, Android 19);
+       it ends the moment the unit moves or shoots, because those branches win above. */
+    if(M.FSEG){
+      const PER=M.FPER||10,e=Math.min(time-(u.lmv===undefined?-1e9:u.lmv),sh)-(PER*.4+((u.id|0)*1.37)%(PER*.6));
+      if(e>=0){const r=e%PER;let acc=0;for(const sg of M.FSEG){acc+=sg[0];if(r<acc){ai=3;fi=sg[1]*4+ph%4;break;}}}   // every fidget pose is baked with the 4 cape phases; they cycle on the same clock as the normal idle
+    }
+  }
   let dir=Math.round(u.face/SPR_TAU*M.DIRS)%M.DIRS;if(dir<0)dir+=M.DIRS;if(!(dir>=0))dir=0;
   return [ai,fi,dir];
 }
@@ -5449,15 +5458,21 @@ function shadow(x,y,rx){ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.elli
 
 /* ---- the fairy archer: slim, cream and orange armour, visored helmet with an amber glow strip, ponytail,
    a flowing orange cape, a recurve light-bow and golden light arrows; drawn at SC x the marine's scale ---- */
-const DIRS=18,FPS=7,FR={idle:4,walk:6,shoot:5},SC=1.2;   // 18 facings, 7 fps, original size
+const DIRS=18,FPS=7,FR={idle:4,walk:6,shoot:5,fidget:12},SC=1.2;
+  /* fidget frames: fi = pose*4 + cape phase. Every pose (ease in/out and the hold) is baked with all 4 cape/ponytail phases, so the cape keeps rippling
+     through the whole fidget exactly like the normal idle. FWT = how far into the pose; the ease-out frames reuse the ease-in poses */
+  const FWT=[.35,.7,1];   // 18 facings, 7 fps, original size
 const tc=t=>(TC[t]||TC[0])[0],rgbC=new Map();
 const trgb=t=>{let v=rgbC.get(t);if(!v){const n=parseInt(tc(t).slice(1),16);v=(n>>16&255)+','+(n>>8&255)+','+(n&255);rgbC.set(t,v);}return v;};
 const PEARL='#f6ece2',PEARL2='#ffffff',MINT='#ff9a3c',MINTD='#b85a12',HAIR='#ffb347',HAIRD='#c26a0e',DK='#22262a',VIS='#ffd27a',VR='255,210,122',LT='255,200,110';
 function drawUnit(face,anim,fi,team){
-  const col=tc(team),rgb=trgb(team),c=Math.cos(face),s=Math.sin(face),n=FR[anim],ph=fi/n*TAU;
-  const walk=anim==='walk',shoot=anim==='shoot',idle=anim==='idle';
-  /* the fairy hovers a little when idle: body bob */
-  const bob=walk?.6+Math.abs(Math.sin(ph))*.8:idle?[.5,.53,.56,.53][fi]:[.7,.7,.5,.9,.9][fi];
+  const col=tc(team),rgb=trgb(team),c=Math.cos(face),s=Math.sin(face),n=FR[anim],ph=anim==='fidget'?(fi&3)/4*TAU:fi/n*TAU;
+  const walk=anim==='walk',shoot=anim==='shoot',idle=anim==='idle',fid=anim==='fidget',rest=idle||fid,k=fid?(fi&3):fi;
+  /* idle fidget (every 10s): the right leg swings forward 15 degrees and the bow turns 90 degrees in the hand, held for 3s, then back.
+     FW = how far into the pose (frames: ease in x2, hold, ease out x2) */
+  const FW=fid?FWT[fi>>2]:0;
+  /* no idle bob: standing still means standing still */
+  const bob=walk?.6+Math.abs(Math.sin(ph))*.8:rest?.5:[.7,.7,.5,.9,.9][fi];
   const P=(lx,ly,z)=>[c*lx-s*ly,(s*lx+c*ly)*K-z];
   const G=(lx,ly)=>[c*lx-s*ly,(s*lx+c*ly)*K];
   const zb=14+bob,parts=[],add=(lx,ly,f)=>parts.push([s*lx+c*ly,f]);
@@ -5482,8 +5497,9 @@ function drawUnit(face,anim,fi,team){
   shadow(0,1,8-bob*.8);
   /* legs: slim pearl thighs, mint greaves, small boots; the feet hover just off the ground */
   for(const sd of [-1,1]){
-    const q=ph+(sd>0?Math.PI:0),ly=sd*1.7;
-    const fx=walk?Math.sin(q)*3.4:shoot?(sd<0?2.8:-2.4):0,lift=walk?Math.max(0,Math.cos(q))*2:0,hov=bob*.5;
+    const q=ph+(sd>0?Math.PI:0),ly=sd*1.7,hov=bob*.5;
+    let fx=walk?Math.sin(q)*3.4:shoot?(sd<0?2.8:-2.4):0,lift=walk?Math.max(0,Math.cos(q))*2:0;
+    if(fid&&sd>0){const Lg=(zb+.5)-(hov+2.6),A=15*Math.PI/180*FW;fx=Lg*Math.sin(A);lift=Lg*(1-Math.cos(A));}   // fidget: right leg forward 15 degrees (foot lifts as the leg swings)
     add(fx,ly,()=>{
       const h0=P(0,ly,zb+.5),f0=P(fx,ly,lift+hov+2.6);
       limb(h0,f0,3.2,MINTD);limb(L2(h0,f0,.05),L2(h0,f0,.5),3,PEARL,false);limb(L2(h0,f0,.55),L2(h0,f0,.9),2.4,MINT,false);
@@ -5493,7 +5509,7 @@ function drawUnit(face,anim,fi,team){
   }
   /* orange cape (where the wings were): hangs from the shoulders and ripples; billows while walking, whips out when the arrow is released */
   add(-4.5,0,()=>{
-    const off=walk?2.6+Math.sin(ph):shoot?[1.8,1.6,1.4,3.4,2.8][fi]:1.6+[0,.4,.8,.4][fi]*.7;
+    const off=walk?2.6+Math.sin(ph):shoot?[1.8,1.6,1.4,3.4,2.8][fi]:1.6+[0,.4,.8,.4][k]*.7;
     const amp=walk?1.3:shoot?1.2:.8,zt=zb+9.6,zm=zb+3,zbot=zb-6.5,w=i=>Math.sin(ph+i*1.7)*amp;
     const pts=[P(-2.8,-3.8,zt),P(-2.8,3.8,zt),P(-3.6-off*.5,4.6,zm),P(-4.2-off+w(0),5.2,zbot),P(-4.2-off+w(1),1.7,zbot-.8),P(-4.2-off+w(2),-1.7,zbot),P(-4.2-off+w(3),-5.2,zbot-.5),P(-3.6-off*.5,-4.6,zm)];
     ctx.lineJoin='round';ctx.fillStyle='#e0761c';ctx.strokeStyle='#4a2008';ctx.lineWidth=.8;path(pts);ctx.closePath();ctx.fill();ctx.stroke();
@@ -5503,7 +5519,7 @@ function drawUnit(face,anim,fi,team){
   });
   /* ponytail: sways with the motion */
   add(-3.4,0,()=>{
-    const sway=walk?Math.sin(ph+1)*1.8:idle?[0,.5,1,.5][fi]:[.6,.9,1.2,-1,-.6][fi];
+    const sway=walk?Math.sin(ph+1)*1.8:rest?[0,.5,1,.5][k]:[.6,.9,1.2,-1,-.6][fi];
     const a=P(-2.4,0,zb+13),m=P(-4.6,sway*.6,zb+10),e=P(-6.2,sway,zb+5.5);
     limb(a,m,2.6,HAIR);limb(m,e,2.2,HAIR,false);
     ctx.fillStyle=HAIRD;ctx.beginPath();ctx.arc(e[0],e[1],1.1,0,7);ctx.fill();
@@ -5551,22 +5567,26 @@ function drawUnit(face,anim,fi,team){
   add(bc[0],bc[1],()=>{
     /* large ornate recurve: tapered limbs (orange outer, gold inner), tips flicked forward, wrapped grip with a team gem, little side spurs */
     const N=16,pts=[],us=[];
-    const bx=u=>bc[0]-bul*u*u+FL*Math.pow(Math.max(0,Math.abs(u)-.72)/.28,2);
-    for(let k=0;k<=N;k++){const u=k/(N/2)-1;us.push(u);pts.push(P(bx(u),bc[1],bc[2]+u*half));}
-    const nk=P(nock===null?bc[0]-bul+FL:nock,bc[1],bc[2]);
+    /* the bow turns about the grip in its own plane: th=0 is the normal upright bow, th=90deg lies it flat pointing forward (fidget).
+       bp(belly offset, offset along the limbs) -> screen point */
+    const th=FW*Math.PI/2,cs=Math.cos(th),sn=Math.sin(th);
+    const bp=(b,a)=>P(bc[0]+b*cs+a*sn,bc[1],bc[2]+a*cs-b*sn);
+    const bxr=u=>-bul*u*u+FL*Math.pow(Math.max(0,Math.abs(u)-.72)/.28,2);
+    for(let k=0;k<=N;k++){const u=k/(N/2)-1;us.push(u);pts.push(bp(bxr(u),u*half));}
+    const nk=bp(nock===null?-bul+FL:nock-bc[0],0);
     const wd=u=>1.1+1.6*(1-Math.abs(u));
     ctx.lineJoin='round';ctx.lineCap='round';
     for(const sd of [-1,1]){   // spurs
-      const u=sd*.55,a=P(bx(u),bc[1],bc[2]+u*half),b=P(bx(u)+2.6,bc[1],bc[2]+u*half+sd*2.6);
+      const u=sd*.55,a=bp(bxr(u),u*half),b=bp(bxr(u)+2.6,u*half+sd*2.6);
       limb(a,b,1.2,'#ffc266');glow(b[0],b[1],2.4,LT,.6);
     }
     for(let k=0;k<N;k++){ctx.strokeStyle='#0a0d10';ctx.lineWidth=wd((us[k]+us[k+1])/2)+1.3;path([pts[k],pts[k+1]]);ctx.stroke();}
     for(let k=0;k<N;k++){const um=(us[k]+us[k+1])/2;ctx.strokeStyle=Math.abs(um)>.5?MINT:'#ffc266';ctx.lineWidth=wd(um);path([pts[k],pts[k+1]]);ctx.stroke();}
     ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=.5;path(pts);ctx.stroke();
-    const g0=P(bx(-.16),bc[1],bc[2]-.16*half),g1=P(bx(.16),bc[1],bc[2]+.16*half);   // grip
+    const g0=bp(bxr(-.16),-.16*half),g1=bp(bxr(.16),.16*half);   // grip
     limb(g0,g1,3.6,'#6b3409');limb(g0,g1,2.8,PEARL2,false);
     limb(L2(g0,g1,.3),L2(g0,g1,.34),3,col,false);limb(L2(g0,g1,.66),L2(g0,g1,.7),3,col,false);
-    const gm=P(bx(0)+.4,bc[1],bc[2]);ctx.fillStyle=col;ctx.beginPath();ctx.arc(gm[0],gm[1],1.1,0,7);ctx.fill();glow(gm[0],gm[1],4,rgb,.55);
+    const gm=bp(bxr(0)+.4,0);ctx.fillStyle=col;ctx.beginPath();ctx.arc(gm[0],gm[1],1.1,0,7);ctx.fill();glow(gm[0],gm[1],4,rgb,.55);
     ctx.lineCap='butt';
     ctx.strokeStyle='rgba(255,246,200,.95)';ctx.lineWidth=.7;path([pts[0],nk,pts[N]]);ctx.stroke();
     for(const q of [pts[0],pts[N]]){ctx.fillStyle=PEARL2;ctx.beginPath();ctx.arc(q[0],q[1],.9,0,7);ctx.fill();glow(q[0],q[1],3.4,LT,.6);}
@@ -5598,8 +5618,8 @@ function drawUnit(face,anim,fi,team){
 }
 
 
-const DS=2,DIMS=[[30, 62, 15, 48], [32, 63, 16, 49], [70, 72, 35, 58]],ANIMS=["idle", "walk", "shoot"],cache=new Map();   // [w,h,anchorX,anchorY], measured from the drawing code
-const keyOf=(ai,fi,dir,team)=>((team*3+ai)*18+dir)*6+fi;
+const DS=2,DIMS=[[30, 62, 15, 48], [32, 63, 16, 49], [70, 72, 35, 58], [47, 55, 24, 47]],ANIMS=["idle", "walk", "shoot", "fidget"],cache=new Map();   // [w,h,anchorX,anchorY], measured from the drawing code
+const keyOf=(ai,fi,dir,team)=>((team*4+ai)*18+dir)*32+fi;
 function sprite(ai,fi,dir,team){
   const k=keyOf(ai,fi,dir,team);let c=cache.get(k);
   if(!c){
@@ -5616,9 +5636,9 @@ function live(g,x,y,face,ai,fi,team){
   const p=ctx;ctx=g;g.save();g.translate(x,y);
   try{drawUnit(face,ANIMS[ai],fi,team);}finally{g.restore();ctx=p;}
 }
-function jobs(team){const q=[];for(let ai=0;ai<3;ai++)for(let fi=0;fi<FR[ANIMS[ai]];fi++)for(let d=0;d<DIRS;d++)q.push(()=>sprite(ai,fi,d,team));return q;}
+function jobs(team){const q=[];for(let ai=0;ai<4;ai++)for(let fi=0;fi<FR[ANIMS[ai]];fi++)for(let d=0;d<DIRS;d++)q.push(()=>sprite(ai,fi,d,team));return q;}
 function clear(){for(const c of cache.values())c.width=c.height=0;cache.clear();}
-return {FPS,DIRS,dim:ai=>DIMS[ai],sprite,live,jobs,clear,get size(){return cache.size;}};
+return {FPS,DIRS,FPER:17,FSEG:[[.143,0],[.143,1],[3,2],[.143,1],[.143,0]],dim:ai=>DIMS[ai],sprite,live,jobs,clear,get size(){return cache.size;}};
 })();
 function fairyFlash(u,x,y){if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.ellipse(x,y-24,9,24,0,0,7);ctx.fill();}}
 function spriteFairy(u,t){
@@ -5662,7 +5682,10 @@ function glow(x,y,r,rgb,a){const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addCo
 function shadow(x,y,rx){ctx.fillStyle='rgba(0,0,0,.32)';ctx.beginPath();ctx.ellipse(x+rx*.25,y,rx,rx*K,0,0,7);ctx.fill();}
 /* ---- the gold android: bulky gold armour, crested helmet with a cyan eye slit, red cape and a laser sword it swings; drawn at SC x the marine's scale.
    Team colour: the chest gem, the pauldron bands and the crest tip. The cape stays red. ---- */
-const DIRS=18,FPS=7,FR={idle:4,walk:6,swing:5},SC=1.2;   // 18 facings, 7 fps, 2x-resolution sprites (DS below)
+const DIRS=18,FPS=7,FR={idle:4,walk:6,swing:5,fidget:32},SC=1.2;
+  /* fidget frames: fi = pose*4 + cape phase. All 8 poses are baked with all 4 cape phases, so the cape keeps rippling through the whole fidget like the normal idle.
+     FKF = per pose [from key, to key, blend]: ease to 'across', hold, ease to 'down', hold, ease back */
+  const FKF=[[0,1,.4],[0,1,.8],[1,1,0],[1,2,.33],[1,2,.67],[2,2,0],[2,0,.33],[2,0,.67]];   // 18 facings, 7 fps, 2x-resolution sprites (DS below)
 const tc=t=>(TC[t]||TC[0])[0],rgbC=new Map();
 const trgb=t=>{let v=rgbC.get(t);if(!v){const n=parseInt(tc(t).slice(1),16);v=(n>>16&255)+','+(n>>8&255)+','+(n&255);rgbC.set(t,v);}return v;};
 const DEG=Math.PI/180;
@@ -5670,9 +5693,9 @@ const GOLD='#d6a21e',GOLD2='#f1c640',GOLDD='#94690f',STEEL='#9aa3aa',DK='#22262a
 /* sword pose per swing frame: [yaw in degrees from forward towards the right, elevation in radians]; frames 2 and 3 are the fast slash */
 const SWING=[[105,1.05],[70,.6],[5,.15],[-60,.1],[-25,.5]];
 function drawUnit(face,anim,fi,team){
-  const col=tc(team),rgb=trgb(team),c=Math.cos(face),s=Math.sin(face),n=FR[anim],ph=fi/n*TAU;
-  const walk=anim==='walk',swing=anim==='swing',idle=anim==='idle';
-  const bob=walk?Math.abs(Math.sin(ph))*.9:idle?[0,.3,.6,.3][fi]:0;
+  const col=tc(team),rgb=trgb(team),c=Math.cos(face),s=Math.sin(face),n=FR[anim],ph=anim==='fidget'?(fi&3)/4*TAU:fi/n*TAU;
+  const walk=anim==='walk',swing=anim==='swing',idle=anim==='idle',fid=anim==='fidget',k=fid?(fi&3):fi;
+  const bob=walk?Math.abs(Math.sin(ph))*.9:0;   // no idle bob: standing still means standing still
   const P=(lx,ly,z)=>[c*lx-s*ly,(s*lx+c*ly)*K-z];
   const G=(lx,ly)=>[c*lx-s*ly,(s*lx+c*ly)*K];
   const zb=12+bob,parts=[],add=(lx,ly,f)=>parts.push([s*lx+c*ly,f]);
@@ -5680,9 +5703,17 @@ function drawUnit(face,anim,fi,team){
   const v=clamp(s*3,0,1);
   /* sword: hand position and blade direction from (yaw, elevation) */
   const hand=(yw,el)=>[3.5+3.5*Math.cos(yw),3.2+3.4*Math.sin(yw),zb+4.5+3*Math.sin(el)];
-  const sw=(yw,el)=>{const h=hand(yw,el),d=[Math.cos(el)*Math.cos(yw),Math.cos(el)*Math.sin(yw),Math.sin(el)];return {h,d,at:t=>[h[0]+d[0]*t,h[1]+d[1]*t,h[2]+d[2]*t]};};
-  const cur=swing?SWING[fi]:[15,1+(idle?[0,.02,.05,.02][fi]:Math.sin(ph)*.05)];
-  const S=sw(cur[0]*DEG,cur[1]),yaw=cur[0]*DEG;
+  const sw=(yw,el,ho)=>{const h=ho||hand(yw,el),d=[Math.cos(el)*Math.cos(yw),Math.cos(el)*Math.sin(yw),Math.sin(el)];return {h,d,at:t=>[h[0]+d[0]*t,h[1]+d[1]*t,h[2]+d[2]*t]};};
+  /* idle fidget (every 10s): sword across the chest for 1s, then pointing down at the floor beside the right leg for 1s, then back to the ready pose.
+     Key poses [yaw deg, elevation rad, hand x, y, z]: ready, across (blade level, held in front of the chest), down (hand at the hip, blade almost straight down).
+     Each frame blends two keys [from,to,t]; frames 2 and 5 are the two holds. The ready pose does not sway any more. */
+  const hA=hand(15*DEG,1),FK=[[15,1,hA[0],hA[1],hA[2]],[-88,.08,6.2,1.2,zb+6],[10,-1.3,1.8,5.8,zb+.4]];
+  let cur,hOv=null;
+  if(fid){const kf=FKF[fi>>2],a=FK[kf[0]],b=FK[kf[1]],q=kf[2]*kf[2]*(3-2*kf[2]),m=i=>a[i]+(b[i]-a[i])*q;cur=[m(0),m(1)];hOv=[m(2),m(3),m(4)];}
+  else cur=swing?SWING[fi]:[15,1+(walk?Math.sin(ph)*.05:0)];
+  const S=sw(cur[0]*DEG,cur[1],hOv),yaw=cur[0]*DEG;
+  /* the laser blade stops at the floor when it points down: the tip lands on the ground and gets a small glow there */
+  const tipT=S.d[2]<-.05?clamp((S.h[2]-.4)/-S.d[2],4,22):22;
   const pt=t=>{const q=S.at(t);return P(q[0],q[1],q[2]);};
   ctx.save();ctx.scale(SC,SC);
   shadow(0,1,9);
@@ -5708,7 +5739,7 @@ function drawUnit(face,anim,fi,team){
   });
   /* red cape: hangs from the shoulders and ripples; billows while walking, whips sideways with the swing */
   add(-6,0,()=>{
-    const off=walk?3.2+Math.sin(ph):swing?[2.4,3.4,4.2,3.8,3][fi]:2.2+[0,.4,.8,.4][fi]*.8;
+    const off=walk?3.2+Math.sin(ph):swing?[2.4,3.4,4.2,3.8,3][fi]:2.2+[0,.4,.8,.4][k]*.8;
     const sh=swing?-Math.sin(yaw)*3:0,amp=walk?1.4:swing?1.6:.8,zt=zb+11,zm=zb+3,zbot=zb-7.5,w=i=>Math.sin(ph+i*1.7)*amp;
     const pts=[P(-4.4,-6.6,zt),P(-4.4,6.6,zt),P(-5.2-off*.5+sh*.5,7.4,zm),P(-5.8-off+w(0),7.9+sh,zbot),P(-5.8-off+w(1),2.6+sh*.9,zbot-.8),P(-5.8-off+w(2),-2.6+sh*.8,zbot),P(-5.8-off+w(3),-7.9+sh,zbot-.5),P(-5.2-off*.5+sh*.5,-7.4,zm)];
     const path=a=>{ctx.beginPath();a.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();};
@@ -5753,17 +5784,17 @@ function drawUnit(face,anim,fi,team){
     ctx.fillStyle=DK;ctx.beginPath();ctx.arc(hd[0],hd[1],2.2,0,7);ctx.fill();
   });
   /* the sword: grip, gold cross-guard, long silver blade with a fuller */
-  const mid=S.at(12);
+  const mid=S.at((3+tipT)/2);
   add(mid[0],mid[1],()=>{
     const g=S.at(2.5),pv=[-Math.sin(yaw),Math.cos(yaw)];
     limb(pt(-1),pt(2.5),1.9,DK);
     limb(pt(2),pt(3.2),2.7,STEEL);                                  // emitter ring
     limb(P(g[0]-pv[0]*1.9,g[1]-pv[1]*1.9,g[2]),P(g[0]+pv[0]*1.9,g[1]+pv[1]*1.9,g[2]),1.5,GOLD2);
     /* laser blade: blue halo, light-blue body, white-hot core, glow at the tip; width hums per frame */
-    const b0=pt(3),b1=pt(22),hum=[1,1.1,.94][fi%3];
+    const b0=pt(3),b1=pt(tipT),hum=[1,1.1,.94][(fid?k:fi)%3];
     ctx.save();ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
     for(const [wd,cc] of [[7.5,'rgba(40,110,255,.3)'],[4.4,'rgba(90,185,255,.75)'],[2,'rgba(255,255,255,.95)']]){ctx.strokeStyle=cc;ctx.lineWidth=wd*hum;ctx.beginPath();ctx.moveTo(b0[0],b0[1]);ctx.lineTo(b1[0],b1[1]);ctx.stroke();}
-    glow(b1[0],b1[1],5,'130,195,255',.7);const bm=pt(12);glow(bm[0],bm[1],8,'60,130,255',.3);glow(b0[0],b0[1],4,'200,230,255',.6);
+    glow(b1[0],b1[1],5,'130,195,255',.7);if(tipT<21.5){glow(b1[0],b1[1],7,'160,215,255',.7);ctx.fillStyle='rgba(150,215,255,.5)';ctx.beginPath();ctx.ellipse(b1[0],b1[1],4,1.8,0,0,7);ctx.fill();}const bm=pt((3+tipT)/2);glow(bm[0],bm[1],8,'60,130,255',.3);glow(b0[0],b0[1],4,'200,230,255',.6);
     ctx.restore();
     const pm=pt(-1.4);ctx.fillStyle=GOLD2;ctx.beginPath();ctx.arc(pm[0],pm[1],1.1,0,7);ctx.fill();
   });
@@ -5785,8 +5816,8 @@ function drawUnit(face,anim,fi,team){
 }
 
 
-const DS=2,DIMS=[[63,76,32,67],[65,77,33,68],[85,75,43,66]],ANIMS=["idle","walk","swing"],cache=new Map();   // [w,h,anchorX,anchorY], measured from the rendered pixels of every anim x frame x 18 facings (+2px margin)
-const keyOf=(ai,fi,dir,team)=>((team*3+ai)*18+dir)*6+fi;
+const DS=2,DIMS=[[63,76,32,67],[65,77,33,68],[85,75,43,66],[80,87,40,63]],ANIMS=["idle","walk","swing","fidget"],cache=new Map();   // [w,h,anchorX,anchorY], measured from the rendered pixels of every anim x frame x 18 facings (+2px margin)
+const keyOf=(ai,fi,dir,team)=>((team*4+ai)*18+dir)*32+fi;
 function sprite(ai,fi,dir,team){
   const k=keyOf(ai,fi,dir,team);let c=cache.get(k);
   if(!c){
@@ -5803,9 +5834,9 @@ function live(g,x,y,face,ai,fi,team){
   const p=ctx;ctx=g;g.save();g.translate(x,y);
   try{drawUnit(face,ANIMS[ai],fi,team);}finally{g.restore();ctx=p;}
 }
-function jobs(team){const q=[];for(let ai=0;ai<3;ai++)for(let fi=0;fi<FR[ANIMS[ai]];fi++)for(let d=0;d<DIRS;d++)q.push(()=>sprite(ai,fi,d,team));return q;}
+function jobs(team){const q=[];for(let ai=0;ai<4;ai++)for(let fi=0;fi<FR[ANIMS[ai]];fi++)for(let d=0;d<DIRS;d++)q.push(()=>sprite(ai,fi,d,team));return q;}
 function clear(){for(const c of cache.values())c.width=c.height=0;cache.clear();}
-return {FPS,DIRS,dim:ai=>DIMS[ai],sprite,live,jobs,clear,get size(){return cache.size;}};
+return {FPS,DIRS,FPER:19,FSEG:[[.143,0],[.143,1],[1,2],[.143,3],[.143,4],[1,5],[.143,6],[.143,7]],dim:ai=>DIMS[ai],sprite,live,jobs,clear,get size(){return cache.size;}};
 })();
 function androidFlash(u,x,y){if(u.hit>0){ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.ellipse(x,y-26,11,28,0,0,7);ctx.fill();}}
 function spriteAndroid(u,t){
@@ -9146,7 +9177,7 @@ const TDESC={
   arsenal:'Research: +25 hp and +7 damage for all your units, 300 minerals each.',
   port:'Raises your command points (supply cap) by 15 so you can train more units.',
   barracks:'Trains headhunters and rocket soldiers.',
-  ironnest:'Trains tanks and copters.',
+  ironnest:'Trains tech heavy compunds like Tanks, Jets and Mecha.',
   turret:'Defence tower. Automatically shoots any enemy ground or air unit in range.'
 };
 Object.assign(TDESC,{
@@ -9270,6 +9301,8 @@ window.addEventListener('keydown',e=>{
   if(k===' '&&!e.repeat){togglePause();return;}
   if(k==='Escape'){place=null;aMode=false;rallyMode=false;return;}
   if(k==='h'||k==='H'){const n=buildings.find(b=>b.team===0&&b.type==='central');if(n)centerOn(n.tx+n.size/2,n.ty+n.size/2);return;}
+  if(k==='F1'){e.preventDefault();idleWorker();return;}   // F1: next idle worker (the browser's help page is suppressed)
+  if(k==='F2'){e.preventDefault();selectArmy();return;}   // F2: select the whole army
   if(k==='.'){idleWorker();return;}
   if(k===','){selectArmy();return;}
   if(k==='m'||k==='M'){toggleMute();return;}
@@ -9356,7 +9389,7 @@ function setMap(id){
 }
 function drawPickMap(){const c=$('pickMap');if(c.width!==384)c.width=c.height=384;c.getContext('2d').drawImage(mapThumbs[opts.map],0,0,384,384);}
 const DIFFS=[
-  {id:'easy',name:'Easy',pips:1,desc:'Every AI (enemies and your ally) fields a quarter of the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings. Keeps 5 workers (replaces any that are killed, never more). Command point cap 13. Builds only one barracks, one factory, one port and one turret (no expansions) and queues a new unit only once every 15 seconds. Does not prioritise super units. First attack at 6 minutes, then a new batch every 2 minutes',cl:'easy'},
+  {id:'easy',name:'Easy',pips:1,desc:'Every AI (enemies and your ally) fields a quarter of the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings',cl:'easy'},
   {id:'normal',name:'Normal',pips:2,desc:'Every AI (enemies and your ally) fields half the troops. Attack waves and army sizes never grow. Plans Defense and Dynamic Strike Timings. Command point cap 40. First attack at 6 minutes, then a new batch every 2 minutes',cl:'norm'},
   {id:'hard',name:'Hard',pips:4,desc:'Full-strength AI, exactly as it plays mostly unrestricted: armies and attack waves keep growing. Command point cap 100. Plans Defense and Dynamic Strike Timings',cl:'hard'}];
 const RICON={syndicate:'<svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 8v8M8 10.5l8 3M16 10.5l-8 3"/></svg>',
