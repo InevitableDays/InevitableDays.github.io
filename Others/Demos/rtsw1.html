@@ -708,7 +708,7 @@ body.umbrals:not(.eirian):not(.draugar) #basin{background:linear-gradient(180deg
 
     <div>
         <b style="color:var(--fg)">Umbrals</b>
-        grow their base as living violet trees, with sapling workers and tentacled gunners that shoot in turn.
+        strike with unyielding ghost units. High damage output with tactical upgrades.
     </div>
 
 </div>
@@ -833,7 +833,7 @@ Object.assign(UD,{
 });
 UD.tank.noair=true;
 UD.mecha={name:'Mecha',cost:450,time:60,supply:10,hp:400,sh:1000,speed:2,range:10,dmg:6,cd:.12,armored:true,info:'Super unit: 1000 energy shield that regenerates 33/s after 15s without being attacked, only one per player and it can only be trained again once it is dead. Heavy walker. Gatling cannon (6 damage every 0.12s, range 10, hits ground, air and buildings) plus a shoulder rocket pod (4 rockets, 20 area damage each, every 5s, range 10) that also hits flying units. With 3+ enemies close it also fires an EMP pulse blast (every 20s): 200 damage to the target the beam hits, plus 50 damage to every enemy the shockwave reaches (the beam target takes both). Trained at the Ironnest',vis:13};
-UD.mothership={name:'Mothership',cost:450,time:50,supply:10,hp:1600,sh:500,speed:1.4,range:12,dmg:14,cd:1.1,beams:5,info:'Super unit: only one per player, it can only be trained again once it is dead. Eirian capital ship. Fires blue pulse beams at up to 5 targets per volley, 14 damage each, range 12. Hits ground and air. Every 4th volley with 2+ targets, the beams turn red and converge on one target (same damage per beam). Trained at the Cybergrid',vis:15,air:true};
+UD.mothership={name:'Mothership',cost:450,time:50,supply:10,hp:1600,sh:500,speed:1.75,range:12,dmg:14,cd:1.1,beams:5,info:'Super unit: only one per player, it can only be trained again once it is dead. Eirian capital ship. Fires blue pulse beams at up to 5 targets per volley, 14 damage each, range 12. Hits ground and air. Every 4th volley with 2+ targets, the beams turn red and converge on one target (same damage per beam). Trained at the Cybergrid',vis:15,air:true};
 UD.behemoth={name:'Behemoth',cost:360,time:40,supply:10,hp:1600,speed:2.8,range:2.4,dmg:35,cd:1.1,splash:1.5,armored:true,noair:true,spikes:5,spikeDmg:14,spikeRange:10,spikeCd:4,info:'Super unit: only one per player, it can only be trained again once it is dead. Draugar siege beast. Kaiser blades sweep a 1.5 tile area for 35 damage every 1.1s (ground only, reach 2.4). Back spines also throw a barrage of 5 spikes every 4s at up to 5 targets, 14 damage each, range 10, ground and air. Armoured. Trained at the Monolith',vis:13};
 Object.assign(UD,{
   dog:{name:'Hound',cost:50,time:15,supply:1,hp:100,speed:3.5,range:1,dmg:18,cd:.86,aggro:true,info:'Scorpion-tailed melee biter, 18 damage per bite. Half a Unit-02, no shield, very cheap and quick to spawn. Cannot hit air',vis:11},
@@ -3315,8 +3315,14 @@ function ultraSpike(u,tg,idx){
 const SPIDER={gap:.14};
 function spiderTick(u,dt){
   const d=UD.spider;
-  if(resBusy(u.team,'chan')){u.path=null;u.chRoot=true;}else u.chRoot=false;   // Channel Healing bought: the Spider is rooted (channelling) until the 40 s of research have passed
-  if(teams[u.team].upChan&&u.hp<u.maxhp)u.hp=Math.min(u.maxhp,u.hp+u.maxhp/40*dt);   // Channel Healing (Sapwell research): max hp over 40 s, 90 hp a second at 3600
+  /* Channel Healing (Sapwell, bought again every time): when the 50 s research has finished, finishResearch gives the Spider u.chHeal=1600. It then stands rooted and heals 40 hp a second (1600 over 40 s)
+     until its hp is full or the 1600 are healed, whichever comes first. The Spider never heals itself otherwise, and it is NOT rooted while the research is only training. */
+  if(u.chHeal>0){
+    u.path=null;u.chRoot=true;
+    const a=Math.min(CHAN_RATE*dt,u.chHeal,u.maxhp-u.hp);
+    if(a>0){u.hp+=a;u.chHeal-=a;}
+    if(u.maxhp-u.hp<1e-6||u.chHeal<1e-6){u.chHeal=0;u.chRoot=false;}
+  }else u.chRoot=false;
   u.vcd=(u.vcd===undefined?.5:u.vcd)-dt;if(u.vcd>0)return;u.vcd+=1;
   u.vn=(u.vn|0)+1;if(u.vn%4===1)u.volT=time;   // the shroud and ground ring swell only on every 4th veil tick
   effects.push({k:'spv',x:u.x,y:u.y,team:u.team,R:d.veilR,t:1,T:1});
@@ -3714,11 +3720,13 @@ function queueResearch(b,id,cost){
   const tm=teams[b.team];
   if(!b.done||b.dead)return false;
   if(b.queue.length>=5){if(b.team===0)flash('Queue is full');return false;}
-  if((id==='ahp'&&tm.upHp)||(id==='adm'&&tm.upDm)||(id==='laser'&&b.laser)||(id==='hp'&&b.defUp)||(id==='chan'&&tm.upChan))return false;
+  if((id==='ahp'&&tm.upHp)||(id==='adm'&&tm.upDm)||(id==='laser'&&b.laser)||(id==='hp'&&b.defUp))return false;   // Channel Healing has no one-time flag: it can be bought again after each use
+
   if((id==='ahp'||id==='adm'||id==='chan')?resBusy(b.team,id):b.queue.some(q=>q.res===id)){if(b.team===0)flash('Already queued');return false;}
   if(tm.minerals<cost){if(b.team===0)flash('Not enough minerals');return false;}
-  tm.minerals-=cost;b.queue.push({res:id,t:RES_T,tot:RES_T,cost});
-  if(b.team===0)flash(resName(id,0)+' queued ('+RES_T+'s)');
+  const rt=id==='chan'?CHAN_T:RES_T;
+  tm.minerals-=cost;b.queue.push({res:id,t:rt,tot:rt,cost});
+  if(b.team===0)flash(resName(id,0)+' queued ('+rt+'s)');
   return true;
 }
 function spawnUnit(b,type){
@@ -3815,14 +3823,19 @@ function updateBuilding(b,dt){
   const q=b.queue[0];
   if(q){q.t-=dt;if(q.t<=0){b.queue.shift();if(q.res){finishResearch(b,q.res);hudDirty=true;if(sel.includes(b))hud.lastSel='';}else spawnUnit(b,q.type);}}
 }
-const RES_T=40;   // every upgrade takes 40 seconds to research
+const RES_T=40;   // every upgrade takes 40 seconds to research (Channel Healing 50)
+const CHAN_T=50,CHAN_HEAL=1600,CHAN_RATE=40;   // Channel Healing: 50 s to research, then 1600 hp healed at 40 hp a second (40 s) while the Spider is rooted
 const RES_INFO={ahp:{ic:'defup',cost:300},adm:{ic:'dmgup',cost:300},laser:{ic:'laser',cost:500},hp:{ic:'defup',cost:600},chan:{ic:'heal',cost:900}};
 const resName=(id,t)=>id==='chan'?'Channel Healing':id==='ahp'?'Unit HP +'+(raceOf(t)==='draugar'?50:25):id==='adm'?'Unit Damage +7':id==='laser'?'Laser Guns':'Defense Up';
 const resBusy=(team,id)=>buildings.some(b=>b.team===team&&!b.dead&&b.queue.some(q=>q.res===id));   // queued or researching anywhere on the team
 function finishResearch(b,id){
   const tm=teams[b.team],mineT=b.team===0;
   if(id==='ahp'){tm.upHp=true;const hu=raceOf(b.team)==='draugar'?50:25;for(const u of units)if(u&&!u.dead&&u.team===b.team){u.maxhp+=hu;u.hp+=hu;}if(mineT)flash('Unit HP +'+hu+' researched');}
-  else if(id==='chan'){tm.upChan=true;if(mineT)flash('Channel Healing researched: the Spider now heals itself');}
+  else if(id==='chan'){
+    let n=0;
+    for(const u of units)if(u&&!u.dead&&u.team===b.team&&u.type==='spider'){u.chHeal=CHAN_HEAL;u.path=null;n++;}   // 50 s research vs 40 s heal: a new purchase can never finish while the last heal is still running, so nothing stacks
+    if(n&&mineT)flash('Channel Healing: the Spider is rooted and channelling, healing up to '+CHAN_HEAL+' hp');
+  }
   else if(id==='adm'){tm.upDm=true;if(mineT)flash('Unit damage +7 researched');}
   else if(id==='laser'){b.laser=true;b.lcd=0;if(mineT)flash('Laser Guns installed: this Central now defends itself');}
   else if(id==='hp'){b.defUp=true;b.maxhp+=2000;b.hp+=2000;if(mineT)flash('Central defense upgraded: +2000 hp');}
@@ -12801,10 +12814,10 @@ function cmdHTML(){
     else if(id==='upgrade:laser')dis=t0.minerals<500||qf||qh('laser')||!!(sel[0]&&sel[0].laser);
     else if(id==='upgrade:ahp')dis=t0.minerals<300||!!t0.upHp||qf||resBusy(0,'ahp');
     else if(id==='upgrade:adm')dis=t0.minerals<300||!!t0.upDm||qf||resBusy(0,'adm');
-    else if(id==='upgrade:chan')dis=t0.minerals<900||!!t0.upChan||qf||resBusy(0,'chan');
+    else if(id==='upgrade:chan')dis=t0.minerals<900||qf||resBusy(0,'chan');
     else if(a==='train'||a==='build'){const cost=(a==='train'?UD:BD)[b].cost;dis=t0.minerals<cost;if(a==='train'&&t0.used+UD[b].supply>t0.cap&&!UD[b].give)dis=true;if(a==='train'&&SUPER[b]&&superCnt(0,b)>0)dis=true;}
     el.disabled=dis||!!over;
-    el.classList.toggle('on',(id==='upgrade:laser'&&!!(sel[0]&&sel[0].laser))||(id==='upgrade:hp'&&!!(sel[0]&&sel[0].defUp))||(id==='upgrade:ahp'&&!!t0.upHp)||(id==='upgrade:adm'&&!!t0.upDm)||(id==='upgrade:chan'&&!!t0.upChan)||(id==='amove'&&aMode)||(id==='rally'&&rallyMode)||(a==='build'&&place&&place.type===b));
+    el.classList.toggle('on',(id==='upgrade:laser'&&!!(sel[0]&&sel[0].laser))||(id==='upgrade:hp'&&!!(sel[0]&&sel[0].defUp))||(id==='upgrade:ahp'&&!!t0.upHp)||(id==='upgrade:adm'&&!!t0.upDm)||(id==='amove'&&aMode)||(id==='rally'&&rallyMode)||(a==='build'&&place&&place.type===b));
   }
 }
 function drawSpark(){
@@ -12962,7 +12975,7 @@ const TDESC={
   valkrie:'Giant walker with twin lances: area damage, bonus vs light infantry. Cannot hit air.',
   central:'Command center. Drop-off point for minerals; trains workers.',
   arsenal:'Research: +25 hp and +7 damage for all your units, 300 minerals each.',
-  port:'Raises your command points (supply cap) by 15 so you can train more units.',
+  port:'Raises your command points (supply cap) by 10 so you can train more units.',
   barracks:'Trains marines, flamers and rocketeers.',
   ironnest:'Trains tanks, hover jets and the Mecha.',
   turret:'Defence tower. Automatically shoots any enemy ground or air unit in range.'
@@ -12990,15 +13003,15 @@ const TD2={draugar:{
   arsenal:'Research: +25 hp and +7 damage for all your units, 300 minerals each.'},umbrals:{
   worker:'Builds structures and mines minerals. Can fight in melee.',
   central:'Penumbra. Drop-off point for minerals; trains Weavers.',
-  port:'Sporepod. Gives +15 supply.',
+  port:'Sporepod. Gives +10 supply.',
   barracks:'Gloomhollow. Trains Spectras and Rogues.',
   ironnest:'Webgrove. Trains the Spider, Gallants and Spaceworms.',
   turret:'Barbthorn. Automatically shoots any enemy ground or air unit in range.',
-  arsenal:'Sapwell. Research: +25 hp and +7 damage for all your units, 300 minerals each, and Channel Healing for the Spider, 900 minerals.'}};
+  arsenal:'Sapwell. Research: +25 hp and +7 damage for all your units, 300 minerals each, and Channel Healing for the Spider (heals 1600 hp, buy it again whenever needed), 900 minerals.'}};
 TDESC.nyx='';TDESC.scorpion='';TDESC.ironlizard='';TDESC.fairy='';TDESC.android='';TDESC.flamer='';TDESC.marine='';TDESC.rocketeer2='';TDESC.hoverjet='';TDESC.goldcrawler='';TDESC.spectra='';TDESC.gallant='Void colossus. A hulking melee brute that throws two punches in turn, each one hitting every enemy around the target for 50 area damage. Ground only. Trained at the Webgrove.';TDESC.spaceworm='Floating dragon-head caster. Fires light projectiles that hit every enemy around the target for 22 area damage, range 9. Hits ground and air. Trained at the Webgrove.';TDESC.rogue='Ghostly dagger assassin. Walks toward its target until 7 tiles are left, then blinks onto it and strikes for 100 damage. Takes 70% less damage from anything 7 or more tiles away. Cannot hit air.';   // description comes later
 const tdesc=(ty,t)=>(TD2[raceOf(t)]||{})[ty]||TDESC[ty];
 const ODESC={
-  'upgrade:chan':['Channel Healing','Your Spider heals itself by 1/40 of its max hp every second (90 hp a second at 3600 hp), so it goes from nearly dead to full in 40 seconds, whenever it is hurt. One-time research, takes 40 seconds, and the Spider cannot move until those 40 seconds have passed.<small>900 minerals · 40s</small>'],
+  'upgrade:chan':['Channel Healing','Takes 50 seconds to research (the Spider can move freely meanwhile). Once finished, the Spider is rooted and heals 40 hp a second, up to 1600 hp over 40 seconds, and stops as soon as its hp is full or 1600 hp have been healed. The Spider never heals itself otherwise. Can be bought again every time.<small>900 minerals · 50s</small>'],
   'upgrade:ahp':['Unit HP +25','All your units gain +25 max hp, current and future. One-time research, takes 40 seconds.<small>300 minerals · 40s</small>'],
   'upgrade:adm':['Unit Damage +7','All your units deal +7 damage per attack. One-time research, takes 40 seconds.<small>300 minerals · 40s</small>'],
   'upgrade:laser':['Laser Guns','This Central fires a single-target laser at the nearest enemy unit within its sight range: 30 damage, +15 vs armoured, every 2.1s. No splash. Only the selected Central is upgraded.<small>500 minerals · 40s · once per Central</small>'],
