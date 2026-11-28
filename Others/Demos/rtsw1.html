@@ -666,7 +666,7 @@ body.umbrals:not(.eirian):not(.draugar) #basin{background:linear-gradient(180deg
         <p>Smoke covers the map. Your units only see a short distance, so scout to find the enemy.</p>
       </div>
       <div id="pick" hidden>
-        <header class="mHead"><h1>Last Earth</h1><span>Skirmish setup</span><div class="mCards cmp" id="musicList"><button type="button" class="mCard on" data-m="1"><b>Music on</b></button><button type="button" class="mCard" data-m="0"><b>Music off</b></button></div></header>
+        <header class="mHead"><h1>Last Earth</h1><span>Skirmish setup</span><div id="mTools"><div class="mCards cmp" id="fsBox"><button type="button" class="mCard" id="fsBtn"><b>Fullscreen</b></button></div><div class="mCards cmp" id="musicList"><button type="button" class="mCard on" data-m="1"><b>Music on</b></button><button type="button" class="mCard" data-m="0"><b>Music off</b></button></div></div></header>
         <div class="mGrid">
           <section class="mPanel" aria-label="Teams">
             <h3>1 &middot; Teams</h3>
@@ -14095,6 +14095,7 @@ A("Empty",["Boş","Vide","Leer","Пусто","空き","فارغ","空","비어 �
 A("Preparing terrain",["Arazi hazırlanıyor","Préparation du terrain","Gelände wird vorbereitet","Подготовка местности","地形を準備中","جارٍ تجهيز التضاريس","正在准备地形","지형 준비 중"]);
 A("Planting trees",["Ağaçlar dikiliyor","Plantation des arbres","Bäume werden gepflanzt","Посадка деревьев","木を植えています","جارٍ زرع الأشجار","正在种树","나무 심는 중"]);
 A("Menu music",["Menü müziği","Musique du menu","Menümusik","Музыка меню","メニュー音楽","موسيقى القائمة","菜单音乐","메뉴 음악"]);
+A("Fullscreen",["Tam ekran","Plein écran","Vollbild","Полный экран","フルスクリーン","ملء الشاشة","全屏","전체 화면"]);
 
 /* ---- names ---- */
 A("Syndicate",["Sendika","Syndicat","Syndikat","Синдикат","シンジケート","النقابة","辛迪加","신디케이트"]);
@@ -14379,3 +14380,25 @@ if(mb){new MutationObserver(musSync).observe(mb,{childList:true,subtree:true,cha
 })();
 </script>
 <style>*{cursor:var(--kn,default)}.q.empty{cursor:var(--kn,default)}</style>
+<style>#mTools{display:flex;gap:8px;align-self:center}#fsBox,#musicList{align-self:center}#fsBox{width:auto;padding:3px;border:1px solid rgba(110,76,46,.9);border-radius:10px;background:linear-gradient(180deg,rgba(26,36,42,.92),rgba(12,18,22,.95));box-shadow:0 6px 18px rgba(0,0,0,.5);box-sizing:border-box}#fsBox .mCard{background:rgba(10,16,20,.85);height:28px;box-sizing:border-box;white-space:nowrap;padding:0 14px}#mTools #musicList{width:clamp(200px,20vw,290px)}</style>
+<script>
+/* F11 = page fullscreen (Fullscreen API) so the browser tabs / toolbar do not slide down when the mouse touches the top edge; Esc is locked (Chromium) so only F11 leaves fullscreen */
+(function(){
+  var de=document.documentElement;
+  function isFS(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
+  function lockEsc(){try{if(navigator.keyboard&&navigator.keyboard.lock)navigator.keyboard.lock(['Escape']).catch(function(){});}catch(_){}}
+  function unlockEsc(){try{if(navigator.keyboard&&navigator.keyboard.unlock)navigator.keyboard.unlock();}catch(_){}}
+  function enter(){var r=de.requestFullscreen||de.webkitRequestFullscreen;if(!r)return;try{var p=r.call(de,{navigationUI:'hide'});if(p&&p.catch)p.catch(function(){});}catch(_){}}
+  function leave(){var x=document.exitFullscreen||document.webkitExitFullscreen;if(!x)return;try{var p=x.call(document);if(p&&p.catch)p.catch(function(){});}catch(_){}}
+  window.addEventListener('keydown',function(e){
+    if(e.key!=='F11'&&e.code!=='F11')return;
+    e.preventDefault();
+    if(!e.repeat){if(isFS())leave();else enter();}
+  },true);
+  var fb=document.getElementById('fsBtn');
+  function onFS(){if(isFS())lockEsc();else unlockEsc();if(fb)fb.classList.toggle('on',isFS());}
+  if(fb)fb.addEventListener('click',function(){if(isFS())leave();else enter();fb.blur();});
+  document.addEventListener('fullscreenchange',onFS);
+  document.addEventListener('webkitfullscreenchange',onFS);
+})();
+</script>
